@@ -1,0 +1,11 @@
+{
+  "title": "Petits Pas Dans La Neige",
+  "description": "Haclong's lair",
+  "slogan": "Haclong Home",
+  "locale": "fr",
+  "author": "Haclong",
+  "eleventy": {
+      "name": "eleventy",
+      "url": "https://www.11ty.dev/"
+  }
+}
