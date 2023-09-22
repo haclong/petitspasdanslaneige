@@ -1,11 +1,37 @@
 {% extends "main.njk" %}
 
 {% block content %}
-<div class="container-xl" id="post">
-<h1>{{ title }}</h1>
-<p>
-hello 2
-{{content | safe}}
-</p>
-</div>
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/{{ locale }}">Home</a><i class="fas fa-angle-right"></i>I will survive !!
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <h2>{{ title | safe }}</h2>
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>Mon, 07/22/2019 - 17:00
+        <i class="fas fa-th-large"></i><a href="">daily-life, de quoi je me mêle,</a>
+      </div>
+      <img src="/assets/images/banner.png" class="node-banner" />
+      <p><strong>Credit</strong><br/>Sebastian Mantel - Unsplash</p>
+      <p class="dummy">No... for those who were wondering if i was out / lost interest / dead, i am not</p>
+      <p>Things have changed on my end and i am trying to cope with everything</p>
+      <p>Just taking few minutes to keep you updated</p>
+
+      <p>{{content | safe}}</p>
+
+      <div class="node-taxonomy">
+        <h3><i class="fas fa-bookmark"></i>Tags</h3>
+        <a href="">front-end</a>
+        <a href="">Drupal</a>
+        <a href="">css</a>
+      </div>
+
+      <div class="node-links"></div>
+    </article>
+
 {% endblock %}

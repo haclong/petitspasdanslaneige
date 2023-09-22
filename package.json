@@ -1,29 +1,17 @@
 {
-  "name": "app",
+  "name": "haclong' eleventy",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "build": "npx @11ty/eleventy",
-    "start": "npx @11ty/eleventy --serve"
+    "serve": "npx @11ty/eleventy --serve"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://haclong@bitbucket.org/haclong/petitspas_eleventy.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://bitbucket.org/haclong/petitspas_eleventy/issues"
-  },
-  "homepage": "https://bitbucket.org/haclong/petitspas_eleventy#readme",
+  "author": "haclong",
   "devDependencies": {
-    "@11ty/eleventy": "^1.0.2"
+    "@11ty/eleventy": "^2.0.1",
+    "@11ty/eleventy-img": "^3.1.0"
   },
   "dependencies": {
-    "@11ty/eleventy-img": "^2.0.1",
     "bootstrap": "^5.3.0-alpha1"
   }
 }

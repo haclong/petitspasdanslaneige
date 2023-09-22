@@ -1,6 +1,6 @@
-version: "3"
+version: '3'
 
-services: 
+services:
   eleventy:
     build:
       context: .
@@ -8,4 +8,6 @@ services:
     ports:
       - 8080:8080
     volumes:
-      - .:/usr/src/app
+      - ./:/usr/src/app
+      - /usr/src/app/node_modules
+

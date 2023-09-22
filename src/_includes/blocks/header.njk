@@ -1,18 +1,20 @@
-<header id="header">
-{% include "blocks/languageswitcher.njk" %}
-
-  <nav class="navbar navbar-expand-lg">
-    <div class="container-fluid container-xl">
-      <div class="navbar-brand">
-        <h3><a href="/" class="fw-normal">{{ site.title | upper }}</a></h3>
-        <span id="slogan" class="fs-5 fw-light">{{ site.slogan }}</span>
-      </div>
-      <div class="justify-content-end">
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-          <li class="nav-item ms-4"><a class="nav-link" href="#">Collections</a></li>
-          <li class="nav-item ms-4"><a class="nav-link" href="#">Home</a></li>
-        </ul>
+  <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/en">English</a>
+        <a href="/fr">French</a>
       </div>
     </div>
-  </nav>
-</header>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="" class="site-name">{{ site.title | upper }}</a>
+        <div class="site-slogan">{{ site.slogan }}</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="">Collections</a>
+        <a href="">Home</a>
+      </nav>
+    </div>
+  </header>

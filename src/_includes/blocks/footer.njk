@@ -1,15 +1,13 @@
-<section id="last-section" style="height:290px">
-</section>
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
 
-<footer id="footer">
-  <div class="container-xl" id="footer-container">
-    <div id="about-me" class="py-4">
-      <h3 class="ps-3">{{ aboutme.title }}</h3>
-      <span class="d-block mb-3">{{ aboutme.content }}</span>
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>{{ aboutme.title }}</h3>
+      <p>{{ aboutme.content }}</p>
+      <div class="hr-double"></div>
+      <div class="bottomline">
+        <p>&copy; 2022 {{ site.author }}. All rights reserved</p>
+        <p>Powered by <a href="{{ site.eleventy.url }}" target="_blank">{{ site.eleventy.name | capitalize }}</a></p>
+      </div>
     </div>
-
-    <div id="copyright" class="py-3 mb-3">(c) 2022 {{ site.author }}. All rights reserved</div>
-
-    <div id="powered-by" class="mb-4">Powered by <a href="{{ site.eleventy.url }}" target="_blank">{{ site.eleventy.name | capitalize }}</a></div>
-  </div>
-</footer>
+  </footer>

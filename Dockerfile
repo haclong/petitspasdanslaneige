@@ -1,11 +1,9 @@
 FROM node:current-slim
 
 WORKDIR /usr/src/app
+COPY . .
 
-COPY . /usr/src/app
+RUN npm install --save-dev
 
-RUN npm install --save-dev @11ty/eleventy
-
-EXPOSE 8080
-
-CMD "npm" "start"
+EXPOSE 8080 
+CMD ["npx", "@11ty/eleventy", "--serve"]
