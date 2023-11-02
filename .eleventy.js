@@ -63,11 +63,11 @@ module.exports = function (eleventyConfig) {
 //	eleventyConfig.addAsyncShortcode("imagemax", imageMaxShortcode);
 
 	eleventyConfig.addCollection("post_fr", function (collection) {
-		return collection.getFilteredByGlob("./src/fr/posts/*.md");
+		return collection.getFilteredByGlob("./src/fr/posts/*/*.md");
 	});
   
 	eleventyConfig.addCollection("post_en", function (collection) {
-		return collection.getFilteredByGlob("./src/en/posts/*.md");
+		return collection.getFilteredByGlob("./src/en/posts/*/*.md");
 	});
 
   return {

@@ -6,13 +6,11 @@
 <div class="container-xl" id="home">
 <h1>{{ title }}</h1>
 <p>
-in src root
-{{content | safe}}
-<ul>
-{%- for post in posts -%}
-  <li><a href="{{ post.url }}">{{ post.url }}</a></li>
-{%- endfor -%}
-</ul>
+  {{content | safe}}
 </p>
+{%- for post in posts | reverse -%}
+  {% include "blocks/postsummary.njk" %}
+{%- endfor -%}
+
 </div>
 {% endblock %}

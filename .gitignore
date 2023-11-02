@@ -8,8 +8,10 @@ _site/
 _site/*.html
 _site/index.html
 src/_includes/stash
-src/en/
-src/fr/
+
+# ATTENTION !!
+# si les pages markdown sont ajoutées dans gitignore, le generateur eleventy ignore AUSSI ces fichiers (donc, on ne gènère plus rien)
+
 
 # Node artifact files
 node_modules/
