@@ -1,8 +1,8 @@
 ---
-layout: list.njk
+layout: list_en.njk
 title: Home
 eleventyExcludeFromCollections: true
-permalink: en/index.html
+permalink: en/index{{ pagination.pageNumber }}.html
 ---
 
 This is the english homepage

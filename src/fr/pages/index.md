@@ -1,5 +1,5 @@
 ---
-layout: list.njk
+layout: list_fr.njk
 eleventyExcludeFromCollections: true
-permalink: fr/index.html
+permalink: fr/index{{ pagination.pageNumber }}.html
 ---

@@ -11,12 +11,14 @@
           {%- endfor -%}
         {% endif %}
       </div>
-      <img src="{{ post.data.media.path }}" class="node-banner" />
-      {% if post.data.media.credit|length > 0 %}
-        <p><strong>Credit</strong> : {{ post.data.media.credit }} </p>
-      {% elif post.data.credit|length > 0 %}
-        <p><strong>Credit</strong> : {{ post.data.credit }} </p>
-      {% endif %}
+      <div class="node-banner">
+        <img src="{{ post.data.media.path }}" class="node-banner" />
+        {% if post.data.media.credit|length > 0 %}
+          <p><strong>Credit</strong> : {{ post.data.media.credit }} </p>
+        {% elif post.data.credit|length > 0 %}
+          <p><strong>Credit</strong> : {{ post.data.credit }} </p>
+        {% endif %}
+      </div>
       <p class="dummy">
         {{- post.data.summary -}}
       </p>
@@ -24,9 +26,11 @@
       {% if post.data.tags|length > 0 %}
         <div class="node-taxonomy">
           <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul>
           {%- for tag in post.data.tags -%}
-            <a href=#>{{ tag }}</a>
+            <li><a href=#>{{ tag }}</a></li>
           {%- endfor -%}
+          </ul>
         </div>
       {% endif %}
       <div class="node-links">

@@ -1,0 +1,21 @@
+<!-- Conditional pagination block -->
+<div id="pagination-wrapper" class="container-xl">
+  <div class="pagination justify-content-center flex-wrap">
+    <ul>
+      {% if pagination.href.previous %}
+        <li><a href="{{ pagination.href.first }}" class="pagination-first"></a></li>
+        <li><a href="{{ pagination.href.previous }}" class="pagination-previous"></a></li>
+      {% endif %}
+
+      {%- for pageEntry in pagination.pages %}
+        <li><a href="{{ pagination.hrefs[ loop.index0 ] }}"{% if page.url == pagination.hrefs[ loop.index0 ] %} class="current" aria-current="page"{% endif %}>{{ loop.index }}</a></li>
+      {%- endfor %}
+
+      {% if pagination.href.next %}
+        <li><a href="{{ pagination.href.next }}" class="pagination-next"></a></li>
+        <li><a href="{{ pagination.href.last }}" class="pagination-last"></a></li>
+      {% endif %}
+
+    </ul>
+  </div>
+</div>
