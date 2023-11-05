@@ -1,6 +1,7 @@
 
     <article class="article container-xl">
       <h2><a href="{{ post.url }}">{{ post.data.title | safe }}</a></h2>
+
       <div class="node-meta">
         <i class="fas fa-user"></i>{{ post.data.author }}
         <i class="fas fa-calendar"></i>{{ post.date.toLocaleString(locale) }}
@@ -11,12 +12,13 @@
           {%- endfor -%}
         {% endif %}
       </div>
+
       <div class="node-banner">
         <img src="{{ post.data.media.path }}" class="node-banner" />
         {% if post.data.media.credit|length > 0 %}
-          <p><strong>{{ credit }}</strong> : {{ post.data.media.credit }} </p>
+          <p><strong>{{ credit_label }}</strong> : {{ post.data.media.credit }} </p>
         {% elif post.data.credit|length > 0 %}
-          <p><strong>{{ credit }}</strong> : {{ post.data.credit }} </p>
+          <p><strong>{{ credit_label }}</strong> : {{ post.data.credit }} </p>
         {% endif %}
       </div>
       <p class="dummy">
@@ -34,7 +36,7 @@
         </div>
       {% endif %}
       <div class="node-links">
-        <a href="{{ post.url }}" class="btn">{{ readmore }}<i class="fas fa-long-arrow-alt-right"></i></a>
+        <a href="{{ post.url }}" class="btn">{{ readmore_label }}<i class="fas fa-long-arrow-alt-right"></i></a>
       </div>
 
       <div class="hr-double"></div>
