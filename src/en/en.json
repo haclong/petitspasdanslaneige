@@ -8,5 +8,9 @@
     "nav": {
       "book": "Collections",
       "home": "Home"
-    }
+    },
+    "powered": "Powered by ",
+    "copyright": "All rights reserved.",
+    "credit": "Credit",
+    "readmore": "Read more about..."
 }

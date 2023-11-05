@@ -1,13 +1,14 @@
+  {% set aboutme = aboutme[lang] if lang else aboutme['en'] %}
   <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
 
   <footer id="footer">
     <div class="container-xl">
-      <h3>{{ aboutme.title }}</h3>
+      <h3>{{ aboutme.title}}</h3>
       <p>{{ aboutme.content }}</p>
       <!--div class="hr-double"></div-->
       <div class="bottomline">
-        <p>&copy; 2022 {{ site.author }}. All rights reserved</p>
-        <p>Powered by <a href="{{ site.eleventy.url }}" target="_blank">{{ site.eleventy.name | capitalize }}</a></p>
+        <p>&copy; 2012-2023 {{ site.author }}. {{ copyright }}</p>
+        <p>{{ powered }}<a href="{{ site.eleventy.url }}" target="_blank">{{ site.eleventy.name | capitalize }}</a></p>
       </div>
     </div>
   </footer>

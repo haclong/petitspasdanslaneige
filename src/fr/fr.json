@@ -8,5 +8,9 @@
     "nav": {
       "book": "Séries",
       "home": "Accueil"
-    }
+    },
+    "powered": "Propulsé par ",
+    "copyright": "Tous droits réservés.",
+    "credit": "Crédit",
+    "readmore": "Lire..."
 }

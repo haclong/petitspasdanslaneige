@@ -14,9 +14,9 @@
       <div class="node-banner">
         <img src="{{ post.data.media.path }}" class="node-banner" />
         {% if post.data.media.credit|length > 0 %}
-          <p><strong>Credit</strong> : {{ post.data.media.credit }} </p>
+          <p><strong>{{ credit }}</strong> : {{ post.data.media.credit }} </p>
         {% elif post.data.credit|length > 0 %}
-          <p><strong>Credit</strong> : {{ post.data.credit }} </p>
+          <p><strong>{{ credit }}</strong> : {{ post.data.credit }} </p>
         {% endif %}
       </div>
       <p class="dummy">
@@ -34,7 +34,7 @@
         </div>
       {% endif %}
       <div class="node-links">
-        <a href="{{ post.url }}" class="btn">Read more about... <i class="fas fa-long-arrow-alt-right"></i></a>
+        <a href="{{ post.url }}" class="btn">{{ readmore }}<i class="fas fa-long-arrow-alt-right"></i></a>
       </div>
 
       <div class="hr-double"></div>
