@@ -1,4 +1,12 @@
 {
     "lang": "en",
-    "locale": "en"
+    "locale": "en",
+    "i18n": {
+      "fr": "French",
+      "en": "English"
+    },
+    "nav": {
+      "book": "Collections",
+      "home": "Home"
+    }
 }
