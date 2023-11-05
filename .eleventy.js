@@ -62,6 +62,8 @@ module.exports = function (eleventyConfig) {
 //	eleventyConfig.addAsyncShortcode("bandeau", bandeauShortcode);
 //	eleventyConfig.addAsyncShortcode("imagemax", imageMaxShortcode);
 
+    eleventyConfig.addShortcode("year", () => `${new Date().getFullYear()}`);
+
 	eleventyConfig.addCollection("post_fr", function (collection) {
 		return collection.getFilteredByGlob("./src/fr/posts/*/*.md");
 	});
