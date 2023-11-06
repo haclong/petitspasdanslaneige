@@ -13,7 +13,7 @@ media:
   path: /img/teaser/1445685965f9j56.jpg
 
 tags:
-  - "daily-life"
+  - "daily life"
 
 
 summary: "Juste quelques mots au passage, en partie pour dire que je suis toujours de ce monde."

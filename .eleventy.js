@@ -72,6 +72,7 @@ module.exports = function (eleventyConfig) {
 		return collection.getFilteredByGlob("./src/en/posts/*/*.md");
 	});
 
+
   return {
     dir: {
 	  input: "src",
@@ -82,6 +83,6 @@ module.exports = function (eleventyConfig) {
 //	dataTemplateEngine: "", // transforming /data files into JSON
 	markdownTemplateEngine: "njk", // transforming markdown files into html
 //	htmlTemplateEngine: "", // transforming html files into html
-//    templateFormats: ["md"] // list of format that should be transformed
+    templateFormats: ["md", "njk"] // list of format that should be transformed
   };
 };

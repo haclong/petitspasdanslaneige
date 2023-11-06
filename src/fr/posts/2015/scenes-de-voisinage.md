@@ -13,7 +13,7 @@ media:
   path: /img/teaser/voisins.jpg
 
 tags:
-  - "daily-life"
+  - "daily life"
   - "de quoi je me mêle"
 
 

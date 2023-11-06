@@ -15,7 +15,7 @@ media:
 tags:
   - "linguistique"
   - "multilingual"
-  - "daily-life"
+  - "daily life"
 
 sites:
   - "Haclong projects"

@@ -14,7 +14,7 @@ media:
   credit: "Claudia Mc Elhill"
 
 tags:
-  - "book"
+  - book
 
 
 summary: "En parlant de son livre, Joyce Carol Oates a dit de lui que c'était son roman vampire. Comme la créature de la nuit, le roman est sombre, vénéneux, fascinant. Il vous attire et vous aspire et vous trouble. Il raconte l'histoire d'une famille dynastique américaine, les Bellefleur. Une fois que c'est dit, obligé, on pense aux VRAIES grandes familles américaines alourdies par une Histoire sur-médiatisée. Obligé, on pense aux Kennedy. La famille au dessus de tout. La famille et surtout le patronyme, le patrimoine, la famille, nucléaire, désunie s'il en faut mais soudée malgré tout. La puissance d'un groupe qui se transmet à l'individu, tant et si bien qu'il en oublie son individualité. L'arrogance d'un nom démultipliée par autant d'individus qui composent le groupe. Et, comme pour toutes ces familles : les secrets, les secrets, les secrets..."

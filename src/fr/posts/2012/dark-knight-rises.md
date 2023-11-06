@@ -16,7 +16,6 @@ tags:
   - "cinema"
   - "super-heros mythology"
 
-
 summary: "Batman Begins. The Dark Knight. The Dark Knight Rises. Avec ce dernier chapitre, Christopher Nolan met fin à sa trilogie Dark Knight. Inutile de préciser que cet épisode a été attendu avec impatience. Autour de moi, beaucoup ont détesté Batman Begins mais ce sont les mêmes qui ont encensés The Dark Knight. En se basant sur la courbe de progression, on est en droit d'attendre le meilleur de ce dernier opus."
 ---
 
@@ -47,7 +46,3 @@ D'après la bande annonce, je m'attendais à quelques chose comme un Choc des Ti
 J'en pleurerais...
 
 Peut-être que j'en attendais trop, de ce dernier Batman. Quand vous mettez trop d'attentes dans ces films qui mettent en scène un ou plusieurs personnages mythiques absorbées par la conscience collective, vous pouvez être très sévèrement déçu. S'il vous plaît, messieurs du cinéma, arrêtez de créer des super-héros torturés par leurs propres fantômes... Cela convient peut être au personnage de Peter Parker mais aucunement à Bruce Wayne. D'après moi.
-
-
-
-

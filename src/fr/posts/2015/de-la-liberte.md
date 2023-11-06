@@ -14,7 +14,7 @@ media:
   credit: "Eugène Delacroix"
 
 tags:
-  - "daily-life"
+  - "daily life"
   - "philosophie"
 
 
