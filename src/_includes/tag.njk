@@ -1,12 +1,3 @@
----
-pagination:
-  data: collections
-  size: 1
-  alias: tag
-  filter:
-    - all
-permalink: /tags/{{ tag | slugify }}.html
----
 
 {% extends "main.njk" %}
 
@@ -20,6 +11,5 @@ permalink: /tags/{{ tag | slugify }}.html
 {%- endfor -%}
 
 </div>
-
 
 {% endblock %}

@@ -72,6 +72,66 @@ module.exports = function (eleventyConfig) {
 		return collection.getFilteredByGlob("./src/en/posts/*/*.md");
 	});
 
+	eleventyConfig.addCollection("tag_fr", function (collection) {
+		let fr_tags = {}
+		let posts = collection.getFilteredByGlob("./src/fr/posts/**/*.md");
+		for (let post of posts) {
+			if (post.data.tags) { 
+				for (let tag of post.data.tags) {
+					fr_tags[tag] ??= [];
+					fr_tags[tag].push(post);
+				}
+			}
+		}
+
+		return fr_tags;
+	})
+
+	eleventyConfig.addCollection("tag_en", function (collection) {
+		let en_tags = {}
+		let posts = collection.getFilteredByGlob("./src/en/posts/**/*.md");
+		for (let post of posts) {
+			if (post.data.tags) { 
+				for (let tag of post.data.tags) {
+					en_tags[tag] ??= [];
+					en_tags[tag].push(post);
+				}
+			}
+		}
+
+		return en_tags;
+	})
+
+	eleventyConfig.addCollection("sites_fr", function (collection) {
+		let fr_sites = {}
+		let posts = collection.getFilteredByGlob("./src/fr/posts/**/*.md");
+		for (let post of posts) {
+			if (post.data.tags) { 
+				for (let tag of post.data.tags) {
+					fr_sites[tag] ??= [];
+					fr_sites[tag].push(post);
+				}
+			}
+		}
+
+		return fr_sites;
+	})
+
+
+	eleventyConfig.addCollection("sites_en", function (collection) {
+		let en_sites = {}
+		let posts = collection.getFilteredByGlob("./src/en/posts/**/*.md");
+		for (let post of posts) {
+			if (post.data.tags) { 
+				for (let tag of post.data.tags) {
+					en_sites[tag] ??= [];
+					en_sites[tag].push(post);
+				}
+			}
+		}
+
+		return en_sites;
+	})
 
   return {
     dir: {
