@@ -262,6 +262,10 @@ h6 {
   margin: 0 0 10px 0;
 }
 
+h1.tagged {
+  font-size: 1.8em;
+}
+
 hr {
   border-color: #dbdbd3;
   opacity: .4;
@@ -334,6 +338,10 @@ article img.node-banner,
 
 .node-meta i:first-child {
   margin-left: 0;
+}
+
+.node-meta a.tag-sites {
+  color: #96918b;
 }
 
 .node-taxonomy {

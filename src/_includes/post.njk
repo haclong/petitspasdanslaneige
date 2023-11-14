@@ -16,8 +16,8 @@
         <i class="fas fa-calendar"></i>{{ page.date.toLocaleString(locale) }}
         {% if sites | length > 0 %}
         <i class="fas fa-th-large"></i>
-          {%- for site in post.data.sites -%}
-            <a href="/{{ locale }}/sites/{{site | slugify}}.html">{{ site }}</a>{{ ", " if site != post.data.sites|last }}
+          {%- for site in sites -%}
+            <a href="/{{ locale }}/sites/{{site | slugify}}.html" class="tag-sites">{{ site }}</a>{{ ", " if site != sites|last }}
           {%- endfor -%}
         {% endif %}
       </div>

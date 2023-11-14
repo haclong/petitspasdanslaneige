@@ -1,13 +1,12 @@
----
+--- 
+# cette page fait une bidouille dans des directives frontmatter 
+# pour rediriger l'URL / vers /en
 pagination:
-  data: collections.post_en
-  size: 10
-  alias: posts
-  reverse: true
-layout: list.njk
-title: Home
-eleventyExcludeFromCollections: true
-permalink: en/index{{ pagination.pageNumber }}.html
+  data: redirects
+  size: 1
+  alias: redirect
+redirects:
+  - {"from": "/en/index.html", "to": "/en/0/index.html"}
+permalink: en/index.html
+layout: redirect.njk
 ---
-
-This is the english homepage

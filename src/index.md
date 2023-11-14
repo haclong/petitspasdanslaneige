@@ -6,7 +6,7 @@ pagination:
   size: 1
   alias: redirect
 redirects:
-  - {"from": "/", "to": "/fr/index0.html"}
+  - {"from": "/", "to": "/fr/index.html"}
 permalink: "index.html"
 layout: redirect.njk
 ---

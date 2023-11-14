@@ -2,8 +2,14 @@
 {% extends "main.njk" %}
 
 {% block content %}
+
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/{{ locale }}/index0.html">{{ nav.home }}</a><i class="fas fa-angle-right"></i>{{ tagged_with }}<i class="fas fa-angle-right"></i>{{ tag | safe }}
+      </div>
+    </div>
+
 <div class="container-xl" id="home">
-<h1>{{ tag }}</h1>
 
 {% set taglist = collections[ tag ] %}
 {%- for post in taglist | reverse -%}

@@ -133,6 +133,14 @@ module.exports = function (eleventyConfig) {
 		return en_sites;
 	})
 
+	eleventyConfig.addCollection("book_fr", function (collection) {
+		return collection.getFilteredByGlob("./src/fr/books/*/*.md");
+	});
+  
+	eleventyConfig.addCollection("book_en", function (collection) {
+		return collection.getFilteredByGlob("./src/en/books/*/*.md");
+	});
+
   return {
     dir: {
 	  input: "src",
