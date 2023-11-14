@@ -44,7 +44,32 @@ module.exports = function (eleventyConfig) {
   
 	eleventyConfig.addGlobalData("baseUrl", baseUrl) ;  
 
-	eleventyConfig.addGlobalData("testValue", testValue) ;  
+	eleventyConfig.addGlobalData("testValue", testValue) ;
+
+	// gestion des drafts
+	// ne pas publier le permalink
+	eleventyConfig.addGlobalData("eleventyComputed.permalink", function() {
+		return (data) => {
+			// always skip during non-watch/serve builds
+			if(data.draft) {
+				return false;
+			}
+
+			return data.permalink;
+		}
+	});
+	// gestion des drafts
+	// when eleventyExcludeFromCollections is true, the file is not included in any collection
+	eleventyConfig.addGlobalData("eleventyComputed.eleventyExcludedFromCollections", function() {
+		return (data) => {
+			// always exclude from non-watch/serve builds
+			if(data.draft) {
+				return true;
+			}
+
+			return data.eleventyExcludeFromCollections;
+		}
+	});
 
 //	eleventyConfig.addLayoutAlias("postTemplate", "src/_includes/post.njk") ;
 
@@ -134,11 +159,11 @@ module.exports = function (eleventyConfig) {
 	})
 
 	eleventyConfig.addCollection("book_fr", function (collection) {
-		return collection.getFilteredByGlob("./src/fr/books/*/*.md");
+		return collection.getFilteredByGlob("./src/fr/books/*.md");
 	});
   
 	eleventyConfig.addCollection("book_en", function (collection) {
-		return collection.getFilteredByGlob("./src/en/books/*/*.md");
+		return collection.getFilteredByGlob("./src/en/books/*.md");
 	});
 
   return {

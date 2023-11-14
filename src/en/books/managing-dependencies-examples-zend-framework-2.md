@@ -15,8 +15,7 @@ media:
 sites:
   - "Développement"
 
+summary: "A list of snippets to manage dependencies within your application"
 ---
 
 A list of snippets to manage dependencies within your application
-
-

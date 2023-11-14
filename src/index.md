@@ -10,5 +10,3 @@ redirects:
 permalink: "index.html"
 layout: redirect.njk
 ---
-
-on ne peut pas voir ce contenu parce que c'est une redirection vers la page home française

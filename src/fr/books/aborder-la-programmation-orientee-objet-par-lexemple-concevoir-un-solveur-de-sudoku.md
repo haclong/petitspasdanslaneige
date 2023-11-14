@@ -15,10 +15,10 @@ media:
 sites:
   - "Développement"
 
-summary: "Avec le prétexte de développer un solveur de sudoku, nous allons aborder plusieurs aspects de la programmation orientée objet. 
+summary: "Avec le prétexte de développer un solveur de sudoku, nous allons aborder plusieurs aspects de la programmation orientée objet. \n
 
-Durant ce tutorial en plusieurs épisodes, nous allons voir comment 
-- concevoir le modèle objet de notre sudoku en nous attardant sur les options possibles
+Durant ce tutorial en plusieurs épisodes, nous allons voir comment \n
+- concevoir le modèle objet de notre sudoku en nous attardant sur les options possibles\n
 - créer les tests unitaires sur notre modèle"
 ---
 

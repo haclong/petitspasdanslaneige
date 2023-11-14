@@ -15,8 +15,8 @@ media:
 sites:
   - "Développement"
 
+summary: "Une liste de snippets pour gérer les dépendances dans votre application"
+
 ---
 
 Une liste de snippets pour gérer les dépendances dans votre application
-
-

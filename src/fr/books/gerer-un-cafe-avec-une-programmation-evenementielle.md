@@ -16,6 +16,11 @@ media:
 sites:
   - "Développement"
 
+summary: "Instinctivement, il me semble plus naturel de programmer en séquentiel. Une action après une autre. En gros, ça ressemble à une liste de tâches et chaque tâche est exécutée dans l’ordre où on les a mises.\n
+
+Je pense que la programmation séquentielle est une structure plus facile à saisir parce qu’il y a un ordre à suivre…\n
+
+Mais il existe d’autres angles d’attaque. Abordons la programmation événementielle avec une application MVC basée sur le framework Zend Framework 2. Nous allons développer une application pour gérer les commandes d’un petit café."
 ---
 
 Instinctivement, il me semble plus naturel de programmer en séquentiel. Une action après une autre. En gros, ça ressemble à une liste de tâches et chaque tâche est exécutée dans l’ordre où on les a mises.
@@ -30,5 +35,3 @@ En plus de donner des éclaircissements sur la programmation événementielle, o
 - un formulaire avec une liste d'objets (avec plusieurs propriétés) dans un élément Select en pair avec un champ de saisie de texte et le nombre d'occurences de ces éléments est infini.
 
 Vous trouverez l'intégralité de l'application sur mon <a href="https://github.com/haclong/coffeebar" target="_blank">github</a>
-
-

@@ -17,6 +17,12 @@ sites:
   - "Développement"
   - "Haclong projects"
 
+summary: "Now let's talk about GoCD setup on my localhost.\n
+
+At the beginning, i planned to write a single article but the more i wrote about the topic, the more i had to talk about. I really tried to write something short but it turned out that i'd need more than one article to talk about GoCD.\n
+
+We will start first with the installation, though my own install is quite old and i don't remember very well how i did it but i'd try nonetheless. Beside, it can be helpful nonetheless. I truly hate incomplete tutorial where it is assumed that the reader knows more than he does..."
+
 ---
 
 Now let's talk about GoCD setup on my localhost.
@@ -28,5 +34,3 @@ We will start first with the installation, though my own install is quite old an
 Then i will talk really shortly about concepts within GoCD though you will find the <a href="https://docs.go.cd/current/introduction/concepts_in_go.html" target="_blank">complete documentation</a> on their website
 
 And finally, what is the most important thing here : what have i done :)
-
-

@@ -16,6 +16,12 @@ media:
 sites:
   - "Développement"
 
+summary: "Spontaneously, i will use procedural programming. One step after another. Like a todo list with every tasks done in order.\n
+
+I believe procedural programming is a much understandable paradigm because it is based on a succession of ordered tasks and the order is (well should) be easy to follow.\n
+
+But of course, other options are available. Let's explore the event driven programming paradigm with an MVC application based on Zend Framework 2. We will implement a small application to handle the orders of a coffee bar."
+
 ---
 
 Spontaneously, i will use procedural programming. One step after another. Like a todo list with every tasks done in order.
@@ -30,5 +36,3 @@ Added to the discovery of the event driven programming, we will also need to man
 - a second form with a list of Objects (and their properties) in a Select element, tied to an input text field and a counting.
 
 The whole application can be found in my <a href="https://github.com/haclong/coffeebar" target="_blank">github</a>
-
-

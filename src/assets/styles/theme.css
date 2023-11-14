@@ -271,6 +271,11 @@ hr {
   opacity: .4;
 }
 
+#collection .hr-double {
+  margin-top: 5em;
+  border-bottom: 6px double #dbdbd3;
+}
+
 /* .hr-double {
   border-bottom: 3px double #bbb;
 } */
@@ -412,8 +417,11 @@ article img.node-banner,
 
 .pagination {
   padding-top: 48px;
-  border-top: double 6px #dbdbd3;
   /* margin-bottom: 24px; */
+}
+
+#home .pagination {
+  border-top: double 6px #dbdbd3;
 }
 
 .pagination li {

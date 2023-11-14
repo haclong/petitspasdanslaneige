@@ -8,6 +8,7 @@ drupal_uuid: 1f610593-5abd-47f6-be3f-0e642f158cd4
 drupal_nid: 168
 lang: en
 author: haclong
+draft: true
 
 media:
   path: /img/teaser/2048x1536-fit_illustration-laboratoire-antidopage.jpg
