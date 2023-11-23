@@ -33,6 +33,12 @@
 
       <p>{{ content | safe }}</p>
 
+      <ul>
+        {% for book in slug | getGlobalData %}
+           <li><a href="{{book.url}}">{{book.title}}</a></li>
+        {% endfor %}
+      </ul>
+
       {% if tags|length > 0 %}
         <div class="node-taxonomy">
           <h3><i class="fas fa-bookmark"></i>Tags</h3>
@@ -44,9 +50,7 @@
         </div>
       {% endif %}
 
-      {% if book %}
-        {% include "blocks/booknavigation.njk" %}
-      {% endif %}
+      {% include "blocks/booknavigation.njk" %}
     
     </article>
 

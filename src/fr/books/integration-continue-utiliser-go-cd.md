@@ -3,11 +3,17 @@ title: "Intégration Continue - Utiliser Go CD"
 permalink: "fr/books/integration-continue-utiliser-go-cd.html"
 date: "2016-12-12T15:32"
 slug: integration-continue-utiliser-go-cd
-layout: post
+layout: book
 drupal_uuid: 79eb4a4e-9783-473e-a6f5-4c520b58d549
 drupal_nid: 167
 lang: fr
 author: haclong
+
+book: 
+  key: integration-continue-utiliser-go-cd
+  next:
+    url: /fr/posts/integration-continue-installer-le-projet.html
+    title: Intégration continue - Installer le projet
 
 media:
   path: /img/teaser/capture_2.png

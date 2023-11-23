@@ -9,6 +9,19 @@ drupal_nid: 172
 lang: fr
 author: haclong
 
+book:
+  book: integration-continue-utiliser-go-cd
+  rank: 5
+  top:
+    url: /fr/books/integration-continue-utiliser-go-cd.html
+    title: Intégration Continue - Utiliser Go CD
+  next:
+    url: /fr/posts/integration-continue-avec-gocd-monitorer-les-pipelines.html
+    title: Intégration Continue avec GoCD - Monitorer les pipelines
+  previous: 
+    url: /fr/posts/integration-continue-tester-le-projet-12.html
+    title: Intégration continue - Tester le projet 1/2
+
 media:
   path: /img/teaser/capture_2.png
   credit: "Sebastian Mantel - Unsplash"

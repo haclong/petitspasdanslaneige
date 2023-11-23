@@ -44,8 +44,6 @@ module.exports = function (eleventyConfig) {
   
 	eleventyConfig.addGlobalData("baseUrl", baseUrl) ;  
 
-	eleventyConfig.addGlobalData("testValue", testValue) ;
-
 	// gestion des drafts
 	// ne pas publier le permalink
 	eleventyConfig.addGlobalData("eleventyComputed.permalink", function() {
@@ -89,6 +87,10 @@ module.exports = function (eleventyConfig) {
 
     eleventyConfig.addShortcode("year", () => `${new Date().getFullYear()}`);
 
+	eleventyConfig.addFilter("getGlobalData", function(data) {
+		return require(`./src/_data/collections/${data}.json`) ;
+	});
+
 	eleventyConfig.addCollection("post_fr", function (collection) {
 		return collection.getFilteredByGlob("./src/fr/posts/*/*.md");
 	});
@@ -131,10 +133,19 @@ module.exports = function (eleventyConfig) {
 		let fr_sites = {}
 		let posts = collection.getFilteredByGlob("./src/fr/posts/**/*.md");
 		for (let post of posts) {
-			if (post.data.tags) { 
-				for (let tag of post.data.tags) {
-					fr_sites[tag] ??= [];
-					fr_sites[tag].push(post);
+			if (post.data.sites) { 
+				for (let site of post.data.sites) {
+					fr_sites[site] ??= [];
+					fr_sites[site].push(post);
+				}
+			}
+		}
+		let books = collection.getFilteredByGlob("./src/fr/books/*.md");
+		for (let book of books) {
+			if (book.data.sites) {
+				for (let site of book.data.sites) {
+					fr_sites[site] ??= [];
+					fr_sites[site].push(book);
 				}
 			}
 		}
@@ -142,15 +153,14 @@ module.exports = function (eleventyConfig) {
 		return fr_sites;
 	})
 
-
 	eleventyConfig.addCollection("sites_en", function (collection) {
 		let en_sites = {}
 		let posts = collection.getFilteredByGlob("./src/en/posts/**/*.md");
 		for (let post of posts) {
-			if (post.data.tags) { 
-				for (let tag of post.data.tags) {
-					en_sites[tag] ??= [];
-					en_sites[tag].push(post);
+			if (post.data.sites) { 
+				for (let site of post.data.sites) {
+					en_sites[site] ??= [];
+					en_sites[site].push(post);
 				}
 			}
 		}

@@ -9,6 +9,16 @@ drupal_nid: 164
 lang: fr
 author: haclong
 
+book:
+  book: integration-continue-utiliser-go-cd
+  rank: 1
+  top:
+    url: /fr/books/integration-continue-utiliser-go-cd.html
+    title: Intégration Continue - Utiliser Go CD
+  next:
+    url: /fr/posts/integration-continue-installer-gocd.html
+    title: Intégration Continue - Installer GoCD
+
 media:
   path: /img/teaser/2048x1536-fit_illustration-laboratoire-antidopage.jpg
 

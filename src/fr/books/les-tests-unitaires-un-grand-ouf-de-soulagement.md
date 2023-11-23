@@ -10,6 +10,11 @@ lang: fr
 author: haclong
 draft: true
 
+book:
+  key: les-tests-unitaires-un-grand-ouf-de-soulagement
+
+posts: collections.collection_fr.les-tests-unitaires-un-grand-ouf-de-soulagement
+
 media:
   path: /img/teaser/2048x1536-fit_illustration-laboratoire-antidopage.jpg
 

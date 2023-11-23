@@ -9,6 +9,19 @@ drupal_nid: 169
 lang: fr
 author: haclong
 
+book:
+  book: integration-continue-utiliser-go-cd
+  rank: 3
+  top:
+    url: /fr/books/integration-continue-utiliser-go-cd.html
+    title: Intégration Continue - Utiliser Go CD
+  next:
+    url: /fr/posts/integration-continue-tester-le-projet-12.html
+    title: Intégration continue - Tester le projet 1/2
+  previous: 
+    url: /fr/posts/integration-continue-installer-gocd.html
+    title: Intégration Continue - Installer GoCD
+
 media:
   path: /img/teaser/capture_2.png
   credit: "Sebastian Mantel - Unsplash"
