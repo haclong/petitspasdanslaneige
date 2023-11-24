@@ -9,6 +9,19 @@ drupal_nid: 99
 lang: en
 author: haclong
 
+book:
+  book: manage-coffeebar-event-driven-programming
+  rank: 2,
+  top: 
+    url: /en/books/manage-coffeebar-event-driven-programming.html
+    title: Manage a coffeebar with event driven programming
+  next: 
+    url: /en/posts/coffeebar-application-319-spying-our-cache.html
+    title: CoffeeBar Application 3/19 - Spying on our cache
+  previous:
+    url: /en/posts/coffeebar-application-119-introduction-event-driven-programmation.html
+    title: CoffeeBar Application 1/19 - Introduction to event driven programmation
+
 media:
   path: /img/teaser/file9271237667217.jpg
   credit: "Morguefile.com"

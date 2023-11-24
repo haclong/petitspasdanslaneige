@@ -9,6 +9,19 @@ drupal_nid: 19
 lang: en
 author: haclong
 
+book:
+  book: howto-creating-online-manual-docbook
+  rank: 2,
+  top: 
+    url: /en/books/howto-creating-online-manual-docbook.html
+    title: HOWTO - Creating an online manual with DocBook
+  next: 
+    url: /en/posts/howto-creating-online-manual-docbook-customization.html
+    title: HOWTO - Creating an online manual with DocBook - Customization
+  previous:
+    url: /en/posts/howto-creating-online-manual-using-docbook-getting-ready.html
+    title: HOWTO - Creating an online manual using DocBook - Getting ready
+
 media:
   path: /img/teaser/old-books.jpg
 

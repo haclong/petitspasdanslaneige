@@ -3,11 +3,17 @@ title: "HOWTO - Creating an online manual with DocBook"
 permalink: "en/books/howto-creating-online-manual-docbook.html"
 date: "2012-07-30T16:54"
 slug: howto-creating-online-manual-docbook
-layout: post
+layout: book
 drupal_uuid: 1ab1324a-46c4-4138-88d6-7822ea775346
 drupal_nid: 16
 lang: en
 author: haclong
+
+book: 
+  key: howto-creating-online-manual-docbook
+  next:
+    url: /en/posts/howto-creating-online-manual-using-docbook-getting-ready.html
+    title: HOWTO - Creating an online manual using DocBook - Getting ready
 
 media:
   path: /img/teaser/old-books.jpg

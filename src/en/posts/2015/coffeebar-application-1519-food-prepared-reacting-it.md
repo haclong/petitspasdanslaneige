@@ -9,6 +9,19 @@ drupal_nid: 119
 lang: en
 author: haclong
 
+book:
+  book: manage-coffeebar-event-driven-programming
+  rank: 15,
+  top: 
+    url: /en/books/manage-coffeebar-event-driven-programming.html
+    title: Manage a coffeebar with event driven programming
+  next: 
+    url: /en/posts/coffeebar-application-1619-get-staff-todo-list.html
+    title: CoffeeBar Application 16/19 - Get the staff todo list
+  previous:
+    url: /en/posts/coffeebar-application-1419-marking-prepared-food.html
+    title: CoffeeBar Application 14/19 - Marking prepared food
+
 media:
   path: /img/teaser/file9271237667217.jpg
   credit: "Morguefile.com"

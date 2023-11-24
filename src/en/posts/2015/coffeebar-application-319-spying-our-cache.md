@@ -9,6 +9,19 @@ drupal_nid: 105
 lang: en
 author: haclong
 
+book:
+  book: manage-coffeebar-event-driven-programming
+  rank: 3,
+  top: 
+    url: /en/books/manage-coffeebar-event-driven-programming.html
+    title: Manage a coffeebar with event driven programming
+  next: 
+    url: /en/posts/coffeebar-application-419-open-tab-form.html
+    title: CoffeeBar Application 4/19 - The Open Tab Form
+  previous:
+    url: /en/posts/coffeebar-application-219-install-framework.html
+    title: CoffeeBar Application 2/19 - Install the framework
+
 media:
   path: /img/teaser/file9271237667217.jpg
   credit: "Morguefile.com"

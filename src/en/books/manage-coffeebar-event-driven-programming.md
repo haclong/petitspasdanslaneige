@@ -3,11 +3,17 @@ title: "Manage a coffeebar with event driven programming"
 permalink: "en/books/manage-coffeebar-event-driven-programming.html"
 date: "2014-12-15T15:30"
 slug: manage-coffeebar-event-driven-programming
-layout: post
+layout: book
 drupal_uuid: 84da71c5-2fd7-4095-ba76-4c3d2c12e029
 drupal_nid: 103
 lang: en
 author: haclong
+
+book: 
+  key: manage-coffeebar-event-driven-programming
+  next:
+    url: /en/posts/coffeebar-application-119-introduction-event-driven-programmation.html
+    title: CoffeeBar Application 1/19 - Introduction to event driven programmation
 
 media:
   path: /img/teaser/file9271237667217.jpg

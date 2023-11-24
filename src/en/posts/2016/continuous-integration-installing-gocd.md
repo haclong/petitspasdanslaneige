@@ -9,6 +9,19 @@ drupal_nid: 166
 lang: en
 author: haclong
 
+book:
+  book: continuous-integration-using-go-cd
+  rank: 2,
+  top: 
+    url: /en/books/continuous-integration-using-go-cd.html
+    title: Continuous Integration - Using Go CD
+  next: 
+    url: /en/posts/continuous-integration-installing-project.html
+    title: Continuous Integration - Installing the project
+  previous:
+    url: /en/posts/continuous-integration-gocd-concepts.html
+    title: Continuous Integration - GoCD concepts
+
 media:
   path: /img/teaser/capture_2.png
   credit: "Sebastian Mantel - Unsplash"

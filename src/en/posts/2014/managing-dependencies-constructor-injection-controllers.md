@@ -9,6 +9,16 @@ drupal_nid: 101
 lang: en
 author: haclong
 
+book:
+  book: managing-dependencies-examples-zend-framework-2
+  rank: 1,
+  top: 
+    url: /en/books/managing-dependencies-examples-zend-framework-2.html
+    title: Managing Dependencies - Examples with Zend Framework 2
+  next: 
+    url: /en/posts/managing-dependencies-custom-select-element-form.html
+    title: Managing Dependencies - Custom Select Element in Form
+
 media:
   path: /img/teaser/Capture_serveur_rack.PNG
 

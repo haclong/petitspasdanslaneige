@@ -9,6 +9,19 @@ drupal_nid: 98
 lang: en
 author: haclong
 
+book:
+  book: managing-dependencies-examples-zend-framework-2
+  rank: 2,
+  top: 
+    url: /en/books/managing-dependencies-examples-zend-framework-2.html
+    title: Managing Dependencies - Examples with Zend Framework 2
+  next: 
+    url: /en/posts/managing-dependencies.html
+    title: Managing Dependencies
+  previous:
+    url: /en/posts/managing-dependencies-constructor-injection-controllers.html
+    title: Managing Dependencies - Constructor Injection in controllers
+
 media:
   path: /img/teaser/Capture_serveur_rack.PNG
 

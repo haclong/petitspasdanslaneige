@@ -9,6 +9,16 @@ drupal_nid: 123
 lang: en
 author: haclong
 
+book:
+  book: manage-coffeebar-event-driven-programming
+  rank: 19,
+  top: 
+    url: /en/books/manage-coffeebar-event-driven-programming.html
+    title: Manage a coffeebar with event driven programming
+  previous:
+    url: /en/posts/coffeebar-application-1819-bill-last-not-least.html
+    title: CoffeeBar Application 18/19 - The bill, last but not least
+
 media:
   path: /img/teaser/file9271237667217.jpg
   credit: "Morguefile.com"

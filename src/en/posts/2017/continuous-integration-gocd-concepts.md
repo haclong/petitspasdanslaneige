@@ -9,6 +9,16 @@ drupal_nid: 164
 lang: en
 author: haclong
 
+book:
+  book: continuous-integration-using-go-cd
+  rank: 1,
+  top: 
+    url: /en/books/continuous-integration-using-go-cd.html
+    title: Continuous Integration - Using Go CD
+  next: 
+    url: /en/posts/continuous-integration-installing-gocd.html
+    title: Continuous Integration - Installing GoCD
+
 media:
   path: /img/teaser/2048x1536-fit_illustration-laboratoire-antidopage.jpg
 

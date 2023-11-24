@@ -3,11 +3,17 @@ title: "Continuous Integration - Using Go CD"
 permalink: "en/books/continuous-integration-using-go-cd.html"
 date: "2016-12-12T15:32"
 slug: continuous-integration-using-go-cd
-layout: post
+layout: book
 drupal_uuid: 79eb4a4e-9783-473e-a6f5-4c520b58d549
 drupal_nid: 167
 lang: en
 author: haclong
+
+book: 
+  key: continuous-integration-using-go-cd
+  next:
+    url: /en/posts/continuous-integration-gocd-concepts.html
+    title: Continuous Integration - GoCD concepts
 
 media:
   path: /img/teaser/capture_2.png
