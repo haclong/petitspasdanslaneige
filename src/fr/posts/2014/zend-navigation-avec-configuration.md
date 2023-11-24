@@ -9,6 +9,19 @@ drupal_nid: 77
 lang: fr
 author: haclong
 
+book:
+  book: configuration-dans-zend-framework-2
+  rank: 6,
+  top: 
+    url: /fr/books/configuration-dans-zend-framework-2.html
+    title: Configuration dans Zend Framework 2
+  next: 
+    url: /fr/posts/zend-filter-par-configuration.html
+    title: Zend Filter par configuration
+  previous:
+    url: /fr/posts/zend-mvc-router-par-configuration.html
+    title: Zend Mvc Router par configuration
+
 media:
   path: /img/teaser/musictechnique.jpg
 

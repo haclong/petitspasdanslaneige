@@ -9,6 +9,16 @@ drupal_nid: 104
 lang: fr
 author: haclong
 
+book:
+  book: gerer-un-cafe-avec-une-programmation-evenementielle
+  rank: 1,
+  top: 
+    url: /fr/books/gerer-un-cafe-avec-une-programmation-evenementielle.html
+    title: Gérer un café avec une programmation événementielle
+  next: 
+    url: /fr/posts/application-coffeebar-219-installer-la-base-de-developpement.html
+    title: Application CoffeeBar 2/19 - Installer la base de développement
+
 media:
   path: /img/teaser/file9271237667217.jpg
   credit: "Morguefile.com"

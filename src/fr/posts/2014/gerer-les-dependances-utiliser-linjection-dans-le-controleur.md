@@ -9,6 +9,19 @@ drupal_nid: 101
 lang: fr
 author: haclong
 
+book:
+  book: gerer-les-dependances-avec-zend-framework-2
+  rank: 2,
+  top: 
+    url: /fr/books/gerer-les-dependances-avec-zend-framework-2.html
+    title: Gérer les dépendances avec Zend Framework 2
+  next: 
+    url: /fr/posts/gerer-les-dependances.html
+    title: Gérer les dépendances
+  previous:
+    url: /fr/posts/gerer-les-dependances-une-liste-deroulante-personnalisee.html
+    title: Gérer les dépendances - Une liste déroulante personnalisée
+
 media:
   path: /img/teaser/Capture_serveur_rack.PNG
 

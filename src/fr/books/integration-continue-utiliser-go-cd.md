@@ -12,8 +12,8 @@ author: haclong
 book: 
   key: integration-continue-utiliser-go-cd
   next:
-    url: /fr/posts/integration-continue-installer-le-projet.html
-    title: Intégration continue - Installer le projet
+    url: /fr/posts/integration-continue-les-concepts-de-gocd.html
+    title: Intégration continue - Les concepts de GoCD
 
 media:
   path: /img/teaser/capture_2.png

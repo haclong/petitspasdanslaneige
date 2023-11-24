@@ -9,6 +9,16 @@ drupal_nid: 54
 lang: fr
 author: haclong
 
+book:
+  book: aborder-la-programmation-orientee-objet-par-lexemple-concevoir-un-solveur-de-sudoku
+  rank: 1,
+  top: 
+    url: /fr/books/aborder-la-programmation-orientee-objet-par-lexemple-concevoir-un-solveur-de-sudoku.html
+    title: Aborder la programmation orientée objet par l'exemple. Concevoir un solveur de sudoku
+  next: 
+    url: /fr/posts/le-solveur-de-sudoku-concevoir-les-objets.html
+    title: Le solveur de sudoku - Concevoir les objets
+
 media:
   path: /img/teaser/Sudoku_Board_Game.jpg
 

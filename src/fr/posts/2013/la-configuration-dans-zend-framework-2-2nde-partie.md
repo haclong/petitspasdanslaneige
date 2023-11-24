@@ -9,6 +9,19 @@ drupal_nid: 37
 lang: fr
 author: haclong
 
+book:
+  book: configuration-dans-zend-framework-2
+  rank: 2,
+  top: 
+    url: /fr/books/configuration-dans-zend-framework-2.html
+    title: Configuration dans Zend Framework 2
+  next: 
+    url: /fr/posts/rajouter-zend-inputfilter.html
+    title: Rajouter Zend InputFilter
+  previous:
+    url: /fr/posts/la-configuration-dans-zend-framework-2-1ere-partie.html
+    title: La configuration dans Zend Framework 2 - 1ere partie
+
 media:
   path: /img/teaser/musictechnique.jpg
 

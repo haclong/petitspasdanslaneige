@@ -3,11 +3,17 @@ title: "Gérer un café avec une programmation événementielle"
 permalink: "fr/books/gerer-un-cafe-avec-une-programmation-evenementielle.html"
 date: "2014-12-15T15:30"
 slug: gerer-un-cafe-avec-une-programmation-evenementielle
-layout: post
+layout: book
 drupal_uuid: 84da71c5-2fd7-4095-ba76-4c3d2c12e029
 drupal_nid: 103
 lang: fr
 author: haclong
+
+book: 
+  key: gerer-un-cafe-avec-une-programmation-evenementielle
+  next:
+    url: /fr/posts/application-coffeebar-119-introduction-la-programmation-evenementielle.html
+    title: Application CoffeeBar 1/19 - Introduction à la programmation événementielle
 
 media:
   path: /img/teaser/file9271237667217.jpg

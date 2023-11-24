@@ -9,6 +9,16 @@ drupal_nid: 129
 lang: fr
 author: haclong
 
+book:
+  book: configuration-dans-zend-framework-2
+  rank: 8,
+  top: 
+    url: /fr/books/configuration-dans-zend-framework-2.html
+    title: Configuration dans Zend Framework 2
+  previous:
+    url: /fr/posts/zend-filter-par-configuration.html
+    title: Zend Filter par configuration
+
 media:
   path: /img/teaser/240_F_65801716_Yq2jOxAZPSuynsc1l541JgKzytKOuHZJ.jpg
 

@@ -9,6 +9,19 @@ drupal_nid: 40
 lang: fr
 author: haclong
 
+book:
+  book: configuration-dans-zend-framework-2
+  rank: 4,
+  top: 
+    url: /fr/books/configuration-dans-zend-framework-2.html
+    title: Configuration dans Zend Framework 2
+  next: 
+    url: /fr/posts/zend-mvc-router-par-configuration.html
+    title: Zend Mvc Router par configuration
+  previous:
+    url: /fr/posts/rajouter-zend-inputfilter.html
+    title: Rajouter Zend InputFilter
+
 media:
   path: /img/teaser/__table_de_mixage_2.jpg
 

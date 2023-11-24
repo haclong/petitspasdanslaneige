@@ -9,6 +9,16 @@ drupal_nid: 102
 lang: fr
 author: haclong
 
+book:
+  book: gerer-les-dependances-avec-zend-framework-2
+  rank: 3,
+  top: 
+    url: /fr/books/gerer-les-dependances-avec-zend-framework-2.html
+    title: Gérer les dépendances avec Zend Framework 2
+  previous:
+    url: /fr/posts/gerer-les-dependances-utiliser-linjection-dans-le-controleur.html
+    title: Gérer les dépendances - Utiliser l'injection dans le controleur
+
 media:
   path: /img/teaser/jeu_de_contruction.jpg
 

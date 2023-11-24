@@ -9,6 +9,16 @@ drupal_nid: 36
 lang: fr
 author: haclong
 
+book:
+  book: configuration-dans-zend-framework-2
+  rank: 1,
+  top: 
+    url: /fr/books/configuration-dans-zend-framework-2.html
+    title: Configuration dans Zend Framework 2
+  next: 
+    url: /fr/posts/la-configuration-dans-zend-framework-2-2nde-partie.html
+    title: La configuration dans Zend Framework 2 - 2nde partie
+
 media:
   path: /img/teaser/musictechnique.jpg
 

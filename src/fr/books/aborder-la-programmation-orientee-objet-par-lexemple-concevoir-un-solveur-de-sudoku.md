@@ -3,11 +3,17 @@ title: "Aborder la programmation orientée objet par l'exemple. Concevoir un sol
 permalink: "fr/books/aborder-la-programmation-orientee-objet-par-lexemple-concevoir-un-solveur-de-sudoku.html"
 date: "2014-03-09T14:50"
 slug: aborder-la-programmation-orientee-objet-par-lexemple-concevoir-un-solveur-de-sudoku
-layout: post
+layout: book
 drupal_uuid: 8884ba0b-d4c3-4101-90a7-a56a74aa45aa
 drupal_nid: 53
 lang: fr
 author: haclong
+
+book: 
+  key: aborder-la-programmation-orientee-objet-par-lexemple-concevoir-un-solveur-de-sudoku
+  next:
+    url: /fr/posts/le-solveur-de-sudoku-preparer-le-projet.html
+    title: Le solveur de sudoku - Préparer le projet
 
 media:
   path: /img/teaser/Sudoku_Board_Game.jpg

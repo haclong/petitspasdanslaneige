@@ -9,6 +9,19 @@ drupal_nid: 128
 lang: fr
 author: haclong
 
+book:
+  book: configuration-dans-zend-framework-2
+  rank: 7,
+  top: 
+    url: /fr/books/configuration-dans-zend-framework-2.html
+    title: Configuration dans Zend Framework 2
+  next: 
+    url: /fr/posts/zend-validator-avec-configuration.html
+    title: Zend Validator avec configuration
+  previous:
+    url: /fr/posts/zend-navigation-avec-configuration.html
+    title: Zend Navigation avec configuration
+
 media:
   path: /img/teaser/eau.jpg
 

@@ -3,11 +3,17 @@ title: "Configuration dans Zend Framework 2"
 permalink: "fr/books/configuration-dans-zend-framework-2.html"
 date: "2013-06-07T18:08"
 slug: configuration-dans-zend-framework-2
-layout: post
+layout: book
 drupal_uuid: c5ad5899-b375-479f-af3d-b69fa2656fd5
 drupal_nid: 38
 lang: fr
 author: haclong
+
+book: 
+  key: configuration-dans-zend-framework-2
+  next:
+    url: /fr/posts/la-configuration-dans-zend-framework-2-1ere-partie.html
+    title: La configuration dans Zend Framework 2 - 1ere partie
 
 media:
   path: /img/teaser/musictechnique.jpg

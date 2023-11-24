@@ -3,11 +3,17 @@ title: "HOWTO - Créer un manuel en ligne avec DocBook"
 permalink: "fr/books/howto-creer-un-manuel-en-ligne-avec-docbook.html"
 date: "2012-07-30T16:54"
 slug: howto-creer-un-manuel-en-ligne-avec-docbook
-layout: post
+layout: book
 drupal_uuid: 1ab1324a-46c4-4138-88d6-7822ea775346
 drupal_nid: 16
 lang: fr
 author: haclong
+
+book: 
+  key: howto-creer-un-manuel-en-ligne-avec-docbook
+  next:
+    url: /fr/posts/howto-creer-une-documentation-en-ligne-avec-docbook-preparations.html
+    title: HOWTO - Créer une documentation en ligne avec DocBook  - Préparations
 
 media:
   path: /img/teaser/old-books.jpg

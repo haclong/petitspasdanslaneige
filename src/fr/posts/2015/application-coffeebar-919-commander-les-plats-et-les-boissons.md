@@ -9,6 +9,19 @@ drupal_nid: 111
 lang: fr
 author: haclong
 
+book:
+  book: gerer-un-cafe-avec-une-programmation-evenementielle
+  rank: 9,
+  top: 
+    url: /fr/books/gerer-un-cafe-avec-une-programmation-evenementielle.html
+    title: Gérer un café avec une programmation événementielle
+  next: 
+    url: /fr/posts/application-coffeebar-1019-passer-commande-le-formulaire.html
+    title: Application CoffeeBar 10/19 - Passer commande, le formulaire
+  previous:
+    url: /fr/posts/application-coffeebar-819-afficher-les-notes-en-cours.html
+    title: Application CoffeeBar 8/19 - Afficher les notes en cours
+
 media:
   path: /img/teaser/file9271237667217.jpg
   credit: "Morguefile.com"

@@ -9,6 +9,19 @@ drupal_nid: 106
 lang: fr
 author: haclong
 
+book:
+  book: gerer-un-cafe-avec-une-programmation-evenementielle
+  rank: 4,
+  top: 
+    url: /fr/books/gerer-un-cafe-avec-une-programmation-evenementielle.html
+    title: Gérer un café avec une programmation événementielle
+  next: 
+    url: /fr/posts/application-coffeebar-519-provoquer-louverture-de-commande.html
+    title: Application CoffeeBar 5/19 - Provoquer l'ouverture de commande
+  previous:
+    url: /fr/posts/application-coffeebar-319-espionner-notre-cache.html
+    title: Application CoffeeBar 3/19 - Espionner notre cache
+
 media:
   path: /img/teaser/file9271237667217.jpg
   credit: "Morguefile.com"

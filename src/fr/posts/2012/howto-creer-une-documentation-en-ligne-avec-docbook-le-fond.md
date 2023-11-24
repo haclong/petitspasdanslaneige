@@ -9,6 +9,19 @@ drupal_nid: 19
 lang: fr
 author: haclong
 
+book:
+  book: howto-creer-un-manuel-en-ligne-avec-docbook
+  rank: 2,
+  top: 
+    url: /fr/books/howto-creer-un-manuel-en-ligne-avec-docbook.html
+    title: HOWTO - Créer un manuel en ligne avec DocBook
+  next: 
+    url: /fr/posts/howto-creer-une-documentation-en-ligne-avec-docbook-personnalisation.html
+    title: HOWTO - Créer une documentation en ligne avec DocBook - Personnalisation
+  previous:
+    url: /fr/posts/howto-creer-une-documentation-en-ligne-avec-docbook-preparations.html
+    title: HOWTO - Créer une documentation en ligne avec DocBook  - Préparations
+
 media:
   path: /img/teaser/old-books.jpg
 

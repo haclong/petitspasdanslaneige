@@ -9,6 +9,19 @@ drupal_nid: 78
 lang: fr
 author: haclong
 
+book:
+  book: configuration-dans-zend-framework-2
+  rank: 5,
+  top: 
+    url: /fr/books/configuration-dans-zend-framework-2.html
+    title: Configuration dans Zend Framework 2
+  next: 
+    url: /fr/posts/zend-navigation-avec-configuration.html
+    title: Zend Navigation avec configuration
+  previous:
+    url: /fr/posts/zend-log-logger-avec-configuration.html
+    title: Zend Log Logger avec configuration
+
 media:
   path: /img/teaser/hi_tech.jpg
 
