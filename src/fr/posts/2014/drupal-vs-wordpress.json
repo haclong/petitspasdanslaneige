@@ -1,0 +1,20 @@
+[
+    {
+        "title": "Wordpress vs Drupal",
+        "date": "2014-07-02T16:54",
+        "author": "haclong",
+        "body": "Ah tiens ! dans le match Wordpress vs Drupal, je viens de découvrir que Wordpress peut gérer des articles privés et/ou protégé par mot de passe...\n\nDe mémoire, il me semble que Drupal ne peut pas faire ça...\n\nPar contre, on peut créer dans Drupal un type dédié (privé) et donner accès à ce type de contenu qu'à certaines personnes... Un peu plus long à faire mais c'est jouable.\n\nEn revanche, typiquement, j'ai livré un Wordpress qui fonctionnait bien. Sauf qu'à une mise à jour du core, le plugin multilingue a décidé de se désactiver... Noter qu'on ne peut pas le réactiver parce que dans l'écran d'administration des extensions, il est toujours considéré comme activé... on ne peut pas réactivé un plugin activé qui vous annonce qu'il s'est automatiquement désactivé... Du coup, la fonctionnalité ne marche plus...\n\nTypiquement, c'est ce type de comportement que je ne supporte pas dans Wordpress : ça donne une impression d'instabilité..."
+    },
+    {
+        "title": "Plugin payants",
+        "date": "2014-07-02T17:24",
+        "author": "haclong",
+        "body": "Je commence à comprendre pourquoi il y a tellement d'extensions payantes à Wordpress...\n\nA chaque fois que le core est mis à jour, il semblerait que rien ne garantisse que votre plugin/thème soigneusement testé fonctionne toujours...\n\nDu coup, si vous développez des plugins, il faut \"courir\" après le développement du core pour se tenir à la page... Et à chaque mise à jour, il faut retester votre plugin intégralement pour garantir sa compatibilité avec la nouvelle version... C'est contraignant et ça demande du temps... Un développeur bénévole n'a pas nécessairement envie de revenir sur son dev tous les 45 jours par ex..."
+    },
+    {
+        "title": "Excellent article très complet",
+        "date": "2014-09-16T18:00",
+        "author": "haclong",
+        "body": "Je viens de tomber sur un excellent article très complet sur le match Wordpress vs Drupal\n\nJe trouve que la partie Multilingue, sur la fin est abordé de manière vraiment très succinte par rapport aux autres sujets traités dans le post mais peut être que l'auteur n'a jamais eu à maintenir des sites multilingues... qui pour le coup, est mon lot quotidien..\n\n<a href=\"http://techczech.net/2012/07/28/drupal-wordpress-choice/\" target=\"_blank\">The Drupal/WordPress choice: A guide for individuals, small organizations and the Internet</a>"
+    }
+]

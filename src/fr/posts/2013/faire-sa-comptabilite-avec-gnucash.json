@@ -1,0 +1,82 @@
+[
+    {
+        "title": "GnuCash et salaire",
+        "date": "2013-11-04T06:01",
+        "author": "Sylvain",
+        "body": "Bonjour,\n\nMerci pour cet intéressant article. Je m'essaye à GnuCash depuis quelques minutes :) Je suis d'accord avec vous quant aux limites des tableurs pour la comptabilité. Et ce même si je suis archi-débutant en comptabilité.\nJ'ai encore beaucoup de mal avec les notions de \"crédit\" et de \"débit\" qui, si elles ont l'air simples, restent (je trouve) finalement un peu plus complexe que l'utilisation basique avec simple compte courant. Disons que je me triture encore les méninges :)\n\nJ'ai une interrogation concernant GnuCah ou n'importe quel autre de logiciel de comptabilité. Je cerne bien l’intérêt de la \"comptabilité en partie double\", j'ai un peu de mal à mettre ça en place dans GnuCash pour les rentrées d'argent.\nEn fait surtout 1 rentrée: mon salaire (j'en ai pas d'autre). Il y a bien par défaut, dans les comptes, un compte ressource/Salaire.\nJe me dis que ça ferait bien l'affaire. J'avais dans l'idée de le garnir tout les 1er du mois de la valeur de mon salaire et de le vider tout les mois vers un compte Actif/chèques.\nMais je me pose une question, si je crédite le compte Revenue/Salaire tous les mois, quel compte doit-je débiter? Dois-je créer un compte \"Employeur\" que je débite tous les mois? Et que je crédite d'un montant faramineux lors de sa création pour éviter d'avoir à le créditer tous les mois du montant de mon salaire (pour éviter que ce compte se retrouve en négatif, mais dans ce cas là je le crédite à partir de quel compte, je tourne en boucle).\nEn fait, je me demande s'il est possible de créer un compte dont on ne serait pas propriétaire... Parce que dans mon hypothèse, je risque de voir apparaître le compte \"employeur\" dans mes bilans...\nBon, comme je disais, je suis archi-débutant, j'ai peut-être loupé un point essentiel, qui fait que je ne devrais pas avoir à me poser ce genre de questions :)\nEnfin voilà, si des fois vous avez le temps de réfléchir à mon petit soucis, merci.\nBonne continuation."
+    },
+    {
+        "title": "Merci pour votre commentaire",
+        "date": "2013-11-04T19:54",
+        "author": "haclong",
+        "body": "Merci pour votre commentaire\n\nJe suis également à mes débuts...\n\nOui, en effet, il faut créer un compte (dans les comptes de Revenus). Inutile de \"créditer\" votre compte Employeur.\n\nVous créez un compte Actif qui est votre compte courant (là où votre salaire va être viré en fait).\nVous créez un compte Revenus qui est votre employeur\nChaque mois, vous ouvrez votre compte Actif, vous ajoutez une transaction. Dans la colonne Virement, vous choisissez le compte Revenus correspondant à celui de votre employeur. Et vous saisissez le montant de votre salaire dans la colonne Couverture.\n\nEt voila !\n\nPour vos bilans, seuls les comptes Actif, Passif et Revenus propres vous intéressent.\nLes comptes Revenus n'est pas votre argent : ce sont les comptes externes d'où vient l'argent.\nLes comptes Dépensens n'est pas votre argent : ce sont les comptes internes où va l'argent.\n\nMon prochain poste explique comment saisir des montants dans GnuCash. Restez dans le coin !"
+    },
+    {
+        "title": "GnuCash plusieurs comptes, etc",
+        "date": "2014-12-04T15:05",
+        "author": "Bressy",
+        "body": "Bonjour\n\nje viens de débuter sur GnuCash.\n\neffectivement mon fichier Calc de OpenOffice a atteint ses limites.\n\nmais comment gérer plusieurs comptes en même temps? (le perso et le commun)\n\net comment, je compare par rapport à mon ancien fichier Calc, gérer à la fois par mois et par année?\n\net gérer une carte bleu à débit différé sur le compte perso?\n\net débuter, chaque année, avec un fichier avec des estimations de dépenses et de revenus? et affiner au fur et à mesure de l'année?\n\nCordialement"
+    },
+    {
+        "title": "Bonjour",
+        "date": "2014-12-04T15:19",
+        "author": "haclong",
+        "body": "Bonjour\n\nhehe, le fichier calc, bien pratique, mais assez vite limité\n\nDans vos actifs, il faut créer un compte par compte bancaire, du coup, vous aurez un compte pour votre compte perso, un compte pour votre compte commun, autant de compte que de compte d'épargne... dans les actifs, c'est simple, un compte = un numéro de compte à la banque\n\nSi vous faites des virements entre vos comptes, vous débiterez le premier et créditerez le second. Il faut toujours savoir d'où vient l'argent et où il va... là où GnuCash perturbe (par rapport à un fichier calc en tout cas) c'est que finalement, votre transaction apparaît deux fois : une fois par compte... Là où c'est pratique, c'est que vous créer la ligne une fois mais elle apparait dans les autres comptes.\n\nPour savoir ce qu'il se passe par moi et par année, il faut utiliser les rapports (je n'ai pas le logiciel sous les yeux mais il faut manipuler là)\n\nLa carte bleue à débit différé, c'est un passif (selon moi) : Voici la logique :\n  - actif : le compte perso\n  - passif : le compte CB\n  - dépenses : les boutiques\n\nQuand vous achetez qqch, vous débitez le compte CB et créditez le compte Boutique\nDu coup, vous ne devez plus rien à la boutique mais vous devez de l'argent à votre CB\nA la fin du mois, au moment où votre compte perso est débité, vous débitez le compte perso et vous créditez le compte CB. S'il y a des frais, il faut pensez à splitter la transaction : une part pour le capital et une part pour les frais, sinon, votre compte CB ne pourra jamais être à 0 et là, vous aurez un décalage que vous n'arriverez jamais à rapprocher.\n\nPour le budget, je vous laisse découvrir, je n'ai pas du tout aborder ce point pour le moment.\nJe devrais revenir avec des posts détaillés sur ce que je viens de vous dire mais je n'ai pas trouvé le temps de faire ça. Merci en tout cas pour votre message."
+    },
+    {
+        "title": "GnuCash, comment mettre une action récurrente (salaire, facture",
+        "date": "2014-12-22T09:22",
+        "author": "Bressy",
+        "body": "Bonjour\n\nsur GnuCash j'ai du mal à mettre en place des actions récurrentes comme le salaire chaque fin de mois, un prélévement mensuel.\n\npour l'instant je fais une copie de ligne.\n\nquel est la procédure?\n\nCordialement"
+    },
+    {
+        "title": "Tâches récurrentes",
+        "date": "2014-12-22T12:21",
+        "author": "haclong",
+        "body": "Merci pour le commentaire. Je n'ai pas l'outil sous la main mais je vais revenir avec l'explication"
+    },
+    {
+        "title": "Calcul - défiscalisation",
+        "date": "2016-10-11T07:51",
+        "author": "Denis",
+        "body": "Bonjour. GnuCash peut-il être utilisé pour les calculs liés à la <a href=\"http://simulationpinel.com/defiscalisation-duflot/e\" target=\"_blank\">défiscalisation immobilière Duflot?</a>"
+    },
+    {
+        "title": "defiscalisation",
+        "date": "2016-10-11T18:44",
+        "author": "haclong",
+        "body": "mmh\nje ne pense pas\nil y a bien des fonctionnalités de budget mais je ne crois pas qu'on puisse calculer un dufflot avec.."
+    },
+    {
+        "title": "je vous remercie pour le",
+        "date": "2017-01-09T11:54",
+        "author": "lucien",
+        "body": "je vous remercie pour le partage de ces info, j'avais suivie tout ceci pour le calcul de ma <a href=\"http://www.sunfimmo.com/defiscaliser-france/\" target=\"_blank\">defiscalisation en 2014</a> et c'est beaucoup plus clair de travailler comme cela, je suis assez à l'ancienne où je n'utilise pas d'ordinateur mais je trouve que c'est un bon outil lorsqu'on s'en sert correctement"
+    },
+    {
+        "title": "Opérations récurrentes",
+        "date": "2018-06-22T15:58",
+        "author": "André VERHULST",
+        "body": "Pas de sommes affichées dans le tableau des opérations récurrentes. Dommage, cela rend plus difficiles les prévisions de fin de mois. Y a-t-il une solution ?"
+    },
+    {
+        "title": "je n'ai pas très bien compris",
+        "date": "2018-07-25T13:14",
+        "author": "haclong",
+        "body": "je n'ai pas très bien compris la question..."
+    },
+    {
+        "title": "la suite !? gnucash",
+        "date": "2020-01-28T17:55",
+        "author": "yza",
+        "body": "bonjour\ncherchant des explications compréhensible pour commencer avec ce logiciel , je suis tombées sur cette introduction qui m'a bien éclairée. Merci\nmais je ne trouve pas la suite !\nl'avez vous rédigée ? ou est-elle ?\nmerci\n cordialement\nyza",
+        "replies": [
+            {
+                "title": "je suis très dépassée par ma",
+                "date": "2020-01-29T12:28",
+                "author": "haclong",
+                "body": "je suis très dépassée par ma vie professionnelle\n\nje me remettrais aux articles sur gnucash que je continue d'utiliser quotidiennement.\n\nque cherchez vous en particulier ?"
+            }
+        ]
+    }
+]

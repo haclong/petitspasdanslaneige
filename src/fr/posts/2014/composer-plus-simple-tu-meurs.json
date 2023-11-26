@@ -1,0 +1,14 @@
+[
+    {
+        "title": "oui, c'est bien mais...",
+        "date": "2014-09-26T13:39",
+        "author": "gilles",
+        "body": "Il faut aussi comprendre qu'en entreprise, le proxy bloque beaucoup de chose et que le \"zip\" est fort utile dans certains cas.\nAvec composer, la solution alternative devient inexistante ou \"compliqué\".\nSeulement les derniers \"tuto\" ou \"press\" parlent de composer comme quelque chose d'utile qui se rapproche à ce qui existe dejà en java."
+    },
+    {
+        "title": "C'est vrai. composer doit se",
+        "date": "2014-09-30T15:02",
+        "author": "haclong",
+        "body": "C'est vrai. composer doit se heurter sur certaines sécurités liées à l'utilisation en entreprise. Je ne saurais pas dire en fait...\n\nComposer n'a pas l'ambition de remplacer l'existant en Java. Composer est un gestionnaire de dépendance dans la communauté PHP. Je pense qu'il est possible de trouver un outil unique, à la fois Java et PHP mais en attendant, Composer s'adresse à la communauté PHP."
+    }
+]

@@ -1,0 +1,8 @@
+[
+    {
+        "title": "Template mapping made easy",
+        "date": "2014-07-07T18:09",
+        "author": "haclong",
+        "body": "Heyy !! since ZF2.3.x, you can now do this setup\n\n<code>'view_manager' => array(\n    'controller_map' => array( // new key in view_manager array\n        'Custom\\Application' => true\n    ),\n),</code>\n\nI haven't tested it yet but <a href=\"http://blog.alejandrocelaya.com/2014/06/21/create-modules-with-sub-namespaces-in-zend-framework-2-part-ii/\">Alejandro</a> find it in <a href=\"http://stackoverflow.com/questions/22978399/zf2-modules-in-subfolders\">StackOverflow</a> and in <a href=\"https://github.com/zendframework/zf2/pull/5670\">ZF2 Github repository</a>"
+    }
+]

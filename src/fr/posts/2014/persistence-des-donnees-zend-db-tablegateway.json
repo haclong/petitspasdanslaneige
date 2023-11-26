@@ -1,0 +1,14 @@
+[
+    {
+        "title": "À noter l'existence de la",
+        "date": "2014-10-13T21:45",
+        "author": "Jo_Labricole",
+        "body": "À noter l'existence de la classe AbstractDbMapper du projet ZfcBase\n\n<a href=\"https://github.com/ZF-Commons/ZfcBase/blob/master/src/ZfcBase/Mapper/AbstractDbMapper.php\" target=\"_blank\">https://github.com/ZF-Commons/ZfcBase/blob/master/src/ZfcBase/Mapper/Ab…</a>\n\nQui, je trouve, permet de créer des modèles de persistance plus facilement. (Quand on ne veut pas utiliser Doctrine !)"
+    },
+    {
+        "title": "Oui effectivement, sorti de",
+        "date": "2014-10-16T16:42",
+        "author": "haclong",
+        "body": "Oui effectivement, sorti de Doctrine, il existe également les autres librairies qui font de l'ORM (c'est ORM, c'est ça ?... bref, qui font la même chose...)"
+    }
+]

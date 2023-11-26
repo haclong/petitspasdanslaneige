@@ -1,0 +1,40 @@
+[
+    {
+        "title": "Autres infos sur git",
+        "date": "2014-06-24T10:42",
+        "author": "haclong",
+        "body": "<a href=\"https://try.github.io/levels/1/challenges/1\" target=\"_blank\">Un tuto sur git tout fun</a>\n\nSi vous trouvez que github est un peu trop \"open\" à votre goût, il y a toujours une alternative avec <a href=\"https://bitbucket.org/\" target=\"_blank\">bitbucket</a>"
+    },
+    {
+        "title": "Déploiement gandi",
+        "date": "2015-05-01T02:42",
+        "author": "paul",
+        "body": "Merci pour ce post bien utile pour démarrer :)\n\nNB : sur gandi, on peut déployer son code une fois qu'on l'a pushé sur le serveur. cf. http://wiki.gandi.net/fr/simple/git#deployer_son_code\n\nIl suffit donc de faire :\n$ ssh {login}@git.{datacenter_location}.gpaas.net 'deploy {vhost}.git [ {git_object} ]'\n(exemple concret : ssg monlogin@git.dc0.gpaas.net 'deploy monvhost.git' )\n\n-> la modification se fait bien sur le serveur\nAttention toutefois de bien faire son push à partir d'un dossier local \"htdocs\". Sans quoi sur le serveur gandi, on se trouve avec nos sources à la racine du vhost (à côté du dossier htdocs)\nNB : cette remarque est valable à moins qu'on puisse définir son git remote avec \"htdocs\" pour working directory - ce que je ne sais pas faire. Je suis preneur si quelqu'un peut m'éclairer sur le sujet.",
+        "replies": [
+            {
+                "title": "Effectivement le déploiement",
+                "date": "2016-09-16T23:44",
+                "author": "Bruno",
+                "body": "Effectivement le déploiement se fait correctement mais j'avoue je ne comprends pas bien la nécessité du deploy... Une spécificité Gandi ?"
+            }
+        ]
+    },
+    {
+        "title": "Git, fonctionnalités avancées",
+        "date": "2016-06-24T12:09",
+        "author": "Dominique",
+        "body": "J’ai acquis mes connaissance sur l’utilisation du Git grâce à l’aide des tutoriels en vidéos sur http://www.alphorm.com/tutoriel/formation-en-ligne-git-fonctionnalites-avancees. c’est très pratique et facile à assimiler."
+    },
+    {
+        "title": "gandi et deploy",
+        "date": "2016-09-19T10:24",
+        "author": "haclong",
+        "body": "J'ai utilisé le repo git sur gandi à mes tout début.\nJ'avoue ne pas avoir réessayé. J'utilise github et bitbucket désormais.\nJe ne me souviens pas de cette histoire de deploy mais effectivement, c'est peut être un git \"customisé\"..."
+    },
+    {
+        "title": "git, fonctionnalités avancées",
+        "date": "2016-09-19T10:35",
+        "author": "haclong",
+        "body": "personnellement, la documentation de git (git-scm.com), stackoverflow et google sont mes références. Mais je comprends qu'on puisse préférer une formation structurée.\n\nJe trouve qu'en formation (magistrale), tout va trop vite. On voit plein de choses très vite parce que le contrat veut que la formation couvre un maximum de sujet en un minimum de temps (il faut en avoir pour son argent après tout). Les formations aménagent des exercices mais finalement, c'est un peu la redite de ce qu'on vient de voir. Juste copier le cours et remplacer deux trois variables pour dire que...\nEt puis, surtout, il y a tellement de choses à assimiler, on essaie de retenir et de filtrer l'avalanche d'infos dont on est abreuvé et on n'a pas le temps de prendre le recul et poser les questions utiles.\nLes questions que vous rencontrez quand vous arrivez dans la \"vraie\" vie :\n  - c'est quoi la différence entre un post-commit et un post-receive ?\n  - vaut-il mieux faire un rebase ou un merge ?\n  - peut on créer un repo distant à partir de notre local (sur github) ?\n  etc..."
+    }
+]

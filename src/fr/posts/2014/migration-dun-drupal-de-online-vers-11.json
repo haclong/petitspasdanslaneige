@@ -1,0 +1,48 @@
+[
+    {
+        "title": "problème avec les url simplifiées",
+        "date": "2014-10-24T13:50",
+        "author": "bigbert",
+        "body": "Bonjour, suivant vos instructions ainsi que d'autres tutaux, tout fonctionne correctement, sauf les url simplifiées dont les tests échouent systématiquement. J'ai pourtant modifié le .htaccess mais rien ne fonctionne.\n\nmon install est dans un dosssier, pas directement à la racine car je dois y coller 1 site et un sous-domaine (que je souhaite distincts de core)\n\nsur ma migration donc, rien à faire, quelques soient mes modifs, les test urls échouent systématiquement.\nJ'ai créé un autre site drupal vierge à la racine dans un autre dossier avec 7.32 et j'ai réussi à activer la réécriture mais je ne parviens pas de toute manière à effacer le nom du dossier d'install de l'url.\n\nCela ne résout donc absolument pas mon problème, car même si je souhaite complètement refaire mon site, j'auraii toujours le problème de l'affichage du nom du dossier d'install dans l'url, et ça ne me paraît de toute manière ne pas être une bonne solution car pour des sites plus compliqués développés en local ce sera inenvisageable.\n\nIl me reste peut-être la solution de mettre mon site principal à la racine et de laisser mon dossier d'install du second site à sa place, mais ça ne me paraît pas être une bonne pratique.\n\nAuriez-vous une piste pour se débarrasser du nom du dossier dans l'url??"
+    },
+    {
+        "title": "Bonjour",
+        "date": "2014-10-24T14:09",
+        "author": "haclong",
+        "body": "Bonjour\n\nSi j'ai bien compris, votre site Drupal se situe ici : /votre_domaine/drupal/votre_site et vous souhaitez que lorsque vous avez http://votre_domaine vous obteniez le site drupal, c'est bien ça?\n\nAvez vous essayé de modifier la variable $base_url qui est dans le fichier settings.php ?\n\nSinon, dans 1&1, vous pouvez créer dans votre racine un répertoire www sur lequel vous pointerez votre domaine principal et un répertoire sous_domaine sur lequel vous ferez pointer votre sous domaine. Ainsi, c'est le pointage DNS qui fera le travail pour vous.\n\nMaintenant, si vous souhaitez, DANS LE MEME DOMAINE, installer deux packages différents (mettons Drupal et Dokuwiki, vous aurez probablement des soucis",
+        "replies": [
+            {
+                "title": "Bonjour et merci d'avoir",
+                "date": "2014-10-24T14:40",
+                "author": "bigbert",
+                "body": "Bonjour et merci d'avoir répondu si rapidement,\n\nc'est effectivement ce que cherche à faire , à savoir :\nmonsite.com\net\nmonsite.com/blog/\navec deux core différents pour être sûr que malgé les lises à jour du core j' en ai toujours un des deux qui fonctionne... (peut-être un peu paranno, mais bon)\n\nen ce qui concerne le settings.php, je l'ai modifié effectivement modifié, sur les deux sites (migration et nouvelle install) et ça n'a aucune inscidence.\n\nSinon, j'ai lu souvent qu'il fallait, comme vous l'indiquez, pointer son domaine principal, mais je ne comprend absolument pas comment on doit faire. Suffit-il juste de nommer le dossier WWW??? Quelle manip effectuer pour le faire pointer sur ce dossier??"
+            }
+        ]
+    },
+    {
+        "title": "Hébergé chez 1&1",
+        "date": "2014-10-24T14:51",
+        "author": "haclong",
+        "body": "Bonjour\n\nEtes vous hébergé chez 1&1 ?\n\nSi oui, il faut\n  - soit créer le répertoire dans votre espace web par FTP, puis\n  - aller dans votre espace client et créer un domaine (vous lui donnez le nom que vous voulez, à savoir, chez 1&1, www.mon-domaine.net est domaine tout comme blog.mon-domaine.net est un autre domaine...\n  - dire que votre nouveau domaine point sur votre répertoire créé en FTP\n\n  - soit tout faire à partir de l'espace client : en créant le domaine, vous créez également le répertoire.\n\nQuand vous souscrivez chez 1&1, le domaine www.mon-domaine.net pointe par défaut sur l'espace FTP par défaut mais vous pouvez le changer et dire que www.mon-domaine.net pointe sur espace_FTP/www.\n\nVous pourrez ainsi créer autant de domaines indépendants que vous le souhaitez.\n\nSi vous êtes chez Online.net, vous n'aurez pas le choix, c'est Online qui va faire le lien entre le sous-domaine et votre répertoire. Tout ce que vous avez à faire, c'est de créer un répertoire dans votre espace FTP et automatiquement, votre répertoire sera votre sous domaine (ce qui, soit dit en passant, offre peu de souplesse)\n\nSi vous êtez chez Gandi.net, même punition. Vous créez à partir de votre espace client un nouveau \"virtual host\" et après un moment (le temps que les robots mettent le tout en place), vous avez un sous domaine au nom de votre virtual host. Là encore, peu de souplesse.",
+        "replies": [
+            {
+                "title": "(j'ai déjà le domaine)",
+                "date": "2014-10-24T15:06",
+                "author": "bigbert",
+                "body": "(j'ai déjà le domaine)\n\nok si je comprends bien\n  1. je crée un rep /www avec mon site principal\n  2. je laisse mon /blog au même niveau sans toucher à mon .htaccess\n  3. je les appelle pour leur demander de pointer sur le rep /www\n  4. après j'ai accès par www.monsite.com à mon site principal et www.monsite.com/blog à mon blog\n\n??\n\nSi ça fonctionne comme ça ça résoudera complètement mon problème d'url dans la mesure où je réinstallerai drupal pour mon site principal avec toutes les modifs. Pour le problème de migration je m’énerverai dessus plus tard. (je pense qu'il y avait des soucis au niveau de mon install en local car ça n'a pas de sens)\n\nen tous les cas merci infiniment pour ces infos"
+            },
+            {
+                "title": "ok je viens de les appeler en",
+                "date": "2014-10-24T15:42",
+                "author": "bigbert",
+                "body": "ok je viens de les appeler en fait tout est gérable depuis l'interface client depuis \"Gestion des domaines\"\nPour plus de simplicité, je vais créer un sous-domaine, simplement parce qu'il n'y a pas d'autres solutions (blog.monsite.com). Sur le même domaine, on aura toujours le souci de remonter tous les dossiers accessibles dans le dossier vers le quel pointe le serveur. Néanmoins, pointer vers un dossier permet de poser des fichiers non consultables directement depuis internet à la racine du serveur, ce qui semble être le plus correct.\n\nVoilà merci beaucoup pour votre aide, reste plus qu'à tout réinstaller..."
+            }
+        ]
+    },
+    {
+        "title": "lik",
+        "date": "2015-10-02T21:25",
+        "author": "caroline",
+        "body": "bonjour\nexcellent article , j’ai pris bcp de plaisir à le lire , merci ^^\ncordialement"
+    }
+]

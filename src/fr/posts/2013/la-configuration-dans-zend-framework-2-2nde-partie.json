@@ -1,0 +1,14 @@
+[
+    {
+        "title": "Tutoriel - Gestion des routes",
+        "date": "2014-12-17T13:55",
+        "author": "Nicolas",
+        "body": "Bonjour,\n\nC'est très bien écrit, merci beaucoup pour cette explication détaillée.\n\nJ'avoue avoir beaucoup de mal à comprendre le principe des routes dans un contexte Module/Controller/Action.\n\nIl y'a la notion de route au sein de l'application avec notre fameux module.config.php et on retrouve ce même schéma au sein de nos modules. Quelle est la démarche derrière pour l'application? (Héritage / Priorité etc..).\nOn peut définir un rewriting de l'url car par défaut il prend en considération cette notion - Module/Controller/Action. Mais pour faire propre on a pas forcement envie d'avoir une url qui est monsite.com/monmodule/moncontroller/monaction\nJ'avoue que c'est un peu le flou.\nSans compter que dans un même module on peut avoir plusieurs controllers. Il est d'ailleurs nécessaire d'affecter à notre fichier de conf que l'on peut appeler tel controller via les invokables. Idem avec les actions.\n\nC'est loin d'être évident. Un super tuto avec les différents cas, ce serait super, génial etc..."
+    },
+    {
+        "title": "Tutoriels à venir",
+        "date": "2014-12-22T12:17",
+        "author": "haclong",
+        "body": "Merci pour le commentaire\nRestez dans le coin, pour 2015, j'ai une grosse série de tuto qui arrive. Je parle rapidement des routes dedans... Suite à votre remarque, je penserais également à préparer un tutoriel plus axé sur la route."
+    }
+]
