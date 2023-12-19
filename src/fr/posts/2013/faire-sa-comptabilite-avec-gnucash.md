@@ -95,7 +95,7 @@ Ces types ont des noms :
 
 ### La comptabilité en partie double pour les nuls
 
-**GnuCash** est un logiciel de comptabilité en partie double.**Cela signifie que *ce qui est débité d'un compte crédite nécessairement un autre compte*. Dis comme ça, ça fait un peu peur mais quand y pense, c'est super logique et finalement, c'est super pratique quand on sait où regarder.
+**GnuCash** est un logiciel de comptabilité en partie double. Cela signifie que *ce qui est débité d'un compte crédite nécessairement un autre compte*. Dis comme ça, ça fait un peu peur mais quand y pense, c'est super logique et finalement, c'est super pratique quand on sait où regarder.
 
 Vous achetez 30.00 EUR d'essence. Cela signifie que vous allez débiter votre compte courant de 30.00 EUR (il y a 30.00 EUR de moins sur votre compte courant) mais il y aura 30.00 EUR de plus en dépenses d'essence. Si vous consultez votre compte courant, vous verrez que vous avez dépensé 30.00 EUR en essence. Si vous consultez le compte de dépenses Essence, vous verrez que vous avez mis 30.00 EUR de plus sur le poste essence. Vous verrez également tout ce que vous dépensez pour le poste essence.
 

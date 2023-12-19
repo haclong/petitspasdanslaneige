@@ -1,4 +1,5 @@
-[
+{
+    "oldcomments" : [
     {
         "title": "oui, c'est bien mais...",
         "date": "2014-09-26T13:39",
@@ -11,4 +12,4 @@
         "author": "haclong",
         "body": "C'est vrai. composer doit se heurter sur certaines sécurités liées à l'utilisation en entreprise. Je ne saurais pas dire en fait...\n\nComposer n'a pas l'ambition de remplacer l'existant en Java. Composer est un gestionnaire de dépendance dans la communauté PHP. Je pense qu'il est possible de trouver un outil unique, à la fois Java et PHP mais en attendant, Composer s'adresse à la communauté PHP."
     }
-]
+]}

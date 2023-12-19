@@ -48,6 +48,32 @@
         {% include "blocks/booknavigation.njk" %}
       {% endif %}
     
+
+      {% if oldcomments |length > 0 %}
+        <section id="oldcomment">
+          <h2>{{ oldcomment }}</h2>
+          {%- for oldcomment in oldcomments -%}
+            <article>
+              {% include "blocks/oldcomment.njk" %}
+            </article>
+          {%- endfor -%}
+        </section>
+      {% endif %}
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
     </article>
+
 
 {% endblock %}

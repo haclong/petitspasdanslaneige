@@ -1,4 +1,5 @@
-[
+{
+    "oldcomments" : [
     {
         "title": "À noter l'existence de la",
         "date": "2014-10-13T21:45",
@@ -11,4 +12,4 @@
         "author": "haclong",
         "body": "Oui effectivement, sorti de Doctrine, il existe également les autres librairies qui font de l'ORM (c'est ORM, c'est ça ?... bref, qui font la même chose...)"
     }
-]
+]}

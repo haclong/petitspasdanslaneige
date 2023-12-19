@@ -1,4 +1,5 @@
-[
+{
+    "oldcomments" : [
     {
         "title": "Wordpress vs Drupal",
         "date": "2014-07-02T16:54",
@@ -17,4 +18,4 @@
         "author": "haclong",
         "body": "Je viens de tomber sur un excellent article très complet sur le match Wordpress vs Drupal\n\nJe trouve que la partie Multilingue, sur la fin est abordé de manière vraiment très succinte par rapport aux autres sujets traités dans le post mais peut être que l'auteur n'a jamais eu à maintenir des sites multilingues... qui pour le coup, est mon lot quotidien..\n\n<a href=\"http://techczech.net/2012/07/28/drupal-wordpress-choice/\" target=\"_blank\">The Drupal/WordPress choice: A guide for individuals, small organizations and the Internet</a>"
     }
-]
+]}

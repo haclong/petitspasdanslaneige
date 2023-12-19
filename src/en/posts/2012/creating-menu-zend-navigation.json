@@ -1,4 +1,5 @@
-[
+{
+    "oldcomments" : [
     {
         "title": "this is way too complicated",
         "date": "2013-09-19T07:19",
@@ -19,4 +20,4 @@
         "author": "gorka",
         "body": "The TDD metodology is the best if you want get all the best results on your development. We can use phpunit to goal this approach,"
     }
-]
+]}

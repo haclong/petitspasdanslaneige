@@ -500,3 +500,43 @@ article img.node-banner,
   text-align: center ;
   margin: auto;
 }
+
+#oldcomment {
+  border-top: 1px solid #bbb0a1;
+  margin-top: 30px;
+  padding-top: 30px;
+  font-size: 0.9em;
+}
+
+#oldcomment h2 {
+  width: 70%;
+  margin: 30px auto;
+}
+
+#oldcomment article {
+  width: 70%;
+  margin: 0px auto 1em auto ;
+  border: 2px solid #ffffff;
+  border-radius: 6px;
+  box-shadow: 0 0 8px 1px #cccccc;
+  padding: 1rem 0.8em;
+}
+
+#oldcomment h3 {
+  font-size: 1rem ;
+  margin-bottom: 0.2em;
+}
+
+#oldcomment .meta {
+  font-size: 0.9em;
+  border-bottom: 1px solid #bbb0a1;
+  margin-bottom: 0.8em;
+}
+
+#oldcomment .body {
+  margin-bottom: 0.8em;
+}
+
+#oldcomment .level2 {
+  margin-left: 2em;
+}

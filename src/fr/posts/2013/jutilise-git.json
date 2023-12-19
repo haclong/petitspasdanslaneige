@@ -1,4 +1,5 @@
-[
+{
+    "oldcomments" : [
     {
         "title": "Autres infos sur git",
         "date": "2014-06-24T10:42",
@@ -37,4 +38,4 @@
         "author": "haclong",
         "body": "personnellement, la documentation de git (git-scm.com), stackoverflow et google sont mes références. Mais je comprends qu'on puisse préférer une formation structurée.\n\nJe trouve qu'en formation (magistrale), tout va trop vite. On voit plein de choses très vite parce que le contrat veut que la formation couvre un maximum de sujet en un minimum de temps (il faut en avoir pour son argent après tout). Les formations aménagent des exercices mais finalement, c'est un peu la redite de ce qu'on vient de voir. Juste copier le cours et remplacer deux trois variables pour dire que...\nEt puis, surtout, il y a tellement de choses à assimiler, on essaie de retenir et de filtrer l'avalanche d'infos dont on est abreuvé et on n'a pas le temps de prendre le recul et poser les questions utiles.\nLes questions que vous rencontrez quand vous arrivez dans la \"vraie\" vie :\n  - c'est quoi la différence entre un post-commit et un post-receive ?\n  - vaut-il mieux faire un rebase ou un merge ?\n  - peut on créer un repo distant à partir de notre local (sur github) ?\n  etc..."
     }
-]
+]}

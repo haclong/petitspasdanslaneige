@@ -1,4 +1,5 @@
-[
+{
+    "oldcomments" : [
     {
         "title": "Noms de fichiers trop longs ?",
         "date": "2017-08-06T14:30",
@@ -11,4 +12,4 @@
         "author": "haclong",
         "body": "Pour rebondir sur les infos très intéressantes de Michel, voici plus de détails trouvés grâce aux indices fournis :\n\n<a href=\"https://serverfault.com/questions/163419/window-256-characters-path-name-limitation\" target=\"_blank\">https://serverfault.com/questions/163419/window-256-characters-path-name-limitation</a>\n\nEn attendant, de mon côté, je suis passée à Windows 10... là encore, c'est sport..."
     }
-]
+]}
