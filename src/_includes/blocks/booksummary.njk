@@ -8,7 +8,7 @@
         {% if post.data.sites | length > 0 %}
         <i class="fas fa-th-large"></i>
           {%- for site in post.data.sites -%}
-            <a href="/{{ locale }}/sites/{{site | slugify}}.html" class="tag-sites">{{ site }}</a>{{ ", " if site != post.data.sites|last }}
+            <!--a href="/{{ locale }}/sites/{{site | slugify}}.html" class="tag-sites"-->{{ site }}<!--/a-->{{ ", " if site != post.data.sites|last }}
           {%- endfor -%}
         {% endif %}
       </div>

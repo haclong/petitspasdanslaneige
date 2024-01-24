@@ -5,14 +5,15 @@
 
     <div id="breadcrumb">
       <div class="container-xl">
-        <a href="/{{ locale }}/index0.html">{{ nav.home }}</a><i class="fas fa-angle-right"></i>{{ tagged_with }}<i class="fas fa-angle-right"></i>{{ tag | safe }}
+        <a href="/{{ locale }}/">{{ nav.home }}</a><i class="fas fa-angle-right"></i>{{ tagged_with }}<i class="fas fa-angle-right"></i>{{ tag | safe }}
       </div>
     </div>
 
 <div class="container-xl" id="home">
 
-{% set taglist = collections[ tag ] %}
+{% set taglist = collections[ etiquette ] %}
 {%- for post in taglist | reverse -%}
+
   {% include "blocks/postsummary.njk" %}
 {%- endfor -%}
 

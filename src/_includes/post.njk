@@ -3,7 +3,7 @@
 {% block content %}
     <div id="breadcrumb">
       <div class="container-xl">
-        <a href="/{{ locale }}/index0.html">{{ nav.home }}</a><i class="fas fa-angle-right"></i>{{ title | safe }}
+        <a href="/{{ locale }}/">{{ nav.home }}</a><i class="fas fa-angle-right"></i>{{ title | safe }}
       </div>
     </div>
 
@@ -17,7 +17,7 @@
         {% if sites | length > 0 %}
         <i class="fas fa-th-large"></i>
           {%- for site in sites -%}
-            <a href="/{{ locale }}/sites/{{site | slugify}}.html" class="tag-sites">{{ site }}</a>{{ ", " if site != sites|last }}
+            <!--a href="/{{ locale }}/sites/{{site | slugify}}.html" class="tag-sites"-->{{ site }}<!--/a-->{{ ", " if site != sites|last }}
           {%- endfor -%}
         {% endif %}
       </div>
