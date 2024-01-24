@@ -1,10 +1,10 @@
 ---
 pagination:
-  data: collections.tag_fr
+  data: collections.tags_fr
   size: 1
-  alias: tag
+  alias: etiquette
   filter:
     - all
-permalink: /fr/tags/{{ tag | slugify }}.html
+permalink: /fr/tags/{{ etiquette | slugify }}.html
 layout: tag
 ---

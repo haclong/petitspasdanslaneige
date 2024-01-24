@@ -2,9 +2,9 @@
 pagination:
   data: collections.sites_fr
   size: 1
-  alias: tag
+  alias: etiquette
   filter:
     - all
-permalink: /fr/sites/{{ tag | slugify }}.html
-layout: tag
+permalink: /fr/sites/{{ etiquette }}.html
+layout: site
 ---
