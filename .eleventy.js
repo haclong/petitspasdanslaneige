@@ -129,55 +129,70 @@ module.exports = function (eleventyConfig) {
 		return en_tags;
 	})
 
+// 	eleventyConfig.addCollection("sites_fr", function (collection) {
+// 		let fr_sites = {}
+// 		let sites = []
+// 		let posts = collection.getFilteredByGlob("./src/fr/posts/2012/*.md") ;
+
+// 		i = 0
+// 		for (let post of posts) {
+// 			if (post.data.sites) {
+// 				for (let site of post.data.sites ) {
+// 					sites[i] = site
+// 					i++;
+// 				}
+// 			}
+// 		}
+
+// 		fr_sites['developpement'] = posts.filter(function (post) {
+// 			if(post.data.sites) {
+// 				for (let site of post.data.sites) {
+// 					return site == "Développement"
+// 				}
+// 			}
+// 		})
+		
+// //		console.log(sites)
+
+// //        console.log(fr_sites['developpement'])
+
+// 		return fr_sites ;
+
+
+// 		// for (let post of posts) {
+// 		// 	if (post.data.sites) { 
+// 		// 		for (let item of post.data.sites) {
+// 		// 			fr_sites[item] ??= [];
+// 		// 			fr_sites[item].push(post);
+// 		// 		}
+// 		// 	}
+// 		// }
+// 		// let books = collection.getFilteredByGlob("./src/fr/books/*.md");
+// 		// for (let book of books) {
+// 		// 	if (book.data.sites) {
+// 		// 		for (let site of book.data.sites) {
+// 		// 			fr_sites[site] ??= [];
+// 		// 			fr_sites[site].push(book);
+// 		// 		}
+// 		// 	}
+// 		// }
+
+// 		//return fr_sites;
+// 	})
+
 	eleventyConfig.addCollection("sites_fr", function (collection) {
 		let fr_sites = {}
-		let sites = []
-		let posts = collection.getFilteredByGlob("./src/fr/posts/2012/*.md") ;
-
-		i = 0
+		let posts = collection.getFilteredByGlob("./src/fr/posts/**/*.md");
 		for (let post of posts) {
-			if (post.data.sites) {
-				for (let site of post.data.sites ) {
-					sites[i] = site
-					i++;
+			if (post.data.sites) { 
+				for (let site of post.data.sites) {
+					fr_sites[site] ??= [];
+					fr_sites[site].push(post);
 				}
 			}
 		}
 
-		fr_sites['developpement'] = posts.filter(function (post) {
-			if(post.data.sites) {
-				for (let site of post.data.sites) {
-					return site == "Développement"
-				}
-			}
-		})
-		
-//		console.log(sites)
-
-//        console.log(fr_sites['developpement'])
-
-		return fr_sites ;
-
-
-		// for (let post of posts) {
-		// 	if (post.data.sites) { 
-		// 		for (let item of post.data.sites) {
-		// 			fr_sites[item] ??= [];
-		// 			fr_sites[item].push(post);
-		// 		}
-		// 	}
-		// }
-		// let books = collection.getFilteredByGlob("./src/fr/books/*.md");
-		// for (let book of books) {
-		// 	if (book.data.sites) {
-		// 		for (let site of book.data.sites) {
-		// 			fr_sites[site] ??= [];
-		// 			fr_sites[site].push(book);
-		// 		}
-		// 	}
-		// }
-
-		//return fr_sites;
+		return fr_sites;
 	})
 
 	eleventyConfig.addCollection("sites_en", function (collection) {

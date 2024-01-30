@@ -1,6 +1,6 @@
 ---
 pagination:
-  data: collections.tags_fr
+  data: collections.tag_fr
   size: 1
   alias: etiquette
   filter:
