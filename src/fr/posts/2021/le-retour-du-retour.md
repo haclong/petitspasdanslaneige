@@ -14,7 +14,7 @@ media:
   credit: "Shan Li Fang"
   url: https://unsplash.com/@fangshanli
 
-summary: " Comme dirait l'autre : well, i'm back"
+summary: "Comme dirait l'autre : well, i'm back"
 ---
 
 Me revoilà
