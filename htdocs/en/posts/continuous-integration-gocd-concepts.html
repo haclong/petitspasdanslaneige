@@ -1,0 +1,205 @@
+<!doctype html>
+<html class="no-js" lang="en" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>Continuous Integration - GoCD concepts&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">French</a>
+        <a href="/en/">English</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/en/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/en/books/0/index.html">Collections</a>
+        <a href="/en/">Home</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/en/">Home</a><i class="fas fa-angle-right"></i>Continuous Integration - GoCD concepts
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>Continuous Integration - GoCD concepts</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>1/17/2017, 6:37:00 PM
+        
+        <i class="fas fa-th-large"></i><!--a href="/en/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->, <!--a href="/en/sites/haclong-projects.html" class="tag-sites"-->Haclong projects<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/2048x1536-fit_illustration-laboratoire-antidopage.jpg" class="node-banner" />
+        
+      </div>
+
+      <p><p>Remember, to have an efficient use of a continuous integration server, (moreover when we are using a fully configurable server), you need to tell the server what to do. And you can't tell <strong>GoCD</strong> what to do if you don't grab the general concepts of the application.</p>
+<p>We have successfully installed (and run) <strong>GoCD</strong> (server and agent), we have a PHP project, we will now configure our continuous integration server.</p>
+<p>We will give proper <strong>instructions</strong> to our continuous integration server (<strong>GoCD</strong>) so it will know what to do.</p>
+<h4>Task</h4>
+<p>Each instruction (like a command within a terminal) is a <strong>task</strong> for <strong>GoCD</strong>.</p>
+<h4>Job</h4>
+<p><strong>Tasks</strong> are grouped in <strong>jobs</strong>. Each job is composed by an ordered <strong>sequence of tasks</strong> executed <strong>in the order</strong> we <strong>defined</strong>.</p>
+<h4>Stage</h4>
+<p><strong>Jobs</strong> are grouped in <strong>stages</strong>. Within each stage, <strong>jobs</strong> are executed with <strong>no order</strong>, even <strong>simultaneously</strong>.</p>
+<h4>Pipeline</h4>
+<p>At last, <strong>stages</strong> are grouped in <strong>pipelines</strong>, stages are executed <strong>in the chosen order</strong>.</p>
+<p>On the beginning, it is quite confusing and you can get mixed up with all the concepts so my advice is to use at first one pipeline with only one stage, with only one job and, you can't avoid to have to use multiple tasks... The more you get confident with GoCD, the more you will enhanced your pipeline, creating more than one job and more than one stage.</p>
+<p>Please find the <a href="https://docs.go.cd/current/introduction/concepts_in_go.html" target="_blank">official documentation</a> on <strong>GoCD</strong> website.</p>
+<p>Now that we have our short introduction to <strong>GoCD</strong> concepts, let's dig into the server.</p>
+<h2>My first pipeline</h2>
+<p>Open your <strong>GoCD</strong> server (<a href="#">http://localhost:8153/go</a>), menu <strong>Admin &gt; Pipelines.</strong></p>
+<p>You can group your pipelines in logical groups. This is a feature to help you get organized. It does not have any consequences for the continuous integration building job.</p>
+<p>For me, i am using one pipeline group per project. But i am realizing that i don't have more than one pipeling per project for now. So I'm thinking that maybe it is more interesting to group my pipelines by functionality (or integration type) : one pipeline group for all pipelines using localhost code and sending the build to a shared git server and a second pipeline group for pushing master code to production environment. This sounds good but i am running out of projects for now so i haven't changed anything to my grouping.</p>
+<p>Anyway. Click on <code>**[Add New Pipeline Group]**</code> to create a new pipeline group then on <code>**[Create a new pipeline within this group]**</code> to.. well, you know.</p>
+<p><strong>ATTENTION</strong> : there's something i feel slightly wrong with <strong>GoCD</strong>. You can't delete an existing pipeline. Actually, you can but GoCD advise you to refrain doing so. You can't delete an existing pipeline and create a new pipeline using the same name. <strong>GoCD</strong> actually does not delete all pipeline history. Therefore, a new pipeline will inherit all the history of the deleted pipeline. This is quite boring when you are trying to understand how it works and you are creating multiple pipelines for testing purposes -_-.</p>
+<p>Anyway...</p>
+<p>Now let's see how to create one pipeline.</p>
+<h4>Step 1 : Basic Settings</h4>
+<p>Give it a name (<em>Pipeline Name</em>) (make sure it is unique).
+Make sure that the <em>Pipeline Group Name</em> is the right one but it should be.</p>
+<h4>Step 2 : Materials</h4>
+<p>&quot;<strong>Materials</strong>&quot; for <strong>GoCD</strong> are the starting point from where <strong>Go</strong> will start doing the <em>build</em>. BASICALLY, this is your code, your project. Now, there's also a possibility to add more <em>materials</em> i.e some local dependencies you can't install using <strong>Composer</strong> but mandatory for your project so <strong>Go</strong> need to know about them (and install them).</p>
+<p>For now, all we are interested in are our project commited in our local <strong>git</strong> repository.</p>
+<ul>
+<li><em>Material Type</em> = <span style="background-color:#ffff00;">Git</span></li>
+<li><em>URL</em> = path to the local git repository. Git can use filesystem path, so we can tell GoCD where are our sources (Ubuntu).</li>
+</ul>
+<p>Let's say our project is in this directory :</p>
+<pre><code class="language-sh">/home/user/projets/monprojet/dev/src
+</code></pre>
+<p>git repository should be in this directory :</p>
+<pre><code class="language-sh">/home/user/projets/monprojet/dev/src/.git
+</code></pre>
+<p>Then <strong>GoCD</strong> is expecting this path for the URL data to your git repository :</p>
+<pre><code class="language-sh">/home/user/projets/monprojet/dev/src
+</code></pre>
+<p>You can use <code>**[Check Connection]**</code> to check <strong>GoCD</strong> will find the repository where you said it is.</p>
+<p>As for access rights, the owner has execute access (x), write access (w) and read access (r) on the project files. For all others users, they can execute (x) and read (r) on directories and read access (r) on files. So far, <strong>GoCD</strong> is fine with those rules.</p>
+<ul>
+<li><em>Branch</em>= choose the branch <strong>GoCD</strong> will check. As default, it is <em>master</em>. If you plan to create one branch per feature, you ought to know that for each branch added, you will need to create a different pipeline dedicated for that branch (here we are, pipeline grouping per projects :))</li>
+<li><em>Poll for new changes</em> = check the box. Each time you will commit on the chosen branch, <strong>GoCD</strong> will run the <em>build</em> automatically. If you don't want <strong>GoCD</strong> to run automatically, you have to tell <strong>GoCD</strong> when to run the build. You have two more options :</li>
+<li>either <em>manually</em>: each time you need <strong>GoCD</strong> to run, you have to go on <strong>GoCD</strong> server (website) and <strong>click on a button</strong> to run the build.</li>
+<li>or <em>programmatically</em>: <strong>GoCD</strong> will run a build regularly as planned at fixed time, no matter what changed occured on your sources... <span style="color:#800080;"><em>heyyy... it just occured to me that it is an idea for a pipeline group dedicated to regular builds, per day or per week, just to make sure that nothing external (ie a dependency update) breaks your code... Then, you can control that old projects are still OK...</em></span></li>
+</ul>
+<h4>Step 3 : Stage / Job</h4>
+<ul>
+<li><em>Configuration Type</em> : <span style="background-color:#ffff00;">Define Stages</span>. I believe we will be able to use templates when we get more skilled with <strong>GoCD</strong>. As for now, i need to understand what's happening so i can't afford introducing one level of difficulties.</li>
+<li>Give a <em>Stage Name</em></li>
+<li><em>Trigger Type</em> : <span style="background-color:#ffff00;">On Success</span>. Unless you want to manage your pipelines / stages manually, you will always use &quot;On Success&quot;.</li>
+<li>Choose a <em>Job Name</em>. By default, <strong>GoCD</strong> pipeline wizard will help you create only one stage and only one job by pipeline. But we will edit our pipeline later and add more stages and jobs as needed.</li>
+<li><em>Task Type</em>: I use <span style="background-color:#ffff00;">&quot;More...&quot;</span> choice for now so i can tell <strong>GoCD</strong> which command to use, one after another.</li>
+</ul>
+<p>Click on <code>**Finish**</code>. You've created your first pipeline !! <a href="https://en.wiktionary.org/wiki/%E3%81%8A%E3%82%81%E3%81%A7%E3%81%A8%E3%81%86" target="_blank">Omedeto</a> !!</p>
+<p>In the next article, we will dig into our pipeline and fine tune it.</p>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/en/tags/gocd">gocd</a></li><li><a href="/en/tags/integration-continue">intégration continue</a></li></ul>
+        </div>
+      
+
+      
+        <nav id="book-navigation">
+    
+
+    
+        <li class="link-next"><a href="/en/posts/continuous-integration-installing-gocd.html">Continuous Integration - Installing GoCD <i class="fas fa-long-arrow-alt-right"></i></a></li>
+    
+
+    
+        <li class="link-up"><a href="/en/books/continuous-integration-using-go-cd.html"><i class="fas fa-book-open"></i> Continuous Integration - Using Go CD</li>
+    
+</nav>
+
+      
+    
+
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>About me</h3>
+      <p>I learned coding with php several years ago, when Internet was still young. For multiple reasons, i had stopped then and missed most of this new Internet i&#39;m discovering once again. So, i feel like a newbie again and since i&#39;m ready to start over personal project, i&#39;ll share with you some of my discoveries. Beyond coding topics, i&#39;ll enjoy sharing with you several subjects such as History, Astronomy, Linguistics, Movies, Books, Music and Anime among others. I hope you&#39;ll enjoy reading this blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. All rights reserved.</p>
+        <p>Powered by <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

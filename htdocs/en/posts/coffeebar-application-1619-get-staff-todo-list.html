@@ -1,0 +1,524 @@
+<!doctype html>
+<html class="no-js" lang="en" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>CoffeeBar Application 16/19 - Get the staff todo list&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">French</a>
+        <a href="/en/">English</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/en/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/en/books/0/index.html">Collections</a>
+        <a href="/en/">Home</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/en/">Home</a><i class="fas fa-angle-right"></i>CoffeeBar Application 16/19 - Get the staff todo list
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>CoffeeBar Application 16/19 - Get the staff todo list</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>4/28/2015, 7:53:00 PM
+        
+        <i class="fas fa-th-large"></i><!--a href="/en/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/file9271237667217.jpg" class="node-banner" />
+        
+          <p><strong>Credit</strong> : Morguefile.com </p>
+        
+      </div>
+
+      <p><p>Food is prepared, drinks are ordered... all they are waiting for is to be served. This is the waiters job. And we do have several waiters in the cofffeebar. So we need to assign the right todo list to the right waiter. We wouldn't assign a tab to a waiter who are not in charge of that table, right ?</p>
+<p><em>NOTE : throughout the tutorial, i will reedit numerous classes and views i already talked about. On the second edition, some datas will be missing such as use keyword, extends and implements keywords etc... It doesn't mean you have to delete those existing lines. It is intended to lighten this tutorial. In the case we need to remove lines, i'll say it so plainly, even re-editing the whole part to make myself clear on that item.</em></p>
+<h2>Sorting todo list by waiter</h2>
+<h3>Our (new) controller</h3>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Controller/StaffController.php
+
+&lt;?php
+namespace CoffeeBar\Controller ;
+
+use Zend\Mvc\Controller\AbstractActionController;
+
+class StaffController extends AbstractActionController
+{
+  // get waiters list
+  public function indexAction()
+  {
+    $waiters = $this-&gt;serviceLocator-&gt;get('CoffeeBarEntity\Waiters') ;
+    return array('result' =&gt; $waiters) ;
+  }
+
+  // the todo list
+  public function toDoAction()
+  {
+    $waiter = $this-&gt;params()-&gt;fromRoute('name');
+    $openTabs = $this-&gt;serviceLocator-&gt;get('OpenTabs') ;
+    $list = $openTabs-&gt;todoListForWaiter($waiter) ;
+    return array('result' =&gt; $list, 'waiter' =&gt; $waiter) ;
+  }
+}
+</code></pre>
+<h3>The views</h3>
+<pre><code class="language-php">// module/CoffeeBar/view/coffee-bar/staff/index.phtml
+
+&lt;h1&gt;Staff&lt;/h1&gt;
+
+&lt;ul&gt;
+  &lt;?php
+    foreach($result as $k =&gt; $v)
+    {
+      echo &quot;&lt;li&gt;&lt;a href='&quot; . $this-&gt;url('staff/todo', array('name' =&gt; $k)) . &quot;'&gt;&quot; . $v . &quot;&lt;/a&gt;&quot; ;
+    }
+  ?&gt;
+&lt;/ul&gt;
+</code></pre>
+<pre><code class="language-php">// module/CoffeeBar/view/coffee-bar/staff/todo.phtml
+&lt;h2&gt;Todo List for &lt;?php echo $waiter; ?&gt;&lt;/h2&gt;
+
+&lt;?php
+  foreach($result as $key =&gt; $table)
+  {
+?&gt;
+
+&lt;h3&gt;Table #&lt;?php echo $key; ?&gt;&lt;/h3&gt;
+
+&lt;form action='&lt;?php echo $this-&gt;url('staff/markserved') ; ?&gt;' method='post'&gt;
+  &lt;input type='hidden' name='id' value='&lt;?php echo $key; ?&gt;'/&gt;
+  &lt;input type='hidden' name='waiter' value='&lt;?php echo $waiter; ?&gt;'/&gt;
+  &lt;table&gt;
+    &lt;tr&gt;
+      &lt;th&gt;Menu #&lt;/th&gt;
+      &lt;th&gt;Description&lt;/th&gt;
+      &lt;th&gt;Served&lt;/th&gt;
+    &lt;/tr&gt;
+  
+    &lt;?php
+      foreach($table as $liste)
+      {
+    ?&gt;
+ 
+    &lt;tr&gt;
+      &lt;td&gt;&lt;?php echo $liste-&gt;getMenuNumber() ;?&gt;&lt;/td&gt;
+      &lt;td&gt;&lt;?php echo $liste-&gt;getDescription() ; ?&gt;&lt;/td&gt;
+      &lt;td&gt;&lt;input type='checkbox' name='served[]' value='served_&lt;?php echo $liste-&gt;getMenuNumber() ; ?&gt;'/&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+ 
+    &lt;?php
+      }
+    ?&gt;
+  &lt;/table&gt;
+
+  &lt;a href='&lt;?php echo $this-&gt;url('tab/status', array('id' =&gt; $key)) ; ?&gt;'&gt;Voir la commande&lt;/a&gt;
+  &lt;input type='submit' name='submit' value='Mark Served'/&gt;
+&lt;/form&gt;
+}
+</code></pre>
+<p>We have added the checkboxes so our waiter can easily mark when drinks or food have been served. Do not forget the route we will use to process the form.</p>
+<h3>The configuration</h3>
+<p>The route, the nav and the controller alias altogether.</p>
+<pre><code class="language-php">// module/CoffeeBar/config/module.config.php
+
+&lt;?php
+return array(
+  'router' =&gt; array(
+    'routes' =&gt; array(
+      /**
+       * cette URL : http://coffeebar.home/staff mène à cette route
+       */
+      'staff' =&gt; array(
+        'type' =&gt; 'Literal',
+        'options' =&gt; array(
+          'route' =&gt; '/staff',
+          'defaults' =&gt; array(
+            'controller' =&gt; 'CoffeeBarController\Staff',
+            'action' =&gt; 'index',
+          ),
+        ),
+        'may_terminate' =&gt; true,
+        'child_routes' =&gt; array(
+          /**
+           * cette URL : http://coffeebar.home/staff/{$waiter} mène à cette route
+           */
+          'todo' =&gt; array(
+            'type' =&gt; 'Segment',
+            'options' =&gt; array(
+              'route' =&gt; '/[:name]',
+              'constraints' =&gt; array(
+                'name' =&gt; '[a-zA-Z]+',
+              ),
+              'defaults' =&gt; array(
+                'controller' =&gt; 'CoffeeBarController\Staff',
+                'action' =&gt; 'toDo',
+              ),
+            ),
+            'may_terminate' =&gt; true,
+          ),
+          'markserved' =&gt; array(
+            'type' =&gt; 'Literal',
+            'options' =&gt; array(
+              'route' =&gt; '/mark',
+              'defaults' =&gt; array(
+                'controller' =&gt; 'CoffeeBarController\Staff',
+                'action' =&gt; 'mark',
+              ),
+            ),
+          ),
+        ),
+      ),
+    ),
+  ),
+  'controllers' =&gt; array(
+    'invokables' =&gt; array(
+      'CoffeeBarController\Staff' =&gt; 'CoffeeBar\Controller\StaffController',
+    ),
+  ),
+  'navigation' =&gt; array(
+    'default' =&gt; array(
+      array(
+        'label' =&gt; 'Staff',
+        'route' =&gt; 'staff',
+      ),
+    ),
+  ),
+);
+</code></pre>
+<p>Wait a minute.</p>
+<p>In our <code>StaffController</code>, we have a <code>OpenTabs::todoListForWaiter($waiter)</code> method. Here it is :</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Service/OpenTabs.php
+
+&lt;?php
+class OpenTabs
+{
+  /**
+   * Get the list of items to serve
+   * @param string $waiter
+   * @return ArrayObject
+   */
+  public function todoListForWaiter($waiter)
+  {
+    $this-&gt;loadTodoByTab() ;
+    $array = array() ;
+    foreach($this-&gt;todoByTab-&gt;getArrayCopy() as $k =&gt; $v)
+    {
+      if($v-&gt;getWaiter() == $waiter &amp;amp;&amp;amp; count($v-&gt;getItemsToServe()) &gt; 0)
+      {
+        $array[$v-&gt;getTableNumber()] = $v-&gt;getItemsToServe() ;
+      }
+    }
+    return $array ;
+  }
+}
+</code></pre>
+<p>Have you noticed ? Our <strong>OpenTabs</strong> service is so good, we already have all the datas we need... Just write down some methods to organize and return the datas we want. This is one of the fondamental of the Object Oriented Programming : you don't need to extract all datas in a shapeless glob and manipulate the blug without knowing how it would shape... Just clean it and shape it right as you need it and use it as is.</p>
+<h2>Processing the form, the markAction action</h2>
+<p>Let's get back to our <code>StaffController::markAction()</code>.</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Controller/StaffController.php
+
+&lt;?php
+namespace CoffeeBar\Controller ;
+
+use Zend\Mvc\Controller\AbstractActionController;
+
+class StaffController extends AbstractActionController
+{
+  public function markAction()
+  {
+    $request = $this-&gt;getRequest() ; 
+    if($request-&gt;isPost()) 
+    {
+      $id = $request-&gt;getPost()-&gt;get('id') ;
+      $waiter = $request-&gt;getPost()-&gt;get('waiter') ;
+ 
+      if(!is_array($request-&gt;getPost()-&gt;get('served'))) 
+      {
+        $this-&gt;flashMessenger()-&gt;addErrorMessage('Aucun plat ou boisson n\'a été choisi pour servir');
+        return $this-&gt;redirect()-&gt;toRoute('staff/todo', array('name' =&gt; $waiter));
+      }
+ 
+      $menuNumbers = array() ;
+      foreach($request-&gt;getPost()-&gt;get('served') as $item)
+      {
+        $groups = explode('_', $item) ;
+        $menuNumbers[] = $groups[1] ;
+      }
+      $this-&gt;markDrinksServed($id, $menuNumbers) ;
+      $this-&gt;markFoodServed($id, $menuNumbers) ;
+
+      return $this-&gt;redirect()-&gt;toRoute('staff/todo', array('name' =&gt; $waiter));
+    }
+  }
+
+  // $menuNumbers = array - numéro de menus
+  // $id = numéro de la table
+  protected function markDrinksServed($id, array $menuNumbers)
+  {
+    // pour retrouver l'id unique de la note
+    $openTabs = $this-&gt;serviceLocator-&gt;get('OpenTabs') ;
+    $tabId = $openTabs-&gt;tabIdForTable($id) ;
+
+    // we need to retrieve the menu items informations here
+    $menu = $this-&gt;serviceLocator-&gt;get('CoffeeBarEntity\MenuItems') ;
+ 
+    $drinks = array() ;
+    foreach($menuNumbers as $nb)
+    {
+      if($menu-&gt;getById($nb)-&gt;getIsDrink())
+      {
+        $drinks[] = $nb ;
+      }
+    }
+ 
+    if(!empty($drinks))
+    {
+      // récupérer l'objet 'CoffeeBar\Command\MarkDrinksServed'
+      $markServed = $this-&gt;serviceLocator-&gt;get('MarkDrinksServedCommand') ;
+      $markServed-&gt;markServed($tabId, $drinks) ;
+    }
+  }
+ 
+  protected function markFoodServed($id, array $menuNumbers)
+  {
+    $openTabs = $this-&gt;serviceLocator-&gt;get('OpenTabs') ;
+    $tabId = $openTabs-&gt;tabIdForTable($id) ;
+
+    $menu = $this-&gt;serviceLocator-&gt;get('CoffeeBarEntity\MenuItems') ;
+ 
+    $food = array() ;
+    foreach($menuNumbers as $nb)
+    {
+      if(!$menu-&gt;getById($nb)-&gt;getIsDrink())
+      {
+        $food[] = $nb ;
+      }
+    }
+
+    if(!empty($food))
+    {
+      $markServed = $this-&gt;serviceLocator-&gt;get('MarkFoodServedCommand') ;
+      $markServed-&gt;markServed($tabId, $food) ;
+    }
+  }
+}
+</code></pre>
+<p>Both <code>**CoffeeBar\Command\MarkDrinksServed**</code> command and <code>**CoffeeBar\Command\MarkFoodServed**</code> command trigger an event each. So don't forget to inject the <strong>Event Manager</strong> in each of them.</p>
+<p>Let's get a quick look at our commands :</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Command/MarkDrinksServed.php
+
+&lt;?php
+namespace CoffeeBar\Command ;
+
+use Zend\EventManager\EventManagerAwareInterface;
+use Zend\EventManager\EventManagerInterface;
+
+class MarkDrinksServed implements EventManagerAwareInterface
+{
+  protected $id ; // int (guid) - id unique de la note
+  protected $drinks ; // array - numéro de menus
+  protected $events ; // EventManager
+
+  // getters &amp;amp; setters y compris setEventsManager &amp;amp; getEventsManager
+
+  public function markServed($id, $menuNumbers)
+  {
+    $this-&gt;setId($id) ;
+    $this-&gt;setDrinks($menuNumbers) ;
+    $this-&gt;events-&gt;trigger('markDrinksServed', '', array('markDrinksServed' =&gt; $this)) ;
+  }
+}
+</code></pre>
+<p>the other one :</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Command/MarkFoodServed.php
+
+&lt;?php
+namespace CoffeeBar\Command ;
+
+use Zend\EventManager\EventManagerAwareInterface;
+use Zend\EventManager\EventManagerInterface;
+
+class MarkFoodServed implements EventManagerAwareInterface
+{
+  protected $id ; // int (guid) - id unique de la note
+  protected $food ; // array - liste des numéros de menus
+  protected $events ; // EventManager
+
+  public function markServed($id, $menuNumbers)
+  {
+    $this-&gt;setId($id) ;
+    $this-&gt;setFood($menuNumbers) ;
+    $this-&gt;events-&gt;trigger('markFoodServed', '', array('markFoodServed' =&gt; $this)) ;
+  }
+}
+</code></pre>
+<p>Very very quick look at the unnoticed method : <code>MenuItems::getById($id)</code> (found in the <code>StaffController::markAction()</code>)</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Entity/MenuItems.php
+
+class MenuItems
+{
+  public function getById($id)
+  {
+    $iterator = $this-&gt;getIterator() ;
+    foreach($iterator as $item)
+    {
+      if($id == $item-&gt;getId())
+      {
+        return $item ;
+      }
+    }
+  }
+}
+</code></pre>
+<h3>Injecting the dependencies</h3>
+<pre><code class="language-php">// module/CoffeeBar/Module.php
+
+&lt;?php
+namespace CoffeeBar;
+
+use CoffeeBar\Command\MarkDrinksServed;
+use CoffeeBar\Command\MarkFoodServed;
+
+class Module
+{
+  // on charge le service manager
+  public function getServiceConfig()
+  {
+    return array(
+      'factories' =&gt; array(
+        'MarkDrinksServedCommand' =&gt; function($sm) {
+          $events = $sm-&gt;get('TabEventManager') ;
+          $markDrinksServed = new MarkDrinksServed() ;
+          $markDrinksServed-&gt;setEventManager($events) ;
+          return $markDrinksServed ;
+        },
+        'MarkFoodServedCommand' =&gt; function($sm) {
+          $events = $sm-&gt;get('TabEventManager') ;
+          $markFoodServed = new MarkFoodServed() ;
+          $markFoodServed-&gt;setEventManager($events) ;
+          return $markFoodServed ;
+        },
+      ),
+    ) ;
+  }
+}
+</code></pre>
+<p>View and structure are done. This chapter is long enough so we will process the data in the next chapter. But i bet you already know what to expect.. and don't forget : once items are served, we need to count the bill...</p>
+<p><em>You'll find the full application in my <a href="https://github.com/haclong/coffeebar" target="_blank">github</a></em></p>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/en/tags/zend-framework-2">zend framework 2</a></li><li><a href="/en/tags/programmation-evenementielle">programmation événementielle</a></li><li><a href="/en/tags/oop">OOP</a></li></ul>
+        </div>
+      
+
+      
+        <nav id="book-navigation">
+    
+       <li class="link-previous"><a href="/en/posts/coffeebar-application-1519-food-prepared-reacting-it.html"><i class="fas fa-long-arrow-alt-left"></i> CoffeeBar Application 15/19 - Food is prepared, reacting to it</li>
+    
+
+    
+        <li class="link-next"><a href="/en/posts/coffeebar-application-1719-serving.html">CoffeeBar Application 17/19 - Serving <i class="fas fa-long-arrow-alt-right"></i></a></li>
+    
+
+    
+        <li class="link-up"><a href="/en/books/manage-coffeebar-event-driven-programming.html"><i class="fas fa-book-open"></i> Manage a coffeebar with event driven programming</li>
+    
+</nav>
+
+      
+    
+
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>About me</h3>
+      <p>I learned coding with php several years ago, when Internet was still young. For multiple reasons, i had stopped then and missed most of this new Internet i&#39;m discovering once again. So, i feel like a newbie again and since i&#39;m ready to start over personal project, i&#39;ll share with you some of my discoveries. Beyond coding topics, i&#39;ll enjoy sharing with you several subjects such as History, Astronomy, Linguistics, Movies, Books, Music and Anime among others. I hope you&#39;ll enjoy reading this blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. All rights reserved.</p>
+        <p>Powered by <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

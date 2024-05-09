@@ -1,0 +1,191 @@
+<!doctype html>
+<html class="no-js" lang="fr" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>Back to work !&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">Français</a>
+        <a href="/en/">Anglais</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/fr/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/fr/books/0/index.html">Séries</a>
+        <a href="/fr/">Accueil</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/fr/">Accueil</a><i class="fas fa-angle-right"></i>Back to work !
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>Back to work !</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>19/09/2016 14:59:00
+        
+        <i class="fas fa-th-large"></i><!--a href="/fr/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/jeu_de_contruction.jpg" class="node-banner" />
+        
+      </div>
+
+      <p><p>Oh la la !! Festival de nouveautés !</p>
+<p>Dernièrement, je :</p>
+<ul>
+<li>ai installé un projet en Symfony 3,</li>
+<li>ai installé un projet avec le nouveau MVC Skeleton Application de Zend Framework. Maintenant que Zend Framework est tout éclaté en composants &quot;indépendants&quot;, je suppose qu'il faut plus parler des versions de chacun des composants. Pour ma part, j'ai suivi leur tutoriel et j'ai installé le skeleton qui est mis à disposition actuellement, soit la version d'août 2016 (probablement la version 3.0.x du skeleton... hum hum, un fichier VERSION.md à la racine pourrait être utile),</li>
+<li>me suis découvert une étrange passion pour les tests unitaires,</li>
+<li>ai lu la <a href="https://tools.ietf.org/html/rfc6749">spec de Oauth</a> que je ne sais ABSOLUMENT pas prononcer sans avoir l'air de bégayer,</li>
+<li>n'ai pas fait mes comptes, ce qui est une véritable catastrophe mais vous vous en fichez bien.</li>
+</ul>
+<p>Par voie de conséquence, j'ai plein de choses à vous dire. ^^</p>
+<h2>Comparatif Symfony - Zend Framework</h2>
+<p>Avant de passer aux choses sérieuses, je souhaite ajouter un complément à mon comparatif Symfony / Zend Framework, ayant tâté des deux maintenant.</p>
+<h4>Zend Framework</h4>
+<p>Il faut savoir que PAR DEFAUT, dans un projet Zend Framework basé sur l'installation d'un Skeleton Application, il n'y a RIEN d'installé. Juste le strict minimum et cela revient à parler d'un lot minimum minimonum. (il faut lire : QUASIMENT RIEN d'installé... bien sûr qu'il y a des trucs installés, vous pouvez trouver la <a href="https://docs.zendframework.com/zend-mvc/services/#servicemanager">liste des services installés dans une application MVC de Zend Framework ici</a></p>
+<p>C'est parce que la team de Zend Framework préfère laisser au développeur (qui utilise le skeleton application) de choisir lui même les services (composants) dont il a besoin.</p>
+<p>Ainsi, si vous avez une très vieille version du skeleton application, <strong>composer</strong> installe TOUS les composants de Zend Framework (pas le choix, à l'époque, c'était tout ou rien) mais il n'y avait pas forcément de services correspondant aux composants qui s'installaient.</p>
+<p>Désormais, sur les nouvelles versions du skeleton application, depuis que Zend Framework a été séparé en plusieurs composants indépendants, <strong>composer</strong> n'installe QUE les composants nécessaires, ce qui réduit DRASTIQUEMENT la liste des composants installés.</p>
+<h4>Symfony</h4>
+<p>Côté Symfony, tous les composants sont installés (à vérifier) mais le niveau d'exigence de Symfony pour les composants nécessaires à une application web est différent. DE BASE, Symfony monte tout un tas de services, qu'on le veuille ou non.</p>
+<h4>Comparatif</h4>
+<p><strong>Tous les composants de base pour gérer la mécanique MVC</strong>
+<em>Installés par défaut sur ZF, Installés par défaut sur SF</em></p>
+<ul>
+<li>Gestionnaire de route,</li>
+<li>Gestionnaire de requête,</li>
+<li>Gestionnaire de réponse,</li>
+<li>Gestionnaire de controlleur,</li>
+<li>Gestionnaire de vue.</li>
+</ul>
+<p>Ce sont des composants qui permettent de faire le *hello world !*de base :)</p>
+<p><strong>Gestionnaire de service</strong>
+<em>Par défaut sur ZF, par défaut sur SF</em>
+Zend Framework l'appelle le <strong>Service Manager</strong> (ou bien <strong>Container</strong> récemment) et Symfony l'appelle <strong>Container</strong>.</p>
+<p>Je ne connais pas de commande sur Zend Framework pour voir tous les services qui sont montés sur votre application.</p>
+<p>Symfony, de son côté, a une commande sur la console qui permet de lister l'intégralité des services disponibles. Ce que je trouve hyper pratique.</p>
+<p><strong>Gestionnaire d'événements</strong>
+<em>Par défaut sur ZF, par défaut sur SF</em>
+Zend Framework l'appelle l'<strong>Event Manager</strong> (composant <strong>Event Manager</strong>). Symfony l'appelle le <strong>Dispatcher</strong> (ou <strong>event-dispatcher</strong>).</p>
+<p>Ici aussi, pas de commande connue côté Zend Framework pour identifier tous les événements qui existent dans votre applicatin.</p>
+<p>Côté Symfony, il y a une console pour lister tous les événements qui sont écoutés. Si vous créez un événement, qu'il est déclenché mais qu'il n'existe aucun listener sur votre application, il ne peut pas être listé...</p>
+<p><strong>Gestionnaire de module</strong>
+<em>Par défaut sur ZF, probablement par défaut sur SF</em>
+Zend Framework, c'est le <strong>module manager</strong>. Côté Symfony, un module est un <strong>Bundle</strong>. Mais je ne connais pas le nom du composant qui gère les bundles...</p>
+<p><strong>Session</strong>
+<em>Pas sur ZF, par défaut sur SF</em>
+Symfony a une session qui tourne par défaut quand vous installez une application Symfony. Alors ne surtout pas créer votre propre session ou bien vous aurez des surprises sur la persistence de vos données.</p>
+<p>Côté Zend Framework, la session n'est pas présente par défaut. Il faut instancier un objet Session si vous souhaitez utiliser la session.</p>
+<p><strong>Log</strong>
+<em>Pas sur ZF, par défaut sur SF</em>
+Symfony utilise la librairie <strong>Monolog</strong> pour journaliser par défaut tout ce que lui-même fait sur une application Symfony. Il ne tient plus qu'à vous d'utiliser le même service pour logger vos propres informations.</p>
+<p>Côté Zend Framework, constant avec lui-même : si vous voulez des logs, installez <strong>Zend-log</strong> pour commencer (ou bien n'importe quel autre module de log à votre convenance) et ajouter ce service à votre gestionnaire de service (vous arrêtez pas sur la difficulté d'ajouter votre service au gestionnaire de service, vous trouverez la doc facilement sur la doc de Zend Framework.)</p>
+<p><strong>Base de données</strong>
+<em>Pas sur ZF, par défaut sur SF</em>
+Symphony utilise <strong>Doctrine ORM</strong> pour gérer l'intéraction avec la base de données. Et par défaut, Symfony considère que vous avez besoin d'une base de données dans une application Symfony. Du coup, vous avez les services Doctrine présents à l'installation. Pour le coup, je trouve cette décision un peu arbitraire. J'ai plusieurs exemples de tests et de manipulation pour lesquels je n'ai pas de bases de données. Après, vous me direz, si ça ne gêne pas...</p>
+<p>Zend Framework, de son côté, reste fidèle à lui-même. Si vous souhaitez utiliser <strong>Zend-db</strong>, depuis les dernières versions, il faut installer Zend-db. Du coup, contrairement aux anciennes versions où vous aviez l'impression d'installer Doctrine ORM EN PLUS DE Zend db, dans les versions récentes, vous pouvez installer Doctrine, Zend-db ne fait MEME PAS parti du paysage, à moins que vous l'ayez décidé.</p>
+<p>Ah oui, non, en fait, le module qui fait connecteur entre Zend Framework et Doctrine ne marche pas pour la version Zend MVC 3.0 (ce qui est un peu le module de tous les derniers skeleton application... ce qui est vraiment bête...) En attendant, il semblerait qu'on trouve d'autres modules pour brancher Doctrine et ZF sur packagist... à voir.</p>
+<hr>
+<p>Sur ce, si je vois autre chose, je vous en parlerais à n'en pas douter. Je vous donne rendez vous prochainement pour parler d'intégration continue.</p>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/fr/tags/symfony">symfony</a></li><li><a href="/fr/tags/zend-framework-2">zend framework 2</a></li><li><a href="/fr/tags/mvc">MVC</a></li></ul>
+        </div>
+      
+
+      
+    
+
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>Sur moi</h3>
+      <p>J&#39;ai appris le php il y a quelques années, quand Internet était à ses débuts. Pour diverses raisons, j&#39;ai arrêté en route et j&#39;ai perdu le fil des nouveaux Internets que je redécouvre. Résultat, je me sens constamment à courir après l&#39;histoire mais je suis toujours motivée à reprendre des projets personnels. Je me propose de vous partager mes découvertes. Au delà des sujets de programmation, j&#39;aime également partager mes infos concernant notamment l&#39;Histoire, l&#39;Astronomie, la Linguistique, les Films, les Livres et les Anime. J&#39;espère que vous aimerez suivre mon blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. Tous droits réservés.</p>
+        <p>Propulsé par <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

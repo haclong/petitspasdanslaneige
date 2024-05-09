@@ -1,0 +1,192 @@
+<!doctype html>
+<html class="no-js" lang="fr" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>Tâtons du Symfony 3&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">Français</a>
+        <a href="/en/">Anglais</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/fr/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/fr/books/0/index.html">Séries</a>
+        <a href="/fr/">Accueil</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/fr/">Accueil</a><i class="fas fa-angle-right"></i>Tâtons du Symfony 3
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>Tâtons du Symfony 3</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>29/08/2016 17:03:00
+        
+        <i class="fas fa-th-large"></i><!--a href="/fr/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/hi_tech.jpg" class="node-banner" />
+        
+      </div>
+
+      <p><p>Avec le lancement de Symfony 3, et dans ma démarche continue de m'améliorer, j'ai décidé de réaliser un nouveau projet. J'ai laissé Zend Framework de côté pour une fois, la communauté de celui ci étant en pleine ébullition avec le déploiement prochain de Zend Framework 3. Le nouveau projet sera, cette fois ci, développé avec le framework Symfony*.</p>
+<h2>Installation</h2>
+<p>L'installation de Symfony s'est passé sans encombre. Il faut se rendre directement sur la documentation de Symfony et lancer la <a href="http://symfony.com/doc/current/setup.html#creating-symfony-applications-with-composer">création du projet avec <strong>composer</strong></a>. Les <em>bundles</em> et les <em>composants</em> qui vont bien s'installent tous sans problème.</p>
+<h2>L'exécution</h2>
+<p>Il y a deux trois petites choses qui ne sont pas claires à ce niveau là avec Symfony :</p>
+<ul>
+<li>Symfony distingue un <em>front controller de prod</em> et un <em>front controller de dev</em>. Il y a quelque chose dans le code qui SAIT qu'on est en <em>dev</em>. Je n'ai pas encore trouvé à quel endroit/moment on pouvait changer ça. Il y a cependant une ligne de commande qui fait ça correctement lorsqu'on utilise la console. En tout cas, lorsque je lis la <a href="http://symfony.com/doc/current/deployment.html">documentation concernant la mise en prod d'une application Symfony</a>, cela me paraît bien compliqué !</li>
+<li>Symfony recommande de lancer le <a href="http://php.net/manual/fr/features.commandline.webserver.php">serveur PHP interne</a>. En suivant les <a href="http://symfony.com/doc/current/setup.html#running-the-symfony-application">instructions de Symfony à ce sujet</a>, l'application se lance sans problème. On trouve également une <a href="http://symfony.com/doc/current/setup/web_server_configuration.html">documentation pour configurer un véritable serveur web</a> (apache) mais si les instructions me semblent familières parce que mes autres projets y ressemblent, je n'ai jamais réussi à le faire avec un projet Symfony... Tout ce que j'y ai gagné à essayer, c'est de réinstaller Symfony parce qu'avec mes manipulations répétées, j'avais perdu les permissions initiales et même avec le serveur interne, l'application ne fonctionnait plus... Grosse déception de ce côté là. Je réessaierais plus tard. J'ai décidé que pour une fois, je n'allais pas m'arrêter pour ce problème qui, somme toute, n'est pas si important.</li>
+</ul>
+<h2>Le projet</h2>
+<p>Il y a quelques temps déjà, j'ai développé un solveur de sudoku. Même si ce projet - à l'époque - m'a laissé assez satisfaite de moi-même, il restait des points irrésolus qui ont fini par m'empêcher de tourner en rond :p... j'exagère à peine.</p>
+<ul>
+<li>la résolution de la grille est très longue et on ne peut pas voir sa progression pendant que le solveur la résoud. Le nouvel objectif est que la grille se remplisse au fur et à mesure que les cases se remplissent.</li>
+<li>impossible de rajouter de nouvelles grilles dans la librairie des grilles disponibles.</li>
+<li>impossible à un humain de jouer à la grille... je m'étais arrêté à la fonctionnalité &quot;résouds-moi&quot;.</li>
+<li>le moteur de résolution était tout sauf efficace. Rendez vous compte : on lisait toute la grille une première fois et en fonction des chiffres qui étaient placés, on mettait à jour les chiffres possibles des autres cases. Puis on relisait toute la grille une seconde fois et on remettait à jour les chiffres possibles dans les autres cases puisqu'il y avait fatalement des chiffres qui ont été placés à la 1ere lecture. Ainsi de suite. C'était une résolution en itératif qui parcourait l'intégralité de la grille à chaque fois. C'était forcément long puisque toutes les cases étaient examinées à chaque fois. Le nouvel objectif est de concevoir un moteur plus rapide, pas linéaire.</li>
+</ul>
+<p>Le nouveau projet comprend donc :</p>
+<ul>
+<li>le solveur de sudoku (reprendre l'ancien en l'améliorant, parce que de ce côté aussi, lorsque je regarde la tête de mes objets, au secours :p)</li>
+<li>un peu de front (pour rafraichir la grille au fur et à mesure qu'elle se remplit)</li>
+<li>de la gestion d'événement (pour un solveur moins linéaire mais réactif aux actions qui se produisent sur la grille)</li>
+</ul>
+<h2>Le framework</h2>
+<p>Comme j'ai pas mal travaillé avec Zend Framework maintenant, je remarque mieux les différences avec Symfony.</p>
+<p>Par rapport à Zend Framework qui est un framework très verbeux, développer avec Symfony est plus rapide. Par ex, même s'il est possible de définir ses routes dans un fichier de configuration, comme pour ZF, Symfony permet également de définir ses routes directement à l'aide d'annotations dans les controllers.</p>
+<p>De même, lorsque la route admet des paramètres, pour Zend Framework, on définit les paramètres dans les routes (en config) alors que Symfony fait apparaître les paramètres comme des arguments de la méthode *Action(). Personnellement, à la lecture, c'est plus clair.</p>
+<p>Philosophiquement, Symfony encourage à développer <a href="https://symfony.com/doc/current/best_practices/creating-the-project.html#application-bundles">toute son application dans un seul <em>bundle</em></a>, en expliquant que la finalité du <em>Bundle</em>, c'est d'être une brique réutilisable et que cela n'a pas de sens de scinder une application en plusieurs <em>bundle</em> puisqu'aucun de vos <em>bundles</em> applicatifs ne peut fonctionner sans les autres que vous aurez développés tous ensemble dans l'objectif de créer votre application. Chez Zend Framework (la dernière fois que j'ai regardé), un <em>module</em> est une entité fonctionnelle distincte et une application est forcément constituée de plusieurs <em>modules</em>.</p>
+<p>Après, le choix final revient à celui qui est au commande. Subdiviser son application en plusieurs composants ou ne conserver qu'un seul composant n'est qu'une question de préférence. Personnellement, j'opte pour la subdivision. Après, l'enjeu est de maintenir une cohérence dans la division. Par ex, si on doit migrer notre application, il faudrait pouvoir le faire par module distinct. Si on se retrouve à migrer 5 modules en une fois, on peut se dire qu'on a échoué lorsqu'on a mis en place nos modules.</p>
+<p>Concernant le <em>gestionnaire de service</em>, que Symfony appelle <em>container</em>, ici aussi, les deux framework diffèrent dans leur manière d'aborder le sujet. Zend Framework explique que pour mieux gérer les problématiques d'injection de dépendance, tous les objets peuvent être déclarés dans le gestionnaire de service alors que pour Symfony, on distingue les entités des services et que si <a href="https://symfony.com/doc/current/service_container.html">les services doivent être déclarés dans le <em>container</em>, les entités n'ont pas forcément à y être</a>.</p>
+<p>Là encore, ce qui est bien avec les framework, le choix final revient encore au développeur.</p>
+<p>Concernant le <em>design pattern Observer</em> enfin, implémenté en <em>Event Manager</em> chez Zend Framework et en <em>Event Dispatcher</em> chez Symfony, Symfony distingue les <em>listeners</em> et les <em>subscribers</em> alors que Zend Framework - si je me souviens bien - n'implémente que le modèle <em>Subscriber</em>. Mais je m'aventure dans une zone très pointue et je sens que je dis des bêtises :)</p>
+<p>Pour le <em>dispatcher</em> de Symfony, c'est forcément un objet <em>Event</em> qui doit être déclenché. Il me semble que pour Zend Framework, soit il y a un objet, soit le framework construit un objet par défaut.</p>
+<p>Enfin, à propos des différents composants proposés par les deux frameworks :</p>
+<p>On l'avait déjà noté, Zend Framework et Symfony proposent tous les deux un composant de cache. Or, lorsqu'on se penche sur le sujet, les deux solutions ne parlent pas du même cache. Chez Symfony, son composant <strong>Http Cache</strong> concerne seulement le <a href="https://fr.wikipedia.org/wiki/Cache_web">cache web</a> alors que chez Zend Framework, on parle plutôt d'<a href="https://fr.wikipedia.org/wiki/M%C3%A9moire_cache#Gestion_d.27un_cache_au_niveau_logiciel">une mémoire cache</a>. Chez Symfony, il faut utiliser le composant <code>Doctrine\Common\Cache\ApcCache</code> de <strong>Doctrine</strong> pour accéder à des fonctionnalités de mémoire cache.</p>
+<p>Du côté des <em>vues</em>, Symfony implémente <a href="http://symfony.com/doc/current/templating.html"><strong>Twig</strong></a> et Zend Framework implémente <a href="https://framework.zend.com/manual/2.4/en/modules/zend.view.renderer.php-renderer.html"><strong>PHPRenderer</strong></a>.</p>
+<p>Si Zend Framework gère ses fichiers vues dans un répertoire du module, pour Symfony par défaut, les fichiers sont dans un emplacement hors des <em>Bundles</em> (/app). Je suis sûre qu'on peut le faire autrement mais ce répertoire où j'ai trouvé les vues par défaut est intrigant. En revanche, Symphony gère ce qu'il appelle les &quot;assets&quot; grâce à la console. Les <em>assets</em> (les fichiers .js, .css et les images) sont déposés dans un chemin particulier de votre bundle. Avec une petite commande dans la console, un lien symbolique est créé dans le répertoire web et permet d'accéder facilement aux fichiers. Zend Framework (la dernière fois que j'ai regardé), n'offrait pas ce type de facilités et les fichiers étaient dans le répertoire web.</p>
+<p>Ainsi, ironiquement, si on doit déplacer son bundle/son module, avec Zend Framework, il faut penser à déplacer les fichiers (js, images, css) alors qu'avec Symfony, il faut penser à déplacer les vues.</p>
+<p>Je suis sûre que pour résoudre ce dernier point, il ne faut pas grand chose. Mais je trouvais fun de le signaler :p.</p>
+<h3>Last but not least</h3>
+<p>Gros plus pour Symfony pour le coup : grâce à des commandes en console, on peut trouver facilement tous les services qui sont enregistrés dans le container, de la même façon qu'on peut retrouver également tous les événements pour lesquels il y a au moins un listener. Mine de rien, ça aide, surtout quand on voit la liste des services qui sont chargés dans le container.</p>
+<p>Voilà. Pour un projet très concis, c'est tout ce que j'ai noté entre Symfony et Zend Framework.</p>
+<h3>Les plus de Symfony</h3>
+<ul>
+<li>J'ai l'impression que je code plus vite, moins de fichiers de configuration à préparer. En revanche, je compare une appli très complexe que je fais en ZF alors que le solveur ne demande pas autant de complexité dans les routes</li>
+<li>Liste des services accessible facilement pour peu que je retrouve la commande qui va bien</li>
+<li>Les <em>assets</em> qui sont regroupés dans le <em>bundle</em> et qui peuvent donc être déplacé en même temps que le <em>bundle</em> qui les utilise</li>
+<li>Symfony embarque plein d'autres modules dont <strong>PHPUnit</strong> préconfiguré comme il faut pour fonctionner avec le bundle <strong>AppBundle</strong> qui s'installe par défaut.</li>
+</ul>
+<h3>Les moins de Symfony</h3>
+<ul>
+<li>Impossible de développer avec Apache. Le serveur interne est un passage obligé dont je me passerais bien.</li>
+<li>Symfony embarque plein d'autres modules dont <strong>Monolog</strong> et <strong>Doctrine</strong> dont on n'a pas toujours besoin. Comme ce sont des composants de fournisseur tiers, pourquoi ne pas laisser le développeur faire son choix ?</li>
+<li>Il y a toujours des relents de magie avec des décisions qui sont prises par l'application à mon insu. Je suis hantée par ce choix du <code>app_dev.php</code> plutôt que du <code>app.php</code> et aucune manipulation, lien symbolique ou renommage n'y change rien à part dégrader l'application.</li>
+</ul>
+<p>Je reviendrais vous parler plus en détail de cette nouvelle version de solveur, développé grâce aux composants de Symfony cette fois ci.</p>
+<ul>
+<li><em>faut se remettre dans le contexte au moment où j'ai pris ma décision... depuis, ZF3 est sorti et j'ai trop hâte :)</em></li>
+</ul>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/fr/tags/symfony">symfony</a></li><li><a href="/fr/tags/zend-framework">Zend Framework</a></li><li><a href="/fr/tags/code">code</a></li></ul>
+        </div>
+      
+
+      
+    
+
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>Sur moi</h3>
+      <p>J&#39;ai appris le php il y a quelques années, quand Internet était à ses débuts. Pour diverses raisons, j&#39;ai arrêté en route et j&#39;ai perdu le fil des nouveaux Internets que je redécouvre. Résultat, je me sens constamment à courir après l&#39;histoire mais je suis toujours motivée à reprendre des projets personnels. Je me propose de vous partager mes découvertes. Au delà des sujets de programmation, j&#39;aime également partager mes infos concernant notamment l&#39;Histoire, l&#39;Astronomie, la Linguistique, les Films, les Livres et les Anime. J&#39;espère que vous aimerez suivre mon blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. Tous droits réservés.</p>
+        <p>Propulsé par <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

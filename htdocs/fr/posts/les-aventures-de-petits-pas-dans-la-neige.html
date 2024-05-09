@@ -1,0 +1,159 @@
+<!doctype html>
+<html class="no-js" lang="fr" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>Les aventures de Petits Pas Dans La Neige...&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">Français</a>
+        <a href="/en/">Anglais</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/fr/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/fr/books/0/index.html">Séries</a>
+        <a href="/fr/">Accueil</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/fr/">Accueil</a><i class="fas fa-angle-right"></i>Les aventures de Petits Pas Dans La Neige...
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>Les aventures de Petits Pas Dans La Neige...</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>06/12/2021 13:10:00
+        
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/aaron-burden-xG8IQMqMITM-unsplash.jpg" class="node-banner" />
+        
+          <p><strong>Crédit</strong> : Aaron Burden </p>
+        
+      </div>
+
+      <p><p>Pour le moment, Petits Pas Dans La Neige utilise un Drupal. J'ai migré récemment le blog d'une version majeure à la suivante et je dois déjà considérer la prochaine migration (oui, comme ça me prend un certain temps pour me décider à mettre les mains dans le cambouis, il faut que je me prépare psychologiquement à y aller...)</p>
+<p>On va dire que j'avais plus d'ambition pour ce blog quand je l'ai créé il y a de cela quelques années. L'une d'elle étant très ouvertement d'aller tripatouiller la solution Drupal. J'en ai fais le tour (pas Drupal, le blog) et voici le constat après toutes ces années :</p>
+<ul>
+<li>Un blog, c'est juste un blog... c'est pas un réseau social, y'a pas besoin d'un énorme système de gestion de users (surtout CE blog)</li>
+<li>Drupal, c'est un peu overkill pour ce que j'en fais. C'était rigolo et ça fait le job, je dis pas, mais finalement, je n'ai pas forcément besoin de toute la complexité du CMS. Même pour le thème, comme il n'y a pas beaucoup une typologie complexe des articles ni une activité débordante, pas besoin d'avoir un thème très complexe qui permettrait de mettre des articles en avant sur différents domaines. J'avais bien regardé Wordpress à l'époque où j'ai fait mon choix mais à l'époque, Wordpress n'offrait pas une solution multilingue qui me convenait.</li>
+<li>La solution Drupal ou Wordpress me contraint de passer par l'admin de ces deux CMS pour ajouter du contenu au site. Or, avec le temps, j'écris mes nouveaux articles sur un notepad de base, je mets en forme ma réflexion, je réarrange les chapitres et je sauvegarde le résultat dans un .txt. Ensuite je me connecte sur l'admin du site et là, je fais copier coller de mon fichier .txt et je refais la mise en page en utilisant l'éditeur de Drupal, en répartissant le titre, le summary, les liens internes et externes, les insertions des images... Quitte à réécrire suite à la relecture, ce qui fait que ma version Drupal dévie de ma version initiale... Après un moment, je me retrouve avec pleins de fichiers .txt qui ont été pour certains publiés, pour d'autres pas encore, dans le chaos créatif, je me retrouve même avec plusieurs répertoires différents (sur les différents ordinateurs) qui contiennent ces embryons d'articles. Je finis par m'interroger sur la nécessité de doubler les articles : la version .txt qui pourrait convenir pour peu qu'ils incluent une mise en page basique et la version base de données de Drupal qui est la version &quot;officielle&quot; finalement, mais qui ne peut être réexploité sans le moteur du CMS qui est le seul à comprendre ce qui a été stocké et comment ça a été stocké. J'en retire un sentiment de dépendance confortable mais irritant.</li>
+</ul>
+<p>La crise s'est surtout manifestée lorsqu'il s'est agit de migrer Drupal d'une version majeure à la suivante, Drupal n'assurant pas la rétro compatibilité entre ses versions majeures (pas de surprise, on le sait quand on choisit Drupal). La crainte de perdre des informations dans mes articles, les liens, les images, la mise en page, tout ça résultant des nombreux modules complémentaires que j'ai installé sur Drupal et dont je n'étais pas sûre de la conformité / correspondance dans la version suivante. Le travail nécessaire pour s'assurer que tous les articles survivraient suffisamment bien à la migration parce qu'ils passaient d'une base de données à la suivante alors qu'en soi, migrer d'une version à une autre un CMS ne <em>devrait</em> pas avoir d'incidence sur un contenu et sa mise en page a également contribué à remettre la solution en question.</p>
+<p>J'en suis là. Je cherche un moyen de migrer mon blog sur une version markdown avec des fichiers plats pour chacun de mes articles. Toutes &quot;migrations&quot; ultérieures concerneraient le moteur de restitution des articles, les thèmes, les fonctionnalités mais pas le contenu de mes articles.</p>
+<p>Afin d'assurer la migration du blog, il faut en lister les fonctionnalités :</p>
+<ul>
+<li>la page d'accueil contient la liste des articles du plus récent au plus ancien</li>
+<li>les articles sont en anglais ou en français avec des liens entre eux puisque certains sont la traduction des autres</li>
+<li>les articles ont tous une image d'entête pour illustrer</li>
+<li>les articles peuvent avoir des images insérées dans le corps de l'article</li>
+<li>les articles doivent pouvoir afficher du code avec coloration syntaxique pour faciliter la lecture</li>
+<li>les articles peuvent être taggés</li>
+<li>les articles doivent être datés</li>
+<li>il peut y avoir des commentaires sur les articles mais il doit être possible de modérer ces commentaires, voire même de les refuser</li>
+<li>certains articles sont regroupés en collection d'articles sur un même sujet (comme un tutoriel en plusieurs épisodes)</li>
+<li>les articles des collections d'articles sont hiérarchisés et ordonnés</li>
+<li>les collections d'articles affichent dans l'ordre les articles qui les composent</li>
+<li>les collections d'articles peuvent apparaître sur une liste &quot;books&quot;</li>
+<li>il y a également des événements qui me permettent de partager des sujets sur des événements à venir ou en cours (expositions, festivals etc..)</li>
+<li>les événements peuvent avoir des commentaires</li>
+<li>les événements peuvent être taggés</li>
+<li>les événements apparaissent sur une liste &quot;événements à venir&quot;</li>
+<li>les articles, comme les événements, peuvent avoir des liens en interne ou des liens vers des sites externes.</li>
+</ul>
+<p>J'envisage soit Jekyll <a href="https://jekyllrb.com/">https://jekyllrb.com/</a>, soit Grav <a href="https://getgrav.org/">https://getgrav.org/</a>. Je dois avouer, Jekyll en Ruby me freine à cause d'un ancien litige avec Ruby qui se refusait de fonctionner correctement et qui, malgré de nombreuses recherches sur Google et Stackoverflow, s'est avéré impossible de débugger... J'en garde un ressentiment encore vivace... Mais, toujours est-il, la compétition est ouverte !</p>
+</p>
+
+      
+
+      
+    
+
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>Sur moi</h3>
+      <p>J&#39;ai appris le php il y a quelques années, quand Internet était à ses débuts. Pour diverses raisons, j&#39;ai arrêté en route et j&#39;ai perdu le fil des nouveaux Internets que je redécouvre. Résultat, je me sens constamment à courir après l&#39;histoire mais je suis toujours motivée à reprendre des projets personnels. Je me propose de vous partager mes découvertes. Au delà des sujets de programmation, j&#39;aime également partager mes infos concernant notamment l&#39;Histoire, l&#39;Astronomie, la Linguistique, les Films, les Livres et les Anime. J&#39;espère que vous aimerez suivre mon blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. Tous droits réservés.</p>
+        <p>Propulsé par <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

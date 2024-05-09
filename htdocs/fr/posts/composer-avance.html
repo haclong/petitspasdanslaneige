@@ -1,0 +1,365 @@
+<!doctype html>
+<html class="no-js" lang="fr" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>Composer avancé&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">Français</a>
+        <a href="/en/">Anglais</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/fr/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/fr/books/0/index.html">Séries</a>
+        <a href="/fr/">Accueil</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/fr/">Accueil</a><i class="fas fa-angle-right"></i>Composer avancé
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>Composer avancé</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>05/09/2014 15:17:00
+        
+        <i class="fas fa-th-large"></i><!--a href="/fr/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/Composer-A-Dependency-Manager-for-PHP-1030x360.jpg" class="node-banner" />
+        
+          <p><strong>Crédit</strong> : getcomposer </p>
+        
+      </div>
+
+      <p><p><strong>Composer</strong>, quand on commence à l’utiliser, on est plutôt consommateur. On l’installe, on l’utilise pour installer les projets, pour installer les dépendances et voilà… Mais voilà, on finit par se dire : ce qui est bien pour les autres, serait tout aussi bien pour moi…</p>
+<p>Je n’ai pas la prétention de pouvoir mettre un de mes packages à dispo pour la communauté… Cependant, j’aimerais bien que mes petits modules soient dispo, à minima, pour ma propre utilisation.</p>
+<h3>Composer ready</h3>
+<p>Veillez à ce que votre librairie / module / code soit <strong>PSR-0</strong> compliant. Cet aspect du code doit avoir été prévu dès le début. Ce n’est pas au moment de décider d’utiliser <strong>Composer</strong> qu’il faut s’inquiéter des normes de votre code.</p>
+<p>Ensuite, tout ce que vous avez à faire, c’est de nommer votre module. <strong>Composer</strong> admet des noms de packages au format <code>{vendor}/{package}</code>. Le <em>vendor</em>, c’est vous… donnez votre nom, vos initiales, votre alias… pour la sémantique, c’est comme une marque et pour le côté pratique, c’est pour éviter que deux packages qui porteraient le même nom (user ou client par ex) puissent être confondus.</p>
+<p>Créez un fichier <code>composer.json</code> dans votre module et déclarez y <strong>le nom de votre package</strong>.</p>
+<pre><code class="language-json">// composer.json
+
+{
+    &quot;name&quot;: &quot;vendor/package&quot;
+}
+</code></pre>
+<p>Et c’est (presque) tout.</p>
+<p>Si vous bricolez tout à la main parce que vous n’avez pas un process d’intégration continue bien rodé (comme moi), vous allez devoir ajouter <strong>le numéro de version</strong> à la main dans le fichier <code>composer.json</code></p>
+<pre><code class="language-json">// composer.json
+
+{
+    &quot;name&quot;: &quot;vendor/package&quot;,
+    &quot;version&quot;: &quot;version&quot;
+}
+</code></pre>
+<p>Déclarez votre <strong>namespace</strong> (c’est plus propre)</p>
+<pre><code class="language-json">// composer.json
+
+{
+    &quot;autoload&quot;: {
+        &quot;psr-4&quot;|&quot;psr-0&quot;: {
+            &quot;Namespace\\&quot;: &quot;/path/to/files&quot;
+        }
+    }
+}
+</code></pre>
+<p>Entre les normes <strong>psr-4</strong> et <strong>psr-0</strong>, il y a une subtile différence. Je vous invite à voir les docs associées : celle de <a href="https://getcomposer.org/doc/04-schema.md" target="_blank">Composer</a> et celles de la norme <a href="http://www.php-fig.org/psr/psr-0/" target="_blank">psr-0</a> et <a href="http://www.php-fig.org/psr/psr-4/" target="_blank">psr-4</a>. <strong>PSR-4</strong> étant la dernière arrivée, il y a fort à parier qu’elle va rester pour durer.</p>
+<p>Après, c’est que de l’optionnel.</p>
+<p><strong>Votre module a des dépendances ?</strong></p>
+<pre><code class="language-json">// composer.json
+
+{
+    &quot;require&quot;: {
+        &quot;vendor/package&quot;: &quot;version&quot;,
+        &quot;vendor/package2&quot;: &quot;version&quot;,
+    }
+}
+</code></pre>
+<p><strong>Votre module est en conflit avec un autre package, ne fonctionne pas avec ?</strong> Signalez le.</p>
+<pre><code class="language-json">// composer.json
+
+{
+    &quot;conflict&quot;: {
+        &quot;vendor/package&quot;: &quot;version&quot;,
+        &quot;vendor/package2&quot;: &quot;version&quot;,
+    }
+}
+</code></pre>
+<p><strong>Pour une meilleure utilisation de votre module, vous pensez que l’installation d’autres packages serait un must ?</strong></p>
+<pre><code class="language-json">// composer.json
+
+{
+    &quot;suggest&quot;: {
+        &quot;vendor/package&quot;: &quot;explication&quot;,
+        &quot;vendor/package2&quot;: &quot;explication&quot;,
+    }
+}
+</code></pre>
+<p>Vous comptez déployer votre module à la communauté ? <strong>Ajoutez des métadonnées</strong> :</p>
+<pre><code class="language-json">// composer.json
+
+{
+    &quot;description&quot;: &quot;description du package&quot;,
+    &quot;keywords&quot;: {
+        &quot;tag1&quot;,
+        &quot;tag2&quot;
+    },
+    &quot;homepage&quot;: &quot;http://site_web_du_projet&quot;,
+    &quot;license&quot;: &quot;la licence qui va bien&quot;,
+    &quot;authors&quot;: [
+        {
+            &quot;name&quot;: &quot;nom de l'auteur&quot;,
+            &quot;email&quot;: &quot;son email&quot;,
+            &quot;homepage&quot;: &quot;son site&quot;,
+            &quot;role&quot;: &quot;son role dans le projet&quot;
+        }
+    ],
+    &quot;support&quot;: {
+        &quot;email&quot;: &quot;boite.mail.du.support@domaine.tld&quot;,
+        &quot;issues&quot;: &quot;http://url_du_site_issue_tracker&quot;,
+        &quot;forum&quot;: &quot;http://url_du_forum&quot;,
+        &quot;wiki&quot;: &quot;http://url_du_wiki&quot;,
+        &quot;irc&quot;: &quot;irc://serveur/channel&quot;,
+        &quot;source&quot;: &quot;http://url_où_trouver_les_sources_du_projet&quot;
+    }
+}
+</code></pre>
+<h3>Pas encore prêt pour Packagist ?</h3>
+<p>Mais voici la partie qui nous intéresse le plus : personnaliser le dépôt.</p>
+<p>Par défaut, <strong>Composer</strong> récupère les packages qu’il installe à partir de <a href="http://packagist.org" target="_blank"><strong>Packagist</strong></a>. Cela veut notamment dire que si vous souhaitez utiliser <strong>Composer</strong>, il faudra publier vos modules sur <strong>Packagist</strong>.</p>
+<p>Mais attendez… On n’avait pas dit qu’on était timide, que notre module n’était pas prêt à être partagé dans la communauté ? Mais alors, que faire ?</p>
+<p>Heureusement, <strong>Composer</strong> admet d’autres dépôts.</p>
+<h4>Github / Bitbucket</h4>
+<p>Si vous utilisez <strong>github</strong> (ou <strong>bitbucket</strong>), vous pouvez dire à <strong>Composer</strong> que votre module ne se trouve pas sur <strong>Packagist</strong> mais plutôt sur <strong>github</strong> (ou <strong>bitbucket</strong>).</p>
+<pre><code class="language-json">// composer.json
+
+{
+    &quot;repositories&quot;: [
+        {
+            &quot;type&quot;: &quot;vcs&quot;,
+            &quot;url&quot;: &quot;https://github.com/path/to/project&quot;
+        }
+    ]
+}
+</code></pre>
+<h4>Dépôt local</h4>
+<p>Vous pouvez également dire à <strong>Composer</strong> que votre module se trouve sur votre machine locale. Et ça, c’est ce qui nous intéresse le plus pour le moment.</p>
+<pre><code class="language-json">// composer.json
+
+{
+    &quot;repositories&quot;: [
+        {
+            &quot;type&quot;: &quot;artifact&quot;,
+            &quot;url&quot;: &quot;/path/to/local/repository/&quot;
+        }
+    ]
+}
+</code></pre>
+<p>Et voila !!</p>
+<h5>Vous développez des petits modules perso cuisinés aux petits oignons et vous souhaitez pouvoir intégrer ces modules sur vos projets</h5>
+<p>Il faut :</p>
+<ol>
+<li>que le module soit impérativement zippé</li>
+<li>que le zip soit déposé dans <code>/path/to/local/repository</code></li>
+<li>qu’à la racine du module, il y ait impérativement un fichier <code>composer.json</code> avec au minimum le nom du package et son numéro de version.</li>
+</ol>
+<pre><code class="language-json">// composer.json du module
+
+{
+    &quot;name&quot;: &quot;vendor/package&quot;,
+    &quot;description&quot;: &quot;Module pour app ZF2&quot;,
+    &quot;version&quot;: &quot;0.1&quot;,
+    &quot;autoload&quot;: {
+        &quot;psr-0&quot;: {
+            &quot;module_namespace&quot;: &quot;src/&quot;
+        },
+        &quot;classmap&quot;: [
+            &quot;./Module.php&quot;
+        ]
+    }
+}
+</code></pre>
+<h5>Vous souhaitez utiliser un de vos modules perso</h5>
+<pre><code class="language-json">// composer.json du projet
+
+{
+    &quot;name&quot;: &quot;vendor/projet&quot;,
+    &quot;description&quot;: &quot;Projet avec module perso en local&quot;,
+    &quot;require&quot;: {
+        &quot;php&quot;: &quot;&gt;=5.3.3&quot;,
+        &quot;zendframework/zendframework&quot;: &quot;2.2.*&quot;, // package sur Packagist
+        &quot;vendor/package&quot;: &quot;0.1&quot;, // module perso en local
+        &quot;vendor/package2&quot;: &quot;1.0&quot; // module perso sur github
+    },
+    &quot;repositories&quot;: [
+        {
+            &quot;type&quot;: &quot;artifact&quot;,
+            &quot;url&quot;: &quot;/path/to/local/repository&quot;
+        },
+        {
+            &quot;type&quot;: &quot;vcs&quot;,
+            &quot;url&quot;: &quot;https://github.com/vendor/package2&quot;
+        }
+    ]
+}
+</code></pre>
+<h5>Vous souhaitez créer un projet installable intégralement par Composer (la commande composer create-project)</h5>
+<p>Il faut :</p>
+<ol>
+<li>que votre projet soit zippé</li>
+<li>que le zip soit déposé dans <code>/path/to/local/repository</code></li>
+<li>qu’à la racine du module, il y ait impérativement un fichier <code>composer.json</code> avec au minimum le nom du package et son numéro de version.</li>
+<li>que votre projet figure dans un fichier <code>package.json</code></li>
+</ol>
+<pre><code class="language-json">// packages.json dans le repository
+
+{
+    &quot;package&quot;: {
+        &quot;name&quot;: &quot;vendor/project&quot;,
+        &quot;version&quot;: &quot;1.0&quot;,
+        &quot;dist&quot;: {
+            &quot;url&quot;: &quot;path/to/project.zip&quot;,
+            &quot;type&quot;: &quot;zip&quot;
+        }
+    }
+}
+</code></pre>
+<p>Pour l’installer :</p>
+<pre><code class="language-sh"> composer create-project -sdev 
+       --repository-url=&quot;/path/to/local/repository/packages.json&quot; 
+        vendor/project path/to/install
+</code></pre>
+<p>Et tadaaa !! Très utile si vous souhaitez personnaliser le Zend Framework Skeletton par ex, en y intégrant d’autres librairies par défaut et créer des frameworks de projets plus rapidement.</p>
+<p><em><strong>NOTE</strong></em>: pourquoi <code>composer install</code> et <code>composer create-project</code> ?</p>
+<p><strong>composer install</strong></p>
+<ul>
+<li>crée un répertoire <code>vendor/</code> (s’il n’existe pas déjà),</li>
+<li>installe la dépendance,</li>
+<li>ajoute le namespace de la dépendance dans le fichier d’autoload</li>
+</ul>
+<p>C’est prêt à utiliser.</p>
+<p><strong>composer create-project</strong></p>
+<ul>
+<li>copie/colle l’arborescence de fichiers de votre projet (répertoire <code>app/</code>, <code>config/</code>, <code>datas/</code>, <code>modules/</code>, <code>public/</code>, <code>vendor/</code> et tout le bataclan),</li>
+<li>crée si nécessaire le répertoire <code>vendor/</code>,</li>
+<li>installe les dépendances du projet,</li>
+<li>ajoute le namespace de chacune des dépendances dans le fichier d’autoload</li>
+</ul>
+<p>C’est prêt à utiliser.</p>
+<p>En d’autres termes, très très rapidement dit, la différence entre les deux, c’est la présence du fichier <code>index.php</code> initial. Si vous avez un fichier <code>index.php</code> dans le .zip, c’est que vous avez très probablement besoin de <code>composer create-project</code>. Si vous n’avez pas de fichier <code>index.php</code>, c’est que vous avez besoin de <code>composer install</code>…</p>
+<p><em>C’est affreux ce que je viens de dire… Les raccourcis, c’est bien, sauf quand c’est fait comme un barbare… C’est comme dire Star Wars, c’est l’histoire d’un gars qui cherche son père et qui le retrouve quand son père va mourir…</em></p>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/fr/tags/composer">composer</a></li><li><a href="/fr/tags/depot">dépôt</a></li><li><a href="/fr/tags/repository">repository</a></li><li><a href="/fr/tags/developpement">développement</a></li><li><a href="/fr/tags/automatisation">automatisation</a></li></ul>
+        </div>
+      
+
+      
+    
+
+      
+        <section id="oldcomment">
+          <h2>Commentaires historiques</h2><article>
+              <div class="level1">
+  <h3>merci pour ces explications</h3>
+  <div class="meta">poli 2017-07-26T16:32 </div>
+  <div class="body">merci pour ces explications</div>
+
+  
+  
+</div>
+
+            </article></section>
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>Sur moi</h3>
+      <p>J&#39;ai appris le php il y a quelques années, quand Internet était à ses débuts. Pour diverses raisons, j&#39;ai arrêté en route et j&#39;ai perdu le fil des nouveaux Internets que je redécouvre. Résultat, je me sens constamment à courir après l&#39;histoire mais je suis toujours motivée à reprendre des projets personnels. Je me propose de vous partager mes découvertes. Au delà des sujets de programmation, j&#39;aime également partager mes infos concernant notamment l&#39;Histoire, l&#39;Astronomie, la Linguistique, les Films, les Livres et les Anime. J&#39;espère que vous aimerez suivre mon blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. Tous droits réservés.</p>
+        <p>Propulsé par <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

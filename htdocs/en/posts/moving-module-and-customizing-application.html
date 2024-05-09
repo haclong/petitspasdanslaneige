@@ -1,0 +1,405 @@
+<!doctype html>
+<html class="no-js" lang="en" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>Moving the module and customizing the application&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">French</a>
+        <a href="/en/">English</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/en/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/en/books/0/index.html">Collections</a>
+        <a href="/en/">Home</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/en/">Home</a><i class="fas fa-angle-right"></i>Moving the module and customizing the application
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>Moving the module and customizing the application</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>2/2/2014, 5:44:00 PM
+        
+        <i class="fas fa-th-large"></i><!--a href="/en/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/ZendFramework.png" class="node-banner" />
+        
+          <p><strong>Credit</strong> : zend framework </p>
+        
+      </div>
+
+      <p><p>I just don't know why. Maybe i find it too easy ? Maybe building a module in the right module/ directory as intended by the Zend Framework team would be too much ? Maybe i was afraid my modules would be mistaken with somebody's else module ? Maybe i found prefixing my modules too easy to go.. Who can say ? But i decided yesterday that I want to customized the path to my module.</p>
+<p>That should be easy. Anywhere on the web, they explain that Zend Framework 2 is <a href="http://www.php-fig.org/psr/psr-0/" target="_blank">PSR-0</a> compliant so moving a directory one level is peanuts... Indeed. What nobody's telling you is how to get rid of this <code>Fatal error: Class 'Custom\Application\Controller\IndexController' not found in /path/to/libraries/zendframework/zendframework/library/Zend/ServiceManager/AbstractPluginManager.php on line 170...</code> Indeed...</p>
+<h3>Now, to the work !</h3>
+<p>Let's start - again - with the <a href="https://github.com/zendframework/ZendSkeletonApplication" target="_blank">ZendApplicationSkeletton</a>. Just go to github repository and download it to your localhost. Copy the <code>/module/Application</code> directory and paste it here : <code>/module/Custom/Application</code>. Because it does make sense saving the original Application module though we don't want our application to load it. We want our application load our brand new <strong>Custom Application Module</strong> - which is, for now, the lame copy of the original one, except it's one level lower.</p>
+<p>Here is our file system</p>
+<pre><code>config
+----application.config.php
+data
+module
+----Application // we don't want this one
+----Custom
+--------Application // this is our precious
+------------config
+----------------module.config.php
+------------src
+------------Module.php
+public
+vendor
+</code></pre>
+<h3>Loading our Module</h3>
+<p>Now, as we said before, we want the application to load our Custom Application Module and unload the initial Application Module.</p>
+<p>Edit <code>config/application.config.php</code></p>
+<pre><code class="language-php">&lt;?php
+
+return array(
+  // as it is said in comment on the ZendApplicationSkeletton original file
+  // This should be an array of module namespaces used in the application.
+  'modules' =&gt; array(
+    'Custom\Application',
+  ),
+) ;
+</code></pre>
+<p>BECAUSE Zend Framework 2 is PSR-0 compliant, your module namespace should follow your file system. So the namespace and the path to your module Module class are matching. This is working as is out of the box. You can change that but then you'll have to customize the ModuleManager which is bootstrapped in the Zend\Mvc\Application default configuration.</p>
+<p>Out of your <code>application.config.php</code>, you've told your application which module the application should load - by providing the list of module namespaces, and where the ModuleManager should find the Module class for each loaded Module. As the matter of fact, when you load several modules in your <code>application.config.php</code>, the configuration of the last loaded module (by order of the list) will override the configuration of the earlier ones. So either you do it purposedly, or you have to make sure that your configuration keys are not overriding eachother.</p>
+<h3>The Module class</h3>
+<p>Edit your <code>module/Custom/Application/Module.php</code> file. This is the Module class of your module. First of all, we'll have to change the namespace.</p>
+<pre><code class="language-php">&lt;?php
+
+namespace Custom\Application ;
+
+?&gt;
+</code></pre>
+<p>Be really attentive here and observe this line on the end of your Module class</p>
+<pre><code class="language-php">&lt;?php
+  'Zend\Loader\StandardAutoloader' =&gt; array(
+    'namespaces' =&gt; array(
+      __NAMESPACE__ =&gt; __DIR__ . '/src/' . __NAMESPACE__,
+    ),
+  ),
+?&gt;
+</code></pre>
+<p>This line works when the namespace of your module is one word only. But if the namespace involves several directories, you'll have issues here. That's because the namespace use backslashes () while a path use slashes (/). Therefore, the <strong>NAMESPACE</strong> constant includes either backslashes, or slashes but cannot include both.</p>
+<p>So since the namespace has backslashes (), you'll have to edit this line and write the path to your sources literally.</p>
+<p>Now, the path to your module source, as intended by the Zend Framework team :</p>
+<pre><code class="language-php">__NAMESPACE__ =&gt; __DIR__ . '/src/Custom/Application/',
+</code></pre>
+<p>If you want to do it more dynamically, you can use <code>str_replace()</code> function to replace backslahes by slashes :</p>
+<pre><code class="language-php">__NAMESPACE__ =&gt; __DIR__ . '/src/' . str_replace('\\', '/', __NAMESPACE__),
+</code></pre>
+<p>And here is the filesystem you should have :</p>
+<pre><code class="language-php">module
+----Custom
+--------Application // this is our precious
+------------config
+----------------module.config.php
+------------src
+----------------Custom
+--------------------Application
+------------------------Controller
+------------Module.php
+</code></pre>
+<p>If you're not interested being PSR-0 compliant - because you can allow to -, you can decide your namespace would be <code>Custom\Application</code> and your module files can be located (almost) wherever you liked them to be, for example in a &quot;sources&quot; directory.</p>
+<pre><code class="language-php">__NAMESPACE__ =&gt; __DIR__ . '/sources/',
+</code></pre>
+<p>And here is the filesystem you should have :</p>
+<pre><code class="language-php">module
+----Custom
+--------Application // this is our precious
+------------config
+----------------module.config.php
+------------sources
+----------------Controller
+------------Module.php
+</code></pre>
+<p>Or maybe for your source, you don't want to repeat the project name but you want to keep the module name :</p>
+<pre><code class="language-php">__NAMESPACE__ =&gt; __DIR__ . '/src/Application/',
+</code></pre>
+<p>And here is the filesystem you should have :</p>
+<pre><code class="language-php">module
+----Custom
+--------Application // this is our precious
+------------config
+----------------module.config.php
+------------src
+----------------Application
+-------------------Controller
+------------Module.php
+</code></pre>
+<h3>Your Index Controller</h3>
+<p>Edit your <code>module/Custom/Application/src/Application/Controller/IndexController.php</code> file and update the namespace.</p>
+<pre><code class="language-php">&lt;?php
+
+namespace Custom\Application\Controller ;
+
+?&gt;
+</code></pre>
+<p>This is the namespace of our controller, no matter what is the path of the <code>IndexController.php</code> file. Remember, we are talking about namespace and not about path anymore. Your controller (or any other classes belonging to your module) is included in the module namespace, which is, in our case <code>Custom\Application</code>.</p>
+<h3>The Module configuration</h3>
+<p>Edit your <code>module/Custom/Application/config/module.config.php</code></p>
+<p>You'll have to update - at least - the controller loaded in your Service Manager.</p>
+<pre><code class="language-php">&lt;?php
+return array(
+
+  ...
+
+  'controllers' =&gt; array(
+    'invokables' =&gt; array(
+      'Application\Controller\Index' =&gt; 'Custom\Application\Controller\IndexController',
+    ),
+  ),
+);
+?&gt;
+</code></pre>
+<p><code>Application\Controller\Index</code> is the alias which I take as is from the initial ZendApplicationSkeletton package. You can change it and put any alias you find suitable such as MyHomeController or IndexController etc... If you choose to change the alias, do not forget to update the routes (or any other elements) which are using the controller alias.</p>
+<p><code>Custom\Application\Controller\IndexController</code> is your IndexController full name (meaning the namespace + the name of the class).</p>
+<h3>Rendering the view</h3>
+<p>Here again, I discovered the hard way that Zend Framework 2 is not that much PSR-0 compliant. It is, in a limited situation. But it is not anymore if you take too much liberty with the rules.</p>
+<p>After the ability to change our module namespace (and therefore path), we also are able to change the path to our module source files but when we try to access to our module through the navigator, we will have - high probabilities - an error and the framework is looking for a template here : <code>custom/index/index.phtml</code>, which matches this pattern : <code>{first-namespace}/{controller}/{action}.phtml</code>. As observed, the framework is ignoring the arborescence of namespaces. This situation will induce some errors if you have two differents modules under the same Custom directory. So, obviously, we should be able to change our templates names.</p>
+<p>Changing our templates names, and therefore overriding the framework naming system for templates is done in the <strong><code>InjectTemplateListener</code></strong> which is loaded when the application is bootstrapped. Thanks to <strong><a href="http://ctrl-f5.net/php/custom-default-templates-in-zf2/" target="_blank">this blog</a></strong> and <strong><a href="https://github.com/ensemble/EnsembleAdmin" target="_blank">this module</a></strong> , we are now able to change the template naming. Our templates names will now match this scheme : <code>{full}/{module}/{namespace}/{controller}/{action}.phtml</code>.</p>
+<p>We need to create our own <code>InjectTemplateListener</code> to override <strong><a href="http://framework.zend.com/manual/2.2/en/modules/zend.mvc.mvc-event.html#http-context-only" target="_blank">the one by default</a></strong>.</p>
+<p>Edit <code>/module/Custom/Application/src/Application/Listener/InjectTemplateListener.php</code> (or choose your own path)</p>
+<pre><code class="language-php">&lt;?php
+namespace Custom\Application\Listener ;
+
+use Zend\Mvc\View\Http\InjectTemplateListener as BaseListener ;
+use Zend\EventManager\EventManagerInterface as Events ;
+use Zend\Filter;
+use Zend\Mvc\MvcEvent;
+
+class InjectTemplateListener extends BaseListener
+{
+  /**
+  * {@inheritdoc}
+  */
+  // we attach this class as top priorities (but the priorities will be override on bootstrap event
+  public function attach(Events $events)
+  {
+    $this-&gt;listeners[] = $events-&gt;attach(MvcEvent::EVENT_DISPATCH, array($this, 'injectTemplate'), -100);
+  }
+ 
+  /**
+  * {@inheritdoc}
+  */
+  // we use the parent injectTemplate method
+  public function injectTemplate(MvcEvent $e)
+  {
+    parent::injectTemplate($e) ;
+  }
+ 
+  /**
+   * {@inheritdoc}
+   */
+  // we add filtering to the string used
+  // when the inflectName method is called, i honestly don't know
+  // but you can find it out while looking more deeper into the Zend Framework sources.
+  protected function inflectName($name)
+  {
+    if(!$this-&gt;inflector) 
+    {
+      $this-&gt;inflector = new Filter\FilterChain ;
+      $this-&gt;inflector-&gt;attach(new Filter\Word\CamelCaseToDash())
+          -&gt;attach(new Filter\Word\SeparatorToDash('\\')) ;
+    }
+
+    $name = $this-&gt;inflector-&gt;filter($name) ;
+
+    return strtolower($name) ;
+  }
+ 
+  /**
+   * {@inheritdoc}
+   */
+  // this is the method to override
+  protected function deriveModuleNamespace($controller)
+  {
+    if(!strstr($controller, '\\')) 
+    {
+      return '' ;
+    }
+
+    // $controller includes the namespace too
+    $parts = explode('\\', $controller) ;
+    $ns = array() ;
+
+    foreach($parts as $part)
+    {
+      $ns[] = $part ;
+    }
+
+    // we discard the last key, which is the controller name
+    array_pop($ns) ;
+
+    // we discard - again - the last key, which is the namespace Controller
+    array_pop($ns) ;
+ 
+    return implode('/', $ns) ;
+  }
+}
+?&gt;
+</code></pre>
+<p>Now, we need to load our listener, and therefore override the application default listener.</p>
+<p>Edit <code>/module/Custom/Application/Module.php</code></p>
+<pre><code class="language-php">&lt;?php
+
+// add the use instruction
+use Custom\Application\Listener\InjectTemplateListener;
+
+// update the onBootstrap(MvcEvent $e) method
+  public function onBootstrap(MvcEvent $e)
+  {
+    $eventManager = $e-&gt;getApplication()-&gt;getEventManager();
+    $moduleRouteListener = new ModuleRouteListener();
+    $moduleRouteListener-&gt;attach($eventManager);
+ 
+    $injectTemplateListener = new InjectTemplateListener() ;
+    $em = $e-&gt;getApplication()-&gt;getEventManager()-&gt;getSharedManager() ;
+    $em-&gt;attach('Custom', MvcEvent::EVENT_DISPATCH, array($injectTemplateListener, 'injectTemplate'), -89) ;
+  }
+</code></pre>
+<p>Our listener will create the name we are expecting for our template. The error in the navigator is modified now and the application is expecting the template matching this name : <code>custom/application/index/index</code></p>
+<p>Now, map the template's name and the template's path in the module configuration.</p>
+<p>Edit <code>/module/Custom/Application/config/module.config.php</code></p>
+<p>Update the template mapping for the <code>view_manager</code> key :</p>
+<pre><code class="language-php">  'view_manager' =&gt; array(
+    'display_not_found_reason' =&gt; true,
+    'display_exceptions' =&gt; true,
+    'doctype' =&gt; 'HTML5',
+    'not_found_template' =&gt; 'error/404',
+    'exception_template' =&gt; 'error/index',
+    'template_map' =&gt; array(
+      'layout/layout'        =&gt; __DIR__ . '/../view/layout/layout.phtml',
+      'custom/application/index/index' =&gt; __DIR__ . '/../view/application/index/index.phtml',
+      'error/404'        =&gt; __DIR__ . '/../view/error/404.phtml',
+      'error/index'        =&gt; __DIR__ . '/../view/error/index.phtml',
+    ),
+  ),
+</code></pre>
+<p>Now, go to our navigator. Tadaaaa !!!</p>
+<p>We have successfully moved our module under a &quot;vendor&quot; directory, updated the namespace, the path to sources files and the template mapping. This being done, i have to admit that I won't be using it : it is too much customizing for not that much gain.</p>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/en/tags/zend-framework-2">zend framework 2</a></li><li><a href="/en/tags/module">module</a></li><li><a href="/en/tags/customization">customization</a></li><li><a href="/en/tags/psr-0">psr-0</a></li></ul>
+        </div>
+      
+
+      
+    
+
+      
+        <section id="oldcomment">
+          <h2>Old system comments</h2><article>
+              <div class="level1">
+  <h3>Template mapping made easy</h3>
+  <div class="meta">haclong 2014-07-07T18:09 </div>
+  <div class="body">Heyy !! since ZF2.3.x, you can now do this setup<br />
+<br />
+<code>'view_manager' => array(<br />
+    'controller_map' => array( // new key in view_manager array<br />
+        'Custom\Application' => true<br />
+    ),<br />
+),</code><br />
+<br />
+I haven't tested it yet but <a href="http://blog.alejandrocelaya.com/2014/06/21/create-modules-with-sub-namespaces-in-zend-framework-2-part-ii/">Alejandro</a> find it in <a href="http://stackoverflow.com/questions/22978399/zf2-modules-in-subfolders">StackOverflow</a> and in <a href="https://github.com/zendframework/zf2/pull/5670">ZF2 Github repository</a></div>
+
+  
+  
+</div>
+
+            </article></section>
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>About me</h3>
+      <p>I learned coding with php several years ago, when Internet was still young. For multiple reasons, i had stopped then and missed most of this new Internet i&#39;m discovering once again. So, i feel like a newbie again and since i&#39;m ready to start over personal project, i&#39;ll share with you some of my discoveries. Beyond coding topics, i&#39;ll enjoy sharing with you several subjects such as History, Astronomy, Linguistics, Movies, Books, Music and Anime among others. I hope you&#39;ll enjoy reading this blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. All rights reserved.</p>
+        <p>Powered by <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,332 @@
+<!doctype html>
+<html class="no-js" lang="en" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>Continuous Integration - Testing the project 2/2&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">French</a>
+        <a href="/en/">English</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/en/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/en/books/0/index.html">Collections</a>
+        <a href="/en/">Home</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/en/">Home</a><i class="fas fa-angle-right"></i>Continuous Integration - Testing the project 2/2
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>Continuous Integration - Testing the project 2/2</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>2/17/2017, 6:56:00 PM
+        
+        <i class="fas fa-th-large"></i><!--a href="/en/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->, <!--a href="/en/sites/haclong-projects.html" class="tag-sites"-->Haclong projects<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/capture_2.png" class="node-banner" />
+        
+          <p><strong>Credit</strong> : Sebastian Mantel - Unsplash </p>
+        
+      </div>
+
+      <p><p>Within the same stage, we have scheduled two jobs : one job for the coverage tests and the other job for the unit tests and the build. On the previous post, we have seen how to set the coverage tests job. In today's post, we will see how to set the other job, the one with the testing and the copying and the pushing...</p>
+<h3>Job 2 TestAndBuild</h3>
+<h4>MonPremierBuild/ProjectTesting/TestAndBuild</h4>
+<p><strong>Job Settings</strong></p>
+<ul>
+<li>Job Name : <strong>TestAndBuild</strong></li>
+<li>Resources : <strong>''</strong></li>
+<li>Job Timeout : <strong>Use default (Never)</strong></li>
+<li>Run Type : <strong>Run one instance</strong>.</li>
+</ul>
+<p><strong>Artifact</strong></p>
+<p>In our <strong>TestAndBuild</strong> job, we will generate an artifact</p>
+<ul>
+<li>
+<p>Source : <strong>monprojet.*.zip</strong></p>
+</li>
+<li>
+<p>Destination : <strong>''</strong></p>
+</li>
+<li>
+<p>Type : <strong>Build Artifact</strong></p>
+</li>
+</ul>
+<p>If you want to know, you will find all your artifacts here :</p>
+<pre><code class="language-sh">/var/lib/go-server/artifact/pipeline/{pipelineName}/{compteur}/{stageName}/{compteur}/{jobName}
+</code></pre>
+<p><strong>Environment variables</strong></p>
+<p>None defined yet.</p>
+<p><strong>Custom tab</strong></p>
+<p>None defined yet.</p>
+<p>The job settings are done now. Let's take a look at job's tasks.</p>
+<h2>Tasks</h2>
+<p>For our <strong>TestAndBuild</strong> job, we will use more than one task.</p>
+<h3>Task 2.1</h3>
+<p>First task will run unit tests.</p>
+<p>If we had to run that task manually, we would have done this in a terminal :</p>
+<pre><code class="language-sh">phpunit
+</code></pre>
+<h4>What's gonna happen :</h4>
+<ul>
+<li><strong>GoCD</strong> gets the notification the previous stage is successful.</li>
+<li><strong>GoCD</strong> will run the current task</li>
+</ul>
+<h4>What needs to be done :</h4>
+<p>For that purpose, we will add a new task in <strong>GoCD</strong>. It will be a <strong>&quot;More...&quot;</strong> type task so we need to write the rules down.</p>
+<ul>
+<li>Command : <strong>phpunit</strong></li>
+<li>Arguments : <strong>''</strong> (none)</li>
+<li>Working Directory : <strong>''</strong></li>
+<li>Run If Conditions : <strong>Passed</strong> (will run automatically if the previous job is successful)</li>
+</ul>
+<blockquote>Careful, you need to install the **phpunit** binaries in your PATH directory on **Ubuntu**.
+Copy `phpunit` in `/usr/bin`
+</blockquote>
+<blockquote>`phpunit` permissions : `**root:root - 755**`</blockquote>
+<h3>Task 2.2</h3>
+<p>Second task will create a zip with our sources if the tests are successful.</p>
+<p>Manually, we will use that command line :</p>
+<pre><code class="language-sh">git archive --format=zip -v --output=sudokusolver.zip master
+</code></pre>
+<h4>What's gonna happen :</h4>
+<ul>
+<li><strong>GoCD</strong> has run the previous task successfully</li>
+<li><strong>GoCD</strong> will run the next task</li>
+</ul>
+<h4>What needs to be done :</h4>
+<ul>
+<li>Command : <strong>sh</strong> (i know, but it is how it works)</li>
+<li>Arguments : (careful, the new lines are mandatory)</li>
+</ul>
+<pre><code class="language-sh">-c
+git archive --format=zip -v --output.MyBuild.$GO_PIPELINE_COUNTER.zip master
+</code></pre>
+<ul>
+<li>Working Directory : <strong>''</strong></li>
+<li>Run If Conditions : <strong>Passed</strong> (will run automatically if the previous job is successful)</li>
+</ul>
+<blockquote>Please note the usage of the **$GO_PIPELINE_COUNTER** variable exposed by **GoCD**. This is the incremented number **GoCD** uses to count each time a pipeline is run. So you can run the same pipeline several times a day and have different zip for each run.
+<p>Here is the list of <strong>GoCD</strong> variables.</p>
+</blockquote>
+<h3>Task 2.3</h3>
+<p>Our third task will add a remote repository to our local git repository.</p>
+<p>We now all know the command line we need to tell <strong>GoCD</strong> to run</p>
+<pre><code class="language-sh">git remote add github git@github.com:user/remote.git
+</code></pre>
+<h4>What's gonna happen :</h4>
+<p>Lorsque GoCD a installé votre projet, il a fait un clone de votre projet. Il y a donc un nouveau serveur git tout neuf pour votre projet installé par GoCD. Qui dit serveur git tout neuf dit AUCUN dépôt distant, or <em>origin</em> qui pointe sur le répertoire de développement de votre projet (là où GoCD a cloné votre projet)</p>
+<p>Il va donc falloir ajouter à ce serveur git tout neuf votre VRAI répertoire distant.</p>
+<h4>What needs to be done :</h4>
+<ul>
+<li>Command : <strong>sh</strong></li>
+<li>Arguments : (careful, the new lines are mandatory)</li>
+</ul>
+<pre><code class="language-sh">-c
+git remote add github git@github.com:user/remote.git
+</code></pre>
+<ul>
+<li>Working Directory : <strong>''</strong></li>
+<li>Run If Conditions : <strong>Passed</strong> (will run automatically if the previous job is successful)</li>
+</ul>
+<h3>Task 2.4</h3>
+<p>Vous vous doutez bien, la quatrième tâche va consister à pousser notre projet vers le dépôt distant si les tests ont été passés avec succès.</p>
+<p>A la main, dans un terminal, voici la commande qu'on connait bien :</p>
+<pre><code class="language-sh">git push github master
+</code></pre>
+<h4>What needs to be done :</h4>
+<ul>
+<li>Command : <strong>sh</strong></li>
+<li>Arguments : (careful, the new lines are mandatory)</li>
+</ul>
+<pre><code class="language-sh">-c
+git push github master
+</code></pre>
+<ul>
+<li>Working Directory : <strong>''</strong></li>
+<li>Run If Conditions : <strong>Passed</strong> (will run automatically if the previous job is successful)</li>
+</ul>
+<h3>Task 2.5</h3>
+<p>Finally, because i wanted to explore some more, the firth task will copy the .zip package GoCD made earlier and move it to a chosen repository (on localhost).</p>
+<h4>What needs to be done :</h4>
+<ul>
+<li>Command : <strong>sh</strong></li>
+<li>Arguments : (careful, the new lines are mandatory)</li>
+</ul>
+<pre><code class="language-sh">-c
+cp MyBuild.$GO_PIPELINE_COUNTER.zip /home/user/repository/monprojet/builds/.
+</code></pre>
+<ul>
+<li>Working Directory : <strong>''</strong></li>
+<li>Run If Conditions : <strong>Passed</strong> (will run automatically if the previous job is successful)</li>
+</ul>
+<h2>Note : GoCD syntax for tasks</h2>
+<p>Depending on the <strong>GoCD</strong> documentation, when it comes to set our tasks, we either need the real command and set one argument per line in the <strong>Arguments</strong> textarea or in the other hand, <strong>GoCD</strong> think the command we are using is from this kind :</p>
+<pre><code class="language-sh">sh -c &quot;git push github master&quot;
+</code></pre>
+<p>You can find further explanation on <a href="https://docs.gocd.io/current/faq/environment_variables.html" target="_blank">GoCD documentation.</a></p>
+<h2>Note : push to remote git repository</h2>
+<p>If you are following this tutorial, you will get a security issue concerning the <strong>github</strong> access authorization. Currently, <strong>github</strong> won't allow anybody (in your case, a <code>go:go</code> user) to push files on YOUR repository. You need to tell <strong>github</strong> that user <code>go</code> is allowed to push informations.</p>
+<ul>
+<li>Open a terminal</li>
+<li>Log in as <code>go</code> user</li>
+</ul>
+<pre><code class="language-sh">sudo su go
+</code></pre>
+<ul>
+<li>Generate the SSH key for your go user for <strong>github</strong> usage</li>
+</ul>
+<pre><code class="language-sh">ssh-keygen -t rsa -b 4096 -C &quot;{adresse email}&quot;
+</code></pre>
+<p>When a SSH key is generated, you will be prompted to save the key here:</p>
+<pre><code class="language-sh">/var/go/.ssh/id_rsa
+</code></pre>
+<ul>
+<li>Copy and paste the content of <code>/var/go/.ssh/id_rsa.pub</code> and add that SSH key to your <strong>github</strong> repository (your project).</li>
+<li>Once the key is added to <strong>github</strong>, return to your terminal. Make sure you are still logged in as <code>go</code> user</li>
+<li>Type this :</li>
+</ul>
+<pre><code class="language-sh">ssh -vT git@github.com
+</code></pre>
+<p><em><span style="color:#800080;">i don't really know what it is doing but it is working</span></em></p>
+<ul>
+<li>Say <strong>Yes</strong> when prompted</li>
+<li>Log out :</li>
+</ul>
+<pre><code class="language-sh">exit
+</code></pre>
+<p>You may need to define a dedicated port for the HTTPS GoCD server</p>
+<ul>
+<li>Go to <strong>Admin &gt; Server configuration</strong> and define the right URL and the dedicated port for HTTPS. <em><span style="color:#800080;">I can't say more... I am out of my comfort zone here :p</span></em></li>
+</ul>
+<p>Et voilà !!</p>
+<h2><strong>Conclusion</strong></h2>
+<p>So we have seen all the tasks set for our <strong>MonPremierBuild/ProjectTesting/TestAndBuild</strong> job.</p>
+<ul>
+<li>the job run all the unit tests (phpunit)</li>
+<li>if tests are successful, the job packages a zip of our project (without libraries) and copy that zip to a local repository.</li>
+<li>if tests are successful, the job add a remote repository to the current git repository (the one of GoCD) and push the code to the remote.</li>
+</ul>
+<blockquote>*<span style="color:#800080;">This is not fully satisfactory though :</span>*
+<p><em><span style="color:#800080;">Our remote repository is sync with the GoCD git repository but our localhost git repository (the one from our development project) is not synchronized.</span></em></p>
+</blockquote>
+<p>Pfffew... it was a bit too long but hopefully, everything is here. I hope you find this useful. Please come back for more posts !</p>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/en/tags/integration-continue">intégration continue</a></li><li><a href="/en/tags/git">git</a></li><li><a href="/en/tags/phpunit">phpunit</a></li><li><a href="/en/tags/gocd">gocd</a></li><li><a href="/en/tags/tutorial">tutorial</a></li></ul>
+        </div>
+      
+
+      
+        <nav id="book-navigation">
+    
+       <li class="link-previous"><a href="/en/posts/continuous-integration-testing-project-12.html"><i class="fas fa-long-arrow-alt-left"></i> Continuous Integration - Testing the project 1/2</li>
+    
+
+    
+        <li class="link-next"><a href="/en/posts/continuous-integration-gocd-monitoring-pipelines.html">Continuous Integration with GoCD - Monitoring pipelines <i class="fas fa-long-arrow-alt-right"></i></a></li>
+    
+
+    
+        <li class="link-up"><a href="/en/books/continuous-integration-using-go-cd.html"><i class="fas fa-book-open"></i> Continuous Integration - Using Go CD</li>
+    
+</nav>
+
+      
+    
+
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>About me</h3>
+      <p>I learned coding with php several years ago, when Internet was still young. For multiple reasons, i had stopped then and missed most of this new Internet i&#39;m discovering once again. So, i feel like a newbie again and since i&#39;m ready to start over personal project, i&#39;ll share with you some of my discoveries. Beyond coding topics, i&#39;ll enjoy sharing with you several subjects such as History, Astronomy, Linguistics, Movies, Books, Music and Anime among others. I hope you&#39;ll enjoy reading this blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. All rights reserved.</p>
+        <p>Powered by <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

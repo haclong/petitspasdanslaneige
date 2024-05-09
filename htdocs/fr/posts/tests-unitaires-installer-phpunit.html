@@ -1,0 +1,141 @@
+<!doctype html>
+<html class="no-js" lang="fr" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>Tests unitaires - Installer PHPUnit&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">Français</a>
+        <a href="/en/">Anglais</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/fr/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/fr/books/0/index.html">Séries</a>
+        <a href="/fr/">Accueil</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/fr/">Accueil</a><i class="fas fa-angle-right"></i>Tests unitaires - Installer PHPUnit
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>Tests unitaires - Installer PHPUnit</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>07/12/2016 17:59:00
+        
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/2048x1536-fit_illustration-laboratoire-antidopage.jpg" class="node-banner" />
+        
+      </div>
+
+      <p><p>Nous allons utiliser la librairie de tests PHP la plus utilisée à ce jour : <a href="https://phpunit.de/" target="_blank"><strong>PHPUnit</strong></a>.</p>
+<p>Malheureusement, pour ma part, j'ai <strong>PHPUnit</strong> qui fonctionne sur mon poste de développement depuis longtemps, en fait depuis mes multiples tentatives de TDD. Du coup, je ne saurais plus trop vous orienter sur un step-by-step. Toutefois, vous trouverez la <a href="https://phpunit.de/manual/current/en/installation.html" target="_blank">documentation</a> nécessaire sur le site officiel de <strong>PHPUnit</strong>. De souvenir, il me semble qu'il n'y avait pas de piège à l'installation.</p>
+<p>D'un autre côté, si vous installez le package <a href="https://github.com/zendframework/ZendSkeletonApplication" target="_blank">Zend Framework Skeleton Application,</a> il suffira d'installer (avec <strong>Composer</strong>) le package <strong>zend-test</strong></p>
+<pre><code class="language-sh">composer require --dev zendframework/zend-test
+</code></pre>
+<p>Sur un projet Symfony, la librairie <strong>PHPUnit</strong> fait partie intégrante des dépendances du projet. (En principe), elle s'installe au moment où vous allez installer votre projet Symfony.</p>
+<p>Pour lancer les premiers tests, un petit coup d'oeil sur la documentation officielle <a href="https://phpunit.de/manual/4.8/en/writing-tests-for-phpunit.html">https://phpunit.de/manual/4.8/en/writing-tests-for-phpunit.html</a> et un nombre non négligeable de posts sur Internet vous y aideront. En règle générale, il suffit de se rendre à la racine de votre projet (tip : au même niveau que votre fichier <code>phpunit.xml.dist</code> et de lancer la commande</p>
+<p><code>phpunit</code></p>
+<p>Vous pouvez affiner l'exécution de vos tests avec des arguments dans la ligne de commande. Les différentes options sont documentées ici : <a href="https://phpunit.de/manual/current/en/textui.html">https://phpunit.de/manual/current/en/textui.html</a>
+<code>Le fichier</code>phpunit.xml.dist est le fichier de paramétrage de <strong>PHPUnit</strong> pour votre projet. S'il y a des paramétrages à faire, c'est dans ce fichier qu'il faut le faire. Voici la documentation : <a href="https://phpunit.de/manual/current/en/appendixes.configuration.html">https://phpunit.de/manual/current/en/appendixes.configuration.html</a></p>
+<p>Comme toutes les autres librairies de tests, <strong>PHPUnit</strong> est conçu avec tout un ensemble d'assertions qui vont nous aider à rédiger nos tests : <a href="https://phpunit.de/manual/current/en/appendixes.assertions.html">https://phpunit.de/manual/current/en/appendixes.assertions.html</a>. Vous pouvez jeter un rapide coup d'oeil sur la liste des assertions. Il y en a vraiment pour tous les goûts mais ce qu'on peut retenir :</p>
+<p>Les assertions les plus utilisées seront très probablement : <code>assertEquals</code>, <code>assertFalse</code>, <code>assertTrue</code>, <code>assertInstanceOf</code>.</p>
+<p>Mais vous pourrez les découvrir au fur et mesure. Par ex, je viens de découvrir qu'il existe <code>assertCount</code> que je peux faire en utilisant <code>assertEquals</code> au lieu d'<code>assertCount</code>.</p>
+<p>Il y a des assertions sur les contenus des tableaux et des chaînes de caractères, sur les format XML et Json, sur le système de fichier... Si vous avez besoin de faire des assertions un peu plus complexe, penchez vous tout particulièrement sur l'assertion <code>assertThat</code> qui permet de faire des assertions conditionnelles. <a href="https://phpunit.de/manual/current/en/appendixes.assertions.html#appendixes.assertions.assertThat">https://phpunit.de/manual/current/en/appendixes.assertions.html#appendi…</a>. Nous aborderons probablement ce point si j'ai un exemple sous la main mais il est probable qu'on ait également la solution pour le faire autrement.</p>
+</p>
+
+      
+
+      
+    
+
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>Sur moi</h3>
+      <p>J&#39;ai appris le php il y a quelques années, quand Internet était à ses débuts. Pour diverses raisons, j&#39;ai arrêté en route et j&#39;ai perdu le fil des nouveaux Internets que je redécouvre. Résultat, je me sens constamment à courir après l&#39;histoire mais je suis toujours motivée à reprendre des projets personnels. Je me propose de vous partager mes découvertes. Au delà des sujets de programmation, j&#39;aime également partager mes infos concernant notamment l&#39;Histoire, l&#39;Astronomie, la Linguistique, les Films, les Livres et les Anime. J&#39;espère que vous aimerez suivre mon blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. Tous droits réservés.</p>
+        <p>Propulsé par <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,688 @@
+<!doctype html>
+<html class="no-js" lang="fr" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>Zend Validator avec configuration&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">Français</a>
+        <a href="/en/">Anglais</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/fr/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/fr/books/0/index.html">Séries</a>
+        <a href="/fr/">Accueil</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/fr/">Accueil</a><i class="fas fa-angle-right"></i>Zend Validator avec configuration
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>Zend Validator avec configuration</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>08/02/2015 14:35:00
+        
+        <i class="fas fa-th-large"></i><!--a href="/fr/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->, <!--a href="/fr/sites/haclong-projects.html" class="tag-sites"-->Haclong projects<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/240_F_65801716_Yq2jOxAZPSuynsc1l541JgKzytKOuHZJ.jpg" class="node-banner" />
+        
+      </div>
+
+      <p><p>Après avoir vu comment on mettait en place un <strong>inputFilter</strong> (ensemble d'élément <strong>Input</strong>), on voit maintenant comment appliquer des <em>validateurs</em> sur chaque élément <strong>Input</strong> de notre <strong>inputFilter</strong>.</p>
+<p>NOTE : Un <em>validateur</em> : il confronte les informations en entrée à des conditions (en fonction du <em>validateur</em> choisi) et retourne un booléen si les informations en entrée sont validées ou pas aux conditions du <em>validateur</em>.</p>
+<p>C'est la présentation des <em>validateurs</em> en mode tableau de configuration (à utiliser avec la <strong>factory</strong>)</p>
+<pre><code class="language-php">'validators' =&gt; array(
+  array(
+    'name' =&gt; 'alnum' // 'Zend\I18n\Validator\Alnum',
+    'options' =&gt; array(
+      'allowWhiteSpace' =&gt; bool // default false
+    ),
+  ),
+
+  array(
+    'name' =&gt; 'alpha' // 'Zend\I18n\Validator\Alpha',
+    'options' =&gt; array(
+      'allowWhiteSpace' =&gt; bool // default false
+    ),
+  ),
+
+  array(
+    'name' =&gt; 'barcode' // 'Zend\Validator\Barcode',
+    'options' =&gt; array(
+      'adapter' =&gt; string // instance de Zend\Validator\Barcode\AbstractAdapter. Default Ean13
+      'options' =&gt; array()
+      'length' =&gt; // default null (override by adapter)
+      'useChecksum' =&gt; // default null (override by adapter)
+    ),
+  ),
+  // list of available barcode adapter
+  'Zend\Validator\Barcode\Codabar' =&gt; 'Codeabar'
+  'Zend\Validator\Barcode\Code128' =&gt; 'Code128'
+  'Zend\Validator\Barcode\Code25interleaved' =&gt; 'Code25interleaved'
+  'Zend\Validator\Barcode\Code25' =&gt; 'Code25'
+  'Zend\Validator\Barcode\Code39ext' =&gt; 'Code39ext'
+  'Zend\Validator\Barcode\Code39' =&gt; 'Code39'
+  'Zend\Validator\Barcode\Code93ext' =&gt; 'Code93ext'
+  'Zend\Validator\Barcode\Code93' =&gt; 'Code93'
+  'Zend\Validator\Barcode\Ean12' =&gt; 'Ean12'
+  'Zend\Validator\Barcode\Ean13' =&gt; 'Ean13'
+  'Zend\Validator\Barcode\Ean14' =&gt; 'Ean14'
+  'Zend\Validator\Barcode\Ean18' =&gt; 'Ean18'
+  'Zend\Validator\Barcode\Ean2' =&gt; 'Ean2'
+  'Zend\Validator\Barcode\Ean5' =&gt; 'Ean5'
+  'Zend\Validator\Barcode\Ean8' =&gt; 'Ean8'
+  'Zend\Validator\Barcode\Gtin12' =&gt; 'Gtin12'
+  'Zend\Validator\Barcode\Gtin13' =&gt; 'Gtin13'
+  'Zend\Validator\Barcode\Gtin14' =&gt; 'Gtin14'
+  'Zend\Validator\Barcode\Identcode' =&gt; 'Identcode'
+  'Zend\Validator\Barcode\Intelligentmail' =&gt; 'Intelligentmail'
+  'Zend\Validator\Barcode\Issn' =&gt; 'Issn'
+  'Zend\Validator\Barcode\Itf14' =&gt; 'Itf14'
+  'Zend\Validator\Barcode\Leitcode' =&gt; 'Leitcode'
+  'Zend\Validator\Barcode\Planet' =&gt; 'Planet'
+  'Zend\Validator\Barcode\Postnet' =&gt; 'Postnet'
+  'Zend\Validator\Barcode\Royalmail' =&gt; 'Royalmail'
+  'Zend\Validator\Barcode\Sscc' =&gt; 'Sscc'
+  'Zend\Validator\Barcode\Upca' =&gt; 'Upca'
+  'Zend\Validator\Barcode\Upce' =&gt; 'Upce'
+
+  array(
+    'name' =&gt; 'between' // 'Zend\Validator\Between',
+    'options' =&gt; array(
+      'inclusive' =&gt; bool // default true
+      'min' =&gt; int // default 0
+      'max' =&gt; int // default PHP_INT_MAX
+    ),
+  ),
+
+  array(
+    'name' =&gt; 'bitwise' // 'Zend\Validator\Bitwise',
+    // http://fr2.php.net/manual/en/language.operators.bitwise.php
+    'options' =&gt; array(
+      'control' =&gt; int
+      'operator' =&gt; // 'xor' | 'and'
+      'strict' =&gt; bool
+    ),
+  ),
+
+  array(
+    'name' =&gt; 'callback' // 'Zend\Validator\Callback',
+    'options' =&gt; array(
+      'callback' =&gt; string | array // default null
+      'callbackOptions' =&gt; array() // options du callback
+    ),
+  ),
+
+  array(
+    'name' =&gt; 'creditcard' // 'Zend\Validator\CreditCard',
+    'options' =&gt; array(
+      'service' =&gt; // default null
+      'type' =&gt; string // Type de la carte de crédit
+    ),
+  ),
+  // list of available credit card type
+  Zend\Validator\CreditCard::AMERICAN_EXPRESS = 'American_Express'
+  Zend\Validator\CreditCard::DINERS_CLUB = 'Diners_Club'
+  Zend\Validator\CreditCard::DINERS_CLUB_US = 'Diners_Club_US'
+  Zend\Validator\CreditCard::DISCOVER = 'Discover'
+  Zend\Validator\CreditCard::JCB = 'JCB'
+  Zend\Validator\CreditCard::LASER = 'Laser'
+  Zend\Validator\CreditCard::MAESTRO = 'Maestro'
+  Zend\Validator\CreditCard::MASTERCARD = 'Mastercard'
+  Zend\Validator\CreditCard::SOLO = 'Solo'
+  Zend\Validator\CreditCard::UNIONPAY = 'Unionpay'
+  Zend\Validator\CreditCard::VISA = 'Visa'
+
+  array(
+    'name' =&gt; 'csrf' // 'Zend\Validator\Csrf',
+    // used with Zend\Form\Element\Csrf for validation
+    // When adding the element to the form, possibility to set validator options there
+    'options' =&gt; array(
+      'name' =&gt;
+      'salt' =&gt;
+      'session' =&gt;
+      'timeout' =&gt;
+    ),
+  ),
+
+  array(
+    'name' =&gt; 'date' // 'Zend\Validator\Date',
+    'options' =&gt; array(
+      'format' =&gt; // default 'Y-m-d'
+      'locale' =&gt; string // locale string (en_EN)
+    ),
+  ),
+
+  array(
+    'name' =&gt; 'datestep' // 'Zend\Validator\DateStep',
+    // used with Zend\Form\Element\Date for validation
+    'options' =&gt; array(
+      'baseValue' =&gt;
+      'step' =&gt; // DateInterval
+      'format' =&gt;
+      'timezone' =&gt; // DateTimeZone
+    ),
+  ),
+
+  array(
+    'name' =&gt; 'datetime' // 'Zend\I18n\Validator\DateTime',
+    // used with Zend\Form\Element\Date for validation
+    // http://fr2.php.net/manual/en/book.intl.php
+  ),
+
+  array(
+    'name' =&gt; 'dbnorecordexists' // 'Zend\Validator\Db\NoRecordExists',
+    'options' =&gt; array(
+      'adapter' =&gt; // database adapter
+      'exclude'
+      'field'
+      'schema'
+      'table'
+    ),
+  ),
+
+  array(
+    'name' =&gt; 'dbrecordexists' // 'Zend\Validator\Db\RecordExists',
+    'options' =&gt; array(
+      'adapter' =&gt; // database adapter
+      'exclude'
+      'field'
+      'schema'
+      'table'
+    ),
+  ),
+
+  array(
+    'name' =&gt; 'digits' // 'Zend\Validator\Digits',
+  ),
+
+  array(
+    'name' =&gt; 'emailaddress' =&gt; 'Zend\Validator\EmailAddress',
+    'options' =&gt; array(
+      'useMxCheck' =&gt; bool // default false
+      'useDeepMxCheck' =&gt; bool // default false
+      'useDomainCheck' =&gt; bool // default true
+      // http://framework.zend.com/manual/current/en/modules/zend.validator.hostname.html
+      'allow' =&gt; // default Zend\Validator\Hostname::ALLOW_DNS
+      'hostnameValidator' =&gt; // default null
+    ),
+  ),
+
+  array(
+    'name' =&gt; 'float' // 'Zend\I18n\Validator\Float',
+    'options' =&gt; array(
+      'locale' =&gt; string // locale string (en_EN)
+    ),
+  ),
+
+  array(
+    'name' =&gt; 'greaterthan' // 'Zend\Validator\GreaterThan',
+    'options' =&gt; array(
+      'min' =&gt; int
+      'inclusive' =&gt; bool
+    ),
+  ),
+
+  array(
+    'name' =&gt; 'hex' // 'Zend\Validator\Hex',
+  ),
+
+  array(
+    'name' =&gt; 'hostname' // 'Zend\Validator\Hostname',
+    'options' =&gt; array(
+      'allow' =&gt; int
+      'useIdnCheck' =&gt; bool // default true
+      'ipValidator' =&gt; // Zend\Validator\Ip
+      'useTldCheck' =&gt; bool // default true
+    ),
+  ),
+  // list of available hostname allow values
+  Zend\Validator\Hostname::ALLOW_DNS = 1
+  Zend\Validator\Hostname::ALLOW_IP = 2
+  Zend\Validator\Hostname::ALLOW_LOCAL = 4
+  Zend\Validator\Hostname::ALLOW_URI = 8
+  Zend\Validator\Hostname::ALLOW_ALL = 15
+
+  array(
+    'name' =&gt; 'iban' // 'Zend\Validator\Iban',
+    'options' =&gt; array(
+      'country_code' =&gt; string // Country code by ISO 3166-1
+      'allow_non_sepa' =&gt; bool // default true
+    ),
+  ),
+
+  array(
+    'name' =&gt; 'identical' // 'Zend\Validator\Identical',
+    'options' =&gt; array(
+      'strict' =&gt; bool // default true
+      'token' =&gt;
+      'literal' =&gt; bool // default false
+    ),
+  ),
+
+  array(
+    'name' =&gt; 'inarray' // 'Zend\Validator\InArray',
+    'options' =&gt; array(
+      'recursive' =&gt; bool
+      'strict' =&gt; int // default 0
+      'haystack' =&gt; array()
+    ),
+  ),
+  // comparative value $strict option
+  Zend\Validator\InArray::COMPARE_NOT_STRICT = -1
+  Zend\Validator\InArray::COMPARE_NOT_STRICT_AND_PREVENT_STR_TO_INT_VULNERABILITY = 0
+  Zend\Validator\InArray::COMPARE_STRICT = 1
+
+  array(
+    'name' =&gt; 'int' // 'Zend\I18n\Validator\Int',
+    'options' =&gt; array(
+      'locale' =&gt; string // locale string (en_EN)
+    ),
+  ),
+
+  array(
+    'name' =&gt; 'ip' // 'Zend\Validator\Ip',
+    'options' =&gt; array(
+      'allowipv4' =&gt; bool // default true
+      'allowipv6' =&gt; bool // default true
+      'allowipvfuture' =&gt; bool // default false
+      'allowliteral' =&gt; default true
+    ),
+  ),
+
+  array(
+    'name' =&gt; 'isbn' // 'Zend\Validator\Isbn',
+    'options' =&gt; array(
+      'type' =&gt; string
+      'separator' =&gt; string // default ''
+    ),
+  ),
+  // list of isbn types available $type option
+  Zend\Validator\Isbn::AUTO = 'auto'
+  Zend\Validator\Isbn::ISBN10 = '10'
+  Zend\Validator\Isbn::ISBN13 = '13'
+  Zend\Validator\Isbn::INVALID = 'isbnInvalid'
+  Zend\Validator\Isbn::NO_ISBN = 'isbnNoIsbn'
+
+  array(
+    'name' =&gt; 'isinstanceof' // 'Zend\Validator\IsInstanceOf',
+    'options' =&gt; array(
+      'classname' =&gt; string
+    ),
+  ),
+
+  array(
+    'name' =&gt; 'lessthan' // 'Zend\Validator\LessThan',
+    'options' =&gt; array(
+      'max' =&gt; int
+      'inclusive' =&gt; bool // default false
+    ),
+  ),
+
+  array(
+    'name' =&gt; 'notempty' // 'Zend\Validator\NotEmpty',
+    'options' =&gt; array(
+      'type' =&gt; // Zend\Validator\NotEmpty types
+    ),
+  ),
+  // list of Zend\Validator\NotEmpty Types
+  Zend\Validator\NotEmpty::BOOLEAN =&gt; 'boolean' = 0x001,
+  Zend\Validator\NotEmpty::INTEGER =&gt; 'integer' = 0x002,
+  Zend\Validator\NotEmpty::FLOAT =&gt; 'float' = 0x004,
+  Zend\Validator\NotEmpty::STRING =&gt; 'string' = 0x008,
+  Zend\Validator\NotEmpty::ZERO =&gt; 'zero' = 0x010,
+  Zend\Validator\NotEmpty::EMPTY_ARRAY =&gt; 'array' = 0x020,
+  Zend\Validator\NotEmpty::NULL =&gt; 'null' = 0x040,
+  Zend\Validator\NotEmpty::PHP =&gt; 'php' = 0x07F,
+  Zend\Validator\NotEmpty::SPACE =&gt; 'space' = 0x080,
+  Zend\Validator\NotEmpty::OBJECT =&gt; 'object' = 0x100,
+  Zend\Validator\NotEmpty::OBJECT_STRING =&gt; 'objectstring' = 0x200,
+  Zend\Validator\NotEmpty::OBJECT_COUNT =&gt; 'objectcount' = 0x400,
+  Zend\Validator\NotEmpty::ALL =&gt; 'all' = 0x7FF,
+
+  array(
+    'name' =&gt; 'phonenumber' // 'Zend\I18n\Validator\PhoneNumber',
+    'options' =&gt; array(
+      'country' =&gt; string // ISO 3611 Country code
+      'allowed_types' =&gt; array // tableau des types possibles (chaine de caractère saisie libre)
+      'allow_possible' =&gt; bool
+    ),
+  ),
+
+  array(
+    'name' =&gt; 'postcode' // 'Zend\I18n\Validator\PostCode',
+    'options' =&gt; array(
+      'locale' =&gt; string // locale string (en_EN)
+      'format' =&gt; string // regex
+      'service'
+    ),
+  ),
+
+  array(
+    'name' =&gt; 'regex' // 'Zend\Validator\Regex',
+    'options' =&gt; array(
+      'pattern' =&gt; string // regex
+    ),
+  ),
+
+  // Sitemap validation http://www.sitemaps.org/protocol.html
+  array(
+    'name' =&gt; 'sitemapchangefreq' // 'Zend\Validator\Sitemap\Changefreq',
+  ),
+  array(
+    'name' =&gt; 'sitemaplastmod' // 'Zend\Validator\Sitemap\Lastmod',
+  ),
+  array(
+    'name' =&gt; 'sitemaploc' // 'Zend\Validator\Sitemap\Loc',
+  ),
+  array(
+    'name' =&gt; 'sitemappriority' // 'Zend\Validator\Sitemap\Priority',
+  ),
+
+  array(
+    'name' =&gt; 'step' // 'Zend\Validator\Step',
+    'options' =&gt; array(
+      'baseValue' =&gt; string
+      'step' =&gt; string
+    ),
+  ),
+
+  array(
+    'name' =&gt; 'stringlength' // 'Zend\Validator\StringLength',
+    'options' =&gt; array(
+      'encoding' =&gt; string // charset encoding
+      'min' =&gt; int
+      'max' =&gt; int
+    ),
+  ),
+
+  array(
+    'name' =&gt; 'uri' // 'Zend\Validator\Uri',
+    'options' =&gt; array(
+      'uriHandler' =&gt; Zend\Uri\Uri
+      'allowRelative' =&gt; bool
+      'allowAbsolute' =&gt; bool
+    ),
+  ),
+),
+</code></pre>
+<p>Validateurs pour fichiers</p>
+<pre><code class="language-php">'validators' =&gt; array(
+  array(
+    'name' =&gt; 'filecount' // 'Zend\Validator\File\Count',
+    // compte le nb de fichiers
+    'options' =&gt; array(
+      'min' =&gt; int
+      'max' =&gt; int
+    ),
+  ),
+ 
+  array(
+    'name' =&gt; 'fileexists' // 'Zend\Validator\File\Exists',
+    'options' =&gt; array(
+      'directory' =&gt; array // default null
+    ),
+  ),
+ 
+  array(
+    'name' =&gt; 'filenotexists' // 'Zend\Validator\File\NotExists',
+    'options' =&gt; array(
+      // voir 'fileexists'
+    ),
+  ),
+
+  array(
+    'name' =&gt; 'fileextension' // 'Zend\Validator\File\Extension',
+    'options' =&gt; array(
+      'case' =&gt; bool // default false
+      'extension' =&gt; '' // list of extension
+    ),
+  ),
+ 
+  array(
+    'name' =&gt; 'fileexcludeextension' // 'Zend\Validator\File\ExcludeExtension',
+    'options' =&gt; array(
+      // voir 'fileextension'
+    ),
+  ),
+
+  array(
+    'name' =&gt; 'filehash' // 'Zend\Validator\File\Hash',
+    // http://php.net/manual/en/book.hash.php
+    'options' =&gt; array(
+      'algorithm' =&gt; string // default 'crc32'
+      'hash' =&gt; string // default null
+    ),
+  ),
+ 
+  array(
+    'name' =&gt; 'filecrc32' // 'Zend\Validator\File\Crc32',
+    // http://php.net/manual/en/book.hash.php
+    'options' =&gt; array(
+      'hash' =&gt; string // default null
+    ),
+  ),
+ 
+  array(
+    'name' =&gt; 'filemd5' // 'Zend\Validator\File\Md5',
+    // http://php.net/manual/en/book.hash.php
+    'options' =&gt; array(
+      'hash' =&gt; string // default null
+    ),
+  ),
+ 
+  array(
+    'name' =&gt; 'filesha1' // 'Zend\Validator\File\Sha1',
+    // http://php.net/manual/en/book.hash.php
+    'options' =&gt; array(
+      'hash' =&gt; string // default null
+    ),
+  ),
+
+  array(
+    'name' =&gt; 'filesize' // 'Zend\Validator\File\Size',
+    'options' =&gt; array(
+      'min' =&gt; int // default null
+      'max' =&gt; int // default null
+      'useBiteString' =&gt; bool // default true
+    ),
+  ),
+ 
+  array(
+    'name' =&gt; 'filefilessize' // 'Zend\Validator\File\FilesSize',
+    'options' =&gt; array(
+      'min' =&gt; int // default null
+      'max' =&gt; int // default null
+      'useBiteString' =&gt; bool // default true
+    ),
+  ),
+
+  array(
+    'name' =&gt; 'fileimagesize' // 'Zend\Validator\File\ImageSize',
+    'options' =&gt; array(
+      'minWidth' =&gt; int // default null
+      'maxWidth' =&gt; int // default null
+      'minHeight' =&gt; int // default null
+      'maxHeight' =&gt; int // default null
+    ),
+  ),
+
+  array(
+    'name' =&gt; 'filemimetype' // 'Zend\Validator\File\MimeType',
+    'options' =&gt; array(
+      'enableHeaderCheck' =&gt; bool // default false
+      'disableMagicFile' =&gt; bool // default false
+      'magicFile' =&gt; string
+      'mimeType' =&gt; string | array
+    ),
+  ),
+ 
+  array(
+    'name' =&gt; 'fileexcludemimetype' // 'Zend\Validator\File\ExcludeMimeType',
+    'options' =&gt; array(
+      // voir 'fileextension'
+    ),
+  ),
+ 
+  array(
+    'name' =&gt; 'fileiscompressed' // 'Zend\Validator\File\IsCompressed',
+  ),
+
+  array(
+    'name' =&gt; 'fileisimage' // 'Zend\Validator\File\IsImage',
+  ),
+
+  array(
+    'name' =&gt; 'fileupload' // 'Zend\Validator\File\Upload',
+    'options' =&gt; array(
+      'files' =&gt; array
+    ),
+  ),
+ 
+  array(
+    'name' =&gt; 'fileuploadfile' // 'Zend\Validator\File\UploadFile',
+    // used with Zend\Form\Element\File component + its inputFilter
+  ),
+ 
+  array(
+    'name' =&gt; 'filewordcount' // 'Zend\Validator\File\WordCount',
+    'options' =&gt; array(
+      'min' =&gt; int
+      'max' =&gt; int
+    ),
+  ),
+)
+</code></pre>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/fr/tags/zend-framework-2">zend framework 2</a></li><li><a href="/fr/tags/zf2">ZF2</a></li><li><a href="/fr/tags/configuration">configuration</a></li><li><a href="/fr/tags/factory">factory</a></li></ul>
+        </div>
+      
+
+      
+        <nav id="book-navigation">
+    
+       <li class="link-previous"><a href="/fr/posts/zend-filter-par-configuration.html"><i class="fas fa-long-arrow-alt-left"></i> Zend Filter par configuration</li>
+    
+
+    
+
+    
+        <li class="link-up"><a href="/fr/books/configuration-dans-zend-framework-2.html"><i class="fas fa-book-open"></i> Configuration dans Zend Framework 2</li>
+    
+</nav>
+
+      
+    
+
+      
+        <section id="oldcomment">
+          <h2>Commentaires historiques</h2><article>
+              <div class="level1">
+  <h3>congratulations</h3>
+  <div class="meta">hector 2017-02-24T14:16 </div>
+  <div class="body">Thsnks for this post, is really usefull<br />
+<br />
+from chile<br />
+<br />
+:)</div>
+
+  
+  
+</div>
+
+            </article></section>
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>Sur moi</h3>
+      <p>J&#39;ai appris le php il y a quelques années, quand Internet était à ses débuts. Pour diverses raisons, j&#39;ai arrêté en route et j&#39;ai perdu le fil des nouveaux Internets que je redécouvre. Résultat, je me sens constamment à courir après l&#39;histoire mais je suis toujours motivée à reprendre des projets personnels. Je me propose de vous partager mes découvertes. Au delà des sujets de programmation, j&#39;aime également partager mes infos concernant notamment l&#39;Histoire, l&#39;Astronomie, la Linguistique, les Films, les Livres et les Anime. J&#39;espère que vous aimerez suivre mon blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. Tous droits réservés.</p>
+        <p>Propulsé par <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

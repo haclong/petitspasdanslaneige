@@ -1,0 +1,346 @@
+<!doctype html>
+<html class="no-js" lang="fr" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>Implémenter une navigation dans une application ZF2 avec des modules&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">Français</a>
+        <a href="/en/">Anglais</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/fr/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/fr/books/0/index.html">Séries</a>
+        <a href="/fr/">Accueil</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/fr/">Accueil</a><i class="fas fa-angle-right"></i>Implémenter une navigation dans une application ZF2 avec des modules
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>Implémenter une navigation dans une application ZF2 avec des modules</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>22/06/2014 14:22:00
+        
+        <i class="fas fa-th-large"></i><!--a href="/fr/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->, <!--a href="/fr/sites/haclong-projects.html" class="tag-sites"-->Haclong projects<!--/a-->, <!--a href="/fr/sites/footprints-in-the-snow.html" class="tag-sites"-->Footprints in the snow<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/ZendFramework.png" class="node-banner" />
+        
+          <p><strong>Crédit</strong> : zend framework </p>
+        
+      </div>
+
+      <p><p>Développer une application avec des modules a des avantages certains : séparation des éléments, diminution des dépendances... On ne va pas refaire l'histoire. Mais on ne peut pas nier qu'il y a des éléments dans un site web, qui sont cross-modules. La navigation est l'un de ces éléments. Chaque élément d'un menu correspond forcément à un module différent. Alors comment implémenter cette particularité ?</p>
+<h3>Prérequis</h3>
+<ul>
+<li>Vous avez installé le Zend Skeletton Application</li>
+<li>Vous savez - a peu près - ce qu'est une route dans une application ZF2</li>
+<li>Vous avez codé le module Album tel que présenté dans le tutorial Getting Started de la documentation de ZF2.</li>
+</ul>
+<p>Après avoir installé le squelette d'application, vous avez commencé à enquiller sur les modules, les uns après les autres. Dans <code>module/Application/view/layout/layout.phtml</code>, a chaque nouveau module, vous avez édité le template et vous avez ajouté un nouveau lien dans le menu.</p>
+<p>Mais voila, au fil du développement, vous avez retiré des modules, peut être parce qu'ils n'étaient pas utiles ou parce que vous avez une régression et que vous essayez de repartir de zéro pour voir à quel moment votre application se crashe... Si vous retirez des modules, vous avez obligatoirement une erreur qui va venir du renderer qui va vous signaler qu'une route n'existe pas. Il faut rééditer <code>layout.phtml</code> et retirer des entrées de menu.</p>
+<p>Et quand vous aurez trouvé la faille, il va également falloir rééditer <code>layout.phtml</code> et cette fois ci, réactiver votre entrée de menu : soit en la réécrivant, soit en la décommantant... Tout ceci est bien fastidieux, si vous ajoutez à cela que pour activer / désactiver un module, vous devez obligatoirement éditer le fichier <code>config/application.config.php</code>. Voici beaucoup de manipulation pour activer / désactiver un module.</p>
+<p>Heureusement, le composant <code>Zend\Navigation</code> va nous aider à faire ça &quot;tout seul&quot;.</p>
+<h3>Le composant Zend\Navigation</h3>
+<p>Toute la <a href="http://framework.zend.com/manual/2.3/en/modules/zend.navigation.intro.html" target="_blank">documentation du composant</a> se trouve sur le site de Zend Framework. Le principe est le même que dans Zend Framework 1 : on définit un <strong>conteneur</strong> qui contient soit des <strong>pages</strong>, soit des <strong>conteneurs</strong> qui contiennent à leur tour soit des <strong>pages</strong> soit des <strong>conteneurs</strong> etc... L'arborescence conteneurs/pages va reproduire la hiérarchie de votre site. Aussi simplement que ça.</p>
+<h3>Définir les routes</h3>
+<p>Si vous avez suivi le tutorial <a href="http://framework.zend.com/manual/2.3/en/user-guide/overview.html" target="_blank">Getting Started</a> de la documentation de ZF2, vous savez qu'il faut définir les routes de votre module. Il est important de noter que chaque module a sa ou ses route(s). Pas question, par paresse ou pour toutes autres raisons, de définir toutes vos routes dans le module <strong>Application</strong> par ex, sous prétexte qu'il est toujours là... De toutes façons, normalement, ça ne devrait que vous compliquer la tâche puisque les controllers invoqués ne sont pas toujours présent en fonction de l'activation/désactivation des modules.</p>
+<h3>Définir l'arborescence des pages</h3>
+<p>Le moyen le plus simple pour utiliser <code>Zend\Navigation</code> : il suffit de rajouter une clé <em>navigation</em> dans la configuration de votre module.</p>
+<pre><code class="language-php">//module/Album/config/module.config.php
+
+&lt;?php
+return array(
+  // la liste de vos controllers
+  'controllers' =&gt; array(
+    'invokables' =&gt; array(
+      'Album\Controller\Album' =&gt; 'Album\Controller\AlbumController',
+    ),
+  ),
+
+  // définition de la route
+  'router' =&gt; array(
+    'routes' =&gt; array(
+      // nom de la route
+      'album' =&gt; array(
+        'type' =&gt; 'segment',
+        'options' =&gt; array(
+          'route' =&gt; '/album[/][:action][/:id]',
+          'constraints' =&gt; array(
+            'action' =&gt; '[a-zA-Z][a-zA-Z0-9_-]*',
+            'id' =&gt; '[0-9]+',
+          ),
+          'defaults' =&gt; array(
+            'controller' =&gt; 'Album\Controller\Album',
+            'action' =&gt; 'index',
+          ),
+        ),
+      ),
+    ),
+  ),
+
+  // la configuration pour le manager de vue
+  'view_manager' =&gt; array(
+    'template_path_stack' =&gt; array(
+      'album' =&gt; __DIR__ . '/../view',
+    ),
+  ),
+
+  // ajouter cette clé.
+  'navigation' =&gt; array(
+    // c'est 'default' par défaut... si vous souhaitez mettre autre chose, il faudra étendre le service Zend\Navigation\Service\DefaultNavigationFactory qui existe par défaut dans la librairie ZF2.
+    'default' =&gt; array(
+      // ce tableau correspond à une de vos pages (ou à un de vos conteneurs)
+      array(
+        'label' =&gt; 'Mes Albums', // le texte qui va apparaitre dans le menu
+        'route' =&gt; 'album', // le nom de la route que vous avez défini plus haut. Si votre entrée de menu n'est pas une de vos pages mais un lien vers une page externe, évidemment, il ne faut pas utiliser 'route'
+        'order' =&gt; 100, // la priorité de entrée de menu
+      ),
+    ),
+  ),
+);
+</code></pre>
+<p>Et voila, vous avez une entrée de menu (mais pas de menu sur le site, pas encore).</p>
+<p>N’oublions surtout pas de déclarer le <strong>Service Navigation</strong> afin que notre clé <em>navigation</em> soit exploitée.</p>
+<h3>Charger un service pour Zend\Navigation</h3>
+<p>Tout d’abord, il faut dire à l’application qu’on va travailler avec une instance de <code>Zend\Navigation</code>. Jusqu’à nouvel ordre, on ne devrait pas avoir besoin de truc bien complexe pour ça.</p>
+<p>Arbitrairement, je choisis de déclarer mon service dans le module <strong>Application</strong>, justement - cette fois ci - parce qu'il est là tout le temps.</p>
+<pre><code class="language-php">//module/Application/config/module.config.php
+
+return array(
+  // ajouter une clé 'service_manager' si elle n'y est pas encore (elle devrait être là)
+  'service_manager' =&gt; array(
+    // ajouter la clé 'factories' si elle n'y est pas encore (elle devrait y être)
+    'factories' =&gt; array(
+      // factories diverses …
+      // ajouter le service 'navigation'
+      // DefaultNavigationFactory est la factory par défaut pour Zend\Navigation.
+      // Si vous souhaitez avoir votre propre factory, il faut étendre cette classe.
+      'navigation' =&gt; 'Zend\Navigation\Service\DefaultNavigationFactory',
+    ),
+  ),
+);
+</code></pre>
+<p>Maintenant, allons afficher tout ça.</p>
+<p>En principe, si vous avez suivi le tutoriel Getting Started avec le module <strong>Album</strong>, vous devriez avoir ce type de code dans le template du layout :</p>
+<pre><code class="language-php">//module/Application/view/layout/layout.phtml
+
+&lt;div class=&quot;nav-collapse collapse&quot;&gt;
+  &lt;ul class=&quot;nav&quot;&gt;
+    &lt;li&gt;&lt;a href=&quot;&lt;?php echo $this-&gt;url('home') ?&gt;&quot;&gt;&lt;?php echo $this-&gt;translate('Home') ?&gt;&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;&lt;?php echo $this-&gt;url('album') ?&gt;&quot;&gt;&lt;?php echo $this-&gt;translate('Album') ?&gt;&lt;/a&gt;&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/div&gt;&lt;!--/.nav-collapse --&gt;
+</code></pre>
+<p>Remplacez le par ce code :</p>
+<pre><code class="language-php">//module/Application/view/layout/layout.phtml
+
+&lt;div class=&quot;collapse nav-collapse&quot;&gt;
+  &lt;?php echo $this-&gt;navigation('navigation')-&gt;menu()-&gt;setUlClass('nav navbar-nav')-&gt;setMaxDepth(0) ;?&gt;
+&lt;/div&gt;&lt;!--/.nav-collapse --&gt;
+</code></pre>
+<p>Et Tadaaaa... Ah non, il nous manque le bouton <strong>Accueil</strong>... Et pourquoi il nous manque le bouton Accueil, parce que sot comme on est, on a oublié d'aller définir notre entrée de menu dans le module <strong>Application</strong>.</p>
+<pre><code class="language-php">//module/Application/config/module.config.php
+
+&lt;?php
+return array(
+  // ajouter la clé navigation en bas du fichier de configuration (comme pour le module Album)
+  'navigation' =&gt; array(
+    'default' =&gt; array(
+      array(
+        'label' =&gt; 'Home',
+        'route' =&gt; 'home',
+      ),
+    ),
+  ),
+);
+</code></pre>
+<p>Comme on peut le voir, les clés <em>navigation</em> et <em>default</em> sont les mêmes dans le module <strong>Application</strong> et dans le module <strong>Album</strong>.</p>
+<p>Voyons voir notre site. Lancer le site dans le navigateur. Tadaaaaa. Vous avez dans le menu un bouton &quot;Accueil&quot; et un bouton &quot;Mes Albums&quot;. Maintenant, si vous allez dans <code>config/application.config.php</code> et que vous désactivez votre module <strong>Album</strong>, de retour sur votre site, le bouton &quot;Mes Albums&quot; aura disparu gentimment... Plus besoin d'aller éditer d'autres fichiers...</p>
+<p><cite>SCOOP !! Alors que j'écris ce post, je m'aperçois que le menu généré automatiquement par Zend\Navigation est multilingue (à condition d'avoir traduits toutes les entrées... je ne sais pas comment ça marche mais ça marche, j'explorerais cet aspect plus tard).</cite></p>
+<p><strong>Edit</strong> : Effectivement : <a href="http://framework.zend.com/manual/2.3/en/modules/zend.navigation.view.helpers.html" target="_blank">ici</a>, les aides de vues (<strong>View Helper</strong>) intègrent toutes des fonctionnalités ACL et des fonctionnalités Translation. Voir les méthodes <code>getTranslator()</code>, <code>setTranslator()</code>, <code>getUseTranslator()</code> et <code>setUseTranslator()</code>... Le squelette d’application ZF2 implémente un objet <code>Translator</code> dès le lancement de l’application.</p>
+<pre><code class="language-php">//module/Application/config/module.config.php
+
+  'service_manager' =&gt; array(
+    'factories' =&gt; array(
+      'translator' =&gt; 'Zend\I18n\Translator\TranslatorServiceFactory',
+    ),
+  ),
+  'translator' =&gt; array(
+    'locale' =&gt; 'fr_FR',
+    'translation_file_patterns' =&gt; array(
+      array(
+        'type' =&gt; 'gettext',
+        'base_dir' =&gt; __DIR__ . '/../language',
+        'pattern' =&gt; '%s.mo',
+      ),
+    ),
+  ),
+</code></pre>
+<h3>La navigation avec Zend Framework</h3>
+<p>En fait, les débutants confondent très souvent le composant <code>Zend\Navigation</code> et le résultat qu’ils souhaitent obtenir. En effet, ZF2 (comme ZF1) sépare les données (le modèle) du rendu (la ou les vues) :</p>
+<ul>
+<li><code>Zend\Navigation</code> construit une hiérarchie de pages : on ne fait que définir notre arborescence de page mais on ne peut pas la voir...</li>
+<li>Ensuite, dans un second temps, une fois (ou pendant) que nous montons l’arborescence des pages, ZF met à disposition des aides de vues qui vont exploiter cette arborescence de pages et qui feront les affichages comme on le souhaite :</li>
+<li>le petit poucet / fil d’ariane / breadcrumbs</li>
+<li>le ou les menus</li>
+<li>le plan du site</li>
+</ul>
+<h3>Commençons par Zend\Navigation</h3>
+<p><a href="http://framework.zend.com/manual/2.3/en/modules/zend.navigation.pages.html" target="_blank">La documentation</a> de <code>Zend\Navigation</code> est assez claire et je n’ai pas eu besoin de trop chercher pour le faire fonctionner.</p>
+<p><code>Zend\Navigation</code> définit deux types de pages :</p>
+<ul>
+<li>Les pages de notre application, généralement définies par les éléments suivants : action / controller ou route avec ou sans les paramètres supplémentaires. Ce sont les pages de type <strong>MVC</strong></li>
+<li>Les pages hors de l'application, généralement définies par une adresse. Ce sont les pages de type <strong>URI</strong></li>
+</ul>
+<p>Dans une utilisation de base, vous aurez besoin des clés suivantes :</p>
+<ul>
+<li><strong>label</strong> : pour donner un libellé à votre lien (ce qui s’affiche sur le site)</li>
+<li><strong>active</strong> : cette option va être utile pour “marquer” visuellement le bouton de menu de la page active</li>
+<li><strong>privilege</strong> : les autorisations d’accès (voir la doc)</li>
+<li><strong>visible</strong> : il arrive parfois qu’on ne souhaite pas qu’un menu apparaisse sur le site (par exemple, on peut avoir une hiérarchie avec un niveau qui dit : menu principal / menu sidebar / menu footer : clairement, vous ne souhaitez pas que ces trois entrées de menu apparaissent à l’écran mais c’est plutôt une méthode pour séparer les sujets) : utiliser l’option ‘visible’</li>
+<li><strong>order</strong> : expérimentez avec pour réorganiser votre menu</li>
+<li><strong>pages</strong> : les pages enfant dans votre hiérarchie de pages</li>
+</ul>
+<p>Pour des pages de type <strong>MVC</strong>, ajoutez les options suivantes :</p>
+<ul>
+<li><strong>route</strong> : le nom de la route dans votre application</li>
+<li><strong>controller</strong> : le controller de l’application... depuis ZF2, avec l’intervention du <strong>Service Manager</strong>, je ne sais pas encore quelles sont les astuces pour invoquer le controller à partir de <code>Zend\Navigation</code></li>
+<li><strong>action</strong> : l’action - ici, c’est comme pour ZF1, on saisit juste le nom de l’action sans la partie “Action”</li>
+<li><strong>params</strong> : les autres paramètres éventuellement tels que définis dans votre route.</li>
+</ul>
+<p>Pour les pages de type <strong>URI</strong>, ajoutez l’option suivante :</p>
+<ul>
+<li><strong>uri</strong> : l’URL de la page que vous souhaitez ajouter</li>
+</ul>
+<p><code>Zend\Navigation</code> définit également des conteneurs mais pour une utilisation basique, ne retenez que la partie sur les pages. Sinon, référez vous à la <a href="http://framework.zend.com/manual/2.3/en/modules/zend.navigation.containers.html" target="_blank">documentation officielle</a>.</p>
+<p>Au delà des deux types de pages définis par <code>Zend\Navigation</code>, vous êtes évidemment libre d’étendre la fonctionnalité et de créer vos propres types de page... Perso, je ne vois pas encore à quelle occasion j’aurais besoin de cette fonctionnalité... Peut-etre si je veux gérer un système d’autorisation d’accès complexe... à voir...</p>
+<h3>Pour le rendu</h3>
+<p>La <a href="http://framework.zend.com/manual/2.3/en/modules/zend.navigation.view.helpers.html" target="_blank">documentation est ici</a> et elle est assez bien documentée en exemple. En tatonnant, on arrive assez facilement au résultat qu’on souhaite obtenir.</p>
+<p>Si en revanche vous souhaitez des rendus de types menus déroulants, je suppose qu’il faut voir soit avec les classes de Twitter Bootstrap (installé par défaut avec le squelette d’application), soit avec un autre framework javascript.</p>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/fr/tags/zf2">ZF2</a></li><li><a href="/fr/tags/zend-framework">Zend Framework</a></li><li><a href="/fr/tags/mvc">MVC</a></li><li><a href="/fr/tags/zend-navigation">Zend Navigation</a></li></ul>
+        </div>
+      
+
+      
+    
+
+      
+        <section id="oldcomment">
+          <h2>Commentaires historiques</h2><article>
+              <div class="level1">
+  <h3>Is there a way to add an</h3>
+  <div class="meta">King 2015-09-05T14:08 </div>
+  <div class="body">Is there a way to add an empty link to a navigation menu? I want sub pages to the main link to go somewhere, but I want a label with no link to the main category. Any ideas?</div>
+
+  
+    
+      <div class="level2">
+        <h3>I'd use the URI type page</h3>
+        <div class="meta">haclong 2015-05-09T16:06</div>
+        <div class="body">I'd use the URI type page<br />
+<br />
+or use a key in the navigation array so you can use its child pages later</div>
+      </div>
+    
+  
+  
+</div>
+
+            </article></section>
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>Sur moi</h3>
+      <p>J&#39;ai appris le php il y a quelques années, quand Internet était à ses débuts. Pour diverses raisons, j&#39;ai arrêté en route et j&#39;ai perdu le fil des nouveaux Internets que je redécouvre. Résultat, je me sens constamment à courir après l&#39;histoire mais je suis toujours motivée à reprendre des projets personnels. Je me propose de vous partager mes découvertes. Au delà des sujets de programmation, j&#39;aime également partager mes infos concernant notamment l&#39;Histoire, l&#39;Astronomie, la Linguistique, les Films, les Livres et les Anime. J&#39;espère que vous aimerez suivre mon blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. Tous droits réservés.</p>
+        <p>Propulsé par <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

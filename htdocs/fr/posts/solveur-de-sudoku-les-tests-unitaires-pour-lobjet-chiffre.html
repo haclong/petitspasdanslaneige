@@ -1,0 +1,303 @@
+<!doctype html>
+<html class="no-js" lang="fr" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>Solveur de Sudoku - Les tests unitaires pour l&#39;objet Chiffre&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">Français</a>
+        <a href="/en/">Anglais</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/fr/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/fr/books/0/index.html">Séries</a>
+        <a href="/fr/">Accueil</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/fr/">Accueil</a><i class="fas fa-angle-right"></i>Solveur de Sudoku - Les tests unitaires pour l'objet Chiffre
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>Solveur de Sudoku - Les tests unitaires pour l'objet Chiffre</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>09/03/2014 21:22:00
+        
+        <i class="fas fa-th-large"></i><!--a href="/fr/sites/haclong-projects.html" class="tag-sites"-->Haclong projects<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/Sudoku_Board_Game.jpg" class="node-banner" />
+        
+      </div>
+
+      <p><h3>Monter la campagne de tests</h3>
+<p>Je ne suis pas encore très calée en développement piloté par les tests. Mais cela ne veut pas dire qu'on va se passer des tests unitaires. Pour ma part, j'utilise les tests unitaires pour vérifier que je n'ai pas de régression pendant l'utilisation de mes objets.</p>
+<p>Nous allons donc monter un jeu de tests que nous n'hésiterons pas à lancer régulièrement pour vérifier que tout le monde va bien.</p>
+<h3>Préparons le fichier de tests pour l'objet Chiffre.</h3>
+<pre><code class="language-php">// module/Application/test/ApplicationTest/Model/ChiffreTest.php
+
+&lt;?php
+namespace ApplicationTest\Model ;
+
+use Application\Model\Chiffre ;
+use PHPUnit_Framework_TestCase ;
+
+class ChiffreTest extends PHPUnit_Framework_TestCase
+{
+}
+</code></pre>
+<p>Nous allons nous concentrer à tester chaque fonctionnalité, chaque caractéristique de notre objet <strong>Chiffre</strong>.</p>
+<p>Testons le constructeur en vérifiant que quand on instancie un objet <strong>Chiffre</strong>, chaque possibilité existe et n'est pas écartée.</p>
+<pre><code class="language-php">public function testChiffreInitial()
+{
+  $f = new Chiffre(4) ;
+ 
+  $this-&gt;assertSame($f-&gt;getStatutDuNumero(1), 2) ;
+  $this-&gt;assertSame($f-&gt;getStatutDuNumero(2), 2) ;
+  $this-&gt;assertSame($f-&gt;getStatutDuNumero(3), 2) ;
+  $this-&gt;assertSame($f-&gt;getStatutDuNumero(4), 2) ;
+}
+</code></pre>
+<p>Testons que lorsqu'on instancie un objet <strong>Chiffre</strong>, il n'y a pas plus de numéros possibles que la taille de la grille. Pour ce type de test, les méthodes doivent retourner une erreur PHP. Il faut donc prévenir PHP Unit que pour ce test, nous attendons une exception.</p>
+<pre><code class="language-php">public function testChiffreInitial()
+{
+  $f = new Chiffre(4) ;
+ 
+  $this-&gt;assertSame($f-&gt;getStatutDuNumero(1), 2) ;
+  $this-&gt;assertSame($f-&gt;getStatutDuNumero(2), 2) ;
+  $this-&gt;assertSame($f-&gt;getStatutDuNumero(3), 2) ;
+  $this-&gt;assertSame($f-&gt;getStatutDuNumero(4), 2) ;
+}
+
+/**
+ * @expectedException PHPUnit_Framework_Error
+ */
+public function testNotExistingOffset()
+{
+  $f = new Chiffre(4) ;
+
+  // Le Chiffre n'a que 4 numéros possibles.
+  // Il est donc impossible qu'il existe un 5eme numéro possible.
+  // Cette assertion retourne une erreur.
+  $this-&gt;assertFalse($f-&gt;getStatutDuNumero(5)) ;
+}
+</code></pre>
+<p>Testons le comportement quand on valide un numéro.</p>
+<pre><code class="language-php">public function testValiderChiffre()
+{
+  $f = new Chiffre(4) ;
+  $f-&gt;validerChiffre(2) ;
+ 
+  $this-&gt;assertSame($f-&gt;getNumero(), 2) ;
+  $this-&gt;assertSame($f-&gt;getStatutDuNumero(3), 0) ;
+  $this-&gt;assertFalse($f-&gt;estInconnu()) ;
+  $this-&gt;assertTrue($f-&gt;estValide()) ;
+}
+</code></pre>
+<p>Vérifions qu'on ne peut pas valider un numéro qui a été éliminé. Pour ce test, nous attendons une exception.</p>
+<pre><code class="language-php">/**
+ * @expectedException Exception
+ */
+public function testEchecValiderChiffre()
+{
+  $f = new Chiffre(4) ;
+  $f-&gt;eliminerChiffre(2) ;
+  $f-&gt;validerChiffre(2) ;
+}
+</code></pre>
+<p>Testons le comportement d'un objet Chiffre quand on réinitialise la grille alors qu'un chiffre a été validé.</p>
+<pre><code class="language-php">public function testRetablirChiffre()
+{
+  $f = new Chiffre(4) ;
+  $f-&gt;validerChiffre(2) ;
+  $f-&gt;retablirTout() ;
+
+  // Le numéro validé est réinitialisé
+  $this-&gt;assertSame($f-&gt;getNumero(), '') ;
+  $this-&gt;assertSame($f-&gt;getStatutDuNumero(1), 2) ;
+  $this-&gt;assertTrue($f-&gt;estInconnu()) ;
+  $this-&gt;assertFalse($f-&gt;estValide()) ;
+}
+</code></pre>
+<p>On vérifie ce qu'il se passe quand on élimine une possibilité</p>
+<pre><code class="language-php">public function testEliminerChiffre()
+{
+  $f = new Chiffre(4) ;
+ 
+  $this-&gt;assertSame($f-&gt;getNumero(), '') ;
+  $this-&gt;assertSame($f-&gt;getStatutDuNumero(3), 2) ;
+ 
+  $f-&gt;eliminerChiffre(3) ;
+ 
+  $this-&gt;assertSame($f-&gt;getNumero(), '') ;
+  $this-&gt;assertSame($f-&gt;getStatutDuNumero(3), 0) ;
+  $this-&gt;assertTrue($f-&gt;estInconnu()) ;
+  $this-&gt;assertFalse($f-&gt;estValide()) ;
+}
+</code></pre>
+<p>On teste qu'il est impossible d'éliminer un chiffre qui a été validé</p>
+<pre><code class="language-php">/**
+ * @expectedException Exception
+ */
+public function testEchecEliminerChiffre()
+{
+  $f = new Chiffre(4) ;
+  $f-&gt;validerChiffre(2) ;
+  $f-&gt;eliminerChiffre(2) ;
+}
+</code></pre>
+<p>Il reste à vérifier que lorsque tous les numéros possibles sont éliminés, le dernier numéro possible est validé.</p>
+<pre><code class="language-php">public function testEstDerniereOption()
+{
+  $f = new Chiffre(4) ;
+ 
+  $this-&gt;assertSame($f-&gt;getNumero(), '') ;
+  $this-&gt;assertTrue($f-&gt;estInconnu()) ;
+  $this-&gt;assertFalse($f-&gt;estValide()) ;
+ 
+  $f-&gt;eliminerChiffre(3) ;
+  $f-&gt;eliminerChiffre(2) ;
+  $f-&gt;eliminerChiffre(1) ;
+
+  // La seule possibilité qui reste (4) a été validée.
+  $this-&gt;assertSame($f-&gt;getNumero(), 4) ;
+  $this-&gt;assertFalse($f-&gt;estInconnu()) ;
+  $this-&gt;assertTrue($f-&gt;estValide()) ;
+}
+</code></pre>
+<p>Testons enfin la méthode qui va retourner le statut de chacun des numéros</p>
+<pre><code class="language-php">public function testGetStatutDuNumero()
+{
+  $f = new Chiffre(4) ;
+  $this-&gt;assertSame($f-&gt;getStatutDuNumero(1), 2) ; // Chiffre::POSSIBLE
+  $this-&gt;assertSame($f-&gt;getStatutDuNumero(3), 2) ; // Chiffre::POSSIBLE
+ 
+  $f-&gt;validerChiffre(3) ;
+ 
+  $this-&gt;assertSame($f-&gt;getStatutDuNumero(1), 0) ; // Chiffre:ELIMINE
+  $this-&gt;assertSame($f-&gt;getStatutDuNumero(3), 1) ; // Chiffre::VALIDE
+ 
+  $f-&gt;retablirTout() ;
+ 
+  $this-&gt;assertSame($f-&gt;getStatutDuNumero(2), 2) ; // Chiffre::POSSIBLE
+  $this-&gt;assertSame($f-&gt;getStatutDuNumero(3), 2) ; // Chiffre::POSSIBLE
+}
+</code></pre>
+<p>Lancer les tests dans Netbeans (<code>Run &gt; Run Tests</code>).</p>
+<p>Les tests devraient bien se passer. Nous avons un objet <strong>Chiffre</strong> quasiment complet. Passons à l'objet <strong>Case</strong> dans le prochain post</p>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/fr/tags/oop">OOP</a></li></ul>
+        </div>
+      
+
+      
+        <nav id="book-navigation">
+    
+       <li class="link-previous"><a href="/fr/posts/solveur-de-sudoku-lobjet-chiffre.html"><i class="fas fa-long-arrow-alt-left"></i> Solveur de Sudoku - L&#39;objet Chiffre</li>
+    
+
+    
+        <li class="link-next"><a href="/fr/posts/sudoku-solver-developper-lobjet-case.html">Sudoku Solver - Développer l&#39;objet Case <i class="fas fa-long-arrow-alt-right"></i></a></li>
+    
+
+    
+        <li class="link-up"><a href="/fr/books/aborder-la-programmation-orientee-objet-par-lexemple-concevoir-un-solveur-de-sudoku.html"><i class="fas fa-book-open"></i> Aborder la programmation orientée objet par l&#39;exemple. Concevoir un solveur de sudoku</li>
+    
+</nav>
+
+      
+    
+
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>Sur moi</h3>
+      <p>J&#39;ai appris le php il y a quelques années, quand Internet était à ses débuts. Pour diverses raisons, j&#39;ai arrêté en route et j&#39;ai perdu le fil des nouveaux Internets que je redécouvre. Résultat, je me sens constamment à courir après l&#39;histoire mais je suis toujours motivée à reprendre des projets personnels. Je me propose de vous partager mes découvertes. Au delà des sujets de programmation, j&#39;aime également partager mes infos concernant notamment l&#39;Histoire, l&#39;Astronomie, la Linguistique, les Films, les Livres et les Anime. J&#39;espère que vous aimerez suivre mon blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. Tous droits réservés.</p>
+        <p>Propulsé par <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

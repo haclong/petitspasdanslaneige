@@ -1,0 +1,192 @@
+<!doctype html>
+<html class="no-js" lang="fr" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>Cerner le modèle&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">Français</a>
+        <a href="/en/">Anglais</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/fr/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/fr/books/0/index.html">Séries</a>
+        <a href="/fr/">Accueil</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/fr/">Accueil</a><i class="fas fa-angle-right"></i>Cerner le modèle
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>Cerner le modèle</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>09/03/2013 21:34:00
+        
+        <i class="fas fa-th-large"></i><!--a href="/fr/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/600_prometheus-prom-007_rgb1.jpg" class="node-banner" />
+        
+          <p><strong>Crédit</strong> : 20th century fox </p>
+        
+      </div>
+
+      <p><p>Quand j'ai commencé le développement orienté objet, notamment dans le cadre du modèle MVC, je me suis rapidement heurté à cette interrogation : qu'est ce que le MODELE ? Et au delà de sa définition, comment on construit un modèle ?</p>
+<h3>Ni la vue, ni le contrôleur</h3>
+<p>D'après les explications du <a href="http://fr.wikipedia.org/wiki/Mod%C3%A8le-Vue-Contr%C3%B4leur" target="_blank">modèle MVC</a>, de toutes évidences, le <strong>Modèle</strong> n'est ni le <strong>Contrôleur</strong>, ni la <strong>Vue</strong>.</p>
+<ul>
+<li>La <strong>Vue</strong>, c'est le templating : la mise en forme des <em>données</em>.</li>
+<li>Le <strong>Contrôleur</strong>, c'est le routing et la gestion des requêtes HTTP. La responsabilité du contrôleur est de servir les <em>données</em> en fonction de la requête de l'utilisateur.</li>
+</ul>
+<p>Ainsi, le <strong>contrôleur</strong> sert les <em>données</em> et les transmet à la <strong>vue</strong> qui affiche ces mêmes <em>données</em> dans une jolie mise en page. Comme on peut le constater, contrôleur et vue travaillent en étroite collaboration. Du moins, tel que c'est géré avec <a href="http://framework.zend.com/manual/1.12/en/learning.quickstart.intro.html" target="_blank"><strong>Zend Application</strong></a>.</p>
+<p>Dans ce cadre, de quelles façons s'inscrit donc le <strong>modèle</strong> ? Je vous le donne dans le mille, et après un rapide travail d'élimination, on peut affirmer sans ciller que le <strong>modèle</strong> est tout ce qui reste : les <strong>données</strong>.</p>
+<p>L'affaire prend alors une tournure simplissime.</p>
+<h3>Modèle = données</h3>
+<p>Il y a quelques années, lorsqu'on mentionnait les <em>données</em>, on entendait facilement <em>base de données</em> qui plus est, unique. De nos jours, on ne peut plus se permettre de limiter le concept de <em>données</em> à une seule base.</p>
+<p>En effet, les applications puisent leurs informations parfois dans plusieurs bases de données différentes, chacune avec une technologie différente (MySQL, Posgre, Oracle...). Certaines données peuvent venir de flux échangés avec des webservices de fournisseurs tiers alors que d'autres peuvent provenir de flux RSS.</p>
+<p>Les sources de données sont désormais multiples et à la conception du modèle, il faut pouvoir prévoir - déjà - les possiblités d'extensions de ses fonctionnalités.</p>
+<h3>Le modèle contient les règles métiers</h3>
+<p>Au delà de ce point, j'ai pu constater que je ne pouvais pas me limiter à cette équivalence : modèle = données. Celle ci ne serait vrai que si les utilisateurs qui visitent une application ne souhaitaient accéder qu'à des données brutes, certes mise en page, mais non filtrées, non triées et ne serait-ce qu'en citant le cas des dates non formatées, format timestamp par exemple, j'ai tout dit.</p>
+<p>Diverses lectures font clairement apparaître qu'en plus des données, le modèle comprend également les règles métiers : le format des données à communiquer, les procédures enchaînées suite à un événement, les conditions à satisfaire pour distribuer des informations... En vérité, le coeur de l'application se situe en fait dans le modèle. Deux exemples simples pour s'en convaincre :</p>
+<ul>
+<li>
+<p>Dans le cadre d'une application avec des membres, ceux ci ont la possibilité de se désinscrire. Pour l'utilisateur membre, se désinscrire revient à cliquer sur un bouton &quot;se désinscrire&quot;. Le bouton se situe dans la vue. Lorsque l'utilisateur a cliqué le bouton, la vue transforme cette action en requête que le contrôleur reçoit. Le contrôleur dit alors au modèle qu'un membre authentifié souhaite se désinscrire. Le modèle réagit en</p>
+</li>
+<li>
+<p>retirant l'accès de l'application à l'utilisateur</p>
+</li>
+<li>
+<p>supprimant toutes les données personnelles de l'utilisateur</p>
+</li>
+<li>
+<p>conservant les données (articles, blogs, posts, commentaires) dont l'utilisateur est auteur</p>
+</li>
+<li>
+<p>remplaçant l'identifiant de l'utilisateur par la valeur par défaut &quot;anonyme&quot;</p>
+</li>
+<li>
+<p>Dans le cadre d'une application de vente en ligne, l'utilisateur peut consulter son panier en cours de commande. Pour consulter la commande, l'utilisateur cliquer sur l'icône du &quot;panier&quot; que la vue a bien pris soin de lui mettre à disposition. Lorsque l'utilisateur a cliqué sur l'icône, une requête est envoyée au contrôleur. Le contrôleur dit au modèle que l'utilisateur A souhaite consulter son panier en cours. Le modèle réagit en</p>
+</li>
+<li>
+<p>identifiant le bon panier</p>
+</li>
+<li>
+<p>renvoyant, pour chaque élément du panier, le prix unitaire du produit et le prix total calculé sur la base du prix unitaire multiplié par la quantité</p>
+</li>
+<li>
+<p>renvoyant le montant total du panier en additionant tous les prix totaux des éléments du panier</p>
+</li>
+<li>
+<p>renvoyant le montant de TVA sur la base du taux de TVA en vigueur</p>
+</li>
+</ul>
+<p>On constate donc bien que pour deux actions qui, du point de vue de l'utilisateur semblent être simplissimes enchaînent chacune des décisions, des arbitrages ou des calculs avant l'affichage final des données.</p>
+<p>Pour conclure sur ce point, les recommandations portent sur des contrôleurs très légers et des modèles beaucoup plus volumineux mais plus judicieux également. Vous trouverez des argumentations plus convaincants probablement sur les articles suivants (anglophones) : <a href="http://blog.astrumfutura.com/2008/12/the-m-in-mvc-why-models-are-misunderstood-and-unappreciated/trackback/" target="_blank">The M in MVC...</a> de Pádraic Brady, <a href="http://weblog.jamisbuck.org/2006/10/18/skinny-controller-fat-model" target="_blank">Skinny controller....</a> de Jamis (appliqué au framework Ruby on Rails mais le principe reste le même), et un <a href="http://www.slideshare.net/damiansromek/thin-controllers-fat-models-proper-code-structure-for-mvc" target="_blank">diaporama</a> qui résume bien le choix technique.</p>
+<h3>Mais alors, où allons nous ?</h3>
+<p>Le concept du modèle s'éclaircit. On sait ce qu'il n'est pas, ni la vue, ni le contrôleur. On sait également qu'il ne peut se limiter à une correspondance avec une base de données. Mais quand on est devant son IDE favori et qu'il s'agit de créer son premier modèle, on se dit : par où commencer ?</p>
+<p>Matthew Weier O'Phinney et Rob Allen en décrivent les principes dans leur articles respectifs (anglophones) <a href="http://www.mwop.net/blog/202-Model-Infrastructure.html" target="_blank">Model Infrastructure</a> et <a href="http://akrabat.com/zend-framework/on-models-in-a-zend-framework-application/" target="_blank">On Models in a Zend Framework application</a>. Après la lecture de leurs propositions, j'ai commencé à entrevoir une organisation dans mes objets.</p>
+<p>A la conception, j'ai commencé à craindre la démultiplication des objets si proches les uns des autres, les uns appelant les autres de façon à créer peut être une pyramide avec trop de couches successives dans mon modèle. Je me suis demandée si mon concept n'était pas exagéré dans ses détails et si, dans mon enthousiasme, je n'avais pas appliqué les principes trop scrupuleusement. La lecture de l'article <a href="http://en.wikipedia.org/wiki/SOLID_%28object-oriented_design%29" target="_blank">S.O.L.I.D</a> de Wikipedia (anglophone, désolé, la version française n'a plus cet article) m'a réconfortée dans mes choix et ces 5 principes sont un guide que je garde à l'esprit pour la conception de mes objets. Philippe Vialatte explique très bien les <a href="http://philippe.developpez.com/articles/SOLIDdotNet/" target="_blank">principes S.O.L.I.D</a> sur developpez.com. Concernant ses exemples de code, il faut juste retenir que son article est appliqué au langage .NET. De toutes façons, nous parlons ici d'architecture du code et non pas d'un langage lui même. La conception d'un modèle peut s'appliquer à tous les langages. Ce n'est vraiment qu'au moment de l'appliquer et de l'écrire véritablement que le choix du langage fera la différence.</p>
+<p>L'architecture de mon modèle fait petit à petit son chemin. J'ai dû refactorer plusieurs fois au cours de sa conception (mieux vaut tard que jamais) parce que une arborescence valait peut être mieux qu'une autre. Je ne suis toujours pas sûre mais dans mon développement, je suis de plus en plus persuadée que les principes SOLID contribuent à une programmation orientée objet efficace.</p>
+<p>Je vous donne rendez vous dans le prochain article dans lequel je vous présenterais plus en détail mes conclusions. Initialement, je voulais le faire dans ce même article mais la lecture commence à être longue. Et la rédaction de l'article aussi (!). A bientôt.</p>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/fr/tags/oop">OOP</a></li><li><a href="/fr/tags/architecture-logicielle">architecture logicielle</a></li><li><a href="/fr/tags/modele">modèle</a></li></ul>
+        </div>
+      
+
+      
+    
+
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>Sur moi</h3>
+      <p>J&#39;ai appris le php il y a quelques années, quand Internet était à ses débuts. Pour diverses raisons, j&#39;ai arrêté en route et j&#39;ai perdu le fil des nouveaux Internets que je redécouvre. Résultat, je me sens constamment à courir après l&#39;histoire mais je suis toujours motivée à reprendre des projets personnels. Je me propose de vous partager mes découvertes. Au delà des sujets de programmation, j&#39;aime également partager mes infos concernant notamment l&#39;Histoire, l&#39;Astronomie, la Linguistique, les Films, les Livres et les Anime. J&#39;espère que vous aimerez suivre mon blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. Tous droits réservés.</p>
+        <p>Propulsé par <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

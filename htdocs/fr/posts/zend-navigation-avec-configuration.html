@@ -1,0 +1,341 @@
+<!doctype html>
+<html class="no-js" lang="fr" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>Zend Navigation avec configuration&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">Français</a>
+        <a href="/en/">Anglais</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/fr/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/fr/books/0/index.html">Séries</a>
+        <a href="/fr/">Accueil</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/fr/">Accueil</a><i class="fas fa-angle-right"></i>Zend Navigation avec configuration
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>Zend Navigation avec configuration</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>03/07/2014 13:46:00
+        
+        <i class="fas fa-th-large"></i><!--a href="/fr/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->, <!--a href="/fr/sites/haclong-projects.html" class="tag-sites"-->Haclong projects<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/musictechnique.jpg" class="node-banner" />
+        
+      </div>
+
+      <p><p>Comment configurer un objet <strong>Zend\Navigation</strong> en utilisant la configuration seulement</p>
+<p>J'espère que cette liste va vous aider à utilsier <strong>Zend\Navigation</strong></p>
+<p>Voici l'ensemble entier :</p>
+<p>Toutes les options sont plutôt optionnelles mais pour que la navigation fonctionne, certaines informations seront obligatoires (par bon sens, pas par programmation)</p>
+<pre><code class="language-php">&lt;?php
+return array(
+  // keyword 'navigation' is mandatory
+  'navigation' =&gt; array( 
+    // mandatory - name properties of the Navigation Factory. 
+    // Default = 'default' if we use the \Zend\Navigation\DefaultNavigationFactory class
+    '{$nav_name}' =&gt; array( 
+      // Page definition, the 'name' key can be optional 
+      // and the navigation component will iterate automatically over the $nav_name array
+      '{$page_name}' =&gt; array( 
+        // optional, either 'mvc' or 'uri' for the ZF2 library 
+        // but you can add any other custom type if you want to. 
+        // Custom type has to extend Zend\Navigation\Page\AbstractPage
+        'type' =&gt; string $type, 
+        // it's not mandatory but you'll need this one : 
+        // text on the link, the one you can click. 
+        // Zend Navigation is international and the label should be translatable if everything's fine
+        'label' =&gt; string $label, 
+        // name of the anchor if any. As far as i know, do not include the # sign
+        'fragment' =&gt; string $fragment, 
+        // id of the page (attribut ID de la balise Html A)
+        'id' =&gt; string $id, 
+        // css style class to apply (attribut class de la balise html A)
+        'class' =&gt; string $class, 
+        // title of the page (attribut title de la balise html A)
+        'title' =&gt; string $title,
+        // target of the page (attribut target de la balise html A)
+        'target' =&gt; string $target, 
+        
+        'rel' =&gt; array(
+          // multiple rel types for one page
+          '{$type_rel}' =&gt; array( 
+            // page options such as 'label', 'uri', 'controller' etc...
+          ),
+        ),
+ 
+        'rev' =&gt; array(
+          // multiple rel types for one page
+          '{$type_rel}' =&gt; array( 
+            // page options such as 'label', 'uri', 'controller' etc...
+          ),
+        ),
+ 
+        // default = null : order of the page in the container. 
+        // Ordering from smallest to biggest
+        'order' =&gt; int $order, 
+        // basically, the name you assigned to a resource 
+        // in the Zend\Permission\Acl\Resource\GenericResouce($name) ;
+        'resource' =&gt; string | AclResource $resource, 
+        // basically, the privilege assigned for the ACL component
+        'privilege' =&gt; string $privilege, 
+        // permission set to the page
+        'permission' =&gt; $permission, 
+        // default false - whether the page is active or not
+        'active' =&gt; bool, 
+        // default true - whether the page is visible or not
+        'visible' =&gt; bool, 
+        'pages' =&gt; array(
+          '{$page_name}' =&gt; array(), // recursive
+        ),
+ 
+        // $type = 'uri' Zend\Navigation\Page\Uri
+        // $type = 'uri' by default if there's one 'uri' key in the page
+        // can combine with 'fragment' too
+        'uri' =&gt; string $uri, // any url, either absolute or relative
+ 
+        // $type = 'mvc' Zend\Navigation\Page\Mvc
+        // $type = 'mvc' by default if there's at least 
+        // either one 'action' key, or 'controller' or 'route' key in the page
+        // name of action of the controller
+        'action' =&gt; string $action, 
+        // name of the controller
+        'controller' =&gt; string $controller,
+        // array of all parameters as defined in the route 
+        'params' =&gt; array $params, 
+        // name of the route
+        'route' =&gt; string $route, 
+        // within a ZF Skeleton Application, one is defined by default. 
+        // You can use a customized routeInterface though.
+        'routeMatch' =&gt; Zend\Mvc\Router\RouteMatch, 
+        // default = false - 
+        // if true, use the routeMatch defined to assemble the URI
+        'useRouteMatch' =&gt; bool, 
+        // within a ZF Skeleton Application, one is defined by default. 
+        // You can use a customized RouteStackInterface though.
+        'router' =&gt; Zend\Mvc\Router\RouteStackInterface, 
+      ),
+    ),
+  ),
+);
+?&gt;
+</code></pre>
+<p>Pour utiliser Zend Navigation, il faut également instancier le <code>Navigation Factory</code>.</p>
+<pre><code class="language-php">// n'importe quel fichier de config
+// j'ai tendance à favoriser module/Application/config/module.config.php
+
+&lt;?php
+return array(
+  ... // autre élément de conf
+  'service_manager' =&gt; array(
+    'factories' =&gt; array(
+      'navigation' =&gt; 'Zend\Navigation\Service\DefaultNavigationFactory',
+    ),
+  ),
+);
+</code></pre>
+<p>A titre indicatif, voici à quoi ressemble la classe <code>DefaultNavigationFactory</code> :</p>
+<pre><code class="language-php">&lt;?php
+/**
+ * Zend Framework (http://framework.zend.com/)
+ *
+ * @link http://github.com/zendframework/zf2 for the canonical source repository
+ * @copyright Copyright (c) 2005-2013 Zend Technologies USA Inc. (http://www.zend.com)
+ * @license http://framework.zend.com/license/new-bsd New BSD License
+ */
+
+namespace Zend\Navigation\Service;
+
+/**
+ * Default navigation factory.
+ */
+class DefaultNavigationFactory extends AbstractNavigationFactory
+{
+  /**
+   * @return string
+   */
+  protected function getName()
+  {
+    return 'default';
+  }
+}
+</code></pre>
+<p>Comme on peut le constater, dans la fonction <code>getName()</code>, la valeur est <em>default</em> : c'est cette valeur qu'il faut utiliser dans la configuration de <em>'navigation'</em>, en lieu et place du <code>{$nav_name}</code></p>
+<h3>Créer son propre NavigationFactory</h3>
+<p>Pour créer son propre <code>Navigation Factory</code>, il suffit d'étendre <code>AbstractNavigationFactory</code> et créer une méthode <code>getName()</code> qui retourne le nom de votre <code>Navigation Factory</code>.</p>
+<p>Utiliser ensuite ce même nom pour la configuration de <strong>Zend Navigation</strong> et voilaa...</p>
+<pre><code class="language-php">// path/to/My/Navigation/MyNavigationFactory.php
+
+&lt;?php
+namespace My\Navigation;
+
+/**
+ * Customized navigation factory.
+ */
+class MyNavigationFactory extends AbstractNavigationFactory
+{
+  /**
+   * @return string
+   */
+  protected function getName()
+  {
+    return 'my';
+  }
+}
+</code></pre>
+<p>et dans le fichier de conf :</p>
+<pre><code class="language-php">// My/conf/module.config.php
+
+&lt;?php
+return array(
+  'service_manager' =&gt; array(
+    'factories' =&gt; array(
+      'navigation' =&gt; 'My\Navigation\MyNavigationFactory ',
+    ),
+  ), 
+  'navigation' =&gt; array( 
+    'my' =&gt; array( // My\Navigation\MyNavigationFactory class
+      'home' =&gt; array( 
+        'label' =&gt; 'Home',
+        'route' =&gt; 'home',
+      ),
+    ),
+  ),
+);
+?&gt;
+</code></pre>
+<h3>i18n</h3>
+<p>Pour que la navigation soit traduite, rajouter une classe <code>Translator</code> avec le mot clé <em>'translator'</em> dans le <strong>service Manager</strong></p>
+<pre><code class="language-php">&lt;?php
+return array(
+  'service_manager' =&gt; array(
+    'factories' =&gt; array(
+      'translator' =&gt; 'Zend\I18n\Translator\TranslatorServiceFactory',
+    ),
+  ), 
+);
+?&gt;
+</code></pre>
+<p>Et tadaaa</p>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/fr/tags/zend-framework-2">zend framework 2</a></li><li><a href="/fr/tags/configuration">configuration</a></li><li><a href="/fr/tags/zend-navigation">Zend Navigation</a></li></ul>
+        </div>
+      
+
+      
+        <nav id="book-navigation">
+    
+       <li class="link-previous"><a href="/fr/posts/zend-mvc-router-par-configuration.html"><i class="fas fa-long-arrow-alt-left"></i> Zend Mvc Router par configuration</li>
+    
+
+    
+        <li class="link-next"><a href="/fr/posts/zend-filter-par-configuration.html">Zend Filter par configuration <i class="fas fa-long-arrow-alt-right"></i></a></li>
+    
+
+    
+        <li class="link-up"><a href="/fr/books/configuration-dans-zend-framework-2.html"><i class="fas fa-book-open"></i> Configuration dans Zend Framework 2</li>
+    
+</nav>
+
+      
+    
+
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>Sur moi</h3>
+      <p>J&#39;ai appris le php il y a quelques années, quand Internet était à ses débuts. Pour diverses raisons, j&#39;ai arrêté en route et j&#39;ai perdu le fil des nouveaux Internets que je redécouvre. Résultat, je me sens constamment à courir après l&#39;histoire mais je suis toujours motivée à reprendre des projets personnels. Je me propose de vous partager mes découvertes. Au delà des sujets de programmation, j&#39;aime également partager mes infos concernant notamment l&#39;Histoire, l&#39;Astronomie, la Linguistique, les Films, les Livres et les Anime. J&#39;espère que vous aimerez suivre mon blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. Tous droits réservés.</p>
+        <p>Propulsé par <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

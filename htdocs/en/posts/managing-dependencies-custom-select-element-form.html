@@ -1,0 +1,322 @@
+<!doctype html>
+<html class="no-js" lang="en" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>Managing Dependencies - Custom Select Element in Form&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">French</a>
+        <a href="/en/">English</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/en/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/en/books/0/index.html">Collections</a>
+        <a href="/en/">Home</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/en/">Home</a><i class="fas fa-angle-right"></i>Managing Dependencies - Custom Select Element in Form
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>Managing Dependencies - Custom Select Element in Form</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>11/25/2014, 4:43:00 PM
+        
+        <i class="fas fa-th-large"></i><!--a href="/en/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/Capture_serveur_rack.PNG" class="node-banner" />
+        
+      </div>
+
+      <p><p>A very very frequent case :</p>
+<p>You have a form with a select field (drop down box). The options in the drop box are values from a (most likely) table in your database. How to do this ?</p>
+<p>This is working for - at least - ZF2 2.1.5+</p>
+<h3>The Select Element</h3>
+<p>Create the Select Element as a custom field.</p>
+<p>As we want to manage the dependencies and have a loose coupling between entities and layers of code, we don’t want our custom element to know anything about the database or the table or anything outside the element itself… So we will inject all the external values into the element.</p>
+<p>Reminder : the Select element is expecting an array as value options :</p>
+<pre><code class="language-php">$select-&gt;setValueOptions(array(
+  '0' =&gt; 'French',
+  '1' =&gt; 'English',
+  '2' =&gt; 'Japanese',
+  '3' =&gt; 'Chinese',
+));
+</code></pre>
+<p>All we have to do is to fetch a similar array to our custom element : we can either inject an array with pairs of key/label, or inject an object. If it would be an object, we will have to build the array somehow from the object.</p>
+<p>Injecting an array :</p>
+<pre><code class="language-php">// module/MyModule/src/MyModule/Form/CustomSelect.php
+
+&lt;?php
+namespace MyModule\Form ;
+
+use Zend\Form\Element\Select ;
+
+class CustomSelect extends Select
+{
+  public function __construct($arrayInjected)
+  {
+    $this-&gt;setName('mySelectField') ;
+    $this-&gt;setLabel('Choose the value') ;
+    $this-&gt;setValueOptions($arrayInjected) ;
+  }
+}
+</code></pre>
+<p>Injecting an object : You should be able to iterate through your object, or at least, you should find a way to extract an array out of it.</p>
+<pre><code class="language-php">// module/MyModule/src/MyModule/Form/CustomSelect.php
+
+&lt;?php
+namespace MyModule\Form ;
+
+use Zend\Form\Element\Select ;
+
+class CustomSelect extends Select
+{
+  public function __construct($objectInjected)
+  {
+    $valuesInArray = $this-&gt;makeArray($objectInjectect) ;
+    $this-&gt;setName('mySelectField') ;
+    $this-&gt;setLabel('Choose the value') ;
+    $this-&gt;setValueOptions($valuesInjected) ;
+  }
+
+  protected function makeArray($iterativeObject)
+  {
+    $array = array() ;
+
+    foreach($iterativeObject as $value)
+    {
+      $array[$value-&gt;getId()] = $value-&gt;getName() ;
+    }
+
+    return $array ;
+  }
+}
+</code></pre>
+<h3>Loading the element in the form manager</h3>
+<p>Edit the Module.php file. We have to load the element in the form manager</p>
+<pre><code class="language-php">// module/MyModule/Module.php
+
+&lt;?php
+namespace MyModule ;
+
+use MyModule\Form\CustomSelect ;
+
+class Module
+{
+  public function getFormElementConfig()
+  {
+    return array(
+      'factories' =&gt; array(
+        'MyOwnElement' =&gt; function($sm) {
+          $valuesToInject = $sm-&gt;getServiceLocator()-&gt;get('TableGateway') ;
+
+          // do not forget the use instruction for the CustomSelect object
+          // injecting the values in the constructor of our custom element 
+          $select = new CustomSelect($valuesToInject) ;
+
+          return $select ;
+        },
+      ),
+    ) ;
+  }
+
+  public function getServiceConfig()
+  {
+    return array(
+      'factories' =&gt; array(
+
+        // do whatever it takes to access to your datas from your persistence layer
+        'TableGateway' =&gt; function ($sm) {
+          return new TableGateway(...) ;
+        },
+      ),
+    );
+  }
+}
+</code></pre>
+<h3>Building the form</h3>
+<p>Now we build our form component</p>
+<pre><code class="language-php">// module/MyModule/src/MyModule/Form/MyForm.php
+
+&lt;?php
+namespace MyModule\Form ;
+
+use Zend\Form\Form ;
+
+class MyForm extends Form
+{
+  public function init()
+  {
+    $this-&gt;add(array(
+      'name' =&gt; 'mySelect',
+      'type' =&gt; 'MyOwnElement',
+    )) ;
+  }
+
+  public function __construct()
+  {
+    // build the form as usual with standardized ZF2 elements
+  }
+}
+</code></pre>
+<p>When you create customized form elements, you have to add them in the form (or any fieldset) using the init() method.</p>
+<p>Notice i use the alias defined in the Module class.</p>
+<h3>Declaring the form in the Module class</h3>
+<pre><code class="language-php">// module/MyModule/Module.php
+
+&lt;?php
+namespace MyModule ;
+
+...
+
+class Module
+{
+  public function getServiceConfig()
+  {
+    return array(
+      'invokables' =&gt; array(
+        'MyForm' =&gt; 'MyModule\Form\MyForm',
+      );
+    ) ;
+  }
+}
+</code></pre>
+<h3>Putting it together in the controller</h3>
+<pre><code class="language-php">// module/MyModule/src/MyModule/Controller/IndexController.php
+
+&lt;?php
+namespace MyModule\Controller ;
+
+use Zend\Mvc\Controller\AbstractActionController ;
+
+class IndexController extends AbstractActionController
+{
+  public function indexAction()
+  {
+    $formManager = $this-&gt;serviceLocator-&gt;get('FormElementManager') ;
+    $form = $formManager-&gt;get('MyForm') ;
+
+    return array('form' = $form) ;
+  }
+}
+</code></pre>
+<h3>Now the View</h3>
+<p>As for the view, just use the Views plugins designed by ZF2 for rendering form elements. No further customization is required here.</p>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/en/tags/zend-framework-2">zend framework 2</a></li><li><a href="/en/tags/service-manager">Service Manager</a></li><li><a href="/en/tags/dependances">dépendances</a></li><li><a href="/en/tags/formulaire">formulaire</a></li></ul>
+        </div>
+      
+
+      
+        <nav id="book-navigation">
+    
+       <li class="link-previous"><a href="/en/posts/managing-dependencies-constructor-injection-controllers.html"><i class="fas fa-long-arrow-alt-left"></i> Managing Dependencies - Constructor Injection in controllers</li>
+    
+
+    
+        <li class="link-next"><a href="/en/posts/managing-dependencies.html">Managing Dependencies <i class="fas fa-long-arrow-alt-right"></i></a></li>
+    
+
+    
+        <li class="link-up"><a href="/en/books/managing-dependencies-examples-zend-framework-2.html"><i class="fas fa-book-open"></i> Managing Dependencies - Examples with Zend Framework 2</li>
+    
+</nav>
+
+      
+    
+
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>About me</h3>
+      <p>I learned coding with php several years ago, when Internet was still young. For multiple reasons, i had stopped then and missed most of this new Internet i&#39;m discovering once again. So, i feel like a newbie again and since i&#39;m ready to start over personal project, i&#39;ll share with you some of my discoveries. Beyond coding topics, i&#39;ll enjoy sharing with you several subjects such as History, Astronomy, Linguistics, Movies, Books, Music and Anime among others. I hope you&#39;ll enjoy reading this blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. All rights reserved.</p>
+        <p>Powered by <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

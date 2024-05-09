@@ -1,0 +1,248 @@
+<!doctype html>
+<html class="no-js" lang="fr" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>Composer, plus simple, tu meurs&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">Français</a>
+        <a href="/en/">Anglais</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/fr/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/fr/books/0/index.html">Séries</a>
+        <a href="/fr/">Accueil</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/fr/">Accueil</a><i class="fas fa-angle-right"></i>Composer, plus simple, tu meurs
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>Composer, plus simple, tu meurs</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>27/08/2014 14:31:00
+        
+        <i class="fas fa-th-large"></i><!--a href="/fr/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->, <!--a href="/fr/sites/haclong-projects.html" class="tag-sites"-->Haclong projects<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/nature-morte-6_2.jpg" class="node-banner" />
+        
+          <p><strong>Crédit</strong> : Stefano Paolini </p>
+        
+      </div>
+
+      <p><p>Dernièrement, dans le monde PHP, un outil a vu le jour : <strong>Composer</strong>. Ce gestionnaire de dépendances se révèle extrêmement pratique et facile d’utilisation. Pourtant, il ne rencontre pas le succès escompté, notamment auprès des débutants.</p>
+<h2>Les débutants ne l’utilisent pas.</h2>
+<p>Au mieux, <strong>Composer</strong> est mis de côté : <em>mmh, c’est intéressant, je verrais ça après…</em> Mais pourquoi voir ça “<em>Après</em>” puisque <strong>Composer</strong>, vous en avez besoin notamment pour installer (donc “<em>Avant</em>”)...</p>
+<p>Au pire, ils l’évitent. J’ai l’impression qu’ils pensent qu’une installation avec <strong>Composer</strong> revient à dire : compilez le avant de l’utiliser…</p>
+<p>J’ai déjà vu quelqu’un demander comment installer le Zend Framework Skeleton Application mais de manière simple, sans la version compliquée avec <strong>Composer</strong>…</p>
+<p>J’ai vu quelqu’un d’autre qui voulait installer Doctrine mais “juste Doctrine”... parce que le manuel de Doctrine recommandait d’installer avec <strong>Composer</strong>…</p>
+<p>De temps en temps, un débutant qui n’a pas encore compris ce qu’était Composer hurle : <em>où est le zip ? comment j’installe sans le zip ?</em></p>
+<h3>Mais avec Composer !</h3>
+<p><a href="https://getcomposer.org/" target="_blank"><strong>Composer</strong></a>, c’est un gestionnaire de dépendances.</p>
+<p><strong>Composer</strong> sait quelles sont les librairies dont vous avez besoin pour installer votre application.</p>
+<p>Et quand vous vous lancez dans l’installation avec <strong>Composer</strong>, <strong>Composer</strong> va vous installer l’application qui va bien, puis il va télécharger toutes les librairies dont vous avez besoin pour utiliser votre application. Et, cerise sur le gâteau, <strong>Composer</strong> crée le fichier qui va bien pour gérer l’autoload… Plus la peine de faire des includes chaque fois que vous invoquez un nouvel objet. (enfin, si, il faudra faire l’include du premier fichier quand même…)</p>
+<p>En fait, les gens semblent s’imaginer que <strong>Composer</strong> rajoute une couche de complication sur leur bon vieux PHP-do-it-yourself-bricolage-dans-le-garage… Alors qu’en fait, c’est plus simple que simple.</p>
+<p>Tout ce que vous avez à faire, c’est de l’installer (ça peut être bien pour commencer).</p>
+<p>L’installation étant dépendante du système sur lequel vous êtes, je ne pourrais vous parler que de l’installation sur système Unix (Ubuntu +12.x)</p>
+<p>Ouvrez un terminal et tapez en ligne de commande :</p>
+<pre><code class="language-sh"> curl -sS https://getcomposer.org/installer | php
+</code></pre>
+<p>Normalement, vous devriez avoir (entre autre) téléchargé le fichier <code>composer.phar</code>.</p>
+<p>Essayez maintenant de faire</p>
+<pre><code class="language-sh"> php path/to/composer.phar --help
+</code></pre>
+<p>L’aide de <strong>Composer</strong> devrait s’afficher.</p>
+<p>Voilà, vous avez installé <strong>Composer</strong> avec succès.</p>
+<p>Avant d’utiliser <strong>Composer</strong>, prenez l’habitude de le mettre à jour :</p>
+<pre><code class="language-sh"> php path/to/composer.phar self-update
+</code></pre>
+<p>C’est tout.</p>
+<h3>Votre premier contact avec Composer</h3>
+<p>A n’en pas douter, votre premier contact avec <strong>Composer</strong> sera lorsque vous voudrez installer un projet et que la documentation va vous dire : <em>vous pouvez l’installer avec <strong>Composer</strong></em>. Selon les projets, soit vous aurez le .zip du projet à télécharger et ensuite, <strong>Composer</strong> chargera les dépendances du projet, soit vous n’aurez (presque) rien à faire et <strong>Composer</strong> installera les fichiers du projet ET ses dépendances.</p>
+<p><strong>Voyons la première version qui nous rappelle nos belles heures :</strong></p>
+<ul>
+<li>télécharger le .zip (sur github ou n’importe où ailleurs)</li>
+<li>dézipper l’archive et installer les fichiers dans le répertoire de votre projet, sur votre serveur. En principe, il devrait y avoir un fichier <code>composer.json</code> présent. S’il n’est pas là, adressez vous à la team qui a développé le projet que vous cherchez à installer.</li>
+</ul>
+<p>Ouvrez un terminal, allez dans le répertoire du projet et tapez :</p>
+<pre><code class="language-sh"> php path/to/composer.phar install
+</code></pre>
+<p><strong>Composer</strong> installe toutes les dépendances du projet listées dans le fichier <code>composer.json</code> dans le répertoire <code>vendor/</code>.</p>
+<p>Et voilà ! Y’a plus qu’à…</p>
+<p><strong>Encore plus simple !</strong></p>
+<p>La documentation du projet que vous souhaitez installer ne vous fait pas du tout télécharger un fichier .zip.</p>
+<p>Dans ce cas là, ouvrez un terminal et tapez la ligne de commande que vous donne la doc. Ca devrait en principe ressembler à ça :</p>
+<pre><code class="language-sh"> php composer.phar create-project {options} {projet} {path/to/install}
+</code></pre>
+<p>Et voilà. Projet installé, dépendances téléchargées… <strong>tadaaaaa</strong> !!</p>
+<p>Franchement, faut tester… vous ne pourrez plus vous en passer… Simple, efficace… C’est si bon… Mais s’il n’y avait que ça, on n’en ferait pas tout un foin !! Non, y’a mieux !!</p>
+<h3>Ajouter des librairies</h3>
+<p>Maintenant que vous savez installer un projet avec <strong>Composer</strong>, vous souhaitez ajouter des librairies à votre projet.</p>
+<p>Tout d’abord, il vaut mieux identifier les librairies qui vous intéressent. Vous les trouverez principalement sur <a href="https://packagist.org/explore/" target="_blank"><strong>Packagist</strong></a>. Tous les noms des packages sont composés du nom du <em>vendor</em> et du nom du <em>package</em>, séparés par un slash : <code>vendor/package</code>.</p>
+<p>Lorsque vous consultez la page d’un package, vous aurez les différents numéros de version disponibles pour le package. Selon les besoins de votre projet, choisissez le numéro de version qui vous convient.</p>
+<ul>
+<li>Soit vous souhaitez travailler avec une seule version de la librairie, toujours la même (on ne sait jamais, vous ne souhaitez pas subir de dommages collatéraux suite à une mise à jour malencontreuse des autres dépendances…), on utilisera alors le numéro de version exact du package (versions mineures (les petites chiffres) comprises) : <em><strong>1.0.20</strong></em></li>
+<li>Soit vous souhaitez travailler avec une version majeure mais les versions mineures ne devrait pas poser de problèmes, il faudra utiliser le * : **<em>1.0.</em> *** ou même **<em>1.</em> ***</li>
+<li>Soit vous avez besoin d’une version minimum mais les prochaines mises à jour ne devrait pas vous poser de problème, il faudra utiliser <em><strong>&gt;1.0</strong></em> ou <em><strong>&gt;=1.0</strong></em>. Le contraire est vrai, si votre projet ne fonctionne qu’avec des versions inférieures mais n’est pas compatible avec les versions supérieures : <em><strong>&lt;3.0</strong></em> ou <em><strong>&lt;=3.0</strong></em>. Vous pouvez même mettre les deux pour définir un intervalle de versions acceptables <em><strong>&gt;1.0, &lt;=3.0</strong></em>.</li>
+<li>Si vous voulez travailler avec une version de la librairie, accepter toutes les nouvelles mises à jour mais ne pas vous engager vers la prochaine version majeure par souci de compatibilité, vous pouvez utiliser l’opérateur ~ : <em><strong>~1.2&lt;</strong></em>. C’est exactement la même chose que si vous aviez écrit l’intervalle <em><strong>&gt;=1.2, &lt;2.0</strong></em>.</li>
+</ul>
+<p>Revenez à votre projet et tapez dans le terminal</p>
+<pre><code class="language-sh"> php path/to/composer.phar require {vendor}/{package}:{version}
+</code></pre>
+<p>Cette commande <code>require</code> va rajouter la librairie dans votre fichier <code>composer.json</code> et installer la librairie. Et voila, vous pouvez l’utiliser.</p>
+<p>Comme vous ajoutez des librairies à un projet que vous avez déjà installé avec <strong>Composer</strong>, le projet a déjà le code nécessaire pour autoloader les librairies qui suivent la norme PSR-0. A partir du moment que la nouvelle librairie est installée, vous pouvez l’utiliser dans votre code, sans rien ajouter.</p>
+<p>Il se peut que vous ne sachiez pas quel est le <em>namespace</em>de votre nouvelle librairie. Vous le trouverez à deux endroits, soit dans le fichier <code>composer.json</code> de chacune des librairies installées dans <code>vendor/</code>, soit dans le fichier généré par <strong>Composer</strong> : <code>/vendor/composer/autoload_namespaces.php</code></p>
+<p>Dans le fichier <code>autoload_namespaces.php</code>, vous devriez voir un tableau php avec en clé le namespace et en valeur le chemin pour accéder à la librairie. Trouvez votre librairie, vous aurez le namespace.</p>
+<p>Dans le fichier <code>composer.json</code>, une entrée mentionne <em>autoload</em>, puis <em>psr-0</em> ou <em>psr-4</em>. Le namespace est déclaré à cet endroit là.</p>
+<p><em>NOTE</em> : vous pouvez ajouter vos librairies à la main directement dans le fichier <em>composer.json</em> de votre projet si vous souhaitez. Il suffit de respecter la syntaxe json. Franchement, c’est pas la mort, ça se fait tout seul.</p>
+<h3>Last but not least</h3>
+<p><strong>Composer</strong> est plus que pratique pour installer les projets et les dépendances. Mais <strong>Composer</strong>, c’est encore mieux ! Régulièrement dans votre projet, faites</p>
+<pre><code class="language-sh"> php path/to/composer.phar update
+</code></pre>
+<p>Et hop, si une librairie a été mise à jour dans <strong>Packagist</strong>, elle va être mise à jour dans votre projet… Et, à moins d’avoir une mauvaise surprise de rétro compatibilité, ça devrait se passer tout seul…</p>
+<p>Il existe des packages qui vont vous permettre de veiller à vos dépendances :</p>
+<p>Le <a href="https://security.sensiolabs.org/" target="_blank">security checker de Sensiolabs</a> d’une part et <a href="https://www.versioneye.com/" target="_blank">Version Eye</a> d’autre part peuvent faire ça pour vous… Sinon, faire le check régulièrement fonctionne aussi très bien.</p>
+<h3>Bonus</h3>
+<p>Sur les install *nix, petite cerise sur le gâteau, on va transformer notre binaire <code>composer.phar</code> en exécutable dans la console.</p>
+<p>D’abord, ça va nous permettre de ne pas écrire</p>
+<pre><code class="language-sh"> php path/to/composer.phar install
+</code></pre>
+<p>mais plutôt</p>
+<pre><code class="language-sh"> composer install
+</code></pre>
+<p>C’est pas la classe ?</p>
+<p>Allez, tout ce qu’il y a à faire, ouvrez votre console</p>
+<pre><code class="language-sh"> mv path/to/composer.phar /usr/local/bin/composer
+ chmod +x /usr/local/bin/composer
+</code></pre>
+<p>Et Tadaaaaa… Fastoche je vous dis… fastoche...</p>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/fr/tags/composer">composer</a></li><li><a href="/fr/tags/php">PHP</a></li><li><a href="/fr/tags/dependances">dépendances</a></li><li><a href="/fr/tags/librairies">librairies</a></li><li><a href="/fr/tags/developpement">développement</a></li></ul>
+        </div>
+      
+
+      
+    
+
+      
+        <section id="oldcomment">
+          <h2>Commentaires historiques</h2><article>
+              <div class="level1">
+  <h3>oui, c'est bien mais...</h3>
+  <div class="meta">gilles 2014-09-26T13:39 </div>
+  <div class="body">Il faut aussi comprendre qu'en entreprise, le proxy bloque beaucoup de chose et que le "zip" est fort utile dans certains cas.<br />
+Avec composer, la solution alternative devient inexistante ou "compliqué".<br />
+Seulement les derniers "tuto" ou "press" parlent de composer comme quelque chose d'utile qui se rapproche à ce qui existe dejà en java.</div>
+
+  
+  
+</div>
+
+            </article><article>
+              <div class="level1">
+  <h3>C'est vrai. composer doit se</h3>
+  <div class="meta">haclong 2014-09-30T15:02 </div>
+  <div class="body">C'est vrai. composer doit se heurter sur certaines sécurités liées à l'utilisation en entreprise. Je ne saurais pas dire en fait...<br />
+<br />
+Composer n'a pas l'ambition de remplacer l'existant en Java. Composer est un gestionnaire de dépendance dans la communauté PHP. Je pense qu'il est possible de trouver un outil unique, à la fois Java et PHP mais en attendant, Composer s'adresse à la communauté PHP.</div>
+
+  
+  
+</div>
+
+            </article></section>
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>Sur moi</h3>
+      <p>J&#39;ai appris le php il y a quelques années, quand Internet était à ses débuts. Pour diverses raisons, j&#39;ai arrêté en route et j&#39;ai perdu le fil des nouveaux Internets que je redécouvre. Résultat, je me sens constamment à courir après l&#39;histoire mais je suis toujours motivée à reprendre des projets personnels. Je me propose de vous partager mes découvertes. Au delà des sujets de programmation, j&#39;aime également partager mes infos concernant notamment l&#39;Histoire, l&#39;Astronomie, la Linguistique, les Films, les Livres et les Anime. J&#39;espère que vous aimerez suivre mon blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. Tous droits réservés.</p>
+        <p>Propulsé par <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

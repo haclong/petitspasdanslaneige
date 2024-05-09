@@ -1,0 +1,364 @@
+<!doctype html>
+<html class="no-js" lang="en" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>CI - Continuous Integration with ContinuousPHP&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">French</a>
+        <a href="/en/">English</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/en/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/en/books/0/index.html">Collections</a>
+        <a href="/en/">Home</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/en/">Home</a><i class="fas fa-angle-right"></i>CI - Continuous Integration with ContinuousPHP
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>CI - Continuous Integration with ContinuousPHP</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>12/17/2016, 7:27:00 AM
+        
+        <i class="fas fa-th-large"></i><!--a href="/en/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/9363900-los-engranajes-de-los-viejos-billetes.jpg" class="node-banner" />
+        
+      </div>
+
+      <p><p>For those who are interested, here are the settings i am using with <a href="https://continuousphp.com/" target="_blank">ContinuousPHP</a> for a Zend Framework 2+ project.</p>
+<h2>Project features</h2>
+<ul>
+<li><strong>Repository on Bitbucket</strong></li>
+<li><strong>Installation of Zend Framework MVC Skeleton v 3.0.2dev with Composer</strong></li>
+</ul>
+<p>It is a minimal installation of the Zend Framework MVC Skeleton and i used <a href="https://getcomposer.org/" target="_blank">Composer</a> to add extra packages i needed. Additional packages are written in the <strong><code>composer.json</code></strong> file. Since we will do some testing, installation of <a href="https://docs.zendframework.com/zend-test/" target="_blank">zend-test</a> is mandatory.</p>
+<pre><code class="language-sh">composer require zendframework/zend-test
+</code></pre>
+<ul>
+<li><strong>PHPUnit Tests suite</strong></li>
+</ul>
+<p>We will be using <a href="https://phpunit.de/" target="_blank">PHPUnit</a> testing library to do our unit tests. If you ever add a new module for you application (as i did), the autoloading is managed by composer.</p>
+<p><strong>NOTE</strong> : With the old ZF2 process, we had to add that snippet in each of our Module class to manage the autoloading of our module.</p>
+<pre><code class="language-php">// module/MonModule/Module.php
+
+Class Module {
+  public function getAutoloaderConfig()
+  {
+    return array(
+      'Zend\Loader\StandardAutoloader' =&gt; array(
+        'namespaces' =&gt; array(
+          __NAMESPACE__ =&gt; __DIR__ . '/src/' . __NAMESPACE__,
+        ),
+      ),
+    ) ;
+  }
+}
+</code></pre>
+<p>This snippet made the link between the namespace and the right path to find the files.</p>
+<p>Nowadays, we don't need that snippet anymore. Autoloading has to be declared in <code>**composer.json**</code> :</p>
+<pre><code class="language-php">// composer.json
+&quot;autoload&quot;: {
+  &quot;psr-4&quot;: {
+    &quot;Application\\&quot;: &quot;module/Application/src/&quot;,
+    &quot;MonModule\\&quot;: &quot;module/MonModule/src/&quot;
+  }
+},
+
+&quot;autoload-dev&quot;: {
+  &quot;psr-4&quot;: {
+    &quot;ApplicationTest\\&quot;: &quot;module/Application/test/&quot;,
+    &quot;MonModuleTest\\&quot;: &quot;module/MonModule/test/&quot;
+  }
+},
+</code></pre>
+<p>Of course, although it is not recommended, you can give any name you'd like for your new namespace. But obviously, it is much easier to give a namespace matching the name of your module... well... to each his own...</p>
+<p>So to make it clear, this is where the application will find our classes :</p>
+<pre><code class="language-php">// composer.json
+&quot;autoload&quot;: {
+  &quot;psr-4&quot;: {
+    ...,
+    &quot;MonModule\\&quot;: &quot;module/MonModule/src/&quot;
+  }
+},
+</code></pre>
+<p>and this is where the tests are stored :</p>
+<pre><code class="language-php">// composer.json
+&quot;autoload-dev&quot;: {
+  &quot;psr-4&quot;: {
+    ...,
+    &quot;MonModuleTest\\&quot;: &quot;module/MonModule/test/&quot;
+  }
+},
+</code></pre>
+<p>We have to make sure to add our tests to PHPUnit configuration file. If you missed that info, PHPUnit has its own settings in <code>**phpunit.xml.dist**</code>. Not in <code>**composer.json**</code>.</p>
+<pre><code class="language-xml">// phpunit.xml.dist
+&lt;phpunit colors=&quot;true&quot;&gt;
+  &lt;testsuites&gt;
+    &lt;testsuite name=&quot;ZendSkeletonApplication Test Suite&quot;&gt;
+      &lt;directory&gt;./module/Application/test&lt;/directory&gt;
+    &lt;/testsuite&gt;
+    &lt;testsuite name=&quot;MonModule Test Suite&quot;&gt;
+      &lt;directory&gt;./module/MonModule/test&lt;/directory&gt;
+    &lt;/testsuite&gt;
+  &lt;/testsuites&gt;
+&lt;/phpunit&gt;
+</code></pre>
+<ul>
+<li><strong>Use of a MySQL database</strong></li>
+</ul>
+<p>Using a MySQL database is interesting because it means there is obviously a <code>**config/autoload/dbadapter.local.php**</code> file with all the connection string to the database (including credentials). This file has been ignored by git for obvious security reasons.</p>
+<p>That <code>**config/autoload/dbadapter.local.php**</code> file sets the hostname, username, password to connect to the database.</p>
+<p>git ignore all <strong><code>*.local.php</code></strong> file (security rules included in Zend Framework (you can edit the rule in the .gitignore file)) :</p>
+<pre><code class="language-php">// /config/autoload/.gitignore
+
+local.php
+*.local.php
+</code></pre>
+<p>To summarize, if you wish to run your application / website WITHOUT that <code>**dbadapter.local.php**</code> file, you WILL get an exception.</p>
+<p>You want to use some continuous integration process. So you WILL intall your application repeatedly and run that application EACH TIME.</p>
+<p>Let's see how.</p>
+<h2>Log in Continuous PHP</h2>
+<p>You need to log in <strong>ContinuousPHP</strong> using a <strong>github</strong> / <strong>bitbucket</strong> / <strong>gitlab</strong> account. Obviously, you will need the account where are the sources of your project.</p>
+<p>Once you logged in for your first time, <strong>ContinuousPHP</strong> will ask for your authorization so it will be allowed to do a lot of (quite frightening) things on your VCS account. There's only two possible choices : either you take the red pill and you allow <strong>ContinuousPHP</strong> to do whatever it needs to do to you account and you move on, or you take the blue pill and you're out.</p>
+<p>Once you agreed, <strong>ContinuousPHP</strong> will get all the repositories you've got on your <strong>github</strong> / <strong>bitbucket</strong> / <strong>gitlab</strong> account. Click on <code>[Setup]</code> (on your project line) to set your project. Once it's done, <strong>ContinuousPHP</strong> will know WHERE are your sources (remember, you need to tell the continuous integration server WHERE are stored the sources so it will know where to start).</p>
+<p>Just to make things clear, <strong>ContinuousPHP</strong> is not meant to edit your project, to change anything in it. All it will do is changing your <strong>Bitbucket</strong> account (adding some keys etc) so ContinuousPHP can access your account.</p>
+<h2>Build Settings</h2>
+<p>Now that <strong>ContinuousPHP</strong> knows WHERE are your sources, we will ask him to install the project. We have to tell <strong>ContinuousPHP</strong> which branch the server needs to check.</p>
+<p><strong>ContinuousPHP</strong> (like other CI servers too) can install the project on different instances of PHP. We can install and run our project on different versions of PHP.</p>
+<p>If our project is a web project, <strong>ContinuousPHP</strong> expects to have the path to the index file (the one starting the web application). With a Zend Framework MVC Skeleton, the Document Root is <code>**/htdocs/index.php**</code></p>
+<p>As for now, i haven't set anything for those blocks : <strong>Environment Variables</strong>, <strong>Phing</strong>,** Shell Scripts**, <strong>Credentials</strong>, <strong>SSH Keys</strong> et <strong>HTTP Basic Authentication</strong>.</p>
+<p>As the project is built on a framework, there will be dependencies missing in your sources but the project will need those dependencies to run (such as Zend Framework packages needed to run the MVC base). We will rely on <strong>Composer</strong> to install our dependencies. <strong>ContinuousPHP</strong> will look for the composer.json file. If there's one composer.json file, ContinuousPHP will fill in the field. For your information, &quot;<em>Enable caching of Composer packages</em>&quot; and &quot;<em>Run Composer Hooks</em>&quot; are checked.</p>
+<h2>Test Settings</h2>
+<p>Now that <strong>ContinuousPHP</strong> knows HOW to install the project, we can tell him to run our tests.</p>
+<p>If <code>**phpunit.xml.dist**</code> and <code>**phpcs.xml**</code> files are detected, <strong>ContinuousPHP</strong> will know there's unit tests and coding standards checks for our project. Therefore, PHPUnit tests are set automatically, as well as Code Sniffer tests. As i haven't worked on the coding standard, I have removed that part from ContinuousPHP settings. But you can keep the Code Sniffer checks if you wish to.</p>
+<p>As for PHPUnit settings, check the 'blocking' checkbox and confirm that PHPUnit settings file is indeed <code>**phpunit.xml.dist**</code>.</p>
+<p>All settings are done but you won't be able to run your project. On run, you will catch that exception concerning the missing credentials for the database. To fix this, we will need to add some files to our project.</p>
+<h2>Add credentials to the database.</h2>
+<p>First of all, we need the configuration file with the credential to the database (our missing <code>**config/autoload/dbadapter.local.php**</code> file).</p>
+<p>As for me, i choose to use a shell script. I have stored all my scripts in a <code>**scripts/**</code> folder. Remember that folder will be commited with <code>git</code>. So be careful what you put in it. On our continuous integration server, we will use a temporary database, built and installed only to run the tests and flushed afterward. Once the build will be done, nothing will remain from that database. The credentials for that temporary MySQL database, provided by ContinuousPHP, can be found in their <a href="http://continuousphp.com/documentation/databases/mysql/" target="_blank">documentation</a>.</p>
+<pre><code class="language-sh">// scripts/continuousphp_dbadapter.config.sh
+
+#!/bin/bash
+
+cat &gt; ../config/autoload/dbadapter.local.php &lt;&lt; EOF
+&lt;?php
+
+return [
+  'db' =&gt; [
+    'adapters' =&gt; [
+      'MyDbAdapter' =&gt; [
+        'driver' =&gt; 'Pdo_Mysql',
+        'database' =&gt; 'mydatabase',
+        'dsn' =&gt; 'mysql:dbname=mydatabase;host=localhost',
+        'username' =&gt; 'root',
+        'password' =&gt; '',
+        'driver_options' =&gt; [
+          PDO::MYSQL_ATTR_INIT_COMMAND =&gt; 'SET NAMES \'UTF8\''
+        ],
+      ],
+    ],
+  ],
+];
+EOF
+</code></pre>
+<p>Just make sure that script is commited and sent to <strong>ContinuousPHP</strong> (meaning = it HAS to be in the git repository).</p>
+<p>On <strong>ContinuousPHP</strong>, let's go to <strong>Tests Settings</strong> tab and add our first <strong>Shell</strong> script :</p>
+<p>Giving execution rights to the <code>**scripts/continuousphp_dbadapter.config.sh**</code> script.</p>
+<pre><code class="language-sh">// write the whole line as a string in a ContinuousPHP shell input text
+ cd scripts &amp;amp;&amp;amp; chmod 764 continuousphp_dbadapter.config.sh
+</code></pre>
+<p>Now run the <code>**scripts/continuousphp_dbadapter.config.sh**</code> script so it can generate the <code>**config/autoload/dbadapter.local.php**</code> file.</p>
+<pre><code class="language-sh">// write the whole line
+cd scripts &amp;amp;&amp;amp; ./continuousphp_dbadapter.config.sh
+</code></pre>
+<p>Please note that we have to do <code>**cd scripts**</code> once again because each time we write a new shell script, we are starting from the root of our project in ContinuousPHP.</p>
+<p>If you haven't done any mistake, the <code>**dbadapter.local.php**</code> file is now generated in the <code>**config/autoload/**</code> folder.</p>
+<h4>Now install the database.</h4>
+<p>To install the database, we will need a second shell script :</p>
+<pre><code class="language-sh">// scripts/continuous_db_create.sh
+#!/bin/bash
+
+mysqladmin -u root create mydatabase
+
+mysql --user=root mydatabase &lt; mydatabase.sql
+</code></pre>
+<p>Make sure that <code>**mydatabase.sql**</code> script is sent to <strong>ContinuousPHP</strong> too. (= present in the git repository) As for me, my <code>**mydatabase.sql**</code> is located in the <code>**scripts/**</code> folder so far. All i had to do is to export my database from phpMyAdmin. As i don't need (yet) to test datas stored in my database (but only create the adapter to the database to prevent the exception to be thrown), all i need in the <code>**mydatabase.sql**</code> is the database structure.</p>
+<p>Let's add more scripts in <strong>ContinuousPHP</strong>, tests settings.</p>
+<pre><code class="language-php">cd scripts &amp;amp;&amp;amp; chmod 764 continuous_db_create.sh
+</code></pre>
+<p>and</p>
+<pre><code class="language-php">cd scripts &amp;amp;&amp;amp; ./continuousphp_db_create.sh
+</code></pre>
+<h2>Package Settings</h2>
+<p>Our tests are finally ready. ContinuousPHP need us to choose our package format.</p>
+<p>For my part, i haven't found anything interesting so i choose Generic Tarball and i left all the default values. I then moved to the Deploy Settings.</p>
+<h2>Deployment Settings</h2>
+<p>Though i have tried to set some process (such as pushing my project to a master branch if the build is successful, I finally remove all my settings so there's nothing in particuliar in this tab for my project. Just for you to know, <strong>ContinuousPHP</strong> can't push the resulting package to another repository or merge the package to a master branch.</p>
+<h2>What happens</h2>
+<p>When you <code>remote push</code> your code to your <strong>Bitbucket</strong> repository, <strong>ContinuousPHP</strong> will be notified.</p>
+<ul>
+<li>It will clone your sources to as many instances dedicated to your build (depending on how many PHP version you want to run your project on)</li>
+<li>It will execute <code>php -d memory_limit=-1 composer install -o --no-interaction --ansi --no-progress</code> to install all dependencies</li>
+<li>It will redirect your web server to the Document Root of your project</li>
+<li>It will run all shell scripts you have added on each of your instances</li>
+</ul>
+<pre><code class="language-sh">cd scripts &amp;amp;&amp;amp; chmod 764 continuousphp_dbadapter.config.sh
+cd scripts &amp;amp;&amp;amp; chmod 764 continuous_db_create.sh
+cd scripts &amp;amp;&amp;amp; ./continuousphp_db_create.sh
+cd scripts &amp;amp;&amp;amp; ./continuousphp_dbadapter.config.sh
+</code></pre>
+<ul>
+<li>It will run <code>PHPUnit</code></li>
+</ul>
+<p>Once every tests have been run, ContinuousPHP will delete all temporary files, the database(s), the whole project. All it will be left will be downloadable packages :</p>
+<ul>
+<li>
+<p>The <em>deploy package</em>including</p>
+</li>
+<li>
+<p>all your sources (including the <code>**scripts/**</code> folder),</p>
+</li>
+<li>
+<p>no <code>**config/autoload/dbadapter.local.php**</code> file,</p>
+</li>
+<li>
+<p>all dependencies files installed by <strong>Composer</strong> (meaning all modules from Zend Framework and some others depending on your project...)</p>
+</li>
+</ul>
+<p>some new extra files too :</p>
+<ul>
+<li>
+<p><code>**continuousphp.package**</code></p>
+</li>
+<li>
+<p><code>**phing.phar**</code></p>
+</li>
+<li>
+<p>The <em>test package</em>. Though i have compared both packages (the deploy one and the test one), i haven't seen any differences between them. But i can guess there may be cases where there will be differences between the final deploy package and the temporary test package.</p>
+</li>
+<li>
+<p>Coverage reports on each PHP version (only if you wish <strong>PHPUnit</strong> to generate the coverage report)</p>
+</li>
+<li>
+<p>Tests report for each PHP version.</p>
+</li>
+</ul>
+<h2>How to add coverage report.</h2>
+<p>If you need <strong>PHPUnit</strong> to calculate the coverage report, you need to add a filter to the <strong>PHPUnit</strong> setting file.</p>
+<pre><code class="language-xml">// phpunit.xml.dist
+&lt;filter&gt;
+  &lt;whitelist processUncoveredFilesFromWhitelist=&quot;true&quot;&gt;
+    &lt;directory suffix=&quot;.php&quot;&gt;module/Application/src&lt;/directory&gt;
+    &lt;directory suffix=&quot;.php&quot;&gt;module/MonModule/src&lt;/directory&gt;
+  &lt;/whitelist&gt;
+&lt;/filter&gt;
+</code></pre>
+<p>Et voila !!</p>
+<p>This post might be a little bit too long but i hope it will help those in need.</p>
+<p>My next post on Continuous Integration will talk about the settings of my GoCD server.</p>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/en/tags/integration-continue">intégration continue</a></li><li><a href="/en/tags/zend-framework-3">zend framework 3</a></li><li><a href="/en/tags/tdd">TDD</a></li><li><a href="/en/tags/phpunit">phpunit</a></li><li><a href="/en/tags/continuousphp">continuousPHP</a></li><li><a href="/en/tags/bitbucket">bitbucket</a></li></ul>
+        </div>
+      
+
+      
+    
+
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>About me</h3>
+      <p>I learned coding with php several years ago, when Internet was still young. For multiple reasons, i had stopped then and missed most of this new Internet i&#39;m discovering once again. So, i feel like a newbie again and since i&#39;m ready to start over personal project, i&#39;ll share with you some of my discoveries. Beyond coding topics, i&#39;ll enjoy sharing with you several subjects such as History, Astronomy, Linguistics, Movies, Books, Music and Anime among others. I hope you&#39;ll enjoy reading this blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. All rights reserved.</p>
+        <p>Powered by <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,303 @@
+<!doctype html>
+<html class="no-js" lang="fr" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>Solveur de Sudoku - Mise en place dans le contrôleur&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">Français</a>
+        <a href="/en/">Anglais</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/fr/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/fr/books/0/index.html">Séries</a>
+        <a href="/fr/">Accueil</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/fr/">Accueil</a><i class="fas fa-angle-right"></i>Solveur de Sudoku - Mise en place dans le contrôleur
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>Solveur de Sudoku - Mise en place dans le contrôleur</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>20/05/2014 22:36:00
+        
+        <i class="fas fa-th-large"></i><!--a href="/fr/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/Sudoku_Board_Game.jpg" class="node-banner" />
+        
+      </div>
+
+      <p><p>Notre solveur avance petit à petit. Nous avons déjà mis en place nos objets principaux : les chiffres, la grille et la case. Chacun sait - jusqu'à nouvel ordre - ce qu'il a à faire. Avant de nous attaquer véritablement au moteur de résolution, occupons nous de la paire contrôleur / vue pour nous amuser un peu avec le &quot;rendu&quot;.</p>
+<h3>Utiliser notre objet Grille dans le contrôleur</h3>
+<p>Rappelons nous, pour mettre en place notre vue et notre contrôleur, on avait construit la grille avec une double boucle dans le contrôleur. C'était bien sûr uniquement pour simuler notre grille. Maintenant que notre objet <strong>Grille</strong> est prêt, nous allons modifier notre contrôleur pour qu'il utilise notre objet <strong>Grille</strong> plutôt que la double boucle.</p>
+<pre><code class="language-php">// module/Application/src/Application/Controller/IndexController.php
+
+&lt;?php
+namespace Application\Controller;
+
+use Zend\Mvc\Controller\AbstractActionController;
+use Zend\View\Model\ViewModel;
+use Application\Model\Grille;
+
+class IndexController extends AbstractActionController
+{
+  public function indexAction()
+  {
+    // pour retrouver le paramètre dans l'url
+    // dans la route, on a nommé le paramètre 'size'
+    // si aucune paramètre n'est passé, mettre 9 par défaut
+    $size = (int) $this-&gt;params()-&gt;fromRoute('size', 9) ;
+
+    // on crée notre grille.
+    // la taille est fournie par la variable $size plus haut.
+    $g = new Grille($size) ;
+
+    $view = array(
+      'grille' =&gt; $g-&gt;prepare(),
+    ) ;
+    return $view ;
+  }
+}
+</code></pre>
+<p>Voilà. Avec ceci, nous avons exactement le même comportement que précédemment, mais cette fois ci, nous utilisons l'objet <strong>Grille</strong>.</p>
+<h3>Ajouter des fonctionnalités</h3>
+<p><strong>Modifier la vue</strong></p>
+<p>Notre vue ne comporte que la grille de sudoku et une navigation qui permet de choisir la taille de la grille. Souvenez vous, d'ailleurs, que nous savons changer d'un clic la taille de notre grille de sudoku.</p>
+<p>Voici ce que nous voulons faire :</p>
+<ul>
+<li>obtenir une grille vierge</li>
+<li>remplir la grille en recopiant nous même une grille de sudoku imprimée dans notre grille de sudoku à l'écran</li>
+<li>une fois la grille remplie, charger la grille dans notre objet Grille</li>
+<li>lancer le solveur</li>
+<li>éventuellement, recharger la même grille remplie pour pouvoir relancer le solveur.</li>
+</ul>
+<p>Voici ce que nous allons faire :</p>
+<ul>
+<li>Obtenir une grille vierge : il faut préparer un bouton &quot;Nouvelle grille&quot;</li>
+<li>Remplir la grille : c'est une étape manuelle, pas d'action du côté de notre contrôleur</li>
+<li>Charger la grille : il faut préparer un bouton &quot;Charger la grille&quot; ou &quot;Enregistrer&quot;</li>
+<li>Lancer le solveur : il faut préparer un bouton &quot;Lancer le solveur&quot; ou &quot;Résoudre&quot;</li>
+<li>Recharger la grille : il faut préparer un bouton &quot;Recharger la grille&quot; ou &quot;Recommencer&quot;</li>
+</ul>
+<p>En poussant la réflexion plus loin, on arrive à la conclusion qu'on peut économiser un bouton, voire même deux :</p>
+<ul>
+<li>Enregistrer la grille : on peut enregistrer la grille au moment où on demande à l'application de résoudre notre grille. Les deux peuvent être fait en même temps.</li>
+<li>Nouvelle grille : cliquer sur la navigation réinitialise la grille de toutes façons. Une option peut nous faire garder notre bouton &quot;Nouvelle grille&quot; : dans le cas où, cliquer sur le menu permet de charger une grille automatiquement, auquel cas on n'aurait aucun moyen d'obtenir une grille vierge.</li>
+</ul>
+<p>Nous allons rajouter des boutons : &quot;Nouvelle grille&quot;, &quot;Résoudre&quot; et &quot;Recommencer&quot;. Nous profiterons également de l'occasion pour rajouter la balise <code>&lt;form&gt;</code> qui fait défaut dans notre vue initiale.</p>
+<pre><code class="language-php">// module/Application/view/application/index/index.phtml
+
+&lt;!-- il faut penser à renvoyer le paramètre &quot;size&quot; dans l'url sinon, le contrôleur ne saura pas quel est la taille de l'objet Grille qui doit être créé --&gt;
+&lt;!-- la variable $grille est envoyée par le contrôleur. c'est le tableau en deux dimensions qui est utilisé pour créer / charger la grille de sudoku --&gt;
+&lt;form method=&quot;post&quot; action=&quot;&lt;?php echo $this-&gt;url('home', array('size' =&gt; count($grille))) ; ?&gt;&quot;&gt;
+ 
+  &lt;button class=&quot;btn btn-default&quot; type=&quot;submit&quot; name=&quot;submit&quot; value=&quot;start&quot;&gt;Résoudre&lt;/button&gt;
+  &lt;button class=&quot;btn btn-default&quot; type=&quot;submit&quot; name=&quot;submit&quot; value=&quot;reset&quot;&gt;Recommencer&lt;/button&gt;
+  &lt;button class=&quot;btn btn-default&quot; type=&quot;submit&quot; name=&quot;submit&quot; value=&quot;new&quot;&gt;Nouvelle grille&lt;/button&gt;
+
+  &lt;p&gt;
+    &lt;div&gt;Insérer les chiffres de départ de la grille.&lt;/div&gt;
+    &lt;div&gt;Cliquer sur 'Résoudre' pour que le robot remplisse la grille seul.&lt;/div&gt;
+    &lt;div&gt;Cliquer sur 'Recommencer' pour recommencer la grille.&lt;/div&gt;
+    &lt;div&gt;Cliquer sur 'Nouvelle grille' pour vider la grille complètement.&lt;/div&gt;
+  &lt;/p&gt;
+
+  &lt;!-- ajouter un espace pour afficher d'éventuels messages. --&gt;
+  &lt;!-- décorer cet espace avec les styles de bootstrap --&gt;
+  &lt;div&gt;
+    &lt;?php
+      print($msg) ;
+    ?&gt;
+  &lt;/div&gt;
+
+  &lt;table class=&quot;sudoku_grid&quot;&gt;
+    &lt;!-- le code de notre table de sudoku --&gt;
+  &lt;/table&gt;
+&lt;/form&gt; &lt;!-- ne pas oublier de fermer la balise form --&gt;
+</code></pre>
+<p>Pour pouvoir recharger la grille, il va falloir trouver un moyen pour conserver la grille qui a été chargée. Plusieurs solutions sont possibles. On peut envisager de mettre la grille dans une base de données, dans un fichier plat ou en session.</p>
+<p>On utilisera le composant <strong>Session</strong> de la librairie Zend Framework pour créer notre session.</p>
+<p><strong>Modifier le contrôleur</strong></p>
+<p>Appliquons les modifications au controleur.</p>
+<pre><code class="language-php">// module/Application/src/Application/Controller/IndexController.php
+
+&lt;?php
+namespace Application\Controller;
+
+use Zend\Mvc\Controller\AbstractActionController;
+use Zend\View\Model\ViewModel;
+use Application\Model\Grille;
+use Zend\Session\Container ; // ajouter le composant Session
+
+class IndexController extends AbstractActionController
+{
+  public function indexAction()
+  {
+    // instancier un objet Container pour la session
+    $session = new Container('sudoku') ;
+
+    // pour retrouver le paramètre dans l'url
+    // dans la route, on a nommé le paramètre 'size'
+    // si aucune paramètre n'est passé, mettre 9 par défaut
+    $size = (int) $this-&gt;params()-&gt;fromRoute('size', 9) ;
+
+    // récupérer les informations du formulaire (en méthode POST)
+    $request = $this-&gt;getRequest() ; // on récupère l'objet Request qui arrive au contrôleur
+    $post = $request-&gt;getPost() ; // dans l'objet Request, on récupère la propriété $post (qui est un tableau avec toutes les clés du formulaire
+
+    // on instancie la chaîne $msg
+    $msg = '' ;
+
+    // on crée notre grille.
+    // la taille est fournie par la variable $size plus haut.
+    $g = new Grille($size) ;
+
+    // en fonction du bouton qui a été cliqué dans le formulaire, nous allons avoir des comportements différents
+    switch($post['submit']) {
+      case 'start' :
+        // créer une variable $grille dans la session
+        $session-&gt;grille = $post-&gt;k ;
+        $g-&gt;chargerGrille($session-&gt;grille) ;
+        break ;
+ 
+      case 'reset' :
+        $g-&gt;chargerGrid($session-&gt;grille) ;
+        break ;
+ 
+      case 'new' :
+      default :
+        // on vide la session
+        $session-&gt;grille = array() ;
+        $g-&gt;nouvelleGrille() ;
+        break ;
+    }
+
+    $view = array(
+      'grille' =&gt; $g-&gt;prepare(),
+      'msg' =&gt; $msg ;
+    ) ;
+    return $view ;
+  }
+}
+</code></pre>
+<p>Manipuler un peu votre contrôleur. Afficher une grille. Remplissez la avec quelques numéros. Cliquer sur <em>Résoudre</em>. Rajoutez quelques chiffres. Cliquer sur <em>Recommencer</em>. La grille revient à son état initial (au moment où vous avez cliqué sur <em>Résoudre</em>). Cliquer sur <em>Nouvelle grille</em>. La grille se vide.</p>
+<p>Rendez vous dans le prochain post pour construire notre solveur.</p>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/fr/tags/poo">POO</a></li><li><a href="/fr/tags/zend-framework-2">zend framework 2</a></li><li><a href="/fr/tags/zend-session">Zend Session</a></li></ul>
+        </div>
+      
+
+      
+        <nav id="book-navigation">
+    
+       <li class="link-previous"><a href="/fr/posts/solveur-de-sudoku-la-grille-suite.html"><i class="fas fa-long-arrow-alt-left"></i> Solveur de Sudoku - La grille, suite</li>
+    
+
+    
+        <li class="link-next"><a href="/fr/posts/solveur-de-sudoku-resoudre-des-grilles-plus-compliquees.html">Solveur de Sudoku - Résoudre des grilles plus compliquées <i class="fas fa-long-arrow-alt-right"></i></a></li>
+    
+
+    
+        <li class="link-up"><a href="/fr/books/aborder-la-programmation-orientee-objet-par-lexemple-concevoir-un-solveur-de-sudoku.html"><i class="fas fa-book-open"></i> Aborder la programmation orientée objet par l&#39;exemple. Concevoir un solveur de sudoku</li>
+    
+</nav>
+
+      
+    
+
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>Sur moi</h3>
+      <p>J&#39;ai appris le php il y a quelques années, quand Internet était à ses débuts. Pour diverses raisons, j&#39;ai arrêté en route et j&#39;ai perdu le fil des nouveaux Internets que je redécouvre. Résultat, je me sens constamment à courir après l&#39;histoire mais je suis toujours motivée à reprendre des projets personnels. Je me propose de vous partager mes découvertes. Au delà des sujets de programmation, j&#39;aime également partager mes infos concernant notamment l&#39;Histoire, l&#39;Astronomie, la Linguistique, les Films, les Livres et les Anime. J&#39;espère que vous aimerez suivre mon blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. Tous droits réservés.</p>
+        <p>Propulsé par <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

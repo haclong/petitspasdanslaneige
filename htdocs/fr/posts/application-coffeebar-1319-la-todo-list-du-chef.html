@@ -1,0 +1,426 @@
+<!doctype html>
+<html class="no-js" lang="fr" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>Application CoffeeBar 13/19 - La Todo list du Chef&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">Français</a>
+        <a href="/en/">Anglais</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/fr/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/fr/books/0/index.html">Séries</a>
+        <a href="/fr/">Accueil</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/fr/">Accueil</a><i class="fas fa-angle-right"></i>Application CoffeeBar 13/19 - La Todo list du Chef
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>Application CoffeeBar 13/19 - La Todo list du Chef</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>07/04/2015 13:00:00
+        
+        <i class="fas fa-th-large"></i><!--a href="/fr/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/file9271237667217.jpg" class="node-banner" />
+        
+          <p><strong>Crédit</strong> : Morguefile.com </p>
+        
+      </div>
+
+      <p><p>Dans les articles précédents, les boissons et les plats ont été commandés. Une boisson peut être servie immédiatement mais un plat doit être adressé à la cuisine pour être préparé. Le plat pourra être servi uniquement lorsqu'il sera prêt. Dans l'article d'aujourd'hui, nous allons gérer la todo list du chef et afficher la liste des plats commandés.</p>
+<p><em>NOTE : le long du tutoriel, je vais vous faire rééditer des classes et des vues sur lesquels on sera déjà passé. Il va y avoir des parties qui auront disparu au second passage : typiquement les use, les instructions extends, implements etc... Cela ne veut pas dire qu'il faut les retirer. C'est juste pour alléger le code. S'il faut retirer du code, soit je vous remettrais le passage intégralement, pour voir ce qui a disparu, soit je vous signalerais qu'il faut effacer une ligne pour la remplacer par une autre.</em></p>
+<h2>Todo list du chef</h2>
+<p>Nous allons monter un service consacré à la liste du chef cuisinier. Ce service va intercepter l'événement '<code>foodOrdered</code>', ajouter les plats à préparer dans une liste afin de les présenter au chef.</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Service/ChefTodoList.php
+
+&lt;?php
+namespace CoffeeBar\Service;
+
+use ArrayObject;
+use CoffeeBar\Entity\ChefTodoList\TodoListGroup;
+use CoffeeBar\Entity\ChefTodoList\TodoListItem;
+use Zend\EventManager\EventManagerInterface;
+use Zend\EventManager\ListenerAggregateInterface;
+
+class ChefTodoList implements ListenerAggregateInterface
+{
+  protected $todoList ;
+  protected $cache ;
+  protected $listeners ;
+ 
+  public function attach(EventManagerInterface $events)
+  {
+    $this-&gt;listeners[] = $events-&gt;attach('foodOrdered', array($this, 'onFoodOrdered')) ;
+  }
+
+  public function detach(EventManagerInterface $events)
+  {
+    foreach ($this-&gt;listeners as $index =&gt; $listener) 
+    {
+      if ($events-&gt;detach($listener)) 
+      {
+        unset($this-&gt;listeners[$index]);
+      }
+    }
+  }
+ 
+  public function setCache($cache)
+  {
+    $this-&gt;cache = $cache ;
+  }
+ 
+  public function getCache()
+  {
+    return $this-&gt;cache ;
+  }
+
+  protected function loadTodoList()
+  {
+    $this-&gt;todoList = $this-&gt;cache-&gt;getTodoList() ;
+  }
+ 
+  protected function saveTodoList()
+  {
+    $this-&gt;cache-&gt;saveTodoList(serialize($this-&gt;todoList)) ;
+  }
+ 
+  public function onFoodOrdered($events)
+  {
+    $foodOrdered = $events-&gt;getParam('foodOrdered') ;
+
+    $this-&gt;loadTodoList() ;
+ 
+    $items = new ArrayObject() ;
+    foreach($foodOrdered-&gt;getItems() as $value)
+    {
+      $item = new TodoListItem($value-&gt;getId(), $value-&gt;getDescription()) ;
+      $items-&gt;offsetSet(NULL, $item) ;
+    }
+
+    $group = new TodoListGroup($foodOrdered-&gt;getId(), $items) ;
+ 
+    $this-&gt;todoList-&gt;offsetSet(NULL, $group) ;
+    $this-&gt;saveTodoList() ;
+  }
+
+  public function getList()
+  {
+    $this-&gt;loadTodoList() ;
+    return $this-&gt;todoList ;
+  }
+}
+</code></pre>
+<p>Nous avons pour ce service les méthodes <code>attach()</code> et <code>detach()</code> obligatoires pour l'interface <code>Zend\EventManager\ListenerAggregateInterface</code>. Nous avons également les <em>getter</em> et <em>setter</em> pour accéder au cache, injecté dans le service.</p>
+<p>Il reste la méthode <code>ChefTodoList::onFoodOrdered()</code> qui va construire la liste de plats à préparer.</p>
+<p>La liste est un objet <code>\ArrayObject</code> stocké dans l'index '<code>todoList</code>' du cache.</p>
+<p>Chaque itération de la liste est un objet <code>CoffeeBar\Entity\ChefTodoList\TodoListGroup</code>. L'objet <code>CoffeeBar\Entity\ChefTodoList\TodoListGroup</code> a deux propriétés : l'<em>id unique de la note</em> d'une part, et <em>la liste des plats</em> (<code>\ArrayObject</code>) à préparer.</p>
+<p>Voici l'objet <code>CoffeeBar\Entity\ChefTodoList\TodoListGroup</code></p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Entity/ChefTodoList/TodoListGroup.php
+
+&lt;?php
+namespace CoffeeBar\Entity\ChefTodoList;
+
+use ArrayObject;
+
+class TodoListGroup {
+  protected $tab ; // int (guid) - id unique de la note
+  protected $items ; // ArrayObject - liste de TodoListItem
+ 
+  public function __construct($tab, ArrayObject $items)
+  {
+    $this-&gt;setTab($tab) ;
+    $this-&gt;setItems($items) ;
+  }
+
+  // getters &amp;amp; setters
+}
+</code></pre>
+<p>et l'objet <code>CoffeeBar\Entity\ChefTodoList\TodoListItem</code></p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Entity/ChefTodoList/TodoListItem.php
+
+&lt;?php
+namespace CoffeeBar\Entity\ChefTodoList;
+
+class TodoListItem {
+  protected $menuNumber ; // int - numéro du menu
+  protected $description ; // string - nom du menu
+
+  public function __construct($menuNumber, $description)
+  {
+    $this-&gt;setMenuNumber($menuNumber) ;
+    $this-&gt;setDescription($description) ;
+  }
+
+  // getters &amp;amp; setters
+}
+</code></pre>
+<p>Après avoir défini notre service <strong>ChefTodoList</strong>, allons mettre tout ça en place dans notre gestionnaire de service.</p>
+<pre><code class="language-php">// module/CoffeeBar/Module.php
+
+&lt;?php
+namespace CoffeeBar;
+
+use CoffeeBar\Service\ChefTodoList;
+
+class Module
+{
+  public function getConfig() //
+
+  public function getAutoloaderConfig() //
+
+  public function onBootstrap(MvcEvent $event)
+  {
+    // ces lignes sont déjà là
+    $sm = $event-&gt;getApplication()-&gt;getServiceManager() ;
+    $em = $sm-&gt;get('TabEventManager');
+ 
+    // au gestionnaire d'événement, on attache le listener ChefTodoList
+    // parce qu'on utilise EventManager::attachAggregate,
+    // on injecte automatiquement l'objet 'TabEventManager' en argument de la méthode TabAggregate::attach
+    // grâce à l'interface ListenerAggregateInterface
+    $em-&gt;attachAggregate($sm-&gt;get('ChefTodoList')) ;
+  }
+
+  public function getServiceConfig()
+  {
+    return array(
+      'factories' =&gt; array(
+        'ChefTodoList' =&gt; function($sm) {
+          $cache = $sm-&gt;get('TabCache') ;
+          $todoList = new ChefTodoList() ;
+          $todoList-&gt;setCache($cache) ;
+          return $todoList ;
+        },
+      ),
+    ) ;
+  }
+}
+</code></pre>
+<h2>Rendu à l'écran</h2>
+<h3>Tout d'abord, avec le contrôleur</h3>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Controller/ChefController.php
+
+&lt;?php
+namespace CoffeeBar\Controller;
+
+use Zend\Mvc\Controller\AbstractActionController;
+
+class ChefController extends AbstractActionController
+{
+  public function indexAction()
+  {
+    $todoList = $this-&gt;serviceLocator-&gt;get('ChefTodoList') ;
+    $list = $todoList-&gt;getList() ; // ArrayObject
+    return array('result' =&gt; $list) ;
+  }
+}
+</code></pre>
+<h3>La vue</h3>
+<pre><code class="language-php">// module/CoffeeBar/view/coffee-bar/chef/index.phtml
+
+&lt;h2&gt;Meals to prepare&lt;/h2&gt;
+
+&lt;table&gt;
+  &lt;tr&gt;
+    &lt;th&gt;Menu #&lt;/th&gt;
+    &lt;th&gt;Description&lt;/th&gt;
+  &lt;/tr&gt;
+
+  &lt;?php
+    foreach($result as $group)
+    {
+      foreach($group-&gt;getItems() as $item)
+      {
+  ?&gt;
+ 
+        &lt;tr&gt;
+          &lt;td&gt;&lt;?php echo $item-&gt;getMenuNumber() ; ?&gt;&lt;/td&gt;
+          &lt;td&gt;&lt;?php echo $item-&gt;getDescription() ; ?&gt;&lt;/td&gt;
+        &lt;/tr&gt;
+ 
+  &lt;?php
+      }
+    }
+  ?&gt;
+&lt;/table&gt;
+</code></pre>
+<h3>Et la route</h3>
+<pre><code class="language-php">// module/CoffeeBar/config/module.config.php
+
+&lt;?php
+return array(
+  'router' =&gt; array(
+    'routes' =&gt; array(
+      
+      /**
+       * cette URL : http://coffeebar.home/chef mène à cette route
+       */ 
+      'chef' =&gt; array(
+        'type' =&gt; 'Literal',
+        'options' =&gt; array(
+          'route' =&gt; '/chef',
+          'defaults' =&gt; array(
+            'controller' =&gt; 'CoffeeBarController\Chef',
+            'action' =&gt; 'index',
+          ),
+        ),
+        'may_terminate' =&gt; true,
+      ),
+    ),
+  ),
+) ;
+</code></pre>
+<h3>La navigation</h3>
+<pre><code class="language-php">// module/CoffeeBar/config/module.config.php
+
+&lt;?php
+return array(
+  'navigation' =&gt; array(
+    'default' =&gt; array(
+      // a ajouter
+      array(
+        'label' =&gt; 'Chef\'s todo',
+        'route' =&gt; 'chef',
+      ),
+    ),
+  ),
+
+  // ... // others keys and arrays...
+);
+</code></pre>
+<h3>Configuration du contrôleur</h3>
+<pre><code class="language-php">// module/CoffeeBar/config/module.config.php
+
+&lt;?php
+return array(
+  'controllers' =&gt; array(
+    'invokables' =&gt; array(
+      // à ajouter
+      'CoffeeBarController\Chef' =&gt; 'CoffeeBar\Controller\ChefController',
+    ),
+  ),
+) ;
+</code></pre>
+<p>A cette adresse <code>http://coffeebar.home/chef</code>, vous pourrez voir la liste des plats à préparer. Mais on ne peut s'arrêter là pour le chef. Il faut maintenant qu'il marque les plats préparés à partir de cette liste.</p>
+<p><em>Vous trouverez l'intégralité de l'application sur mon <a href="https://github.com/haclong/coffeebar" target="_blank">github</a></em></p>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/fr/tags/zend-framework-2">zend framework 2</a></li><li><a href="/fr/tags/programmation-evenementielle">programmation événementielle</a></li><li><a href="/fr/tags/oop">OOP</a></li><li><a href="/fr/tags/mvc">MVC</a></li><li><a href="/fr/tags/event-manager">Event Manager</a></li></ul>
+        </div>
+      
+
+      
+        <nav id="book-navigation">
+    
+       <li class="link-previous"><a href="/fr/posts/application-coffeebar-1219-traiter-la-commande.html"><i class="fas fa-long-arrow-alt-left"></i> Application CoffeeBar 12/19 - Traiter la commande</li>
+    
+
+    
+        <li class="link-next"><a href="/fr/posts/application-coffeebar-1419-marquer-les-plats-prepares.html">Application CoffeeBar 14/19 - Marquer les plats préparés <i class="fas fa-long-arrow-alt-right"></i></a></li>
+    
+
+    
+        <li class="link-up"><a href="/fr/books/gerer-un-cafe-avec-une-programmation-evenementielle.html"><i class="fas fa-book-open"></i> Gérer un café avec une programmation événementielle</li>
+    
+</nav>
+
+      
+    
+
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>Sur moi</h3>
+      <p>J&#39;ai appris le php il y a quelques années, quand Internet était à ses débuts. Pour diverses raisons, j&#39;ai arrêté en route et j&#39;ai perdu le fil des nouveaux Internets que je redécouvre. Résultat, je me sens constamment à courir après l&#39;histoire mais je suis toujours motivée à reprendre des projets personnels. Je me propose de vous partager mes découvertes. Au delà des sujets de programmation, j&#39;aime également partager mes infos concernant notamment l&#39;Histoire, l&#39;Astronomie, la Linguistique, les Films, les Livres et les Anime. J&#39;espère que vous aimerez suivre mon blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. Tous droits réservés.</p>
+        <p>Propulsé par <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

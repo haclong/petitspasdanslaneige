@@ -1,0 +1,444 @@
+<!doctype html>
+<html class="no-js" lang="en" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>CoffeeBar Application 6/19 - A listener to manager the tab and its history&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">French</a>
+        <a href="/en/">English</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/en/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/en/books/0/index.html">Collections</a>
+        <a href="/en/">Home</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/en/">Home</a><i class="fas fa-angle-right"></i>CoffeeBar Application 6/19 - A listener to manager the tab and its history
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>CoffeeBar Application 6/19 - A listener to manager the tab and its history</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>2/5/2015, 7:37:00 PM
+        
+        <i class="fas fa-th-large"></i><!--a href="/en/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/file9271237667217.jpg" class="node-banner" />
+        
+          <p><strong>Credit</strong> : Morguefile.com </p>
+        
+      </div>
+
+      <p><p>We have triggered our very first event in our previous chapter : '<em>openTab</em>'. Now, we will set a service to catch the events triggered and process the business rules to it.</p>
+<p><em>NOTE : throughout the tutorial, i will reedit numerous classes and views i already talked about. On the second edition, some datas will be missing such as use keyword, extends and implements keywords etc... It doesn't mean you have to delete those existing lines. It is intended to lighten this tutorial. In the case we need to remove lines, i'll say it so plainly, even re-editing the whole part to make myself clear on that item.</em></p>
+<h2>The TabAggregate service</h2>
+<p>We will set up a <strong>TabAggregate</strong> service to listen and catch all events triggered on a tab.</p>
+<ul>
+<li>The <strong>TabAggregate</strong> service listens to events triggered by commands (<strong><code>CoffeeBar\Command\*</code></strong>) and checks that the event is coherent along the business rules.</li>
+<li>The <strong>TabAggregate</strong> service listens to several different events triggered in only one <strong>Event Manager</strong> : we will need to use the <code>**Zend\EventManager\ListenerAggregateInterface**</code> interface.</li>
+<li>The <strong>TabAggregate</strong> service will trigger other events depending on the methods it will use : we then will need to use the <code>**Zend\EventManager\EventManagerAwareInterface**</code> interface.</li>
+<li>The <strong>TabAggregate</strong> service will store in the cache each one of the opened tab. It will load each tab (identified by its unique id) from the cache. Therefore, there is a <strong>dependency</strong> on the cache too.</li>
+</ul>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Service/TabAggregate.php
+
+namespace CoffeeBar\Service ;
+
+use Zend\EventManager\EventManagerInterface;
+use Zend\EventManager\ListenerAggregateInterface;
+use Zend\EventManager\EventManagerAwareInterface;
+
+class TabAggregate implements ListenerAggregateInterface, EventManagerAwareInterface
+{
+  protected $listeners = array() ; // see listenerAggregateInterface
+  protected $events ; // see EventManagerAwareInterface
+  protected $cache ; // the cache
+
+  // the event manager $events will be inject in the Service Manager
+  // mandatory method if we want to implement EventManagerAwareInterface
+  public function setEventManager(EventManagerInterface $events)
+  {
+    $this-&gt;events = $events;
+    return $this;
+  }
+
+  // mandatory method if we want to implement EventManagerAwareInterface
+  public function getEventManager()
+  {
+    return $this-&gt;events;
+  }
+
+  // the argument $events will be injected when we will attach 
+  // this object to the Event Manager, thanks to the ListenerAggregateInterface
+  // mandatory method if we want to implement ListenerAggregateInterface
+  public function attach(EventManagerInterface $events)
+  {
+    // attach the events + their callback here
+  }
+
+  public function detach(EventManagerInterface $events)
+  {
+    foreach ($this-&gt;listeners as $index =&gt; $listener) {
+      if ($events-&gt;detach($listener)) {
+        unset($this-&gt;listeners[$index]);
+      }
+    }
+  }
+ 
+  // inject the cache from the Service Manager
+  public function getCache() 
+  {
+    return $this-&gt;cache;
+  }
+
+  public function setCache($cache) 
+  {
+    $this-&gt;cache = $cache;
+  }
+}
+</code></pre>
+<h2>Loading from the cache</h2>
+<p>To store a tab in the cache and then load it from the cache :</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Service/TabAggregate.php
+
+class TabAggregate
+{
+  /**
+   * Load the tab story by id
+   * @param string $id - Tab guid
+   */
+  public function loadStory($id)
+  {
+    // checking if there's already an item with the id in the cache
+    if($this-&gt;cache-&gt;hasItem($id))
+    {
+      // yes : load the item
+      return unserialize($this-&gt;cache-&gt;getItem($id)) ;
+
+      // otherwise, instanciate a new TabStory() object
+      // and assign to it a new id
+    } else {
+      // to be totally clean (and dependency free)
+      // we should clone the TabStory() and we shouldn't instanciate it here
+      $story = new TabStory() ; // do not forget the use keywords, of course
+      $story-&gt;setId($id) ;
+
+      return $story ;
+    }
+  }
+
+  /**
+   * Storing in the cache
+   * @param string $id - Tab guid
+   * @param string $story - Tab Story object
+   */
+  protected function saveStory($id, $story)
+  { 
+    // it is mandatory to serialize the object
+    // the cache won't allow any object.
+    $this-&gt;cache-&gt;setItem($id, serialize($story)) ;
+  }
+}
+</code></pre>
+<p>Quick look on the <code>**CoffeeBar\Entity\TabStory\TabStory**</code> class. For now, it is pretty light, holding only two properties.</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Entity/TabStory/TabStory.php
+
+&lt;?php
+namespace CoffeeBar\Entity\TabStory ;
+
+class TabStory
+{
+  protected $id ; // int (guid) - unique id of the tab
+  protected $status ; // bool - is the tab open or not
+
+  // constantes
+  const CLOSE = false ;
+  const OPEN = true ;
+
+  // getters &amp;amp; setters
+
+  public function __construct()
+  {
+    // default value : the tab is closed
+    $this-&gt;status = self::CLOSE ;
+  }
+
+  public function isTabOpened()
+  {
+    return $this-&gt;status ;
+  }
+ 
+  public function openTab()
+  {
+    // opening the tab
+    $this-&gt;status = self::OPEN ;
+    return $this ;
+  }
+ 
+  public function closeTab()
+  {
+    $this-&gt;status = self::CLOSE ;
+    return $this ;
+  }
+}
+</code></pre>
+<p>Here we go. Our <strong>TabAggregate</strong> service will catch the events triggered and will in turn trigger other events for other listeners. But, on last thing : the <strong>TabAggregate</strong> is unable to catch anything if the <strong>Event Manager</strong> is not aware of who is listening...</p>
+<h2>Attach the listener to the Event Manager</h2>
+<p>We go in the <code>**Module**</code> class and see how we can add a new listener to the Event Manager.</p>
+<pre><code class="language-php">// module/CoffeeBar/Module.php
+
+&lt;?php
+namespace CoffeeBar;
+
+use CoffeeBar\Service\TabAggregate;
+
+class Module
+{
+  public function getConfig() //
+
+  public function getAutoloaderConfig() //
+
+  public function onBootstrap(MvcEvent $event)
+  {
+    // this line should already be there
+    $sm = $event-&gt;getApplication()-&gt;getServiceManager() ;
+
+    // get the Event Manager in the Service Manager
+    $em = $sm-&gt;get('TabEventManager');
+
+    // attach the TabAggregate listener to the Event Manager
+    // do not forget to add the TabAggregate service to the Service Manager
+    $em-&gt;attachAggregate($sm-&gt;get('TabAggregate')) ;
+
+    // because we use EventManager::attachAggregate() 
+    // and attach the TabAggregate listener to the TabEventManager event manager
+    // we automatically inject the TabEventManager as an argument to the TabAggregate::attach() method
+    // thanks to the ListenerAggregateInterface interface
+  }
+
+  public function getServiceConfig()
+  {
+    return array(
+      'factories' =&gt; array(
+        'TabAggregate' =&gt; function($sm) {
+          // key of our customized Event Manager
+          $events = $sm-&gt;get('TabEventManager') ;
+
+          // key of the Cache service in the Service Manager
+          $cache = $sm-&gt;get('TabCache') ;
+          $tab = new TabAggregate() ;
+
+          // setting the Event Manager in the TabAggregate
+          // mandatory to trigger events
+          $tab-&gt;setEventManager($events) ;
+          $tab-&gt;setCache($cache) ;
+
+          return $tab ;
+        },
+      ),
+    ) ;
+  }
+}
+</code></pre>
+<p>Well. We have now a proper service where we can trigger events (<code>**EventManagerAwareInterface**</code>), listen to events (<code>**ListenerAggregateInterface**</code>) and load and store datas into a proper cache, we can run our scenarii.</p>
+<p><strong>NOTE :</strong></p>
+<p>On the <strong>Event Manager</strong> (<code>**Zend\EventManager\EventManager**</code>), there is a <code>EventManager::attach()</code> method and a <code>EventManager::attachAggregate()</code> method.</p>
+<p>The <code>EventManager::attach()</code> method links the <strong>Event Manager object</strong>, an <strong>event</strong>, and a <strong>listener and its callback</strong>. If a listener need to listen to multiple events, we will have to repeat in our Event Manager the <code>EventManager::attach()</code> method, one for each event to attach. If there's more than one listener, so we will have to do it for each listeners. Which will turn out to be quite cumbersome.</p>
+<p>The <code>EventManager::attachAggregate()</code> method links the <strong>Event Manager object</strong> and an <strong>object which is implementing the ListenerAggregateInterface</strong> interface. This allow, like here, to attach <strong>listeners</strong> only, no matter how many events they are listening to. The list of events they are listening to are attached within each listeners. It is easier to group the events by listeners.</p>
+<p>Maybe there's more applications to the <code>EventManager::attachAggregate()</code> method but this one is already truly convenient.</p>
+<h3>See the tab history from the cache</h3>
+<p>To 'spy' our tabs stored in the cache, let's go back to the view : <code>module/CoffeeBar/view/coffee-bar/index/index.phtml</code>. We had put two <code>var_dump()</code> to see what's inside the '<em>openTabs</em>' key and the '<em>todoList</em>' key from the cache. Now let's add the tab histories.</p>
+<pre><code class="language-php">// module/CoffeeBar/view/coffee-bar/index/index.phtml
+
+// ajouter le code suivant
+&lt;pre&gt;
+&lt;?php
+  foreach($result-&gt;getOpenTabs() as $k =&gt; $v)
+  {
+    var_dump(unserialize($result-&gt;getItem($k))) ;
+  }
+?&gt;
+&lt;/pre&gt;
+</code></pre>
+<p>Since we rely on the '<em>openTabs</em>' cache key to dump each one of our tab story, we need to add open tabs to the '<em>openTabs</em>' cache key.</p>
+<h2>Open a tab</h2>
+<p>We have triggered (when the form has been valid) an '<em>openTab</em>' event. Our<strong>TabAggregate</strong> service will listen to this event and trigger another one : the '<em>tabOpened</em>' event. (which should be the real event, remember ?)</p>
+<pre><code class="language-php">use CoffeeBar\Event\TabOpened;
+
+class TabAggregate
+{
+  public function attach(EventManagerInterface $events)
+  {
+    // if the event 'openTab' is triggered, the TabAggregate::onOpenTab() method is called
+    $this-&gt;listeners[] = $events-&gt;attach('openTab', array($this, 'onOpenTab'));
+  }
+
+  // when  we trigger an 'openTab' event, we create an object $events 
+  // which is automatically passed as parameters to the callback (onOpenTab()).
+  // the $events object is composed with the name of the event (openTab), its target and an array as parameter.
+  // we will fill the parameter array with all useful informations
+  // and we will be able to get those datas using $events-&gt;getParam('array_key')
+  public function onOpenTab($events)
+  {
+    // object type : CoffeeBar\Command\OpenTab
+    $openTab = $events-&gt;getParam('openTab') ;
+ 
+    // from the OpenTab object, we instanciate the CoffeeBar\Event\TabOpened event object
+    $openedTab = new TabOpened() ; //  do not forget to update your use keywords
+    $openedTab-&gt;setId($openTab-&gt;getId()) ;
+    $openedTab-&gt;setTableNumber($openTab-&gt;getTableNumber()) ;
+    $openedTab-&gt;setWaiter($openTab-&gt;getWaiter()) ;
+
+    // triggering the tabOpened
+    // note that we have sent an CoffeeBar\Event\TabOpened object in the parameter array of the event object.
+    $this-&gt;events-&gt;trigger('tabOpened', $this, array('tabOpened' =&gt; $openedTab)) ;
+  }
+}
+</code></pre>
+<p>After managing the '<em>openTab</em>' event, we will now manage the '<em>tabOpened</em>' event, still in the <strong>TabAggregate</strong> service. Add the following code to the previous one.</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Service/TabAggregate.php
+
+&lt;?php
+class TabAggregate
+{
+  public function attach(EventManagerInterface $events)
+  {
+    // if the 'tabOpened' event is triggered, the TabAggregate::onTabOpened() method is called
+    $this-&gt;listeners[] = $events-&gt;attach('tabOpened', array($this, 'onTabOpened'));
+  }
+
+  public function onTabOpened($events)
+  {
+    // $tabOpened type is CoffeeBar\Event\TabOpened
+    $tabOpened = $events-&gt;getParam('tabOpened') ;
+
+    // loading the history of the tab with its unique id
+    // as it is the very first loading, 
+    // the TabAggregate::loadStory will instanciate a new TabStory($id) object
+    $story = $this-&gt;loadStory($tabOpened-&gt;getId()) ;
+    $story-&gt;openTab() ;
+
+    $this-&gt;saveStory($tabOpened-&gt;getId(), $story) ;
+  }
+}
+</code></pre>
+<p>Our tab is finally opened. Let's see how, with the '<em>tabOpened</em>' event, we can use our opened tabs list (remember remember, the 'openTabs' key in our cache...)</p>
+<p><em>You'll find the full application in my <a href="https://github.com/haclong/coffeebar" target="_blank">github</a></em></p>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/en/tags/zend-framework-2">zend framework 2</a></li><li><a href="/en/tags/event-manager">Event Manager</a></li><li><a href="/en/tags/programmation-evenementielle">programmation événementielle</a></li></ul>
+        </div>
+      
+
+      
+        <nav id="book-navigation">
+    
+       <li class="link-previous"><a href="/en/posts/coffeebar-application-519-triggering-opening-tab.html"><i class="fas fa-long-arrow-alt-left"></i> CoffeeBar Application 5/19 - Triggering the opening of a tab</li>
+    
+
+    
+        <li class="link-next"><a href="/en/posts/coffeebar-application-719-managing-opened-tabs.html">CoffeeBar Application 7/19 - Managing opened tabs <i class="fas fa-long-arrow-alt-right"></i></a></li>
+    
+
+    
+        <li class="link-up"><a href="/en/books/manage-coffeebar-event-driven-programming.html"><i class="fas fa-book-open"></i> Manage a coffeebar with event driven programming</li>
+    
+</nav>
+
+      
+    
+
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>About me</h3>
+      <p>I learned coding with php several years ago, when Internet was still young. For multiple reasons, i had stopped then and missed most of this new Internet i&#39;m discovering once again. So, i feel like a newbie again and since i&#39;m ready to start over personal project, i&#39;ll share with you some of my discoveries. Beyond coding topics, i&#39;ll enjoy sharing with you several subjects such as History, Astronomy, Linguistics, Movies, Books, Music and Anime among others. I hope you&#39;ll enjoy reading this blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. All rights reserved.</p>
+        <p>Powered by <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

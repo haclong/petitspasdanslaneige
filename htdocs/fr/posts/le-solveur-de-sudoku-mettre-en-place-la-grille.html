@@ -1,0 +1,488 @@
+<!doctype html>
+<html class="no-js" lang="fr" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>Le solveur de Sudoku - Mettre en place la grille&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">Français</a>
+        <a href="/en/">Anglais</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/fr/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/fr/books/0/index.html">Séries</a>
+        <a href="/fr/">Accueil</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/fr/">Accueil</a><i class="fas fa-angle-right"></i>Le solveur de Sudoku - Mettre en place la grille
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>Le solveur de Sudoku - Mettre en place la grille</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>08/05/2014 08:19:00
+        
+        <i class="fas fa-th-large"></i><!--a href="/fr/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/Sudoku_Board_Game.jpg" class="node-banner" />
+        
+      </div>
+
+      <p><p>Dans le développement d'un modèle en programmation orientée objet, vous serez nécessairement amené à créer plusieurs objets mais la plupart du temps, vous allez construire un principe de poupées russes avec des objets appelés par d'autres objets appelés par d'autres objets... Jusqu'à ce qu'on parvienne à l'objet qui sera au dessus de tout, l'objet &quot;de niveau supérieur&quot;.</p>
+<p>L'objet de niveau supérieur est l'objet qui sera véritablement &quot;utilisé&quot;. Dans le cas d'une application MVC, l'objet de niveau supérieur sera utilisé par le contrôleur. Ou, dans le cas d'une application Zend Framework 2, l'objet qui sera chargé dans le Service Manager.</p>
+<p>Dans le cadre du Solveur de Sudoku, nous ne ferons pas intervenir le <strong>Service Manager</strong>. Nous passerons également sur la gestion des dépendances. Les objets seront ainsi utilisés par le contrôleur de manière directe.</p>
+<p>Voyons donc notre objet <strong>Grille</strong>. Celui ci n'a que très peu de propriétés, mais en revanche, il a beaucoup plus de méthodes. C'est à partir de cet objet qu'on va charger une nouvelle grille, la réinitialiser et la résoudre.</p>
+<h3>Développer l'objet Grille</h3>
+<p>Voyons donc notre objet <strong>Grille</strong> et les manipulations que nous prévoyons de faire dessus :</p>
+<ul>
+<li>construire la grille</li>
+<li>charger une nouvelle grille</li>
+<li>réinitialiser une nouvelle grille</li>
+<li>contrôler que la grille respecte les règles du sudoku</li>
+<li>valider que la grille est résolue</li>
+</ul>
+<p>Les propriétés de la grille : souvenons nous, la grille n'a qu'une seule propriété : le tableau des cases qui composent la grille. Eventuellement, il est également utile d'ajouter la taille de la grille aussi.</p>
+<pre><code class="language-php">// module/Application/src/Application/Model/Grille.php
+
+&lt;?php
+namespace Application\Model ;
+
+class Grille
+{
+  /**
+   * Taille de la grille
+   *
+   * @var int
+   */
+  protected $taille ;
+
+  /**
+   * Les cases
+   *
+   * @var array
+   */
+  protected $cases = array() ;
+}
+</code></pre>
+<h3>Le constructeur</h3>
+<pre><code class="language-php">// module/Application/src/Application/Model/Grille.php
+
+&lt;?php
+namespace Application\Model ;
+
+class Grille
+{
+  /**
+   * Constructor
+   *
+   * @param int $taille de la grille - 9 par défaut
+   * Souvenez vous de notre contrôleur. La valeur par défaut du paramètre $taille est défini dans le contrôleur.
+   * Inutile à mon sens de le gérer ici.
+   */
+  public function __construct($taille)
+  {
+    $this-&gt;taille = $taille ;
+    // Construire la grille soit par une méthode protégée, soit directement dans le constructeur
+    // J'opte pour la méthode protégée.
+    $this-&gt;construireGrille() ;
+  }
+}
+</code></pre>
+<p>La méthode <code>construireGrille()</code> va utiliser la propriété <code>$taille</code> pour construire toutes les cases de la grille. On aurait pu soit envoyer la taille de la grille comme argumennt de la méthode <code>construireGrille()</code>, soit utiliser la propriété <code>$taille</code> de l'objet <strong>Grille</strong>.</p>
+<p>Au sujet de la propriété <code>$cases</code> de la grille, il y avait deux façons d'aborder le tableau :</p>
+<ul>
+<li>
+<p>Le tableau est un tableau à deux dimensions. Cette option génère un tableau qui correspond au tableau qui est attendu dans la vue. Toutefois, quand il s'agira de manipuler le tableau, par exemple de manière itérative, en parcourant le tableau ligne par ligne, colonne par colonne et/ou région par région, il faudra systématiquement imbriquer une boucle colonne dans une boucle ligne.</p>
+</li>
+<li>
+<p>Le tableau est un tableau à une seule dimension. Certes le tableau généré ne convient pas pour l'affichage de la vue, mais pour les nombreuses manipulations qui précèdent l'affichage, il offrirait un avantage certain en ne nous faisant manipuler qu'une seule boucle. Il suffira d'avoir une méthode qui, se basant sur les coordonnées ligne et colonne de la case, reconstruirait le tableau en deux dimensions nécessaire à la vue.</p>
+</li>
+</ul>
+<p>Notons que la case de la grille admet trois coordonnées : la ligne, la colonne et la région. Si les informations ligne et colonne peuvent être déduites à partir de la boucle, il en va autrement de la région. Il va falloir calculer, en fonction de la ligne et de la colonne, dans quelle région se situe la case.</p>
+<p>Ce calcul aurait pu se faire dans le constructeur de la case, tout aussi bien que dans l'objet grille - mon choix.</p>
+<pre><code class="language-php">// module/Application/src/Application/Model/Grille.php
+
+&lt;?php
+namespace Application\Model ;
+
+class Grille
+{
+  /**
+   * Calculer le numéro de la région grâce aux informations ligne, colonne et taille de la grille
+   *
+   * @param int $colonne Numéro de colonne
+   * @param int $ligne Numéro de ligne
+   *
+   * @return int Numero de région
+   */
+  protected function calculerRegion($ligne, $colonne)
+  {
+    $region = 0 ;
+    $sqrt = sqrt($this-&gt;taille) ;
+ 
+    // Identifier dans quelle partie de la grille se trouve la ligne
+    $ligne_region = ceil(($ligne / $this-&gt;taille) * $sqrt) ;
+
+    // Identifier dans quelle partie de la grille se trouve la colonne
+    $colonne_region = ceil(($colonne / $this-&gt;taille) * $sqrt) ;
+
+    // Calculer le numéro de région
+    $region = (($ligne_region - 1) * $sqrt) + $colonne_region ;
+   
+    return (int) $region ;
+  }
+
+  /**
+   * Construction de chaque case de la grille
+   *
+   * @return array
+   */
+  protected function construireGrille()
+  {
+    $this-&gt;cases = array() ;
+    // Dans la vue, pour que les marques des régions tombent juste avec l'opérateur module (%),
+    // il est important que la numérotation des lignes et des colonnes commencent par 1
+    for($ligne = 1; $ligne&lt;=$this-&gt;taille; $ligne++) { // ligne
+      for($colonne = 1 ; $colonne&lt;= $this-&gt;taille; $colonne++) { // colonne
+        $region = $this-&gt;calculerRegion($ligne, $colonne) ;
+        $this-&gt;cases[$ligne . '.' . $colonne] = new CaseSudoku($region, $ligne, $colonne, $this-&gt;taille) ;
+      }
+    }
+ 
+    return $this-&gt;cases ;
+  }
+}
+</code></pre>
+<p>Veillons maintenant à accéder à nos propriétés. Récupérons le tableau de cases d'une part, la taille de la grille d'autre part, mais également préparons une méthode pour récupérer une case précise.</p>
+<pre><code class="language-php">// module/Application/src/Application/Model/Grille.php
+
+&lt;?php
+namespace Application\Model ;
+
+class Grille
+{
+  /**
+   * Récupérer la taille de la grille
+   *
+   * @return int
+   */
+  public function getTaille()
+  {
+    return $this-&gt;taille ;
+  }
+
+  /**
+   * Récupérer le tableau des cases
+   *
+   * @return array
+   */
+  public function getCases()
+  {
+    return $this-&gt;cases ;
+  }
+
+  /**
+   * Récupérer une case
+   *
+   * @param int $ligne numéro de ligne
+   * @param int $colonne numéro de colonne
+   *
+   * @return CaseSudoku
+   */
+  public function getCase($ligne, $colonne)
+  {
+    return $this-&gt;cases[$ligne . '.' . $colonne] ;
+  }
+}
+</code></pre>
+<p>Il faudrait également qu'on puisse valider un numéro dans une case ou bien éliminer un chiffre possible d'une case. En vertu des règles du sudoku, rappelons à toutes fins utiles qu'on ne peut valider un chiffre dans une case que si le même chiffre n'est pas déjà validé dans la ligne, la colonne ou la région. De même, si tous les chiffres possibles dans une case sont éliminés, le dernier chiffre qui restera sera validé par défaut. Cette partie est gérée par l'objet <strong>Chiffre</strong>.</p>
+<pre><code class="language-php">// module/Application/src/Application/Model/Grille.php
+
+&lt;?php
+namespace Application\Model ;
+
+class Grille
+{
+  /**
+   * Selectionner toutes les cases qui composent une ligne
+   *
+   * @param int $ligne numéro de ligne
+   *
+   * @return array
+   */
+  public function selectionnerCasesDeLigne($ligne)
+  {
+    $cases = array() ;
+    foreach($this-&gt;cases as $case) {
+      if($case-&gt;getLigne() == $ligne) {
+        $cases[] = $case ;
+      }
+    }
+    return $cases ;
+  }
+
+  /**
+   * Vérifier que le numéro qu'on veut valider n'est pas déjà validé dans la ligne
+   *
+   * @param int $ligne numéro de ligne
+   * @param int $colonne numéro de colonne
+   * @param int $chiffre numéro qu'on souhaite valider
+   *
+   * @return bool
+   */
+  protected function estDefiniDansLigne($ligne, $colonne, $chiffre)
+  {
+    foreach($this-&gt;selectionnerCasesDeLigne($ligne) as $case) {
+      if($case-&gt;chiffre-&gt;getStatutDuNumero($chiffre) == 1 &amp;amp;&amp;amp; $case-&gt;getColonne() != $colonne) {
+        return true ;
+      }
+    }
+    return false ;
+  }
+
+  // On utilisera le même principe pour les méthodes Grille::estDefiniDansColonne() et Grille::estDefiniDansRegion()
+
+  /**
+   * Valider un numéro dans une case
+   *
+   * @param int $ligne numéro de ligne
+   * @param int $colonne numéro de colonne
+   * @param int $chiffre numéro à mettre dans la case
+   */
+  public function validerChiffre($ligne, $colonne, $chiffre)
+  {
+    if($this-&gt;estDefiniDansLigne($ligne, $colonne, $chiffre)) {
+      throw new \Exception('Operation impossible') ;
+    } elseif($this-&gt;estDefiniDansColonne($ligne, $colonne, $chiffre)) {
+      throw new \Exception('Operation impossible') ;
+    } elseif($this-&gt;estDefiniDansRegion($ligne, $colonne, $chiffre)) {
+      throw new \Exception('Operation impossible') ;
+    }
+    $case = $this-&gt;getCase($ligne, $colonne) ;
+    $case-&gt;chiffre-&gt;validerChiffre($chiffre) ;
+  }
+
+  /**
+   * Eliminer un numéro dans une case
+   *
+   * @param int $ligne numéro de ligne
+   * @param int $colonne numéro de colonne
+   * @param int $chiffre chiffre possible à éliminer d'une case
+   */
+  public function eliminerChiffre($ligne, $colonne, $chiffre)
+  {
+    $case = $this-&gt;getCase($ligne, $colonne) ;
+    $case-&gt;chiffre-&gt;eliminerChiffre($chiffre) ;
+  }
+}
+</code></pre>
+<p>Notre objet <strong>Grille</strong> n'est pas fini, loin de là. Mais préparons les tests unitaires liés aux méthodes que nous avons déjà écrite.</p>
+<pre><code class="language-php">// module/Application/test/ApplicationTest/Model/GrilleTest.php
+
+&lt;?php
+namespace ApplicationTest\Model ;
+
+use Application\Model\Grille ;
+use PHPUnit_Framework_TestCase ;
+
+class GrilleTest extends PHPUnit_Framework_TestCase
+{
+  /**
+   * Testons la création de la grille
+   * On doit pouvoir récupérer la valeur de la propriété $taille
+   * Le nombre de cases de la grille est égal à $taille x $taille
+   */
+  public function testGrilleInitial()
+  {
+    $g = new Grille(4) ;
+ 
+    $this-&gt;assertSame($g-&gt;getTaille(), 4) ;
+    $this-&gt;assertSame(count($g-&gt;getCases()), 16) ;
+  }
+ 
+  /**
+   * Vérifions que le calcul de la région est juste
+   */
+  public function testCalculerRegion()
+  {
+    $g = new Grille(4) ;
+    $c = $g-&gt;getCase(3, 2) ;
+ 
+    // Le numéro de la région a été calculée
+    $this-&gt;assertSame($c-&gt;getRegion(), 3) ;
+    $this-&gt;assertSame($c-&gt;getColonne(), 2) ;
+    $this-&gt;assertSame($c-&gt;getLigne(), 3) ;
+  }
+
+  /**
+   * Validons un chiffre dans une case de la grille
+   */
+  public function testValiderChiffre()
+  {
+    $g = new Grille(4) ;
+    // Mettons un 3 dans la 2eme case de la 2me ligne
+    $g-&gt;validerChiffre(2, 2, 3) ;
+ 
+    $case = $g-&gt;getCase(2, 2) ;
+    // Vérifions que la 2eme case de la 2me ligne est bien validée et que c'est le numéro 3 qui est validé.
+    $this-&gt;assertTrue($case-&gt;chiffre-&gt;estValide()) ;
+    $this-&gt;assertSame($case-&gt;chiffre-&gt;getNumero(), 3) ;
+  }
+
+  /**
+   * Vérifions qu'il est impossible de valider un second chiffre dans la même ligne
+   *
+   * @expectedException Exception
+   */
+  public function testDefiniDansLigne()
+  {
+    $g = new Grille(4) ;
+    // Mettons un 1 dans la 1ere case de la 1ere ligne
+    $g-&gt;validerChiffre(1, 1, 1) ;
+ 
+    // Mettons un 1 dans la 4eme case de la 1ere ligne
+    // La méthode assertFalse() importe peu dans la mesure où
+    // la méthode validerChiffre() va envoyer une exception et que c'est le comportement que l'on teste.
+    $this-&gt;assertFalse($g-&gt;validerChiffre(1, 4, 1)) ;
+  }
+
+  // Tester également qu'il est impossible de valider un second chiffre dans la même colonne et un troisième test pour vérifier qu'il est impossible de valider un autre chiffre dans la même région.
+
+  /**
+   * Vérifions qu'on peut éliminer un chiffre
+   */
+  public function testDefiniDansLigne()
+  {
+    $g = new Grille(4) ;
+    // Il ne peut pas y avoir de 3 dans la 2eme case de la 2eme ligne
+    $g-&gt;eliminerChiffre(2, 2, 3) ;
+ 
+    $case = $g-&gt;getCase(2, 2) ;
+    // Vérifions que la 2eme case de la 2me ligne n'a toujours pas de chiffre validé
+    $this-&gt;assertTrue($case-&gt;chiffre-&gt;estInconnu()) ;
+    // Vérifier que le chiffre 3 a un statut ELIMINE (0)
+    $this-&gt;assertSame($case-&gt;chiffre-&gt;getStatutDuNumero(3), 0) ;
+    // Vérifier que le chiffre 1 est toujours un chiffre possible et a un statut POSSIBLE (2)
+    $this-&gt;assertSame($case-&gt;chiffre-&gt;getStatutDuNumero(1), 2) ;
+  }
+}
+</code></pre>
+<p>Lancer les tests. Tout devrait bien se passer. Nous complèterons notre objet Grille dans la prochaine partie en rajoutant les méthodes pour manipuler la grille et pour la valider.</p>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/fr/tags/phpunit">phpunit</a></li><li><a href="/fr/tags/poo">POO</a></li><li><a href="/fr/tags/zend-framework-2">zend framework 2</a></li></ul>
+        </div>
+      
+
+      
+        <nav id="book-navigation">
+    
+       <li class="link-previous"><a href="/fr/posts/sudoku-solver-developper-lobjet-case.html"><i class="fas fa-long-arrow-alt-left"></i> Sudoku Solver - Développer l&#39;objet Case</li>
+    
+
+    
+        <li class="link-next"><a href="/fr/posts/solveur-de-sudoku-ajouter-des-hypotheses.html">Solveur de Sudoku - Ajouter des hypothèses <i class="fas fa-long-arrow-alt-right"></i></a></li>
+    
+
+    
+        <li class="link-up"><a href="/fr/books/aborder-la-programmation-orientee-objet-par-lexemple-concevoir-un-solveur-de-sudoku.html"><i class="fas fa-book-open"></i> Aborder la programmation orientée objet par l&#39;exemple. Concevoir un solveur de sudoku</li>
+    
+</nav>
+
+      
+    
+
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>Sur moi</h3>
+      <p>J&#39;ai appris le php il y a quelques années, quand Internet était à ses débuts. Pour diverses raisons, j&#39;ai arrêté en route et j&#39;ai perdu le fil des nouveaux Internets que je redécouvre. Résultat, je me sens constamment à courir après l&#39;histoire mais je suis toujours motivée à reprendre des projets personnels. Je me propose de vous partager mes découvertes. Au delà des sujets de programmation, j&#39;aime également partager mes infos concernant notamment l&#39;Histoire, l&#39;Astronomie, la Linguistique, les Films, les Livres et les Anime. J&#39;espère que vous aimerez suivre mon blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. Tous droits réservés.</p>
+        <p>Propulsé par <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

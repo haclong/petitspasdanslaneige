@@ -1,0 +1,413 @@
+<!doctype html>
+<html class="no-js" lang="en" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>CoffeeBar Application 15/19 - Food is prepared, reacting to it&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">French</a>
+        <a href="/en/">English</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/en/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/en/books/0/index.html">Collections</a>
+        <a href="/en/">Home</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/en/">Home</a><i class="fas fa-angle-right"></i>CoffeeBar Application 15/19 - Food is prepared, reacting to it
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>CoffeeBar Application 15/19 - Food is prepared, reacting to it</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>4/21/2015, 7:44:00 PM
+        
+        <i class="fas fa-th-large"></i><!--a href="/en/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/file9271237667217.jpg" class="node-banner" />
+        
+          <p><strong>Credit</strong> : Morguefile.com </p>
+        
+      </div>
+
+      <p><p>Now food is prepared and ready to serve... The 'foodPrepared' event has been triggered. But we know it well by now, nothing will ever happen if nobody is listening to this event. So now, let's add some listeners... ok, we (almost) know which listeners, but what about callbacks ?</p>
+<p><em>NOTE : throughout the tutorial, i will reedit numerous classes and views i already talked about. On the second edition, some datas will be missing such as use keyword, extends and implements keywords etc... It doesn't mean you have to delete those existing lines. It is intended to lighten this tutorial. In the case we need to remove lines, i'll say it so plainly, even re-editing the whole part to make myself clear on that item.</em></p>
+<h2>Here is what we know</h2>
+<ul>
+<li>For the <strong>Tab Story</strong>, items in the <code>TabStory::$outstandingFood</code> list will be removed and they will be added to the <code>TabStory::$preparedFood</code> list.</li>
+<li>For the <strong>Chef todo list</strong>, <strong>prepared food will be removed</strong> from the list.</li>
+<li>For the <strong>Open tabs</strong> list, items in the <code>Tab::$itemsInPreparation</code> list will be moved to the <code>Tab::$itemsToServe</code> list.</li>
+</ul>
+<h2>The Tab Story</h2>
+<p>Ordered fool not prepared yet are listed in the <code>TabStory::$outstandingFood</code> property. For each ordered menu number, we need to know** its key** in the <code>TabStory::$outstandingFood</code> array so we can delete that index.</p>
+<p>The <code>TabStory::$outstandingFood</code> property is a <code>**CoffeeTab\Entity\TabStory\OrderedItems**</code> (extending <code>**\ArrayObject**</code>). We need to make a method which will return the <strong>key</strong> of the <code>TabStory::$outstandingFood</code> array by menu number.</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Entity/TabStory/OrderedItems.php
+
+&lt;?php
+namespace CoffeeBar\Entity\TabStory ;
+
+class OrderedItems extends ArrayObject
+{
+  // $id = menu number
+  public function getKeyById($id)
+  {
+    $iterator = $this-&gt;getIterator() ;
+ 
+    // iterate through the whole array
+    foreach($iterator as $key =&gt; $value)
+    {
+      // check when we have a $value matching the menu number.
+      // once we have a match, return its key
+      if($value-&gt;getId() == $id) 
+      {
+        return $key ;
+      }
+    }
+  }
+}
+</code></pre>
+<p>Prepared food are stored now in a <code>TabStory::$preparedFood</code> property.</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/TabStory/TabStory.php
+
+&lt;?php
+namespace CoffeeBar\Entity\TabStory ;
+
+class TabStory
+{
+  protected $preparedFood ; // CoffeeBar/Entity/TabStory/OrderedItems
+ 
+  public function __construct()
+  {
+    $this-&gt;preparedFood = new OrderedItems() ;
+  }
+
+  public function getPreparedFood() 
+  {
+    return $this-&gt;preparedFood;
+  }
+
+  public function addPreparedFood($food) 
+  {
+    foreach($food as $item)
+    {
+      $this-&gt;preparedFood-&gt;offsetSet(NULL, $item) ;
+    }
+  }
+}
+</code></pre>
+<p>Now put it all together : remove the items from the <code>TabStory::$outstandingFood</code> array and add the same items to the <code>TabStory::$preparedFood</code> array.</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Service/TabAggregate.php
+
+&lt;?php
+class TabAggregate
+{
+  ...
+ 
+  public function attach(EventManagerInterface $events)
+  {
+    $this-&gt;listeners[] = $events-&gt;attach('foodPrepared', array($this, 'onFoodPrepared')) ;
+  }
+
+  public function onFoodPrepared($events)
+  {
+    $foodPrepared = $events-&gt;getParam('foodPrepared') ;
+ 
+    $story = $this-&gt;loadStory($foodPrepared-&gt;getId()) ;
+ 
+    foreach($foodPrepared-&gt;getFood() as $food)
+    {
+      // get the key of prepared food
+      $key = $story-&gt;getOutstandingFood()-&gt;getKeyById($food) ;
+ 
+      if($key !== null)
+      {
+        // get the item : CoffeeBar/Entity/TabStory/OrderedItem
+        $value = $story-&gt;getOutstandingFood()-&gt;offsetGet($key) ;
+
+        // remove the item from the $outstandingFood array
+        $story-&gt;getOutstandingFood()-&gt;offsetUnset($key) ;
+
+        // add the item in the $preparedFood array
+        $story-&gt;getPreparedFood()-&gt;offsetSet(NULL, $value) ;
+      }
+    }
+    $this-&gt;saveStory($foodPrepared-&gt;getId(), $story) ;
+  }
+}
+</code></pre>
+<p>Et voila. Next.</p>
+<h2>The Chef Todo List</h2>
+<p>Now let's see what happens to the chef todo list : once the food is prepared, remove the item from the list, of course.</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Service/ChefTodoList.php
+
+&lt;?php
+namespace CoffeeBar\Service;
+
+class ChefTodoList implements ListenerAggregateInterface
+{
+  public function attach(EventManagerInterface $events)
+  {
+    $this-&gt;listeners[] = $events-&gt;attach('foodPrepared', array($this, 'onFoodPrepared')) ;
+  }
+
+  public function onFoodPrepared($events)
+  {
+    $foodPrepared = $events-&gt;getParam('foodPrepared') ;
+
+    $this-&gt;loadTodoList() ;
+
+    foreach($this-&gt;todoList as $key =&gt; $item)
+    {
+      // $item-&gt;getTab() get the tab unique id in the todolist
+      // $foodPrepared-&gt;getId() get the tab unique id from the 'foodPrepared' event
+      if($item-&gt;getTab() == $foodPrepared-&gt;getId())
+      {
+        $groupKey = $key ;
+        $group = $item ;
+      }
+    }
+ 
+    // $foodPrepared-&gt;getFood = array of int (menu numbers)
+    foreach($foodPrepared-&gt;getFood() as $food)
+    {
+      // get the key of the prepared item in the chef todo list
+      $key = $group-&gt;getKeyByMenuNumber($food) ;
+      if($key !== null)
+      {
+        // remove the item by its key
+        $group-&gt;getItems()-&gt;offsetUnset($key) ;
+      }
+    }
+ 
+    // if TodoListGroup::items is empty
+    // remove TodoListGroup
+    if(count($group-&gt;getItems()) == 0)
+    {
+      $this-&gt;todoList-&gt;offsetUnset($groupKey) ;
+    }
+ 
+    $this-&gt;saveTodoList() ;
+  }
+}
+</code></pre>
+<p>This time, we need to retrieve the array key by one of its value in the <code>**CoffeeBar\Entity\ChefTodoList**</code></p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Entity/ChefTodoList/TodoListGroup.php
+
+&lt;?php
+namespace CoffeeBar\Entity\ChefTodoList;
+
+class TodoListGroup 
+{
+  // $menuNumber = numéro de menu passé en argument
+  public function getKeyByMenuNumber($menuNumber)
+  {
+    // itération sur le tableau $items
+    foreach($this-&gt;getItems() as $key =&gt; $value)
+    {
+      // si une valeur est trouvée, correspondant au numéro de menu passé en argument
+      // retourner l'index
+      if($value-&gt;getMenuNumber() == $menuNumber)
+      {
+        return $key ;
+      }
+    }
+  }
+}
+</code></pre>
+<h2>The Open Tabs list</h2>
+<p>Now about the Open Tabs list</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Service/OpenTabs.php
+
+&lt;?php
+namespace CoffeeBar\Service ;
+
+use CoffeeBar\Entity\OpenTabs\TabStatus;
+
+class OpenTabs
+{
+  public function attach(EventManagerInterface $events)
+  {
+    $this-&gt;listeners[] = $events-&gt;attach('foodPrepared', array($this, 'onFoodPrepared')) ;
+  }
+
+  /**
+   * Move the prepared items from the itemsInPreparation list to the itemsToServe list
+   * @param Events $events
+   */
+  public function onFoodPrepared($events)
+  {
+    $foodPrepared = $events-&gt;getParam('foodPrepared') ;
+
+    $this-&gt;loadTodoByTab() ;
+    $tab = $this-&gt;todoByTab-&gt;offsetGet($foodPrepared-&gt;getId()) ;
+ 
+    // get the list of prepared food (array of int)
+    foreach($foodPrepared-&gt;getFood() as $food)
+    {
+      // ici aussi, on récupère l'index du tableau avec le numéro de menu
+      $key = $tab-&gt;getItemsInPreparation()-&gt;getKeyByMenuNumber($food) ;
+      if($key !== null)
+      {
+        // on récupère l'élément stocké à cet index
+        $value = $tab-&gt;getItemsInPreparation()-&gt;offsetGet($key) ;
+
+        // on ajoute l'élément à la liste de $itemsToServe
+        $tab-&gt;getItemsToServe()-&gt;addItem($value) ;
+
+        // on supprime l'élément de la liste $itemsInPreparation
+        $tab-&gt;getItemsInPreparation()-&gt;offsetUnset($key) ;
+      }
+    }
+    $this-&gt;todoByTab-&gt;offsetSet($foodPrepared-&gt;getId(), $tab) ;
+    $this-&gt;saveTodoByTab() ;
+  }
+}
+</code></pre>
+<p>The <code>Tab::$itemsInPreparation</code> property is a <code>**CoffeeBar\Entity\OpenTabs\ItemsArray**</code>. Again, try to get the key by the value.</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Entity/OpenTabs/ItemsArray.php
+
+&lt;?php
+namespace CoffeeBar\Entity\OpenTabs ;
+
+class ItemsArray extends ArrayObject
+{
+  public function getKeyByMenuNumber($menuNumber)
+  {
+    $iterator = $this-&gt;getIterator() ;
+ 
+    foreach($iterator as $key =&gt; $value)
+    {
+      if($value-&gt;getMenuNumber() == $menuNumber) {
+        return $key ;
+      }
+    }
+  }
+}
+</code></pre>
+<h3>Conclusion</h3>
+<p>Once '<em>foodPrepared</em>' event is triggered :</p>
+<ul>
+<li>prepared food is removed from the chef todo list</li>
+<li>prepared food is removed from the <code>Tab::$itemsInPreparation</code> array and added to the <code>Tab::$itemsToServe</code> array</li>
+<li>prepared food is removed from the <code>TabStory::$outstandingFood</code> array and added to the <code>TabStory::$preparedFood</code> array</li>
+</ul>
+<p>Now the service</p>
+<p><em>You'll find the full application in my <a href="https://github.com/haclong/coffeebar" target="_blank">github</a></em></p>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/en/tags/zend-framework-2">zend framework 2</a></li><li><a href="/en/tags/oop">OOP</a></li><li><a href="/en/tags/events">events</a></li><li><a href="/en/tags/event-manager">Event Manager</a></li><li><a href="/en/tags/programmation-evenementielle">programmation événementielle</a></li></ul>
+        </div>
+      
+
+      
+        <nav id="book-navigation">
+    
+       <li class="link-previous"><a href="/en/posts/coffeebar-application-1419-marking-prepared-food.html"><i class="fas fa-long-arrow-alt-left"></i> CoffeeBar Application 14/19 - Marking prepared food</li>
+    
+
+    
+        <li class="link-next"><a href="/en/posts/coffeebar-application-1619-get-staff-todo-list.html">CoffeeBar Application 16/19 - Get the staff todo list <i class="fas fa-long-arrow-alt-right"></i></a></li>
+    
+
+    
+        <li class="link-up"><a href="/en/books/manage-coffeebar-event-driven-programming.html"><i class="fas fa-book-open"></i> Manage a coffeebar with event driven programming</li>
+    
+</nav>
+
+      
+    
+
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>About me</h3>
+      <p>I learned coding with php several years ago, when Internet was still young. For multiple reasons, i had stopped then and missed most of this new Internet i&#39;m discovering once again. So, i feel like a newbie again and since i&#39;m ready to start over personal project, i&#39;ll share with you some of my discoveries. Beyond coding topics, i&#39;ll enjoy sharing with you several subjects such as History, Astronomy, Linguistics, Movies, Books, Music and Anime among others. I hope you&#39;ll enjoy reading this blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. All rights reserved.</p>
+        <p>Powered by <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

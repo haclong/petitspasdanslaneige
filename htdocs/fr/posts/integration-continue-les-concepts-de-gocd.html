@@ -1,0 +1,199 @@
+<!doctype html>
+<html class="no-js" lang="fr" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>Intégration continue - Les concepts de GoCD&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">Français</a>
+        <a href="/en/">Anglais</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/fr/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/fr/books/0/index.html">Séries</a>
+        <a href="/fr/">Accueil</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/fr/">Accueil</a><i class="fas fa-angle-right"></i>Intégration continue - Les concepts de GoCD
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>Intégration continue - Les concepts de GoCD</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>17/01/2017 09:32:00
+        
+        <i class="fas fa-th-large"></i><!--a href="/fr/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->, <!--a href="/fr/sites/haclong-projects.html" class="tag-sites"-->Haclong projects<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/2048x1536-fit_illustration-laboratoire-antidopage.jpg" class="node-banner" />
+        
+      </div>
+
+      <p><p>Rappelons nous, pour utiliser efficacement un serveur d'intégration continue (d'autant plus vrai lorsqu'il s'agit d'un serveur intégralement configurable), il faut qu'on dise quoi faire à notre serveur. Et lorsqu'on utilise <strong>GoCD</strong>, il faut qu'on ait une vision des différents concepts de** GoCD** afin de pouvoir organiser au mieux nos instructions.</p>
+<p>Nous avons installé <strong>GoCD</strong> (un serveur et un agent), nous avons notre projet. Allons configurer le serveur d'intégration continue.</p>
+<p>A notre serveur d'intégration continue (<strong>GoCD</strong>), on va donner des <em>intructions</em> pour qu'il sache quoi faire.</p>
+<h4>Task</h4>
+<p>Chaque <em>instruction</em> (qu'on peut assimiler grosso modo à une commande dans le terminal), est une <em>tâche</em> (<em>task</em>) dans <strong>GoCD</strong>.</p>
+<h4>Job</h4>
+<p>Les <em>tâches</em> sont groupées en <em>job</em>. Un <em>job</em> est donc composé d'une <em>séquence ordonnée de tâches</em> qui va être exécutée <em>dans l'ordre</em> qu'on aura choisi.</p>
+<h4>Stage</h4>
+<p>Les <em>jobs</em> sont organisés en <em>stage</em> et dans chaque <em>stage</em>, les <em>jobs</em> sont exécutés <em>en désordre</em>, voire même <em>en même temps</em>.</p>
+<h4>Pipeline</h4>
+<p>Enfin, les <em>stages</em> sont regroupés en <em>pipeline</em>, les <em>stages</em> sont exécutés <em>dans l'ordre choisi</em>.</p>
+<p>Si au début, cela perturbe un peu, vous pouvez toujours essayer de ne pas multiplier les étapes : un <em>pipeline</em> avec un seul <em>stage</em> avec un seul <em>job</em> et, là, ça va être difficile d'y couper, mais plusieurs <em>tasks</em>... Petit à petit, au fur et à mesure que vous enrichisserez votre <em>pipeline</em>, vous déciderez alors s'il vous faut plusieurs <em>stages</em> / plusieurs <em>jobs</em>...</p>
+<p>Vous trouverez de la <a href="https://docs.go.cd/current/introduction/concepts_in_go.html" target="_blank">documentation plus complète</a> sur le site de <strong>GoCD</strong>.</p>
+<p>Maintenant que nous avons vu les concepts (rapidement) de <strong>GoCD</strong>, passons au vif du sujet.</p>
+<h2>Mon premier pipeline</h2>
+<p>Aller sur votre serveur <strong>GoCD</strong> (<a href="#">http://localhost:8153/go</a>), menu <strong>Admin &gt; Pipelines.</strong></p>
+<p>Les <em>pipelines</em> peuvent être groupés en ensemble administratif. A vous de vous organiser. Cela n'a rien à voir avec le &quot;boulot&quot; d'un serveur d'intégration continue.</p>
+<p>Pour ma part, actuellement, j'ai défini un groupe de <em>pipeline</em> par projet. Mais je réalise que je vais TRES PROBABLEMENT n'avoir qu'un seul <em>pipeline</em> par projet (avant d'atteindre un niveau astronomique en paramétrage de serveur d'intégration continue). Je me dis qu'il pourrait être intéressant de réorganiser mes <em>pipelines</em> par type d'intégration : par ex, un groupe pour intégrer en continu le dépôt local vers le server master principal et un autre groupe pour intégrer en continu les sources validées vers le serveur de prod. C'est une idée à creuser mais sans matière pour le moment, je n'ai rien changé à mon paramétrage.</p>
+<p>Bref, cliquer sur <code>[Add New Pipeline Group]</code> pour créer un groupe de <em>pipelines</em> puis sur <code>[Create a new pipeline within this group]</code> pour créer votre premier <em>pipeline</em>.</p>
+<p><strong>ATTENTION</strong> : il y a un truc tordu (d'après moi) sur <strong>GoCD</strong>. Vous ne pouvez pas supprimer un <em>pipeline</em> et donner le nom du <em>pipeline</em> supprimé à un nouveau <em>pipeline</em>. <strong>GoCD</strong> ne supprime jamais complètement les <em>pipelines</em>. Du coup, un nouveau <em>pipeline</em> avec le même nom qu'un ancien <em>pipeline</em> va hériter de l'historique de l'ancien <em>pipeline</em>. Du coup, on recommande même de ne jamais supprimer les <em>pipelines</em> pour ne pas risque de nommer un nouveau <em>pipeline</em> avec le nom d'un ancien par erreur... Ce qui se révèle très gênant lorsqu'on essaie de comprendre ce qu'il se passe et qu'on passe son temps à créer des <em>pipelines</em> pour expérimenter -_-.</p>
+<p>Bref, bon, on s'en sort quand même.</p>
+<p>Voyons la création du <em>pipeline</em></p>
+<h4>Step 1 : Basic Settings</h4>
+<p>Donner un nom (unique) à votre <em>pipeline</em> (<em>Pipeline Name</em>).
+Assurez vous que le nom du groupe (<em>Pipeline Group Name</em>) est correct mais en principe, ce champ est automatiquement rempli.</p>
+<h4>Step 2 : Materials</h4>
+<p>Les &quot;<em>materials</em>&quot; chez <strong>GoCD</strong>, c'est la matière à partir de laquelle <strong>Go</strong> va construire le <em>build</em>. DE BASE, ce sont vos sources, votre projet. Après, il va être possible de rajouter d'autres <em>materials</em>. Par ex, on peut imaginer des dépendances qui ne pourront pas être installées avec <strong>Composer</strong> et qu'il faudra que <strong>Go</strong> installe également pour exécuter le projet.</p>
+<p>Pour nous, ce qui nous intéresse, ce sont nos fichiers que nous avons commité sur notre <em>dépôt git local</em>.</p>
+<ul>
+<li><em>Material Type</em> = <span style="background-color:#ffff00;">Git</span></li>
+<li><em>URL</em> = le chemin vers vos sources. <strong>Git</strong> acceptant les chemins du système de fichier, nous pouvons indiquer où se situent nos sources sur notre poste local (Ubuntu).</li>
+</ul>
+<p>Mettons que votre projet se trouve dans ce répertoire : <code>/home/user/projets/monprojet/dev/src/</code></p>
+<p>Le <code>dépôt git</code> serait en principe dans ce répertoire : <code>/home/user/projets/monprojet/dev/src/.git</code></p>
+<p>Pour <strong>GoCD</strong>, voici l'URL attendue pour votre <code>dépôt git</code> : <code>/home/user/projets/monprojet/dev/src/</code></p>
+<p>Vous pouvez vous aider du bouton <code>[Check Connection]</code> pour vérifier que <strong>GoCD</strong> va pouvoir accéder au dépôt que vous avez indiqué.</p>
+<p>En terme de droits, le propriétaire a les droits d'exécution (<em>x</em>), d'écriture (<em>w</em>) et de lecture (<em>r</em>) sur les fichiers du projet. Quant aux autres, ils n'ont que les droits d'exécution (<em>x</em>) et de lecture (<em>r</em>) sur les répertoires et les droits de lecture (<em>r</em>) sur les fichiers. Cela semble suffire pour <strong>GoCD</strong>.</p>
+<ul>
+<li><em>Branch</em> = la branche qui doit être contrôlée par <strong>GoCD</strong>. Par défaut, c'est <em>master</em>. Si vous comptez créer une branche par feature, il faut savoir que pour chaque nouvelle branche, vous allez avoir besoin de créer un <em>pipeline</em> dédié (tiens tiens tiens... voila que les <em>pipelines</em> se regroupent par projet maintenant... :) )</li>
+<li><em>Poll for new changes</em> = cocher la case. Chaque fois que vous commiterez sur la branche à surveiller, <strong>GoCD</strong> lancera le <em>build</em> automatiquement. Si vous ne souhaitez pas que <strong>GoCD</strong> s'exécute automatiquement, il faudra dire à <strong>GoCD</strong> quand il doit s'exécuter. Il vous restera deux choix :</li>
+<li>soit <em>manuellement</em>: chaque fois que vous commiterez votre code, il faudra venir sur <strong>GoCD</strong> et lancer le <em>build</em> en cliquant sur un bouton.</li>
+<li>soit <em>programmatiquement</em>: <strong>GoCD</strong> exécutera un <em>build</em> régulièrement à l'heure dite, que le source ait changé ou pas.. <span style="color:#800080;"><em>heyyy... je viens de penser que c'est une idée pour un autre groupe de pipeline : un groupe dédié aux tests réguliers, qui tourneraient en permanence afin de s'assurer qu'un projet qui est fini depuis longtemps n'a pas d'erreur indétectée peut être parce que la version de PHP a changée...</em></span></li>
+</ul>
+<h4>Step 3 : Stage / Job</h4>
+<ul>
+<li><em>Configuration Type</em> : <span style="background-color:#ffff00;">Define Stages</span>. Je pense que lorsqu'on sera rodé, on pourra utiliser les templates, ce qui nous permettra de gagner du temps. Pour le moment, j'ai besoin de comprendre ce qu'il se passe et je ne peux pas me permettre d'introduire de nouveaux niveaux de complexité.</li>
+<li>Nommer le stage (<em>Stage Name</em>)</li>
+<li><em>Trigger Type</em> : <span style="background-color:#ffff00;">On Success</span>. A moins de vouloir gérer nos <em>pipelines</em> / nos <em>stages</em> manuellement, on choisira toujours &quot;On Success&quot;.</li>
+<li>Nommer le job (<em>Job Name</em>). Par défaut, lorsqu'on crée son premier <em>pipeline</em>, <strong>GoCD</strong> va vous aider à créer un seul <em>stage</em> et un seul <em>job</em>. Mais on peut éditer nos <em>pipelines</em> et ajouter de nouveaux <em>stages</em> et de nouveaux <em>jobs</em>.</li>
+<li><em>Task Type</em>: Je préfère choisir l'option <span style="background-color:#ffff00;">&quot;More...&quot;</span> qui permet d'indiquer à <strong>GoCD</strong> quelle ligne de commande doit être exécutée.</li>
+</ul>
+<p>Cliquez sur <code>[Finish]</code>. Vous avez créé votre premier <em>pipeline</em> !! <a href="https://fr.wiktionary.org/wiki/%E3%81%8A%E3%82%81%E3%81%A7%E3%81%A8%E3%81%86" target="_blank">Omedeto</a> !!</p>
+<p>Dans le prochain article, nous réviserons notre <em>pipeline</em> pour lui faire faire ce qu'on veut.</p>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/fr/tags/gocd">gocd</a></li><li><a href="/fr/tags/integration-continue">intégration continue</a></li></ul>
+        </div>
+      
+
+      
+        <nav id="book-navigation">
+    
+
+    
+        <li class="link-next"><a href="/fr/posts/integration-continue-installer-gocd.html">Intégration Continue - Installer GoCD <i class="fas fa-long-arrow-alt-right"></i></a></li>
+    
+
+    
+        <li class="link-up"><a href="/fr/books/integration-continue-utiliser-go-cd.html"><i class="fas fa-book-open"></i> Intégration Continue - Utiliser Go CD</li>
+    
+</nav>
+
+      
+    
+
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>Sur moi</h3>
+      <p>J&#39;ai appris le php il y a quelques années, quand Internet était à ses débuts. Pour diverses raisons, j&#39;ai arrêté en route et j&#39;ai perdu le fil des nouveaux Internets que je redécouvre. Résultat, je me sens constamment à courir après l&#39;histoire mais je suis toujours motivée à reprendre des projets personnels. Je me propose de vous partager mes découvertes. Au delà des sujets de programmation, j&#39;aime également partager mes infos concernant notamment l&#39;Histoire, l&#39;Astronomie, la Linguistique, les Films, les Livres et les Anime. J&#39;espère que vous aimerez suivre mon blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. Tous droits réservés.</p>
+        <p>Propulsé par <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

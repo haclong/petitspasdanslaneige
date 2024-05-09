@@ -1,0 +1,385 @@
+<!doctype html>
+<html class="no-js" lang="fr" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>Application CoffeeBar 5/19 - Provoquer l&#39;ouverture de commande&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">Français</a>
+        <a href="/en/">Anglais</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/fr/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/fr/books/0/index.html">Séries</a>
+        <a href="/fr/">Accueil</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/fr/">Accueil</a><i class="fas fa-angle-right"></i>Application CoffeeBar 5/19 - Provoquer l'ouverture de commande
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>Application CoffeeBar 5/19 - Provoquer l'ouverture de commande</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>28/01/2015 17:18:00
+        
+        <i class="fas fa-th-large"></i><!--a href="/fr/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/file9271237667217.jpg" class="node-banner" />
+        
+          <p><strong>Crédit</strong> : Morguefile.com </p>
+        
+      </div>
+
+      <p><p>Maintenant que nous avons notre formulaire - qui ouvre une note - nous allons lui attacher un objet. Avec cet objet, nous allons pouvoir traiter le formulaire. Nous verrons alors comment avec cet objet, nous allons pouvoir déclencher notre tout premier événement, le point de départ de toute notre application.</p>
+<p><em>NOTE : le long du tutoriel, je vais vous faire rééditer des classes et des vues sur lesquels on sera déjà passé. Il va y avoir des parties qui auront disparu au second passage : typiquement les use, les instructions extends, implements etc... Cela ne veut pas dire qu'il faut les retirer. C'est juste pour alléger le code. S'il faut retirer du code, soit je vous remettrais le passage intégralement, pour voir ce qui a disparu, soit je vous signalerais qu'il faut effacer une ligne pour la remplacer par une autre.</em></p>
+<h2>L'événement TabOpened</h2>
+<p>Tous les scénarii commencent au moment où une note est ouverte (<code>CoffeeBar\Event\TabOpened</code>). On identifie une note avec son <em>id unique</em>, le <em>numéro de la table</em> qui a ouvert la note et le <em>nom du serveur</em> qui a ouvert la note.</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Event/TabOpened.php
+
+namespace CoffeeBar\Event ;
+
+class TabOpened
+{
+  protected $id ; // string (guid)
+  protected $tableNumber ; // string (numéro de la table)
+  protected $waiter ; // string (serveur)
+
+  // getters &amp;amp; setters
+}
+</code></pre>
+<h2>L'opération OpenTab correspondante</h2>
+<p>Pour qu'une note soit ouverte, il nous faut également l'objet qui fait l'action d'ouvrir cette note.</p>
+<p>Le tutoriel d'origine parle de commande (le fait de faire quelquechose), mais en français, il y a trop de sens au mot commande (surtout dans le cadre d'un commerce), je parlerais donc d'une opération (le mot action ayant également un sens dans une architecture MVC). L'opération correspondante qui ouvre une note sera donc <code>CoffeeBar\Command\OpenTab</code>.</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Command/OpenTab.php
+
+namespace CoffeeBar\Command ;
+
+class OpenTab
+{
+  protected $id ; // string (guid)
+  protected $tableNumber ; // string (numéro table)
+  protected $waiter ; // string (serveur)
+  // l’objet ‘OpenTab’ déclenche une opération (événement) ‘openTab’
+
+  // getters &amp;amp; setters
+}
+</code></pre>
+<h2>Le gestionnaire d'événements</h2>
+<p>Dans le tutoriel d'origine, les opérations sont gérées par un gestionnaire central. Quand une opération a lieu, le gestionnaire prend l'opération en charge et déclenche dans ce cas là les événements qui vont bien. Avec Zend Framework 2, cela ne va pas se passer pareil. Il n'y a rien pour '<em>prendre en charge une opération</em>' d'une part et pour '<em>écouter un événement</em>' d'autre part. Que ce soit une opération qui a lieu ou un événement qui est déclenché, il faut intercepter ce qu'il se passe : au final, que ce soit une opération ou un événement, c'est <em>déclencher un événement</em>, que l'événement soit nommé comme l'opération ou comme l'événement...</p>
+<p>Tout le long du tutoriel, nous avons des événements (gérés par le <strong>gestionnaire d'événements</strong>) et des événements (les objets de l'espace de nom <code>Coffee\Event\*</code>). Un objet opération (<code>Coffee\Command\*</code>) va déclencher un événement (géré par le <strong>gestionnaire d'événements</strong>) mais un objet événement (<code>Coffee\Event\*</code>), va AUSSI déclencher un événement. Nous allons avoir une opération <code>CoffeeBar\Command\OpenTab</code> qui va déclencher un événement '<code>openTab</code>' et une fois que l'événement '<code>openTab</code>' va être intercepté, on va générer un objet événement <code>CoffeeBar\Event\TabOpened</code> qui va déclencher un événement '<code>tabOpened</code>'. Notez la casse que j'utilise, je vais faire de mon mieux pour être clair sur ce point...</p>
+<p>Dès qu'on parle d'événements, on va devoir mettre en place un <a href="http://framework.zend.com/manual/current/en/modules/zend.event-manager.event-manager.html" target="_blank"><strong>gestionnaire d'événement</strong></a>. Par défaut, l'application de Zend Framework 2 (<em>raccourci honteux : je parle bien entendu du Application Skeleton qui se base sur le framework de Zend Framework 2. Zend Framework 2 n'est pas une application à lui seul</em>) comprend un <strong>gestionnaire d'événements</strong> par défaut, anonyme. Pour notre usage, nous allons donc créer un <strong>gestionnaire d'événement personnalisé</strong>, basé sur le gestionnaire de Zend.</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Service/TabEventManager.php
+
+&lt;?php
+namespace CoffeeBar\Service ;
+
+use Zend\EventManager\EventManager;
+
+class TabEventManager extends EventManager
+{
+}
+</code></pre>
+<p>Voila. Tout simplement. Franchement, à part lui donner un nom, on n'a rien fait d'autre.</p>
+<p>Par contre, on va l'ajouter dans notre <strong>gestionnaire de services</strong>.</p>
+<pre><code class="language-php">// module/CoffeeBar/Module.php
+
+&lt;?php
+namespace CoffeeBar;
+
+class Module implements FormElementProviderInterface
+{
+  ...
+  public function getServiceConfig()
+  {
+    return array(
+      'invokables' =&gt; array(
+        'TabEventManager' =&gt; 'CoffeeBar\Service\TabEventManager',
+      ),
+    ) ;
+  }
+}
+</code></pre>
+<p>Le <strong>gestionnaire d'événements</strong> a une méthode <code>EventManager::trigger('nom_de_l_evenement', 'cible', 'paramètres')</code>. Lorsque <code>EventManager::trigger()</code> est appelé, un événement '<code>nom_de_l_evenement</code>' est déclenché dans le gestionnaire d'événements.</p>
+<p>Le <strong>gestionnaire d'événements</strong> a une méthode <code>EventManager::attach('nom_de_l_evenement', 'callback')</code>. Lorsqu'un événement '<code>nom_de_l_evenement</code>' est déclenché, la méthode <code>callback</code> s'exécute.</p>
+<p>Dans tous les cas, il est nécessaire que le gestionnaire d'événements soit présent, ou pour déclencher l'événement, ou pour y répondre.</p>
+<h2>Déclencher un événement</h2>
+<p>Voyons maintenant comment notre objet <code>CoffeeBar\Command\OpenTab</code> peut déclencher un événement '<code>openTab</code>' dans le <strong>gestionnaire d'événements</strong>.</p>
+<p>On vient de voir qu'il était nécessaire, pour l'objet <code>CoffeeBar\Command\OpenTab</code> d'intégrer le <strong>gestionnaire d'événements</strong> pour pouvoir déclencher un événement '<code>openTab</code>'.</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Command/OpenTab.php
+
+namespace CoffeeBar\Command ;
+
+use Zend\EventManager\EventManagerAwareInterface;
+use Zend\EventManager\EventManagerInterface;
+
+// OpenTab déclenche un événement. Il faut donc que l’objet puisse avoir
+// accès à un Event Manager pour y déclencher l’événement
+class OpenTab implements EventManagerAwareInterface
+{
+  // propriété liées à l’interface EventManagerAwareInterface
+  protected $events ;
+
+  // méthode définie par l’interface EventManagerAwareInterface
+  // on va injecter le gestionnaire d'événement dans la méthode setEventManager
+  public function setEventManager(EventManagerInterface $events)
+  {
+    $this-&gt;events = $events;
+    return $this;
+  }
+ 
+  // méthode définie par l’interface EventManagerAwareInterface
+  public function getEventManager()
+  {
+    return $this-&gt;events;
+  }
+}
+</code></pre>
+<p>Une fois que l'objet <code>CoffeeBar\Command\OpenTab</code> a un objet héritant de <code>Zend\EventManager\EventManager</code>, on va pouvoir déclencher l'événement.</p>
+<p><strong>Utiliser une méthode dédiée</strong></p>
+<p>On pourrait utiliser une méthode <code>triggerMe()</code> qui déclencherait l'événement, mais on serait alors obligé de l'invoquer.</p>
+<p><strong>Déclencher systématiquement l'événement dans le constructeur</strong></p>
+<p>Pour ma part, je souhaitais, autant que possible, que si l'objet était instancié, l'événement serait déclenché -&gt; dans le constructeur alors ? Avec le <strong>gestionnaire de services</strong>, toutefois, ce n'est pas possible puisqu'on construit tous nos objets dans le gestionnaire de services et on y fait appel après coup... Les événements seraient tous déclenchés au lancement de l'application...</p>
+<p><strong>Déclencher systématiquement l'événement une fois que l'objet est défini</strong></p>
+<p>Finalement, comme l'objet <code>CoffeeBar\Command\OpenTab</code> sera véritablement défini après que le formulaire d'ouverture de note sera validé, il faut déclencher l'événement une fois que les propriétés de l'objet <code>CoffeeBar\Command\OpenTab</code> étaient définies par le formulaire : juste avant d'hydrater l'objet donc. Parmi les <a href="http://framework.zend.com/manual/current/en/modules/zend.stdlib.hydrator.html" target="_blank">hydrators disponibles</a> dans Zend Framework 2, seul l'hydrator <code>Zend\Stdlib\Hydrator\ArraySerializable</code> implemente des méthodes obligatoires. Les autres hydrators utilisent les propriétés et/ou les getters / setters de l'objet.</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Command/OpenTab.php
+
+namespace CoffeeBar\Command ;
+
+use Zend\EventManager\EventManagerAwareInterface;
+use Zend\EventManager\EventManagerInterface;
+
+// OpenTab déclenche un événement. Il faut donc que l’objet puisse avoir
+// accès à un Event Manager pour y déclencher l’événement
+class OpenTab implements EventManagerAwareInterface
+{
+  // les autres méthodes
+
+  // la méthode populate() est obligatoire si on veut utiliser l’hydrator ArraySerializable()
+  // Or l’hydrator ArraySerializable est le seul hydrator exposé par Zend Framework qui permet
+  // d’hydrater un objet avec une fonction personnalisée
+  // Nous avons besoin de la fonction personnalisée pour déclencher l’événement au moment
+  // où on hydrate l’objet...
+  public function populate($data = array())
+  {
+    // hydrating the object
+    $this-&gt;id = (isset($data['id'])) ? $data['id'] : null;
+    $this-&gt;tableNumber = (isset($data['tableNumber'])) ? $data['tableNumber'] : null;
+    $this-&gt;waiter = (isset($data['waiter'])) ? $data['waiter'] : null;
+    // triggering the event
+    $this-&gt;events-&gt;trigger('openTab', '', array('openTab' =&gt; $this)) ;
+  }
+
+  // la méthode getArrayCopy() est obligatoire pour l’hydrator ArraySerializable()
+  public function getArrayCopy() 
+  {
+    return array(
+      'id' =&gt; $this-&gt;id,
+      'tableNumber' =&gt; $this-&gt;tableNumber,
+      'waiter' =&gt; $this-&gt;waiter,
+    ) ;
+  }
+}
+</code></pre>
+<p>Voyons comment on organise tout ça dans notre gestionnaire de services.</p>
+<pre><code class="language-php">// module/CoffeeBar/Module.php
+
+&lt;?php
+namespace CoffeeBar;
+
+use CoffeeBar\Command\OpenTab;
+use Zend\Stdlib\Hydrator\ArraySerializable;
+
+class Module
+{
+  public function getConfig() {...}
+
+  public function getAutoloaderConfig() {...}
+ 
+  // on charge le Service Manager
+  public function getServiceConfig()
+  {
+    return array(
+      'factories' =&gt; array(
+        // formulaire OpenTabForm avec l'instruction setObject()
+        'OpenTabForm' =&gt; function($sm) {
+          // parce que le formulaire OpenTabForm utilise un élément de formulaire personnalisé
+          // il faut utiliser $this-&gt;serviceLocator-&gt;get('FormElementManager') ;
+          // et utiliser le formulaire à partir du Form Element Manager
+          $formManager = $sm-&gt;get('FormElementManager') ;
+          $form = $formManager-&gt;get('CoffeeBar\Form\OpenTabForm') ;
+          // OpenTabCommand : clé dans le Service Manager
+          $form-&gt;setObject($sm-&gt;get('OpenTabCommand')) ;
+          // on peut ajouter l'hydrator directement
+          // dans le fichier CoffeeBar/Form/OpenTabForm.php
+          $form-&gt;setHydrator(new ArraySerializable()) ;
+          return $form ;
+        },
+        'OpenTabCommand' =&gt; function($sm) {
+          $eventsManager = $sm-&gt;get('TabEventManager') ;
+          $openTab = new OpenTab() ;
+          // injection du gestionnaire d’événement dans l’objet OpenTab
+          $openTab-&gt;setEventManager($eventsManager) ;
+          return $openTab ;
+        },
+      ),
+    ) ;
+  }
+}
+</code></pre>
+<h2>Le contrôleur</h2>
+<p>Et enfin le controller, où il faut compléter et traiter le formulaire s'il est valide.</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Controller/TabController.php
+
+&lt;?php
+namespace CoffeeBar\Controller ;
+
+use Zend\Mvc\Controller\AbstractActionController;
+
+class TabController extends AbstractActionController
+{
+  public function openAction()
+  {
+    // récupérer le formulaire dans le ServiceManager
+    $form = $this-&gt;serviceLocator-&gt;get('OpenTabForm') ;
+    $request = $this-&gt;getRequest() ;
+
+    // si le formulaire a été posté
+    if($request-&gt;isPost()) {
+      // assigné les données du tableau $_POST aux éléments du formulaire
+      $form-&gt;setData($request-&gt;getPost()) ;
+ 
+      // si le formulaire est valide, hydraté l'objet qui est lié au formulaire (OpenTab)
+      if($form-&gt;isValid()) {
+        $openTab = $form-&gt;getObject() ;
+        // on redirige directement vers la page de prise de commande
+        // notez qu'on passe en paramètre le numéro de la table
+        return $this-&gt;redirect()-&gt;toRoute('tab/order', array('id' =&gt; $openTab-&gt;getTableNumber()));
+      }
+    }
+
+    $result['form'] = $form ;
+    return array('result' =&gt; $result) ;
+  }
+}
+</code></pre>
+<p>Quand le formulaire sera validé, on va mapper les données du formulaire <code>CoffeeBar\Form\OpenTabForm</code> sur l'objet <code>CoffeeBar\Command\OpenTab</code>. Au moment où on va hydrater notre objet, l'événement '<code>openTab</code>' va se déclencher.</p>
+<p>Restez dans le coin !! dans le prochain article, nous allons voir qui et comment on va prendre cet événement '<code>openTab</code>' en charge.</p>
+<p><em>Vous trouverez l'intégralité de l'application sur mon <a href="https://github.com/haclong/coffeebar" target="_blank">github</a></em></p>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/fr/tags/zend-framework-2">zend framework 2</a></li><li><a href="/fr/tags/events">events</a></li><li><a href="/fr/tags/service-manager">Service Manager</a></li><li><a href="/fr/tags/hydrator">hydrator</a></li><li><a href="/fr/tags/event-manager">Event Manager</a></li></ul>
+        </div>
+      
+
+      
+        <nav id="book-navigation">
+    
+       <li class="link-previous"><a href="/fr/posts/application-coffeebar-419-le-formulaire-de-commande.html"><i class="fas fa-long-arrow-alt-left"></i> Application CoffeeBar 4/19 - Le formulaire de commande</li>
+    
+
+    
+        <li class="link-next"><a href="/fr/posts/application-coffeebar-619-gerer-la-commande.html">Application CoffeeBar 6/19 - Gérer la commande <i class="fas fa-long-arrow-alt-right"></i></a></li>
+    
+
+    
+        <li class="link-up"><a href="/fr/books/gerer-un-cafe-avec-une-programmation-evenementielle.html"><i class="fas fa-book-open"></i> Gérer un café avec une programmation événementielle</li>
+    
+</nav>
+
+      
+    
+
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>Sur moi</h3>
+      <p>J&#39;ai appris le php il y a quelques années, quand Internet était à ses débuts. Pour diverses raisons, j&#39;ai arrêté en route et j&#39;ai perdu le fil des nouveaux Internets que je redécouvre. Résultat, je me sens constamment à courir après l&#39;histoire mais je suis toujours motivée à reprendre des projets personnels. Je me propose de vous partager mes découvertes. Au delà des sujets de programmation, j&#39;aime également partager mes infos concernant notamment l&#39;Histoire, l&#39;Astronomie, la Linguistique, les Films, les Livres et les Anime. J&#39;espère que vous aimerez suivre mon blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. Tous droits réservés.</p>
+        <p>Propulsé par <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

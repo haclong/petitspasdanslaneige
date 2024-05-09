@@ -1,0 +1,165 @@
+<!doctype html>
+<html class="no-js" lang="en" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>Nice to meet you, Mr Docbook&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">French</a>
+        <a href="/en/">English</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/en/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/en/books/0/index.html">Collections</a>
+        <a href="/en/">Home</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/en/">Home</a><i class="fas fa-angle-right"></i>Nice to meet you, Mr Docbook
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>Nice to meet you, Mr Docbook</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>6/22/2012, 3:27:00 PM
+        
+        <i class="fas fa-th-large"></i><!--a href="/en/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/detail_livre.png" class="node-banner" />
+        
+      </div>
+
+      <p><p>While discovering <a href="http://framework.zend.com/" target="_blank">Zend Framework</a> and <a href="http://drupal.org/" target="_blank">Drupal</a>, i was in need for a tool which will allow me to gather the notes i may have to write down during my learning. Those notes were planned for a private usage first so I started to install a wiki engine. I started to add some entries into the wiki. As entries are multiplying, it appears to me that others may be in need for my observations too, that I should form a small public documentation for all to use. Beside, my wiki articles are looking somehow like any online documentation pages (mainly PHP manual pages). That's when I heard about DocBook.</p>
+<p><a href="http://www.docbook.org/whatis" target="_blank">DocBook</a>, as it defines itself, is a schema maintained by the <a href="mailto:docbook-tc@oasis-open.org">DocBook Technical Committee</a> of <a href="http://www.oasis-open.org/" target="_blank">OASIS</a>. It is a very large and robust schema. That's mean somehow, for newbie, a lot of forking, a lot of possibilities and a complexification which may not be there.</p>
+<h2>Installation</h2>
+<p>Since DocBook is an XML schema and only a schema, there's basically nothing to install. All you need is a text editor or, even better, an XML editor. Of course, as for anything coding related, do not use word processor (such as Word or Open Office...).</p>
+<p>That's it. You can create your book now.</p>
+<h2>Creating a book</h2>
+<p>Since DocBook is still an XML schema, you'll be tied to the XML constraints : doctype and/or namespace.</p>
+<p>Depending on the DocBook version you want to use, you may need either the doctype or the namespace. For my part, since I was still experimenting DocBook 5, i didn't declare the doctype (don't have to), but I didn't declare the namespace either because the page rendering is not working once the namespace is added to the root node...</p>
+<p>The Doctype is a regular file, its extension is .dtd. This is good to know because I have found some notes out there referencing DTD which, when applied, returned &quot;not found errors&quot;. In this case, just browse the net looking for the right DTD file by following backward the path given.</p>
+<p>As you may know, an XML file may not have doctype declaration neither namespace declaration and keep working although it won't pass successfully the XML validators. So you really don't have to worry about Doctype or namespace although, of course, it's cleaner to have a well-formed valid XML source.</p>
+<p>The DocBook documentation will give the complete schema, of course.</p>
+<p>A book can start with a <code>&lt;book&gt;</code> or a <code>&lt;set&gt;</code> root node.
+A <code>&lt;set&gt;</code> can have one or several <code>&lt;book&gt;</code> nodes or may have one or several <code>&lt;set&gt;</code> nodes.
+A <code>&lt;book&gt;</code> can have several differents elements such as dedication page, navigational components such as table of contents, lists of figures, tables... or indexes and components such as preface, chapter, article, appendix, glossary, bibliography.</p>
+<h2>But how can this looks like an online manual ?</h2>
+<p>At this point, you feel somehow cheated because you have subscribed for something like the PHP online manual and all you have is just an XML file without any link and any presentation at all.</p>
+<p>This takes me some time to figure it out but DocBook is basically <em>ONLY</em> this ugly XML file. You can make physical division and explode your book contents into several XML files but that's all.</p>
+<p>Fortunately, in conjonction with the DocBook schema, there's also Docbook XSL which is a collection of XSL files which will template the DocBook XML file.</p>
+<h3>Install DocBook XSL</h3>
+<p>The DocBook XSL is a collection of .xsl files. On the SourceForge.net site, you'll find several <strong>docbook-xsl-</strong>* package to download (and even packages which are not prefixed by <strong>docbook</strong>*). For my part, I've downloaded the <strong>docbook-xsl</strong> package. Again, all you have to do is to extract the archive and put all the files into one directory.</p>
+<h3>HTML rendering quick and dirty</h3>
+<p>At least for the HTML rendering, you can just add the XSL file into your XML file (the one containing the root element).</p>
+<pre><code class="language-xml">&lt;?xml-stylesheet type=&quot;text/xsl&quot; href=&quot;path_to_your_xsl_directory/html/docbook.xsl&quot;?&gt;
+</code></pre>
+<p>Drag and drop the XML into a browser (or use your XML editor processor if there's one). Your XML should look more like an online manual now.</p>
+<h3>Going further</h3>
+<p>Now, if you want to go further, you'll have to install a real XSL processor and if you want to have a book in PDF, you'll have to install a XSL-FO processor. Those processors - at least on Linux - use command line instructions.</p>
+<p>I'm not there yet but my quick and dirty method reaches its limits so I guess my next step will be to install an XSL processor which will allow me to use the html/chunck.xsl stylesheet instead of the html/docbook.xsl stylesheet.</p>
+<p>NOTE : The docbook.xsl stylesheet will create the book in one html page while the chunk.xsl stylesheet will create several .html files with appropriate links.</p>
+<p>You can customize the result of the book while using the DocBook XSL. I'm not there yet also so you'll have to find this out by yourself or wait for my next post on this subject.</p>
+<p>I've tried to add customized nodes with a dedicated namespace but this need to dig deeper into the XSL customization layer to get a satisfying result so I quite gave up this point.</p>
+<p>Here we are. I hope you enjoyed this article also.</p>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/en/tags/docbook">docbook</a></li><li><a href="/en/tags/xml">xml</a></li></ul>
+        </div>
+      
+
+      
+    
+
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>About me</h3>
+      <p>I learned coding with php several years ago, when Internet was still young. For multiple reasons, i had stopped then and missed most of this new Internet i&#39;m discovering once again. So, i feel like a newbie again and since i&#39;m ready to start over personal project, i&#39;ll share with you some of my discoveries. Beyond coding topics, i&#39;ll enjoy sharing with you several subjects such as History, Astronomy, Linguistics, Movies, Books, Music and Anime among others. I hope you&#39;ll enjoy reading this blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. All rights reserved.</p>
+        <p>Powered by <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

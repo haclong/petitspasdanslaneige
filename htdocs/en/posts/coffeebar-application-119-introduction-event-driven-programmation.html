@@ -1,0 +1,239 @@
+<!doctype html>
+<html class="no-js" lang="en" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>CoffeeBar Application 1/19 - Introduction to event driven programmation&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">French</a>
+        <a href="/en/">English</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/en/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/en/books/0/index.html">Collections</a>
+        <a href="/en/">Home</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/en/">Home</a><i class="fas fa-angle-right"></i>CoffeeBar Application 1/19 - Introduction to event driven programmation
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>CoffeeBar Application 1/19 - Introduction to event driven programmation</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>12/22/2014, 6:33:00 PM
+        
+        <i class="fas fa-th-large"></i><!--a href="/en/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/file9271237667217.jpg" class="node-banner" />
+        
+          <p><strong>Credit</strong> : Morguefile.com </p>
+        
+      </div>
+
+      <p><p>Though i feel it easier to do applications with procedural programmation, i know it exists other ways to build applications, based on event driven programmation. Even though PHP does not look like the right language to do event driven programmation, we will see how Zend Framework 2 framework will help us set components to wrap a nice event driven application for the web.</p>
+<h2>Procedural vs Event driven ?</h2>
+<p><a href="http://en.wikipedia.org/wiki/Procedural_programming" target="_blank">Procedural programming</a> is the most basic way to start coding. All you have to know/do is to define a list of ordered directives and the program is meant to run each directives one after another always in the same order. When you start to learn programming, everybody will tell you to sketch organigrams to settle the logic of your code. This is exactly how procedural programming is working. One step after another.</p>
+<p><a href="http://en.wikipedia.org/wiki/Event-driven_programming" target="_blank">Event driven programming</a> is another way to consider programming. We don't code with a list of ordered directives anymore but we base the code on a list of events. The application is running and '<strong>something happens</strong>' when an event is happening. Of course, we can say that in procedural programming too, '<strong>something happens</strong>' when an event is happening : when i click on a button, something happens. But between both ways, the difference is in the way you write the code. Not in what's happening at all.</p>
+<p>In <strong>procedural programming</strong>, you would write :</p>
+<pre><code class="language-php">if (bouton_clicked())
+{
+  prog-&gt;do_something() ;
+}
+</code></pre>
+<p>This means - at the architecture level of your application - when you have the method / functions which says (<code>bouton_clicked()</code>) you HAVE TO KNOW all the elements which will do something once the button have been clicked : this means <strong>dependencies management</strong>.</p>
+<p>In <strong>event driven programming</strong>, you shouldn't need to manage the dependencies.</p>
+<p>On one side, you will have the button in the code :</p>
+<pre><code class="language-php">// bouton
+trigger (oh ! i’ve been clicked !) ;
+</code></pre>
+<p>and on the other side, an element will do something because he knows the button have been clicked.</p>
+<pre><code class="language-php">// prog
+when(bouton: oh! i’ve been clicked !)
+{
+   then do_something() ;
+}
+</code></pre>
+<p>The element reacting does not need to know WHICH button have been clicked and the button, on his side, does not need to know WHO'S doing what when he has been clicked... On the dependencies issue, we are more than ok. But you'll need to be clean and straight... we shouldn't spread our listeners (elements reacting to events) anywhere and we should keep an eye on elements which are triggering events because, in my opinion, we can't identify the link between both components...</p>
+<p>In the end, you can choose either paradigms, procedural or event-driven, your program will do the same thing (because, in the end, this is what is expected of you : to code an application which is doing what we need/want it to do). In web applications, i think it is easier to use procedural programming because the web is based on request and response pairs (do this when i do that, do that when i do this)... but in gaming applications, in exemple, the event driven programming is more relevant.</p>
+<h2>The project</h2>
+<p>I find out the event-driven programming when i was looking for a completely another thing... Talk about serendipity... I wanted to have more informations on the <a href="http://en.wikipedia.org/wiki/Command%E2%80%93query_separation" target="_blank">Command-Query Responsibility Segregation</a> principle. The tutorial i've found meant to explain the principle through an example but then i find myself in a middle of another way to use the code. The <a href="http://www.cqrs.nu/tutorial/cs/01-design" target="_blank">original tutorial</a> is meant for the the <strong>.Net</strong> language (i think). We will reuse the tutorial but doing it for PHP.</p>
+<h3>The scenario</h3>
+<p>We will code an application for a small coffeebar. We will focus on the <strong>tab</strong>. One tab will help us keep track of our clients who are showing at our coffeebar. When the clients come to the coffeebar, they take a table and a <strong>tab is opened</strong>. Clients then can <strong>order drinks or food</strong>. <strong>Drinks are served</strong> by the waiter but <strong>food need to be prepared</strong> by the cook before <strong>being served</strong> by the waiter.</p>
+<p>All the time the clients are in the coffeebar, they can order new drinks or new food. They can** cancel food** only if the food has not been prepared yet and they can <strong>cancel drink</strong> only if the drink has not been served.</p>
+<p>In the end, we can** close a tab** when the client is paying for it. A tab can't be paid if there's still food or drinks unserved or not cancelled. Our coffeebar does not allow credit so a tab need to be fully paid. The client can add a tip though.</p>
+<h3>Events</h3>
+<p>If we were doing <strong>procedural programming</strong>, i can imagine you squirming and ready to create your entities already : client, drink, food etc... For your food and your drinks, you'll have a property which will hold the status : ordered, prepared, served... If the drink is ordered, update the status... etc... we all done that.</p>
+<p>In <strong>event driven programming</strong>, all those objects does not interest us yet. What is catching our attention here, is what is happening. And each time it is happening something, it is an event in our application. And keep in mind that an event is always something who alrealdy happened. Always in the past.</p>
+<p>Lets look at our scenario again, with some code this time :</p>
+<p><em>When the clients come to the coffeebar, they take a table and a tab is opened</em>.</p>
+<ul>
+<li>a <em><strong>Command</strong></em>: OpenTab</li>
+<li>an <em><strong>Event</strong></em>: TabOpened</li>
+<li>an <em><strong>Exception</strong></em>: TableNumberUnavailable</li>
+</ul>
+<p><em>Clients then can order drinks or food.</em></p>
+<ul>
+<li>a <em><strong>Command</strong></em>: PlaceOrder</li>
+<li>an <em><strong>Event</strong></em>: DrinksOrdered</li>
+<li>an <em><strong>Event</strong></em>: FoodOrdered</li>
+<li>an <em><strong>Exception</strong></em>: TabNotOpened</li>
+</ul>
+<p><em>Drinks are served by the waiter</em></p>
+<ul>
+<li>a <em><strong>Command</strong></em>: MarkDrinksServed</li>
+<li>an <em><strong>Event</strong></em>: DrinksServed</li>
+</ul>
+<p><em>but food need to be prepared by the cook</em></p>
+<ul>
+<li>a <em><strong>Command</strong></em>: MarkFoodPrepared</li>
+<li>an <em><strong>Event</strong></em>: FoodPrepared</li>
+</ul>
+<p><em>before being served by the waiter.</em></p>
+<ul>
+<li>a <em><strong>Command</strong></em>: MarkFoodServed</li>
+<li>an <em><strong>Event</strong></em>: FoodServed</li>
+</ul>
+<p><em>All the time the clients are in the coffeebar, they can order new drinks or new food</em>.</p>
+<ul>
+<li>a <em><strong>Command</strong></em>: PlaceOrder</li>
+<li>...</li>
+</ul>
+<p><em>They can cancel food only if the food has not been prepared yet and they can <strong>cancel drink</strong> only if the drink has not been served.</em></p>
+<ul>
+<li>a <em><strong>Command</strong></em>: AmendOrder</li>
+<li>a <em><strong>Command</strong></em>: MarkFoodCancelled</li>
+<li>a <em><strong>Command</strong></em>: MarkDrinksCancelled</li>
+<li>an <em><strong>Event</strong></em>: FoodCancelled</li>
+<li>an <em><strong>Event</strong></em>: DrinksCancelled</li>
+<li>an <em><strong>Exception</strong></em>: CannotCancelledServedItem</li>
+<li>an <em><strong>Exception</strong></em>: CannotCancelledPreparedItem</li>
+</ul>
+<p><em>In the end, we can close a tab when the client is paying for it. A tab can't be paid if there's still food or drinks unserved or not cancelled. Our coffeebar does not allow credit so a tab need to be fully paid. The client can add a tip though.</em></p>
+<ul>
+<li>a <em><strong>Command</strong></em>: CloseTab</li>
+<li>an <em><strong>Event</strong></em>: TabClosed</li>
+<li>an <em><strong>Exception</strong></em>: TabHasUnservedItem</li>
+<li>an <em><strong>Exception</strong></em>: MustPayEnough</li>
+</ul>
+<p>The original tutorial does insist on the fact that we need to keep as close to the business rules (and lexicon) as possible, it is important to keep clear and understandable entities and it is unwise to use of shortcuts : we need an <strong>OpenTab</strong> command to get a <strong>TabOpened</strong> event. Please do not hesitate to refer to the original tutorial where the <a href="http://www.cqrs.nu/tutorial/cs/02-domain-logic" target="_blank">whole business logic mechanism is described in detail</a>. The tutorial includes Behaviour Driven Tests.</p>
+<p>I wasn't able to successfully install Behat but if you pay attention to the test scenarii of the original tutorial, the <strong>Command/Event logic takes all its meaning.</strong></p>
+<p>Do not hesitate to create clear and distincts events. Avoid generic names such as 'Created' or 'Updated' etc... because all your events will finally end up by looking all alike otherwise.</p>
+<p>Now let's get into the subject. Please keep the scenario in mind.</p>
+<p>This tutorial will be long. It's better to get it from the beginning since i will only expose chunks of code and later parts won't include parts which are already being told about. For example, i won't repeat basic instructions such as implements, extends, use etc... Thanks for your fidelity. Sorry for my english, i'm not that good sometimes and other times, i feel it's getting worse.</p>
+<p><em>You'll find the full application in my<a href="https://github.com/haclong/coffeebar" target="_blank">github</a></em></p>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/en/tags/events">events</a></li><li><a href="/en/tags/programmation-evenementielle">programmation événementielle</a></li></ul>
+        </div>
+      
+
+      
+        <nav id="book-navigation">
+    
+
+    
+        <li class="link-next"><a href="/en/posts/coffeebar-application-219-install-framework.html">CoffeeBar Application 2/19 - Install the framework <i class="fas fa-long-arrow-alt-right"></i></a></li>
+    
+
+    
+        <li class="link-up"><a href="/en/books/manage-coffeebar-event-driven-programming.html"><i class="fas fa-book-open"></i> Manage a coffeebar with event driven programming</li>
+    
+</nav>
+
+      
+    
+
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>About me</h3>
+      <p>I learned coding with php several years ago, when Internet was still young. For multiple reasons, i had stopped then and missed most of this new Internet i&#39;m discovering once again. So, i feel like a newbie again and since i&#39;m ready to start over personal project, i&#39;ll share with you some of my discoveries. Beyond coding topics, i&#39;ll enjoy sharing with you several subjects such as History, Astronomy, Linguistics, Movies, Books, Music and Anime among others. I hope you&#39;ll enjoy reading this blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. All rights reserved.</p>
+        <p>Powered by <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

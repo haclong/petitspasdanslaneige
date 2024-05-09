@@ -1,0 +1,320 @@
+<!doctype html>
+<html class="no-js" lang="fr" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>Intégration continue - Tester le projet 2/2&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">Français</a>
+        <a href="/en/">Anglais</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/fr/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/fr/books/0/index.html">Séries</a>
+        <a href="/fr/">Accueil</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/fr/">Accueil</a><i class="fas fa-angle-right"></i>Intégration continue - Tester le projet 2/2
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>Intégration continue - Tester le projet 2/2</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>17/02/2017 09:27:00
+        
+        <i class="fas fa-th-large"></i><!--a href="/fr/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->, <!--a href="/fr/sites/haclong-projects.html" class="tag-sites"-->Haclong projects<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/capture_2.png" class="node-banner" />
+        
+          <p><strong>Crédit</strong> : Sebastian Mantel - Unsplash </p>
+        
+      </div>
+
+      <p><p>Dans un même <em>stage</em>, nous avons deux <em>jobs</em> : un <em>job</em> en charge des tests de couverture de code et un <em>job</em> en charge des tests unitaires et copie du code validé vers un dépot de source / dépôt git distant. Nous avons vu dans un article précédent comment on paramètre le <em>job</em> pour faire les tests de couverture et dans cet article, nous allons voir comment on finalise le <em>stage</em>.</p>
+<h3>Job 2 TestAndBuild</h3>
+<h4>MonPremierBuild/ProjectTesting/TestAndBuild</h4>
+<p><strong>Job Settings</strong></p>
+<ul>
+<li>Job Name : <strong>TestAndBuild</strong></li>
+<li>Resources : <strong>''</strong></li>
+<li>Job Timeout : <strong>Use default (Never)</strong></li>
+<li>Run Type : <strong>Run one instance</strong>. <em>Je ne sais pas encore jouer le code sur des instances différentes</em>.</li>
+</ul>
+<p><strong>Artifact</strong></p>
+<p>Pour ce <em>job</em> <strong>TestAndBuild</strong>, nous générons un <em>artifact</em> (<em>les artifacts est une notion en train de s'éclaircir...</em>)</p>
+<ul>
+<li>Source : <strong>monprojet.*.zip</strong></li>
+<li>Destination : <strong>''</strong></li>
+<li>Type : <strong>Build Artifact</strong></li>
+</ul>
+<p>Pour les curieux, vous retrouverez vos <em>artifacts</em> générés par <strong>GoCD</strong> ici : <code>/var/lib/go-server/artifact/pipeline/{pipelineName}/{compteur}/{stageName}/{compteur}/{jobName}/</code></p>
+<p><strong>Variables d'environnement personnalisées</strong></p>
+<p>Aucune variable définie à ce jour.</p>
+<p><strong>Onglet personnalisé</strong></p>
+<p>Aucun onglet personnalisé</p>
+<p>Tout le paramétrage du <em>job</em> est là, penchons nous plus précisemment sur les <em>tâches</em> du <em>job</em>.</p>
+<h2>La task</h2>
+<p>Concernant le <em>job</em> <strong>TestAndBuild</strong>, il y a plusieurs <em>tasks</em> qu'il faut préparer.</p>
+<h3>Task 2.1</h3>
+<p>La première <em>tâche</em> consiste à exécuter les tests unitaires.</p>
+<p>S'il avait fallu le faire dans un terminal, à la main, en ligne de commande, on aurait exécuté cette commande, sans aucun argument :</p>
+<pre><code class="language-sh">phpunit
+</code></pre>
+<h4>Ce qu'il va se passer</h4>
+<ul>
+<li><strong>GoCD</strong> est notifié lorsque le <em>stage</em> qui précède a été exécuté avec succès.</li>
+<li><strong>GoCD</strong> va exécuter la <em>task</em> qu'on va lui dire d'exécuter (ici, pour commencer, <code>phpunit</code>)</li>
+</ul>
+<h4>Ce qu'il faut faire</h4>
+<p>Pour cela, éditer la <em>task</em> dans <strong>GoCD</strong>. C'est une <em>task</em> <strong>&quot;More...&quot;</strong> : à nous d'écrire ce que nous voulons que le server fasse.</p>
+<ul>
+<li>Command : <strong>phpunit</strong></li>
+<li>Arguments : <strong>''</strong> (aucun argument)</li>
+<li>Working Directory : <strong>''</strong></li>
+<li>Run If Conditions : <strong>Passed</strong> (s'exécute automatiquement et à la condition que le <em>job</em> précédent a réussi)</li>
+</ul>
+<p><cite>Attention, afin que cela marche, il faut penser à installer l'exécutable de <strong>phpunit</strong> dans un répertoire de binaires de votre poste <strong>Ubuntu</strong>.</p>
+<p>Mettre <code>phpunit</code> dans <code>/usr/bin/</code></p>
+<p>Les permissions de <code>phpunit</code> : <code>root:root - 755</code>
+</cite></p>
+<h3>Task 2.2</h3>
+<p>La seconde <em>tâche</em> consiste faire un .zip du projet si les tests passent.</p>
+<p>A la main, dans un terminal, voici la commande :</p>
+<pre><code class="language-sh">git archive --format=zip -v --output=sudokusolver.zip master
+</code></pre>
+<h4>Ce qu'il va se passer</h4>
+<ul>
+<li><strong>GoCD</strong> a exécuté la <em>tâche</em> qui précède avec succès</li>
+<li><strong>GoCD</strong> va exécuter la <em>task</em> qu'on va lui dire d'exécuter (ici, pour commencer, faire le zip)</li>
+</ul>
+<h4>Ce qu'il faut faire</h4>
+<ul>
+<li>Command : <strong>sh</strong> (oui, c'est particulier, mais ça marche comme ça)</li>
+<li>Arguments : (attention, les retours à la ligne sont importants)</li>
+</ul>
+<pre><code class="language-sh">-c
+git archive --format=zip -v --output.MyBuild.$GO_PIPELINE_COUNTER.zip master
+</code></pre>
+<ul>
+<li>Working Directory : <strong>''</strong></li>
+<li>Run If Conditions : <strong>Passed</strong> (s'exécute automatiquement et à la condition que le <em>job</em> précédent a réussi)</li>
+</ul>
+<p><cite>Notez que j'ai ajouté la variable <code>$GO_PIPELINE_COUNTER</code> qui correspond au numéro incrémental que <strong>GoCD</strong> affecte à chaque <em>pipeline</em> chaque fois qu'il est exécuté. Ainsi, si on fait notre <em>build</em> plusieurs fois dans la même journée, à chaque fois, on va obtenir un zip différent avec un suffixe auto-incrémenté.</p>
+<p>La liste des variables que l'on peut utiliser se trouve ici.
+</cite></p>
+<h3>Task 2.3</h3>
+<p>La troisième <em>tâche</em> consiste à ajouter le <em>dépôt distant</em> au projet que <strong>GoCD</strong> a installé et exécuté.</p>
+<p>A la main, dans un terminal, voici la commande qu'on connait bien :</p>
+<pre><code class="language-sh">git remote add github git@github.com:user/remote.git
+</code></pre>
+<h4>Ce qu'il va se passer</h4>
+<p>Lorsque <strong>GoCD</strong> a installé votre projet, il a fait un clone de votre projet. Il y a donc un nouveau serveur git tout neuf pour votre projet installé par <strong>GoCD</strong>. Qui dit serveur git tout neuf dit AUCUN dépôt distant, or <em>origin</em> qui pointe sur le répertoire de développement de votre projet (là où <strong>GoCD</strong> a cloné votre projet)</p>
+<p>Il va donc falloir ajouter à ce serveur git tout neuf votre VRAI répertoire distant.</p>
+<h4>Ce qu'il faut faire</h4>
+<ul>
+<li>Command : <strong>sh</strong></li>
+<li>Arguments : (attention, les retours à la ligne sont importants)</li>
+</ul>
+<pre><code class="language-sh">-c
+git remote add github git@github.com:user/remote.git
+</code></pre>
+<ul>
+<li>Working Directory : <strong>''</strong></li>
+<li>Run If Conditions : <strong>Passed</strong> (s'exécute automatiquement et à la condition que le <em>job</em> précédent a réussi)</li>
+</ul>
+<h3>Task 2.4</h3>
+<p>Vous vous doutez bien, la quatrième <em>tâche</em> va consister à pousser notre projet vers le dépôt distant si les tests ont été passés avec succès.</p>
+<p>A la main, dans un terminal, voici la commande qu'on connait bien :</p>
+<pre><code class="language-sh">git push github master
+</code></pre>
+<h4>Ce qu'il faut faire</h4>
+<ul>
+<li>Command : <strong>sh</strong></li>
+<li>Arguments : (attention, les retours à la ligne sont importants)</li>
+</ul>
+<pre><code class="language-sh">-c
+git push github master
+</code></pre>
+<ul>
+<li>Working Directory : <strong>''</strong></li>
+<li>Run If Conditions : <strong>Passed</strong> (s'exécute automatiquement et à la condition que le <em>job</em> précédent a réussi)</li>
+</ul>
+<h3>Task 2.5</h3>
+<p>Finalement, pour me faire plaisir et parce que je voulais expérimenter un peu plus, la cinquième <em>tâche</em> va copier le .zip que <strong>GoCD</strong> a fait plus tôt et le déplacer dans un dépôt de source de mon choix (en local).</p>
+<h4>Ce qu'il faut faire</h4>
+<ul>
+<li>Command : <strong>sh</strong></li>
+<li>Arguments : (attention, les retours à la ligne sont importants)</li>
+</ul>
+<pre><code class="language-sh">-c
+cp MyBuild.$GO_PIPELINE_COUNTER.zip /home/user/repository/monprojet/builds/.
+</code></pre>
+<ul>
+<li>Working Directory : <strong>''</strong></li>
+<li>Run If Conditions : <strong>Passed</strong> (s'exécute automatiquement et à la condition que le <em>job</em> précédent a réussi)</li>
+</ul>
+<h2>Note : syntaxe des tasks</h2>
+<p>D'après la documentation de <strong>GoCD</strong>, lorsqu'il s'agit de rédiger les <em>tasks</em>, il faut soit utiliser la vraie commande et dans le champ <strong>Arguments</strong>, mettre un argument différent par ligne. Dans l'autre cas, <strong>GoCD</strong> considère en fait que la commande qu'on veut voir exécuter est de cette nature : <code>sh -c &quot;git push github master&quot;</code></p>
+<p>Je vous renvoie sur la documentation pour savoir pourquoi il y a deux manières de gérer les commandes sur Ubuntu.</p>
+<h2>Note : pousser le code vers le dépôt git distant</h2>
+<p>Si vous utilisez ce tutorial, vous allez rencontrez un problème de sécurité. En effet, dans l'état actuel, <strong>github</strong> ne va pas accepter que n'importe qui (en l'occurence un utilisateur <code>go:go</code>) lui pousse des fichiers sur un dépôt qui vous appartient. Il va falloir expliquer à <strong>github</strong> que le user <em>go</em> a le droit de lui pousser des informations.</p>
+<ul>
+<li>Ouvrir un terminal</li>
+<li>Prétendre être l'utilisateur <em>go</em></li>
+</ul>
+<pre><code class="language-sh">sudo su go
+</code></pre>
+<ul>
+<li>Générer une clé SSH pour l'utilisateur <em>go</em> à l'intention de <strong>github</strong></li>
+</ul>
+<pre><code class="language-sh">ssh-keygen -t rsa -b 4096 -C &quot;{adresse email}&quot;
+</code></pre>
+<p>En principe, une clé est générée et on vous propose de la sauvegarder ici : <code>/var/go/.ssh/id_rsa</code></p>
+<ul>
+<li>Copier coller le contenu de <code>/var/go/.ssh/id_rsa.pub</code> et ajouter cette nouvelle clé SSH à votre dépôt <strong>github</strong>.</li>
+<li>Une fois que la clé est ajoutée dans <strong>github</strong>, revenir dans le terminal. Assurez vous que vous êtes toujours l'utilisateur <em>go</em></li>
+<li>Saisir cette commande :</li>
+</ul>
+<pre><code class="language-sh">ssh -vT git@github.com
+</code></pre>
+<p>je ne sais pas vraiment ce que ça fait mais ça marche</p>
+<ul>
+<li>Répondre Yes quand on vous pose la question</li>
+<li>Récupérer son user :</li>
+</ul>
+<pre><code class="language-sh">exit
+</code></pre>
+<p>Il faut peut être également définir un port dédié pour la connexion https.</p>
+<ul>
+<li>Aller dans le menu <strong>Admin &gt; Server configuration</strong> et définir l'url et le port pour HTTPS. <em>Je ne saurais vous en dire plus... je ne sais pas trop comment ça marche ici :p</em></li>
+</ul>
+<p>Et voilà !!</p>
+<h2>Conclusion</h2>
+<p>Voila l'ensemble des tâches paramétrées pour le <em>job</em> <strong>MonPremierBuild/ProjectTesting/TestAndBuild</strong>.</p>
+<ul>
+<li>ce <em>job</em> exécute les tests unitaires (<code>phpunit</code>)</li>
+<li>si les tests sont réussis, ce <em>job</em> fait un zip du projet (sans les librairies) et copie ce zip sur un repository local</li>
+<li>si les tests sont réussis, ce <em>job</em> ajoute un dépôt distant au serveur git et pousse le code du projet vers le dépôt distant</li>
+</ul>
+<p><em>J'ai noté un petit inconvénient avec l'automatisation du code poussé vers le dépôt distant :</em></p>
+<p><em>Finalement, c'est à partir du serveur git de GoCD que le code est poussé vers github. Résultat, sur le serveur git de développement (même machine, répertoire de développement et non plus répertoires de GoCD), on perd la synchronisation avec la branche master distante.</em></p>
+<p><em>Du coup, je m'interroge sur la pertinence de mes tâches... A voir...</em></p>
+<p>Ouf... c'était un peu long mais il me semble que tout y est. J'espère que ça vous sera utile. Je vous donne rendez vous pour d'autres aventures !</p>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/fr/tags/integration-continue">intégration continue</a></li><li><a href="/fr/tags/git">git</a></li><li><a href="/fr/tags/phpunit">phpunit</a></li><li><a href="/fr/tags/gocd">gocd</a></li><li><a href="/fr/tags/tutorial">tutorial</a></li></ul>
+        </div>
+      
+
+      
+        <nav id="book-navigation">
+    
+       <li class="link-previous"><a href="/fr/posts/integration-continue-tester-le-projet-12.html"><i class="fas fa-long-arrow-alt-left"></i> Intégration continue - Tester le projet 1/2</li>
+    
+
+    
+        <li class="link-next"><a href="/fr/posts/integration-continue-avec-gocd-monitorer-les-pipelines.html">Intégration Continue avec GoCD - Monitorer les pipelines <i class="fas fa-long-arrow-alt-right"></i></a></li>
+    
+
+    
+        <li class="link-up"><a href="/fr/books/integration-continue-utiliser-go-cd.html"><i class="fas fa-book-open"></i> Intégration Continue - Utiliser Go CD</li>
+    
+</nav>
+
+      
+    
+
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>Sur moi</h3>
+      <p>J&#39;ai appris le php il y a quelques années, quand Internet était à ses débuts. Pour diverses raisons, j&#39;ai arrêté en route et j&#39;ai perdu le fil des nouveaux Internets que je redécouvre. Résultat, je me sens constamment à courir après l&#39;histoire mais je suis toujours motivée à reprendre des projets personnels. Je me propose de vous partager mes découvertes. Au delà des sujets de programmation, j&#39;aime également partager mes infos concernant notamment l&#39;Histoire, l&#39;Astronomie, la Linguistique, les Films, les Livres et les Anime. J&#39;espère que vous aimerez suivre mon blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. Tous droits réservés.</p>
+        <p>Propulsé par <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

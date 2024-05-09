@@ -1,0 +1,457 @@
+<!doctype html>
+<html class="no-js" lang="fr" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>Application CoffeeBar 19/19 - Clore la note&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">Français</a>
+        <a href="/en/">Anglais</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/fr/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/fr/books/0/index.html">Séries</a>
+        <a href="/fr/">Accueil</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/fr/">Accueil</a><i class="fas fa-angle-right"></i>Application CoffeeBar 19/19 - Clore la note
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>Application CoffeeBar 19/19 - Clore la note</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>09/06/2015 16:23:00
+        
+        <i class="fas fa-th-large"></i><!--a href="/fr/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/file9271237667217.jpg" class="node-banner" />
+        
+          <p><strong>Crédit</strong> : Morguefile.com </p>
+        
+      </div>
+
+      <p><p>Pour encaisser la note, il n'y a qu'un seul élément de saisie de formulaire (input text). Si le paiement (donc le montant saisi) est inférieur, la note n'est pas soldée, on refuse de clore la note. Si le paiement est supérieur, on considère que la différence est le pourboire.</p>
+<p><em>NOTE : le long du tutoriel, je vais vous faire rééditer des classes et des vues sur lesquels on sera déjà passé. Il va y avoir des parties qui n'apparaitront plus systématiquement au second passage : typiquement les use, les instructions extends, implements etc... Cela ne veut pas dire qu'il faut les retirer. C'est juste pour alléger le code. S'il faut retirer du code, soit je vous remettrais le passage intégralement, pour voir ce qui a disparu, soit je vous signalerais qu'il faut effacer une ligne pour la remplacer par une autre.</em></p>
+<h2>Traitement du formulaire</h2>
+<p>Traitons d'abord le formulaire dans le contrôleur</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Controller/TabController.php
+
+&lt;?php
+namespace CoffeeBar\Controller ;
+
+use CoffeeBar\Exception\MustPayEnough;
+use CoffeeBar\Exception\TabAlreadyClosed;
+
+class TabController
+{
+  public function closeAction()
+  {
+    $openTabs = $this-&gt;serviceLocator-&gt;get('OpenTabs') ;
+
+    $form = $this-&gt;serviceLocator-&gt;get('CloseTabForm') ;
+
+    $request = $this-&gt;getRequest() ;
+
+    $id = (int) $this-&gt;params()-&gt;fromRoute('id') ;
+
+    // vérifier si on connait le numéro de la table pour laquelle on va encaisser
+    if (isset($id)) 
+    {
+      // vérifier si le formulaire a été posté
+      if($request-&gt;isPost()) 
+      {
+        $form-&gt;setData($request-&gt;getPost()) ;
+ 
+        try {
+          $form-&gt;isValid() ;
+          $this-&gt;flashMessenger()-&gt;addMessage('La note a été fermée avec succès');
+          return $this-&gt;redirect()-&gt;toRoute('tab/opened');
+ 
+        // si le paiement est insuffisant
+        } catch (MustPayEnough $e) {
+          $this-&gt;flashMessenger()-&gt;addErrorMessage($e-&gt;getMessage());
+          return $this-&gt;redirect()-&gt;toRoute('tab/close', array('id' =&gt; $id));
+        // si la note est déjà fermée, on refuse d'encaisser de nouveau
+        } catch (TabAlreadyClosed $e) {
+          $this-&gt;flashMessenger()-&gt;addErrorMessage($e-&gt;getMessage()) ;
+          return $this-&gt;redirect()-&gt;toRoute('tab/opened') ;
+        }
+      }
+
+      // le reste du code
+    }
+
+    $result['status'] = $status ;
+    $result['form'] = $form ;
+    return array('result' =&gt; $result) ;
+  }
+}
+</code></pre>
+<h2>L'historique des notes</h2>
+<p>A la soumission du formulaire, l'objet <code>CoffeeBar\Command\CloseTab</code> est créé. Grâce à l'hydrator <code>Zend\Stdlib\Hydrator\ArraySerializable</code> et à la méthode <code>CloseTab::populate()</code>, on a pu déclencher un événement '<code>closeTab</code>' au moment où on crée l'objet <code>CoffeeBar\Command\CloseTab</code>. Il reste à notre service <strong>TabAggregate</strong> d'intercepter cet événement et, le cas échéant, de lancer les exceptions si nécessaire.</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Service/TagAggregate.php
+
+&lt;?php
+namespace CoffeeBar\Service ;
+
+use CoffeeBar\Event\TabClosed;
+use CoffeeBar\Exception\MustPayEnough;
+use CoffeeBar\Exception\TabAlreadyClosed;
+
+class TabAggregate
+{
+  public function attach(EventManagerInterface $events)
+  {
+    $this-&gt;listeners[] = $events-&gt;attach('closeTab', array($this, 'onCloseTab')) ;
+    $this-&gt;listeners[] = $events-&gt;attach('tabClosed', array($this, 'onTabClosed')) ;
+  }
+
+  public function onCloseTab($events)
+  {
+    $closeTab = $events-&gt;getParam('closeTab') ;
+
+    $story = $this-&gt;loadStory($closeTab-&gt;getId()) ;
+
+    // on compare le montant des éléments servis (stockés dans l'historique)
+    // avec le montant payé (qui vient de l'objet CloseTab)
+    if($story-&gt;getItemsServedValue() &gt; $closeTab-&gt;getAmountPaid())
+    {
+      throw new MustPayEnough('Le solde n\'y est pas, compléter l\'addition') ;
+    }
+
+    // on vérifie que la note est toujours ouverte
+    if(!$story-&gt;isTabOpened())
+    {
+      throw new TabAlreadyClosed('La note est fermée') ;
+    }
+
+    $tabClosed = new TabClosed() ;
+    $tabClosed-&gt;setId($closeTab-&gt;getId()) ;
+    $tabClosed-&gt;setAmountPaid($closeTab-&gt;getAmountPaid()) ;
+    $tabClosed-&gt;setOrderValue($story-&gt;getItemsServedValue()) ;
+    $tabClosed-&gt;setTipValue($closeTab-&gt;getAmountPaid() - $story-&gt;getItemsServedValue()) ;
+
+    $this-&gt;events-&gt;trigger('tabClosed', $this, array('tabClosed' =&gt; $tabClosed)) ;
+  }
+ 
+  public function onTabClosed($events)
+  {
+    $tabClosed = $events-&gt;getParam('tabClosed') ;
+ 
+    $story = $this-&gt;loadStory($tabClosed-&gt;getId()) ;
+    // on ferme la note.
+    $story-&gt;closeTab() ;
+    $this-&gt;saveStory($tabClosed-&gt;getId(), $story) ;
+  }
+}
+</code></pre>
+<p>Voici les deux exceptions, encore une fois, juste des héritages de la classe <code>\Exception</code> de base</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Exception/MustPayEnough.php
+
+&lt;?php
+namespace CoffeeBar\Exception ;
+
+use Exception;
+
+class MustPayEnough extends Exception {}
+</code></pre>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Exception/TabAlreadyClosed.php
+
+&lt;?php
+namespace CoffeeBar\Exception ;
+
+use Exception;
+
+class TabAlreadyClosed extends Exception {}
+</code></pre>
+<p>Voici l'objet <code>CoffeeBar\Event\TabClosed</code>, mais vous vous doutez déjà de ce qu'on va y trouver</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Event/TabClosed.php
+
+&lt;?php
+namespace CoffeeBar\Event ;
+
+class TabClosed
+{
+  protected $id; // int (guid) - id unique de la note
+  protected $amountPaid; // double
+  protected $orderValue; // double
+  protected $tipValue; // double
+
+  // getters &amp;amp; setters
+}
+</code></pre>
+<p>Notez que, contrairement à l'objet <code>CoffeeBar\Command\CloseTab</code> qui n'a que deux propriétés (l'<em>id</em> et le <em>montant payé</em> (<code>$amountPaid</code>)), l'objet <code>CoffeeBar\Event\TabClosed</code> contient deux propriétés de plus : le <em>pourboire</em> (<code>$tipValue</code>) et le <em>montant total de la note</em> (<code>$orderValue</code>).</p>
+<p>Avec l'événement '<code>tabClosed</code>', on ferme la note.</p>
+<h2>Liste des notes ouvertes</h2>
+<p>Avec l'événement '<code>tabClosed</code>', on retire la note de la liste des notes ouvertes.</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Service/OpenTabs.php
+
+&lt;?php
+namespace CoffeeBar\Service ;
+
+class OpenTabs implements ListenerAggregateInterface
+{
+  public function attach(EventManagerInterface $events)
+  {
+    $this-&gt;listeners[] = $events-&gt;attach('tabClosed', array($this, 'onTabClosed')) ;
+  }
+
+  /**
+   * Listener to tabClosed event
+   * unset the tab from the TodoByTab list
+   * @param Events $events
+   */
+  public function onTabClosed($events)
+  {
+    $tabClosed = $events-&gt;getParam('tabClosed') ;
+
+    $this-&gt;loadTodoByTab() ;
+    $this-&gt;todoByTab-&gt;offsetUnset($tabClosed-&gt;getId()) ;
+    $this-&gt;saveTodoByTab() ;
+  }
+}
+</code></pre>
+<p>Et voila. L'application est terminée.</p>
+<h2>Historiser les événements</h2>
+<p>Avec cette méthode, on peut facilement enregistrer l'historique d'une note. Pour cela, il suffit de stocker dans une propriété <code>TabStory::$eventsLoaded</code> les événements qui surviennent.</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Entity/TabStory/TabStory.php
+
+&lt;?php
+class TabStory
+{
+  protected $eventsLoaded ; // array - liste des événements
+
+  public function __construct()
+  {
+    $this-&gt;eventsLoaded = array() ;
+  }
+
+  public function addEvents($event) 
+  {
+    $this-&gt;eventsLoaded[] = $event ;
+  }
+
+  public function getEventsLoaded() 
+  {
+    return $this-&gt;eventsLoaded ;
+  }
+}
+</code></pre>
+<p>Dans notre service <strong>TabAggregate</strong>, lorsqu'on sauvegarde l'historique dans le cache, on va en profiter pour ajouter l'événement à l'historique.</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Service/TabAggregate.php
+
+&lt;?php
+class TabAggregate
+{
+  // les autres méthodes
+
+  public function onTabOpened($events)
+  {
+    $tabOpened = $events-&gt;getParam('tabOpened') ;
+    $story = $this-&gt;loadStory($tabOpened-&gt;getId()) ;
+    $story-&gt;addEvents($tabOpened) ; // stockage de l'événement dans la note
+    // traiter les données
+    $this-&gt;saveStory($tabOpened-&gt;getId(), $story) ;
+  }
+ 
+  public function onDrinksOrdered($events)
+  {
+    $drinksOrdered = $events-&gt;getParam('drinksOrdered') ;
+    $story = $this-&gt;loadStory($drinksOrdered-&gt;getId()) ;
+    $story-&gt;addEvents($drinksOrdered) ; // stockage de l'événement dans la note
+    // traiter les données
+    $this-&gt;saveStory($drinksOrdered-&gt;getId(), $story) ;
+  }
+ 
+  public function onFoodOrdered($events)
+  {
+    $foodOrdered = $events-&gt;getParam('foodOrdered') ;
+    $story = $this-&gt;loadStory($foodOrdered-&gt;getId()) ;
+    $story-&gt;addEvents($foodOrdered) ; // stockage de l'événement dans la note
+    // traiter les données
+    $this-&gt;saveStory($foodOrdered-&gt;getId(), $story) ;
+  }
+ 
+  public function onDrinksServed($events)
+  {
+    $drinksServed = $events-&gt;getParam('drinksServed') ;
+    $story = $this-&gt;loadStory($drinksServed-&gt;getId()) ;
+    $story-&gt;addEvents($drinksServed) ;
+    // traiter les données
+    $this-&gt;saveStory($drinksServed-&gt;getId(), $story) ;
+  }
+
+  public function onFoodPrepared($events)
+  {
+    $foodPrepared = $events-&gt;getParam('foodPrepared') ;
+    $story = $this-&gt;loadStory($foodPrepared-&gt;getId()) ;
+    $story-&gt;addEvents($foodPrepared) ;
+    // traiter les données
+    $this-&gt;saveStory($foodPrepared-&gt;getId(), $story) ;
+  }
+
+  public function onFoodServed($events)
+  {
+    $foodServed = $events-&gt;getParam('foodServed') ;
+    $story = $this-&gt;loadStory($foodServed-&gt;getId()) ;
+    $story-&gt;addEvents($foodServed) ;
+    // traiter les données
+    $this-&gt;saveStory($foodServed-&gt;getId(), $story) ;
+  }
+ 
+  public function onTabClosed($events)
+  {
+    $tabClosed = $events-&gt;getParam('tabClosed') ;
+    $story = $this-&gt;loadStory($tabClosed-&gt;getId()) ;
+    $story-&gt;addEvents($tabClosed) ;
+    // traiter les données
+    $this-&gt;saveStory($tabClosed-&gt;getId(), $story) ;
+  }
+}
+</code></pre>
+<p>Si on souhaite également stocker les opérations (<code>CoffeeBar\Command</code>), il faut savoir que vous ne pourrez pas sérializer les objets du namespace <code>CoffeeBar\Command</code> parce que chacun de ces objets a une propriété <code>$events</code> (<code>EventManager</code>). Il y a quelquechose dans un objet <strong>EventManager</strong> qui empêche la sérialization. Il faudra alors, pour chaque objet du namespace <code>CoffeeBar\Command</code> ajouter une méthode magique <code>__sleep()&gt;</code> dans laquelle on définit les propriétés qui doivent être conservées dans la sérialization.</p>
+<h2>Extensions</h2>
+<p>On peut imaginer la suite, un outil de comptabilité par ex qui comptabiliserait toutes les notes de la journée : montant total encaissés, montant total des éléments servis par table, montant total du pourboire, ou encore pourboire par serveur... On peut encore étendre les fonctionnalités et relativement facilement.</p>
+<p>On peut également permettre de modifier la note : annuler des plats pas encore préparés et des boissons pas encore servies par ex. Les possibilités sont multiples, bien entendu et je vous laisse imaginer la suite.</p>
+<p>Les événements (<code>CoffeeBar\Event</code>) et les opérations (<code>CoffeeBar\Command</code>) sont des objets qui n'héritent de rien. Afin de pouvoir les traiter comme des ensembles (et utiliser par exemple le <a href="http://fr2.php.net/manual/fr/language.oop5.typehinting.php" target="_blank">typage explicite (type hinting)</a>), je pense qu'il faut mettre en place une <em>interface</em> pour les opérations et une autre pour les événements. Chaque objet alors implémenterait l'interface qui correspond.</p>
+<h2>Remarques</h2>
+<p>Avec ce tutoriel, très long finalement (plus long que je ne le pensais) et très répétitif, je vois deux points à mettre en évidence :</p>
+<p>Pour un rendu (avec <strong>Zend Framework 2</strong>), il faut toujours</p>
+<ol>
+<li>une route</li>
+<li>un contrôleur (et surtout ne pas oublier de le déclarer dans la configuration)</li>
+<li>une vue</li>
+<li>une navigation</li>
+<li>un gestionnaire de services parce que tout repasse par lui</li>
+</ol>
+<p><strong>Tous les autres objets ne concernent que le métier</strong></p>
+<p>Parallèlement à cette constatation, je peux dresser deux familles d'objets :</p>
+<ul>
+<li><strong>Controller</strong>, <strong>Form</strong>, <strong>Service</strong>, <strong>Aides de vues</strong> et <strong>Aides d'action</strong> vont être des objets qui servent au rendu de l'application.</li>
+<li><strong>Hydrators</strong>, <strong>Exception</strong>, <strong>Entity</strong>, <strong>Listeners</strong> et tout ce qu'on peut imaginer derrière vont être des objets qui servent au traitement des informations.</li>
+</ul>
+<p>Si on doit appliquer cette règle strictement, mon service <strong>TabAggregate</strong> ne serait pas un service mais serait autre chose... juste un listener par ex. Alors que le service <strong>OpenTabs</strong> lui, retourne des objets (<code>TabStatus</code>, <code>TabInvoice</code>) qui sont exploités par la vue.</p>
+<p>C'est du chipotage... juste une piste pour organiser ses entités par exemple.</p>
+<h2>Conclusion</h2>
+<p>J'espère que ce tutoriel n'a pas été trop long finalement, que vous avez appris de nouvelles choses (en tout cas, moi, je l'ai fait) et que je reste clair le long de la vingtaine d'articles, sans recourir à des raccourcis trop rapide et sans m'embrouiller entre la commande (<code>CoffeeBar\Command</code>) et la commande (des plats et boissons), le service (<strong>ServiceManager</strong>) et le service (<code>CoffeeBar\Service</code>), l'événement (<code>CoffeeBar\Event</code>) et l'événement (l'entité <em>Event</em> déclenchée dans un gestionnaire d'événement).</p>
+<p>Je m'aperçois que dans mon source, il y a des commentaires et des textes en français parfois et en anglais parfois... désolée, je manque de rigueur de ce côté là.</p>
+<p>Tout du long du tutoriel, je sais que j'ai une gestion des dépendances des plus pourries :p Il faudrait bannir les mots clés '<code>new</code>' du code. Je vous laisse faire les corrections pour mettre tout ça au carré. Toutefois, suite à mes remarques plus haut, entre les classes qui servent au traitement des infos et aux classes qui servent au rendu, on peut essayer de dégager une logique pour ne pas systématiquement instancier tous ses objets dans le gestionnaire de services. Je n'ai pas vraiment d'exemple à proposer. Cela reste encore confus pour moi et je ne me permettrais pas de donner des recommandations sur ce point.</p>
+<p>Merci de m'avoir suivi jusqu'ici. A une prochaine fois.</p>
+<p>For my english spoken friends, sorry... If i'd be courageous enough, i'd translate this tutorial into english but it is an awfully long one and i don't know if I'll do it...</p>
+<p><em>Vous trouverez l'intégralité de l'application sur mon <a href="https://github.com/haclong/coffeebar" target="_blank">github</a></em></p>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/fr/tags/zend-framework-2">zend framework 2</a></li><li><a href="/fr/tags/oop">OOP</a></li><li><a href="/fr/tags/programmation-evenementielle">programmation événementielle</a></li></ul>
+        </div>
+      
+
+      
+        <nav id="book-navigation">
+    
+       <li class="link-previous"><a href="/fr/posts/application-coffeebar-1819-inevitablement-laddition.html"><i class="fas fa-long-arrow-alt-left"></i> Application CoffeeBar 18/19 - Inévitablement, l&#39;addition</li>
+    
+
+    
+
+    
+        <li class="link-up"><a href="/fr/books/gerer-un-cafe-avec-une-programmation-evenementielle.html"><i class="fas fa-book-open"></i> Gérer un café avec une programmation événementielle</li>
+    
+</nav>
+
+      
+    
+
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>Sur moi</h3>
+      <p>J&#39;ai appris le php il y a quelques années, quand Internet était à ses débuts. Pour diverses raisons, j&#39;ai arrêté en route et j&#39;ai perdu le fil des nouveaux Internets que je redécouvre. Résultat, je me sens constamment à courir après l&#39;histoire mais je suis toujours motivée à reprendre des projets personnels. Je me propose de vous partager mes découvertes. Au delà des sujets de programmation, j&#39;aime également partager mes infos concernant notamment l&#39;Histoire, l&#39;Astronomie, la Linguistique, les Films, les Livres et les Anime. J&#39;espère que vous aimerez suivre mon blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. Tous droits réservés.</p>
+        <p>Propulsé par <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

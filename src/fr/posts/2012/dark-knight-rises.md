@@ -14,7 +14,7 @@ media:
 
 tags:
   - "cinema"
-  - "super-heros mythology"
+  - "SuperHerosMythology"
 
 summary: "Batman Begins. The Dark Knight. The Dark Knight Rises. Avec ce dernier chapitre, Christopher Nolan met fin à sa trilogie Dark Knight. Inutile de préciser que cet épisode a été attendu avec impatience. Autour de moi, beaucoup ont détesté Batman Begins mais ce sont les mêmes qui ont encensés The Dark Knight. En se basant sur la courbe de progression, on est en droit d'attendre le meilleur de ce dernier opus."
 ---

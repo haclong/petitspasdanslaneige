@@ -1,0 +1,263 @@
+<!doctype html>
+<html class="no-js" lang="fr" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>Intégration continue - Tester le projet 1/2&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">Français</a>
+        <a href="/en/">Anglais</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/fr/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/fr/books/0/index.html">Séries</a>
+        <a href="/fr/">Accueil</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/fr/">Accueil</a><i class="fas fa-angle-right"></i>Intégration continue - Tester le projet 1/2
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>Intégration continue - Tester le projet 1/2</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>07/02/2017 09:25:00
+        
+        <i class="fas fa-th-large"></i><!--a href="/fr/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->, <!--a href="/fr/sites/haclong-projects.html" class="tag-sites"-->Haclong projects<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/capture_2.png" class="node-banner" />
+        
+          <p><strong>Crédit</strong> : Sebastian Mantel - Unsplash </p>
+        
+      </div>
+
+      <p><p>Résumons nous : on a installé un premier <em>pipeline</em> et dans ce <em>pipeline</em>, un premier <em>stage</em>. Le <em>stage</em> initial, la plupart du temps, consistera à installer votre projet : récupérer les librairies, les installer. Une fois que le projet est installé, passons au <em>stage</em> suivant : les tests.</p>
+<h2>Le stage</h2>
+<p>Dans notre <em>pipeline</em>, il faut ajouter un second <em>stage</em>. Comme pour le <em>stage</em> précédent, nous n'utilisons pas de template (mais on pourrait, encore une fois, je préfère faire tout à la main pour bien comprendre avant d'automatiser).</p>
+<ul>
+<li>Configuration type : <strong>Define Stages</strong></li>
+</ul>
+<h3>Stage ProjectTesting</h3>
+<p>Voyons le paramétrage du <em>stage</em> qui teste le projet</p>
+<h4>MonPremierBuild/ProjectTesting</h4>
+<p><strong>Stage Settings</strong></p>
+<ul>
+<li>Stage Name : <strong>ProjectTesting</strong></li>
+<li>Stage Type : <strong>On success</strong> (déclenchement automatisé du <em>stage</em> en opposition au déclenchement manuel). Si le <em>stage</em> est précédé d'un premier <em>stage</em> qui échoue, alors le <em>stage</em> qui suit ne va pas s'exécuter. Si on se situe dans le tout premier <em>stage</em>, le <em>stage</em> est automatiquement exécuté quand <strong>GoCD</strong> commence un <em>build</em>.</li>
+<li>Fetch Materials : <strong>Y.</strong> <strong>GoCD</strong> doit aller chercher les <em>materials</em> pour exécuter le <em>stage</em>.</li>
+<li>Never Cleanup Artifacts : <strong>N</strong>. Si le <em>stage</em> génère un <em>artifact</em>, cette checkbox indique à <strong>GoCD</strong> de ne jamais purger les <em>artifacts</em> stockés sur <strong>Go Server</strong></li>
+<li>Clean Working Directory : <strong>N</strong>. Si vous supprimez le répertoire de travail, alors votre projet que vous avez installé (avec ces dépendances) dans le <em>stage</em> précédent sera effacé et vous n'aurez rien à tester. Laisser le tout premier <em>stage</em> nettoyer le répertoire de travail.</li>
+</ul>
+<p><strong>Variables d'environnement personnalisées</strong></p>
+<p>Aucune variable définie à ce jour.</p>
+<p><strong>Permissions</strong></p>
+<ul>
+<li>choix par défaut : <strong>Inherit from the pipeline group</strong>.</li>
+</ul>
+<p>Interessons nous plutôt aux <em>jobs</em> maintenant.</p>
+<h2>Le job</h2>
+<p>Cette fois ci, j'ai planifié deux <em>jobs</em> :</p>
+<ul>
+<li>
+<p>un premier <em>job</em> qui va exécuter les tests unitaires en vérifiant la couverture des tests, sans pousser le code vers le dépôt distant même si les tests sont réussis</p>
+</li>
+<li>
+<p>un second <em>job</em> qui va exécuter les tests unitaires et en cas de réussite, pousser le code validé vers le dépôt distant</p>
+</li>
+</ul>
+<p>Notez qu'on aurait pu s'aménager un <em>stage</em> pour gérer le déploiement, soit &quot;après les tests&quot;. A la place, on a fait le déploiement (<em>pousser le code validé vers le dépôt distant</em>) dans ce <em>stage</em>. C'est un choix.</p>
+<h3>Job 1 CheckCoverage</h3>
+<h4>MonPremierBuild/ProjectTesting/CheckCoverage</h4>
+<p><strong>Job Settings</strong></p>
+<ul>
+<li>Job Name : <strong>CheckCoverage</strong></li>
+<li>Resources : <strong>''</strong></li>
+<li>Job Timeout : <strong>Use default (Never)</strong></li>
+<li>Run Type : <strong>Run one instance</strong>. <em>Je ne sais pas encore jouer le code sur des instances différentes</em>.</li>
+</ul>
+<p><strong>Artifacts</strong></p>
+<p>Comme on va produire quelquechose à la sortie de notre <em>job</em> (les rapports de couvertures), cela signifie qu'on doit définir au moins un <em>artifact</em>.</p>
+<ul>
+<li>
+<p>Source : <strong>var/coverage</strong> (<code>/var/lib/go-agent/pipelines/{pipelineName}/</code>)</p>
+</li>
+<li>
+<p>Destination : <strong>report</strong> (<code>/var/lib/go-server/artifact/pipelines/{pipelineName}/{compteur}/{stageName}/{compteur}/{jobName}/</code>)</p>
+</li>
+<li>
+<p>Type : <strong>Build Artifact</strong></p>
+</li>
+</ul>
+<p><strong>Variables d'environnement personnalisées</strong></p>
+<p>Aucune variable définie à ce jour.</p>
+<p><strong>Onglet personnalisé</strong></p>
+<p>Puisqu'on souhaite voir le résultat de notre <em>artifact</em> (il se trouve qu'ici, le rapport de couverture des tests est en HTML, ça tombe bien), on doit ajouter un onglet personnalisé.</p>
+<ul>
+<li>Tab Name : <strong>Coverage</strong>. C'est le nom de l'onglet qui va être généré automatiquement quand le <em>job</em> se sera exécuté.</li>
+<li>Path : <strong>report/coverage/index.html</strong>. C'est le chemin pour accéder au fichier <code>index.html</code> du rapport de couverture de tests. Pour celui-là, j'ai triché et j'ai regardé le chemin exact sur le répertoire <code>/var/lib/go-server/artifact/pipelines/{pipelineName}/{compteur}/{stageName}/{compteur}/{jobName}/</code></li>
+</ul>
+<p>Tout le paramétrage du <em>job</em> est là, penchons nous plus précisemment sur les <em>tâches</em> du <em>job</em>.</p>
+<h2>La task</h2>
+<p>Concernant le <em>job</em> <strong>CheckCoverage</strong>, il n'y a qu'une seule <em>tâche</em> à préparer.</p>
+<h3>Task 1.1</h3>
+<p>La première <em>tâche</em> consiste à exécuter les tests unitaires en générant le rapport de couverture.</p>
+<p>S'il avait fallu le faire dans un terminal, à la main, en ligne de commande, on aurait exécuté cette commande : <code>phpunit --coverage-html var/coverage</code></p>
+<h4>Ce qu'il va se passer</h4>
+<ul>
+<li><strong>GoCD</strong> est notifié lorsque le <em>stage</em> qui précède a été exécuté avec succès.</li>
+<li><strong>GoCD</strong> va exécuter la <em>task</em> qu'on va lui dire d'exécuter (ici, <code>phpunit</code>)</li>
+</ul>
+<h4>Ce qu'il faut faire</h4>
+<p>Pour cela, éditer la <em>task</em> dans <strong>GoCD</strong>. C'est une <em>task</em> <strong>&quot;More...&quot;</strong> : à nous d'écrire ce que nous voulons que le server fasse.</p>
+<ul>
+<li>Command : <strong>phpunit</strong></li>
+<li>Arguments : (attention, les retours à la ligne sont importants)</li>
+</ul>
+<pre><code class="language-sh">--coverage-html
+var/coverage
+</code></pre>
+<ul>
+<li>Working Directory : <strong>''</strong></li>
+<li>Run If Conditions : <strong>Passed</strong> (s'exécute automatiquement et à la condition que le <em>job</em> précédent a réussi)</li>
+</ul>
+<p><cite>Attention, afin que cela marche, il faut penser à installer l'exécutable de <strong>phpunit</strong> dans un répertoire de binaires de votre poste <strong>Ubuntu</strong>.</p>
+<p>Mettre <code>phpunit</code> dans <code>/usr/bin/</code></p>
+<p>Les permissions de <code>phpunit</code> : <code>root:root - 755</code>
+</cite></p>
+<h2>Concernant le job CheckCoverage</h2>
+<p>Ce <em>job</em> est intéressant parce qu'il génère des fichiers et fait intervenir plusieurs nouveaux éléments : les <em>artifacts</em>, les onglets personnalisés...</p>
+<p>Lorsqu'on lance notre <em>pipeline</em> :</p>
+<ul>
+<li><strong>GoCD</strong> a cloné notre projet et on le retrouvera ici : <code>/var/lib/go-agent/pipelines/{pipelineName}/</code></li>
+<li>Ensuite la tâche suivante va générer les fichiers html de couverture de tests.</li>
+</ul>
+<pre><code class="language-sh">phpunit --coverage-html var/coverage
+</code></pre>
+<ul>
+<li><strong>phpunit</strong> va créer le répertoire <code>var/coverage/</code> dans les fichiers de notre projet (cloné sur <code>/var/lib/go-agent/</code>)</li>
+</ul>
+<p>Seulement, à partir du dashboard de <strong>GoCD</strong> (<code>http://localhost:8153/go</code>), vous n'accédez pas aux fichiers qui se trouvent sur <code>/var/lib/go-agent/</code>. Si vous avez des fichiers qui sont générés par un des <em>jobs</em> / une des <em>tâches</em>, il faut les déclarez dans les <em>artifacts</em> afin que <strong>go-server</strong> en ait connaissance.</p>
+<p>Ainsi, notre paramétrage d'<em>artifact</em> dit que les fichiers que l'on trouvera à la source <code>var/coverage/</code> (<code>/var/lib/go-agent/pipelines/{pipelineName}/var/coverage/</code>), on souhaite les déplacer vers la destination <code>report/</code> (<code>/var/lib/go-server/artifact/pipelines/{pipelineName}/{compteur}/{stageName}/{compteur}/{jobName}/report/</code>)</p>
+<p>En fait, l'intention était de copier le contenu de <code>var/coverage/</code> vers <code>report/</code> mais finalement, on s'aperçoit que <strong>GoCD</strong> a copié le contenu de <code>var/</code> vers <code>report/</code>. <em>Il faudra creuser un peu plus loin si on souhaite éclaircir ce point.</em></p>
+<p>Une fois qu'on a déclaré notre <em>artifact</em>, on peut y accéder depuis le dashboard de <strong>GoCD</strong> (<code>http://localhost:8153/go</code>) lorsqu'on consulte notre <em>build</em>.</p>
+<p>Enfin, dans le cas particulier de la couverture des tests qui génère des fichiers HTML qu'on pourrait facilement consulter directement à l'écran sans avoir à les télécharger, il faut ajouter un <em>onglet personnalisé</em>.</p>
+<p>Dans ces cas là, on donne un nom à notre nouvel onglet et on lui indique le fichier que l'onglet doit afficher. Le fichier est nécessairement dans le répertoire : <code>/var/lib/go-server/artifact/pipelines/{pipelineName}/{compteur}/{stageName}/{compteur}/{jobName}/</code></p>
+<p>Et voila.</p>
+<p>Il ne restera plus qu'à refaire les tests (sans couverture) et faire les livrables nécessaires.</p>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/fr/tags/integration-continue">intégration continue</a></li><li><a href="/fr/tags/gocd">gocd</a></li><li><a href="/fr/tags/git">git</a></li><li><a href="/fr/tags/phpunit">phpunit</a></li><li><a href="/fr/tags/tutorial">tutorial</a></li></ul>
+        </div>
+      
+
+      
+        <nav id="book-navigation">
+    
+       <li class="link-previous"><a href="/fr/posts/integration-continue-installer-le-projet.html"><i class="fas fa-long-arrow-alt-left"></i> Intégration continue - Installer le projet</li>
+    
+
+    
+        <li class="link-next"><a href="/fr/posts/integration-continue-tester-le-projet-22.html">Intégration continue - Tester le projet 2/2 <i class="fas fa-long-arrow-alt-right"></i></a></li>
+    
+
+    
+        <li class="link-up"><a href="/fr/books/integration-continue-utiliser-go-cd.html"><i class="fas fa-book-open"></i> Intégration Continue - Utiliser Go CD</li>
+    
+</nav>
+
+      
+    
+
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>Sur moi</h3>
+      <p>J&#39;ai appris le php il y a quelques années, quand Internet était à ses débuts. Pour diverses raisons, j&#39;ai arrêté en route et j&#39;ai perdu le fil des nouveaux Internets que je redécouvre. Résultat, je me sens constamment à courir après l&#39;histoire mais je suis toujours motivée à reprendre des projets personnels. Je me propose de vous partager mes découvertes. Au delà des sujets de programmation, j&#39;aime également partager mes infos concernant notamment l&#39;Histoire, l&#39;Astronomie, la Linguistique, les Films, les Livres et les Anime. J&#39;espère que vous aimerez suivre mon blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. Tous droits réservés.</p>
+        <p>Propulsé par <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

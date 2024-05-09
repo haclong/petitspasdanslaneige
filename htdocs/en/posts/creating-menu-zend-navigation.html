@@ -1,0 +1,963 @@
+<!doctype html>
+<html class="no-js" lang="en" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>Creating menu with Zend Navigation&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">French</a>
+        <a href="/en/">English</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/en/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/en/books/0/index.html">Collections</a>
+        <a href="/en/">Home</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/en/">Home</a><i class="fas fa-angle-right"></i>Creating menu with Zend Navigation
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>Creating menu with Zend Navigation</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>11/21/2012, 1:28:00 AM
+        
+        <i class="fas fa-th-large"></i><!--a href="/en/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/search_engine_friendly.jpg" class="node-banner" />
+        
+      </div>
+
+      <p><p>Zend Framework comes with a Zend Navigation component. With this component you can create a menu. Just let see how.</p>
+<p>Zend Navigation is a component which allows you to build a navigation tree, with pages and subpages. You'll need Zend View Helpers to decipher your navigation tree and use it on your website.</p>
+<p>As always when i start to give you tips about Zend Framework, there will be two available use cases :</p>
+<ul>
+<li>you are using Zend Application and you are building a web application based on the MVC design. This means you'll only have to declare your navigation tree to your application, Zend View being already autoloaded by the application bootstrap.</li>
+<li>you've got your own web site / web application and you are using Zend Controller as stand alone, eventually Zend View and of course, you wish to use Zend Navigation</li>
+<li>you've got your own web site / web application and you just want to benefit Zend Navigation functionnalities. You'll have to instantiate both Zend Navigation and Zend View. This is currently not my use case so i'll only give you hints...</li>
+</ul>
+<h3>Building pages</h3>
+<p>Which ever use cases you are using, you'll have to build pages. A &quot;page&quot; in Zend Navigation is <em>NOT</em> a php page (nor an html) but the datas to link to that page. To do it short (and dirty), it's the page url.</p>
+<p>Full documentation for creating pages is <a href="http://framework.zend.com/manual/1.12/en/zend.navigation.pages.html" target="_blank">here</a>. You can extends the original page class if needed (see the previous link).</p>
+<p>Zend Navigation provides two kind of pages :</p>
+<ul>
+<li>The MVC pages will define the link to the page using a &quot;controller&quot; and an &quot;action&quot; parameters that only Zend Controller can decipher. You can use MVC pages definition only if you're using Zend Controller as stand alone component or when you're using Zend Application (which will bootstrap (launch) Zend Controller all by itself). If you're not using either Zend Application or Zend Controller, i guess you'll have to parse MVC pages parameters and adapt your own controller class... You're on your own here.</li>
+<li>the URI pages defines the link to the page using an URI link (either relative link or absolute link). You can use URI pages when using Zend Controller (as stand alone or bootstrapped by Zend Application) by passing the controller/action parameters as a regular URL) or when linking to an external page (which does not belong to the current application). If you're not using either Zend Application or Zend Controller, I'll advise you to use URI pages when you want to manage your navigation (menu and sitemap etc...) with Zend Navigation component.</li>
+</ul>
+<p>With Zend Navigation, you'll have to declare each of your pages either an MVC page or an URI page.</p>
+<p>For each URI page, you'll need at least all those attributes :</p>
+<ul>
+<li><strong>label</strong> : The label will be the text of the link... It's where you click.</li>
+<li><strong>id</strong> : You'll need the id soon. Make sure that all your ids are different. We do not want Zend to mess up with our pages, right ?</li>
+<li><strong>uri</strong> : The URI to the page. Can be NULL.</li>
+<li><strong>pages</strong> : child pages of the page.</li>
+</ul>
+<p>Please refer to the Zend Framework documentation (at Zend Navigation index) to get all informations about the URI pages properties.</p>
+<p>For each MVC page, you'll need at least all those attributes :</p>
+<ul>
+<li><strong>label</strong> : The label will be the text of the link... It's where you click.</li>
+<li><strong>id</strong> : You'll need the id soon. Make sure that all your ids are different. We do not want Zend to mess up with our pages, right ?</li>
+<li><strong>controller</strong> : The controller you're using for the link</li>
+<li><strong>action</strong> : The action you're using for the link</li>
+<li><strong>pages</strong> : child pages of the page.</li>
+</ul>
+<p>As for my part, i'll use also the <strong>module</strong>, the <strong>params</strong> and eventually the <strong>route</strong> parameters. Please refer to the Zend Framework documentation (at Zend Navigation index) to get all informations about the MVC pages properties.</p>
+<p>Zend Framework documentation has several examples for creating single Zend MVC or URI Pages (MVC and URI). Since our target is to build our whole sitemap by listing all our pages and ordering them into menus and submenus, I won't talk about single pages.</p>
+<h3>Building the navigation tree</h3>
+<p>We will now build the navigation tree. Navigation tree is composed with menu containing pages and menu containing submenu containing pages...</p>
+<p>Basically, we will assume that a menu containing pages is similar to a page containing pages. Zend Navigation calls a page containing pages a &quot;container&quot;. Since a navigation tree is built with menu containing pages and menu containing menu containing pages, a full navigation tree is a container. And with this, we've got the whole Zend Navigation logic.</p>
+<p>Let's pretend that we have our sitemap as follow :</p>
+<pre class="brush: php; auto-links: true; collapse: false; first-line: 1; html-script: false; smart-tabs: true; tab-size: 4; toolbar: false; codetag">
+ 1.    Home // this is a single page
+ 2.    About // this will NOT link to a page but contains subpages
+ 2.1   Contact // this is a single page
+ 3.    Asia // this will link to a page and contains subpages too
+ 3.1   China // this is a single page
+ 3.2   Japan // this is a single page
+ 4.    Europe // this will link to a page and contains subpages too
+ 4.1   France // this will link to a page and contains subpages too
+ 4.1.1 Paris // this is a single page
+ 4.1.2 Lyon // this is a single page
+ 4.1.3 Marseille // this is a single page
+ 4.2   Germany // this will link to a page and contains subpages too
+ 4.2.1 Berlin // this is a single page
+ 4.3   Italy // this will link to a page and contains subpages too
+ 4.3.1 Roma // this is a single page
+ 4.3.2 Milano // this is a single page
+ 4.3.3 Firenze // this is a single page
+</pre>
+<p>Zend Navigation allows you to build your navigation tree with several different formats (see <a href="http://framework.zend.com/manual/1.12/en/zend.navigation.containers.html" target="_blank">Zend Navigation Container documentation</a> for more details)</p>
+<ul>
+<li>using a php array</li>
+</ul>
+<pre class="brush: php; auto-links: true; collapse: false; first-line: 1; html-script: false; smart-tabs: true; tab-size: 4; toolbar: false; codetag">
+$container = new Zend_Navigation(
+   array( // Zend Navigation array (building the main navigation tree container)
+      array( // params needed for the Home page (URI page)
+         'label' => 'Home',
+         'id' => 'idHome',
+         'uri' => '/'
+      ),
+      array( // params needed for the About page (URI page)
+         'label' => 'About',
+         'id' => 'idAbout',
+         'type' => 'uri',
+         'pages' => array( // building the About container
+            array( // params needed for the Contact page (MVC page)
+               'label' => 'Contact',
+               'id' => 'idContact',
+               'action' => 'index',
+               'controller' => 'contact'
+            )
+         )
+      ),
+      array( // params needed for the Asia page (MVC page)
+         'label' => 'Asia',
+         'id' => 'idAsia', 
+         'action' => 'index_action',
+         'controller' => 'asia_controller',
+         'pages' => array( // building the asia container
+            array( // params needed for the china page
+               'label' => 'China',
+               'id' => 'idChina',
+               'action' => 'china_action',
+               'controller' => 'asia_controller'
+            ),
+            array( // params needed for the japan page
+               'label' => 'Japan',
+               'id' => 'idJapan',
+               'action' => 'japan_action',
+               'controller' => 'asia_controller'
+            )
+         )
+      ),
+      array( // params needed for the Europe page (MVC page)
+         'label' => 'Europe',
+         'id' => 'idEurope', 
+         'action' => 'index_action',
+         'controller' => 'europe_controller',
+         'pages' => array( // building the europe container
+            array( // params needed for the france page
+               'label' => 'France',
+               'id' => 'idFrance',
+               'action' => 'france_action',
+               'controller' => 'europe_controller',
+               'pages' => array( // building the france container
+                  array( // params needed for the paris page
+                     'label' => 'Paris',
+                     'id' => 'idParis',
+                     'uri' => '/villes/fr/paris'
+                  ),
+                  array( // params needed for the lyon page
+                     'label' => 'Lyon',
+                     'id' => 'idLyon',
+                     'uri' => '/villes/fr/lyon'
+                  ),
+                  array( // params needed for the marseille page
+                     'label' => 'Marseille',
+                     'id' => 'idMarseille',
+                     'uri' => '/villes/fr/marseille'
+                  )
+               )
+            ),
+            array( // params needed for the germany page
+               'label' => 'Germany',
+               'id' => 'idGermany',
+               'action' => 'germany_action',
+               'controller' => 'europe_controller',
+               'pages' => array( // building the germany container
+                  array( // params needed for the berlin page
+                     'label' => 'Berlin',
+                     'id' => 'idBerlin',
+                     'uri' => '/villes/de/berlin'
+                  )
+               )
+            ),
+            array( // params needed for the italy page
+               'label' => 'Italy',
+               'id' => 'idItaly',
+               'action' => 'italy_action',
+               'controller' => 'europe_controller',
+               'pages' => array( // building the italy container
+                  array( // params needed for the roma page
+                     'label' => 'Roma',
+                     'id' => 'idRoma',
+                     'uri' => '/villes/it/roma'
+                  ),
+                  array( // params needed for the milano page
+                     'label' => 'Milano',
+                     'id' => 'idMilano',
+                     'uri' => '/villes/it/milano'
+                  ),
+                  array( // params needed for the firenze page
+                     'label' => 'Firenze',
+                     'id' => 'idFirenze',
+                     'uri' => '/villes/it/firenze'
+                  )
+               )
+            )
+         )
+      )
+   )
+) ;
+</pre>
+<p>Put this array in any php file for the moment. We will see later how to use it. You can use php array when you're using Zend Application or Zend Navigation as standalone component.</p>
+<p>Of course, you'll be able to access the $navigation array while calling the variable name... We are merely manipulating standard php variables here, considering that $navigation is not only a simple array type but a Zend_Navigation object type. Do not bother for the type... it's just a variable and its value.</p>
+<pre class="brush: bash; auto-links: true; collapse: false; first-line: 1; html-script: false; smart-tabs: true; tab-size: 4; toolbar: false; codetag">
+ CONSTRAINTS :
+ * 'label', 'id', 'uri', 'action', 'controller', 'pages' are mandatory
+ * 'pages' expects an array ('pages' => array())
+ * based on page properties, Zend_Navigation can determine either if the page is an MVC page type or an URI page type. But, note the case of the About page which does not link to any page... You have to precise the 'type' property otherwise, you'll catch an Exception.
+</pre>
+<ul>
+<li>using a Zend Config object</li>
+</ul>
+<pre class="brush: bash; auto-links: true; collapse: false; first-line: 1; html-script: false; smart-tabs: true; tab-size: 4; toolbar: false; codetag">
+; params needed for the home page
+home.type = "Zend_Navigation_Page_Uri" 
+home.label = "Home"
+home.id = "idHome"
+home.uri = "/"
+; params needed for the about container
+about.type = "Zend_Navigation_Page_Uri"
+about.id = "idAbout"
+about.label = "About us"
+; params needed for the contact page
+about.pages.contact.type = "Zend_Navigation_Page_Mvc"
+about.pages.contact.label = "Contact"
+about.pages.contact.id = "idContact"
+about.pages.contact.action = "index"
+about.pages.contact.controller = "contact"
+; params needed for the asia page
+asia.type = "Zend_Navigation_Page_Mvc" 
+asia.label = "Asia"
+asia.id = "idAsia"
+asia.action = "index_action"
+asia.controller = "asia_controller"
+; params needed for the china page
+asia.pages.china.type = "Zend_Navigation_Page_Mvc" 
+asia.pages.china.label = "China"
+asia.pages.china.id = "idChina"
+asia.pages.china.action = "china_action"
+asia.pages.china.controller = "asia_controller"
+; params needed for the japan page
+asia.pages.japan.type = "Zend_Navigation_Page_Mvc" 
+asia.pages.japan.label = "Japan"
+asia.pages.japan.id = "idJapan"
+asia.pages.japan.action = "japan_action"
+asia.pages.japan.controller = "asia_controller"
+; params needed for the europe page
+europe.type = "Zend_Navigation_Page_Mvc" 
+europe.label = "Europe"
+europe.id = "idEurope"
+europe.action = "index_action"
+europe.controller = "europe_controller"
+; params needed for the france page
+europe.pages.france.type = "Zend_Navigation_Page_Mvc" 
+europe.pages.france.label = "France"
+europe.pages.france.id = "idFrance"
+europe.pages.france.action = "france_action"
+europe.pages.france.controller = "europe_controller"
+; params needed for the paris page
+europe.pages.france.pages.paris.type = "Zend_Navigation_Page_Uri" 
+europe.pages.france.pages.paris.label = "Paris"
+europe.pages.france.pages.paris.id = "idParis"
+europe.pages.france.pages.paris.uri = "/villes/fr/paris"
+; params needed for the lyon page
+europe.pages.france.pages.lyon.type = "Zend_Navigation_Page_Uri" 
+europe.pages.france.pages.lyon.label = "Lyon"
+europe.pages.france.pages.lyon.id = "idLyon"
+europe.pages.france.pages.lyon.uri = "/villes/fr/lyon"
+; params needed for the Marseille page
+europe.pages.france.pages.marseille.type = "Zend_Navigation_Page_Uri" 
+europe.pages.france.pages.marseille.label = "Marseille"
+europe.pages.france.pages.marseille.id = "idMarseille"
+europe.pages.france.pages.marseille.uri = "/villes/fr/marseille"
+; params needed for the germany page
+europe.pages.germany.type = "Zend_Navigation_Page_Mvc" 
+europe.pages.germany.label = "Germany"
+europe.pages.germany.id = "idGermany"
+europe.pages.germany.action = "germany_action"
+europe.pages.germany.controller = "europe_controller"
+; params needed for the berlin page
+europe.pages.germany.pages.berlin.type = "Zend_Navigation_Page_Uri" 
+europe.pages.germany.pages.berlin.label = "Berlin"
+europe.pages.germany.pages.berlin.id = "idBerlin"
+europe.pages.germany.pages.berlin.uri = "/villes/de/berlin"
+; params needed for the italy page
+europe.pages.italy.type = "Zend_Navigation_Page_Mvc" 
+europe.pages.italy.label = "Italy"
+europe.pages.italy.id = "idItaly"
+europe.pages.italy.action = "italy_action"
+europe.pages.italy.controller = "europe_controller"
+; params needed for the roma page
+europe.pages.germany.pages.roma.type = "Zend_Navigation_Page_Uri" 
+europe.pages.germany.pages.roma.label = "Roma"
+europe.pages.germany.pages.roma.id = "idRoma"
+europe.pages.germany.pages.roma.uri = "/villes/it/roma"
+; params needed for the milano page
+europe.pages.germany.pages.milano.type = "Zend_Navigation_Page_Uri" 
+europe.pages.germany.pages.milano.label = "Milano"
+europe.pages.germany.pages.milano.id = "idMilano"
+europe.pages.germany.pages.milano.uri = "/villes/it/milano"
+; params needed for the firenze page
+europe.pages.germany.pages.firenze.type = "Zend_Navigation_Page_Uri" 
+europe.pages.germany.pages.firenze.label = "Firenze"
+europe.pages.germany.pages.firenze.id = "idFirenze"
+europe.pages.germany.pages.firenze.uri = "/villes/it/firenze"
+</pre>
+<p>Put this into a .ini file you'll put wherever you want. You can use Zend Config object either when using Zend Application or when using Zend Navigation as a standalone object. If you are using Zend Navigation as a standalone object, you'll need to instantiate the Zend Config component as well. For the above config file, you'll have to instantiate Zend_Config_Ini object to decipher this object. We'll see this later too.</p>
+<p>Zend Config object also accept JSON, YAML and XML format. Please, refer to the <a href="http://framework.zend.com/manual/1.12/en/zend.navigation.containers.html" target="_blank">Zend Framework documentation</a> for that.</p>
+<pre class="brush: bash; auto-links: true; collapse: false; first-line: 1; html-script: false; smart-tabs: true; tab-size: 4; toolbar: false; codetag">
+ CONSTRAINTS :
+ * 'label', 'id', 'uri', 'action', 'controller', 'pages' are mandatory
+ * 'europe', 'italy' etc... are up to you.
+</pre>
+<p>If you are using Zend Application object, a config file is already expected with your application parameters and ressources properties. You can include our navigation tree object into your config file.</p>
+<p>NOTE : I'm familiar with the .ini format but the config file can be either an XML file, a Json file or a YAML file. Since i'm familiar with .ini format, the following sample is in this format. Please refer to <a href="http://framework.zend.com/manual/1.12/en/zend.config.introduction.html" target="_blank">Zend Config documentation</a> to know more about Zend Config objects and format.</p>
+<pre class="brush: plain; auto-links: true; collapse: false; first-line: 1; html-script: false; smart-tabs: true; tab-size: 4; toolbar: false; codetag">
+; regular application.ini params 
+bootstrap.path = APPLICATION_PATH "/bootstrap.php"
+bootstrap.class = "Bootstrap"
+resources.frontController.controllerDirectory = APPLICATION_PATH "/controllers"
+resources.view.helperPath.View_Helper = APPLICATION_PATH "/views/helpers"
+resources.view.basePath = APPLICATION_PATH "/views"
+
+; including Zend Navigation resources (same config object than above slightly changed)
+; top level node - building the container
+resources.navigation.type = "Zend_Navigation_Page_Uri"
+resources.navigation.label = "" 
+resources.navigation.id = "container"
+; params needed for the home page
+resources.navigation.pages.home.type = "Zend_Navigation_Page_Uri"
+resources.navigation.pages.home.label = "Home"
+resources.navigation.pages.home.id = "idHome"
+resources.navigation.pages.home.uri = "/"
+; params needed for the about container
+resources.navigation.pages.about.type = "Zend_Navigation_Page_Uri"
+resources.navigation.pages.about.id = "idAbout"
+resources.navigation.pages.about.label = "About us"
+; params needed for the contact page
+resources.navigation.pages.about.pages.contact.type = "Zend_Navigation_Page_Mvc"
+resources.navigation.pages.about.pages.contact.label = "Contact"
+resources.navigation.pages.about.pages.contact.id = "idContact"
+resources.navigation.pages.about.pages.contact.action = "index"
+resources.navigation.pages.about.pages.contact.controller = "contact"
+; params needed for the asia page
+resources.navigation.pages.asia.type = "Zend_Navigation_Page_Mvc"
+resources.navigation.pages.asia.label = "Asia"
+resources.navigation.pages.asia.id = "idAsia"
+resources.navigation.pages.asia.action = "index_action"
+resources.navigation.pages.asia.controller = "asia_controller"
+; params needed for the china page
+resources.navigation.pages.asia.pages.china.type = "Zend_Navigation_Page_Mvc"
+resources.navigation.pages.asia.pages.china.label = "China"
+resources.navigation.pages.asia.pages.china.id = "idChina"
+resources.navigation.pages.asia.pages.china.action = "china_action"
+resources.navigation.pages.asia.pages.china.controller = "asia_controller"
+; params needed for the japan page
+resources.navigation.pages.asia.pages.japan.type = "Zend_Navigation_Page_Mvc"
+resources.navigation.pages.asia.pages.japan.label = "Japan"
+resources.navigation.pages.asia.pages.japan.id = "idJapan"
+resources.navigation.pages.asia.pages.japan.action = "japan_action"
+resources.navigation.pages.asia.pages.japan.controller = "asia_controller"
+</pre>
+<p>When using Zend Application, you have to define your application config file. With all the properties inside this config file, Zend Application can automatically load Zend Component as resource plugins. (See <a href="http://framework.zend.com/manual/1.12/en/zend.application.available-resources.html" target="_blank">Zend Application Available Resource Plugin</a> documentation). In the purpose Zend Application will load our Zend Navigation object, it is <strong>mandatory</strong> to declare our whole navigation tree with the &quot;resources.navigation&quot; prefix (in the case the config file is a .ini file)</p>
+<pre class="brush: bash; auto-links: true; collapse: false; first-line: 1; html-script: false; smart-tabs: true; tab-size: 4; toolbar: false; codetag">
+ CONSTRAINTS :
+ * 'label', 'id', 'uri', 'action', 'controller', 'pages' are mandatory
+ * 'resources.navigation' keywords on beginning of the line are mandatory
+</pre>
+<h3>Using the tree - instantiating the View Helper</h3>
+<p>Well, we now have a nice navigation object. How can we use it ? Of course, we can use it for echoing menus. Lets see...</p>
+<p>First of all, you have to know that Zend Navigation only build the tree, and eventually, extract subtree from the main tree. It is not the job of Zend Navigation to echoing menus. In other words, do not look for Zend Navigation methods to echoing site map or menus.</p>
+<p>Displaying Zend Navigation object on your web application is the job of Zend View Helper. So we need to know how and where accessing the Zend View Helper instance.</p>
+<p>Frankly, i don't know how to use Zend Navigation object without a View Helper object but I guess that debugging the dedicated Helper will help if it is your wish.</p>
+<h4>Instanciating the View Helper while using Zend Application Resource Plugin</h4>
+<p>The easiest solution : your navigation tree is a Zend Application Resource Plugin. The tree is a Zend Config object in your config file and all pages are prefixed with the correct keywords (&quot;resources&quot; and &quot;navigation&quot;).</p>
+<pre class="brush: php; auto-links: true; collapse: false; first-line: 1; html-script: false; smart-tabs: true; tab-size: 4; toolbar: false; codetag">
+ // app/config/application.ini
+[production]
+; where is the bootstrap file
+bootstrap.path = APPLICATION_PATH "/bootstrap.php"
+; what is the bootstrap class used
+bootstrap.class = "Bootstrap"
+; where are the Zend Controller instances
+resources.frontController.controllerDirectory = APPLICATION_PATH "/controllers"
+; where are the Zend View instances
+resources.view.basePath = APPLICATION_PATH "/views"
+; the navigation resources
+resources.navigation.pages = ... your navigation tree here.
+</pre>
+<pre class="brush: php; auto-links: true; collapse: false; first-line: 1; html-script: false; smart-tabs: true; tab-size: 4; toolbar: false; codetag">
+ // app/bootstrap.php
+ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
+ {
+ }
+</pre>
+<p>With these elements, Zend Application knows it has to load a Zend Navigation object AND an Zend View Navigation Helper dedicated to handling Zend Navigation objects.</p>
+<p>NOTE : i don't use Zend Navigation as Zend Application resources plugin because the config file will be too lengthy. So these instructions are only assumptions but it should work.</p>
+<p>You can then access the Zend View Navigation Helper from any of the Zend View instances (meaning view pages or layout pages)</p>
+<h4>Instanciating the View Helper while using Zend Application without Resource Plugin</h4>
+<p>This is my favorite option since i can separate the navigation tree and the application config file. This is only to ease my reading and my editing tasks.</p>
+<pre class="brush: php; auto-links: true; collapse: false; first-line: 1; html-script: false; smart-tabs: true; tab-size: 4; toolbar: false; codetag">
+ // app/config/application.ini
+[production]
+; where is the bootstrap file
+bootstrap.path = APPLICATION_PATH "/bootstrap.php"
+; what is the bootstrap class used
+bootstrap.class = "Bootstrap"
+; where are the Zend Controller instances
+resources.frontController.controllerDirectory = APPLICATION_PATH "/controllers"
+; where are the Zend View instances
+resources.view.basePath = APPLICATION_PATH "/views"
+</pre>
+<pre class="brush: php; auto-links: true; collapse: false; first-line: 1; html-script: false; smart-tabs: true; tab-size: 4; toolbar: false; codetag">
+ // app/config/navigation.ini
+; building the container
+container.pages = ... your navigation tree here.</pre>
+<pre class="brush: php; auto-links: true; collapse: false; first-line: 1; html-script: false; smart-tabs: true; tab-size: 4; toolbar: false; codetag">
+ // app/bootstrap.php
+ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
+ {
+  protected function _initNavigation()
+ {
+ $config = new Zend_Config_Ini(APPLICATION_PATH . "/configs/navigation.ini") ;
+ $navigation = new Zend_Navigation($config) ;
+
+ $this->bootstrap("view") ;
+ $view= $this->getResource('view') ;
+ $view->navigation($navigation) ;
+ }
+}</pre>
+<p>Here are some explanations :</p>
+<p>Since our navigation.ini config file is unknown to Zend Application, we have to declare it. Our config file is a .ini format file. We will use Zend_Config_Ini object to parse and load our navigation.ini file.</p>
+<pre class="brush: php; auto-links: true; collapse: false; first-line: 1; html-script: false; smart-tabs: true; tab-size: 4; toolbar: false; codetag">
+$config = new Zend_Config_Ini(APPLICATION_PATH . "/configs/navigation.ini") ;</pre>
+<p>Of course, you ought to use the dedicated Zend_Config_* object, depending on the config format you are using.</p>
+<p>Then, we will have to build our Zend Navigation object.</p>
+<pre class="brush: php; auto-links: true; collapse: false; first-line: 1; html-script: false; smart-tabs: true; tab-size: 4; toolbar: false; codetag">
+$navigation = new Zend_Navigation($config) ;</pre>
+<p>Then, we will have to assign our Zend_Navigation instance to the Zend View Navigation helper.</p>
+<p>First of all, get the Zend_View instance in our bootstrap file : (for informations on bootstrap() and getResource() methods, see the <a href="http://framework.zend.com/manual/1.12/en/zend.application.theory-of-operation.html" target="_blank">Zend Application Bootstrap</a> documentation. Frankly, i'm not fluent in Zend Application Bootstrap language yet so, i know <em>THIS</em> is working. A View Helper is a Zend View object. I know I need to get a Zend View instance to make this work.</p>
+<pre class="brush: php; auto-links: true; collapse: false; first-line: 1; html-script: false; smart-tabs: true; tab-size: 4; toolbar: false; codetag">
+$this->bootstrap("view") ;
+$view = $this->getResource('view') ;
+</pre>
+<p>Once we have retrieved our Zend View object ($view), we can assign to its Navigation helper our Zend Navigation object.</p>
+<pre class="brush: php; auto-links: true; collapse: false; first-line: 1; html-script: false; smart-tabs: true; tab-size: 4; toolbar: false; codetag">
+$view->navigation($navigation) ;
+</pre>
+<p>All this being bootstrapped in our Zend Application bootstrap, the Zend View Navigation helper will be available in any Zend View instances (meaning view pages or layout pages)</p>
+<h4>Instanciating the View Helper while using Zend Application with php array</h4>
+<p>I don't use this option. If i had to, i'll do something like this :</p>
+<pre class="brush: php; auto-links: true; collapse: false; first-line: 1; html-script: false; smart-tabs: true; tab-size: 4; toolbar: false; codetag">
+ // app/bootstrap.php
+ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
+ {
+ protected function _initNavigation()
+ {
+        $navigation = new Zend_Navigation(array( /* ... your navigation tree here. */ )) ;
+
+ $this->bootstrap("view") ;
+ $view= $this->getResource('view') ;
+ $view->navigation($navigation) ;
+ }
+}</pre>
+<p>Or</p>
+<pre class="brush: php; auto-links: true; collapse: false; first-line: 1; html-script: false; smart-tabs: true; tab-size: 4; toolbar: false; codetag">
+ // app/bootstrap.php
+ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
+ {
+ protected function _initNavigation()
+ {
+        $container = array( /* ... your navigation tree here. */ ) ;
+        $navigation = new Zend_Navigation($container) ;
+
+ $this->bootstrap("view") ;
+ $view= $this->getResource('view') ;
+ $view->navigation($navigation) ;
+ }
+}</pre>
+<p>If i had to create my php array in a separate file, i'll have to find out how to include and access the $container array... I will not look for that yet... So feel free to experiment on your side.</p>
+<h4>Not using Zend Application at all</h4>
+<p>If you're not using Zend Application at all, remember to build your pages using Zend_Navigation_Pages_Uri rather than Zend_Navigation_Pages_Mvc. If you wish to use Zend_Navigation_Pages_Mvc, you'll have to instanciate Zend_Controller too build the correct href based on the &quot;module&quot;, &quot;controller&quot; and &quot;action&quot; properties.</p>
+<p>I'm assuming that if you're not using Zend Application at all, your website will be on regular .php file. But you'll have to create a &quot;controller&quot; type file, which will instantiate all the needed datas and then, call another php file for the rendering of those datas -&gt; the view.</p>
+<p>This also means that you'll have to perform some inclusion : with Zend_Application, all classes are autoloaded using Zend_Loader_Autoload object. If you're not using Zend Application, you'll have to create your own autoloader, use Zend_Loader component or include each classes manually.</p>
+<p>Create a php page and include there all needed classes. This will be your controller page.</p>
+<p>Instantiate your Zend Navigation object in your php page :</p>
+<pre class="brush: php; auto-links: true; collapse: false; first-line: 1; html-script: false; smart-tabs: true; tab-size: 4; toolbar: false; codetag">
+// controller page.php
+$navigation = new Zend_Navigation($container) ;
+</pre>
+<p>if $container is a php array, just create it either in the same php file, or in a separate php file. If you choose to create it in a separate file, use one of the require(), require_once(), include() or include_once php regular functions to include the file and use the $container array.</p>
+<p>if $container is a Zend Config object, create it in a separate config file (INI, JSON, XML or YAML) and instantiate the Zend Config object with the config file. And then, instantiate your Zend Navigation object</p>
+<pre class="brush: php; auto-links: true; collapse: false; first-line: 1; html-script: false; smart-tabs: true; tab-size: 4; toolbar: false; codetag">
+// controller page.php
+$container = new Zend_Config_***("path/to/my/config/file.ext") ;
+$navigation = new Zend_Navigation($container) ;
+</pre>
+<p>Instantiate the Zend_View object. Once the Zend_View object is instantiated, assign the Zend_Navigation object to the Zend View Navigation Helper.</p>
+<pre class="brush: php; auto-links: true; collapse: false; first-line: 1; html-script: false; smart-tabs: true; tab-size: 4; toolbar: false; codetag">
+// controller page.php
+$view = new Zend_View() ;
+$view->navigation($navigation) ;</pre>
+<p>Finally call another php file to render the datas.</p>
+<pre class="brush: php; auto-links: true; collapse: false; first-line: 1; html-script: false; smart-tabs: true; tab-size: 4; toolbar: false; codetag">
+// controller page.php
+echo $view->render('myview.php') ;
+</pre>
+<p>Once Zend View is instantiated, you can use your myview.php file as any other View scripts file.</p>
+<h3>Echoing menus and links</h3>
+<p>Now.</p>
+<p>We have our navigation tree. It is either a separate config file or a php array. With the config file, we have instantiated the Zend Navigation object using the correct Zend Config instance.</p>
+<p>We have somehow instantiate Zend View and assigning the Zend Navigation object to the Zend View Navigation helper. This means that from now on, when using Zend View Navigation Helper, the helper will use the Zend Navigation object we have set. If needed, we can change the Zend Navigation object but you have to know that it will change <em>ALL</em> the Zend View Navigation helper you are using.</p>
+<p>Let's go to the fun part. You can use the Zend View Navigation Helpers in any Zend View type files. This means layout pages (.phtml) or view scripts pages (.phtml) in Zend Application use case or myview.php page in a stand alone use case. Zend View also allow to use template engine... For my part, I don't know how to use Zend View Helpers in template engine though... But you can experiment from here.</p>
+<p>There's several Zend View Navigation Helpers :</p>
+<ul>
+<li>$this-&gt;navigation()-&gt;breadcrumbs() for generating breadcrumbs,</li>
+<li>$this-&gt;navigation()-&gt;links() for generating links (&amp;lt;link&amp;gt; header tags),</li>
+<li>$this-&gt;navigation()-&gt;menu() for generating menu,</li>
+<li>$this-&gt;navigation()-&gt;sitemap() for generating XML sitemap.</li>
+</ul>
+<p>We will talk about $this-&gt;navigation()-&gt;menu() helper mainly.</p>
+<h4>Generating the full menu (expand all menu entries)</h4>
+<pre class="brush: php; auto-links: true; collapse: false; first-line: 1; html-script: false; smart-tabs: true; tab-size: 4; toolbar: false; codetag">
+// layout.phtml (or any other Zend View pages) or myview.php
+// $this is the instance of Zend View
+echo $this->navigation()->menu() ; 
+
+// will generate this html code :
+<ul class="navigation">
+    <li>
+        <a id="menu-idHome" href="/">Home</a>
+    </li>
+    <li>
+        <span id="menu-idAbout">About</span>
+        <ul>
+            <li>
+                <a id="menu-idContact" href="/inventaire/contact">Contact</a>
+            </li>
+        </ul>
+    </li>
+    <li>
+        <a id="menu-idAsia" href="/inventaire/asia_controller/index_action">Asia</a>
+        <ul>
+            <li>
+                <a id="menu-idChina" href="/inventaire/asia_controller/china_action">China</a>
+            </li>
+            <li>
+                <a id="menu-idJapan" href="/inventaire/asia_controller/japan_action">Japan</a>
+            </li>
+        </ul>
+    </li>
+    <li class="active">
+        <a id="menu-idEurope" href="/inventaire/europe_controller/index_action">Europe</a>
+        <ul>
+            <li class="active">
+                <a id="menu-idFrance" href="/inventaire/europe_controller/france_action">France</a>
+                <ul>
+                    <li class="active">
+                        <a id="menu-idParis" href="/villes/fr/paris">Paris</a>
+                    </li>
+                    <li>
+                        <a id="menu-idLyon" href="/villes/fr/lyon">Lyon</a>
+                    </li>
+                    <li>
+                        <a id="menu-idMarseille" href="/villes/fr/marseille">Marseille</a>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <a id="menu-idGermany" href="/inventaire/europe_controller/germany_action">Germany</a>
+                <ul>
+                    <li>
+                        <a id="menu-idBerlin" href="/villes/de/berlin">Berlin</a>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <a id="menu-idItaly" href="/inventaire/europe_controller/italy_action">Italy</a>
+                <ul>
+                    <li>
+                        <a id="menu-idRoma" href="/villes/it/roma">Roma</a>
+                    </li>
+                    <li>
+                        <a id="menu-idMilano" href="/villes/it/milano">Milano</a>
+                    </li>
+                    <li>
+                        <a id="menu-idFirenze" href="/villes/it/firenze">Firenze</a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </li>
+</ul>
+</pre>
+<p>Note the <strong>class=&quot;active&quot;</strong> which identify the active branch (let's pretend we're on paris page)</p>
+<h4>Limit the depth of the menu</h4>
+<p>Use the setMaxDepth() method. This is one of the Zend View Navigation Menu Helper methods.</p>
+<pre class="brush: php; auto-links: true; collapse: false; first-line: 1; html-script: false; smart-tabs: true; tab-size: 4; toolbar: false; codetag">
+echo $this->navigation()->menu()->setMaxDepth(0) ; 
+
+// will generate this html code :
+<ul class="navigation">
+    <li>
+        <a id="menu-idHome" href="/">Home</a>
+    </li>
+    <li>
+        <span id="menu-idAbout">About</span>
+    </li>
+    <li>
+        <a id="menu-idAsia" href="/inventaire/asia_controller/index_action">Asia</a>
+    </li>
+    <li class="active">
+        <a id="menu-idEurope" href="/inventaire/europe_controller/index_action">Europe</a>
+    </li>
+</ul></pre>
+<p>Note the <strong>About</strong> <strong>menu</strong> which can not expand (since there's no link defined for this page). Either add a link to this page in the navigation tree or use javascript to expand the About menu...</p>
+<p>Of course, we can change the depth</p>
+<pre class="brush: php; auto-links: true; collapse: false; first-line: 1; html-script: false; smart-tabs: true; tab-size: 4; toolbar: false; codetag">
+echo $this->navigation()->menu()->setMaxDepth(1) ; 
+
+// will generate this html code :
+<ul class="navigation">
+    <li>
+        <a id="menu-idHome" href="/">Home</a>
+    </li>
+    <li>
+        <span id="menu-idAbout">About</span>
+        <ul>
+            <li>
+                <a id="menu-idContact" href="/inventaire/contact">Contact</a>
+            </li>
+        </ul>
+    </li>
+    <li>
+        <a id="menu-idAsia" href="/inventaire/asia_controller/index_action">Asia</a>
+        <ul>
+            <li>
+                <a id="menu-idChina" href="/inventaire/asia_controller/china_action">China</a>
+            </li>
+            <li>
+                <a id="menu-idJapan" href="/inventaire/asia_controller/japan_action">Japan</a>
+            </li>
+        </ul>
+    </li>
+    <li class="active">
+        <a id="menu-idEurope" href="/inventaire/europe_controller/index_action">Europe</a>
+        <ul>
+            <li class="active">
+                <a id="menu-idFrance" href="/inventaire/europe_controller/france_action">France</a>
+            </li>
+            <li>
+                <a id="menu-idGermany" href="/inventaire/europe_controller/germany_action">Germany</a>
+            </li>
+            <li>
+                <a id="menu-idItaly" href="/inventaire/europe_controller/italy_action">Italy</a>
+            </li>
+        </ul>
+    </li>
+</ul></pre>
+<h4>Expand menu entries when it's the active branch only</h4>
+<p>Zend View Navigation Menu Helper gives the possibility to access to the full menu but expand only the active branch. Keep pretending we're checking the &quot;Paris&quot; page.</p>
+<pre class="brush: php; auto-links: true; collapse: false; first-line: 1; html-script: false; smart-tabs: true; tab-size: 4; toolbar: false; codetag">
+echo $this->navigation()->menu() 
+                        ->setExpandSiblingNodesOfActiveBranch(true) ; 
+
+// will generate this html code :
+<ul class="navigation">
+    <li>
+        <a id="menu-idHome" href="/">Home</a>
+    </li>
+    <li>
+        <span id="menu-idAbout">About</span>
+    </li>
+    <li>
+        <a id="menu-idAsia" href="/inventaire/asia_controller/index_action">Asia</a>
+    </li>
+    <li class="active">
+        <a id="menu-idEurope" href="/inventaire/europe_controller/index_action">Europe</a>
+        <ul>
+            <li class="active">
+                <a id="menu-idFrance" href="/inventaire/europe_controller/france_action">France</a>
+                <ul>
+                    <li class="active">
+                        <a id="menu-idParis" href="/villes/fr/paris">Paris</a>
+                    </li>
+                    <li>
+                        <a id="menu-idLyon" href="/villes/fr/lyon">Lyon</a>
+                    </li>
+                    <li>
+                        <a id="menu-idMarseille" href="/villes/fr/marseille">Marseille</a>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <a id="menu-idGermany" href="/inventaire/europe_controller/germany_action">Germany</a>
+            </li>
+            <li>
+                <a id="menu-idItaly" href="/inventaire/europe_controller/italy_action">Italy</a>
+            </li>
+        </ul>
+    </li>
+</ul>
+</pre>
+<p>Note that all submenus are closed except the Europe &gt; France part.</p>
+<p><strong>The setExpandSiblingNodesOfActiveBranch() method is only implemented starting from Zend Framework 1.12 version. This method does not exist on previous version of the framework.</strong></p>
+<h4>Showing active branch only</h4>
+<p>Zend View Navigation Helper allows the display of the active branch only.</p>
+<pre class="brush: php; auto-links: true; collapse: false; first-line: 1; html-script: false; smart-tabs: true; tab-size: 4; toolbar: false; codetag">
+echo $this->navigation()->menu() 
+                        ->setOnlyActiveBranch(true) ; 
+
+// will generate this html code :
+<ul class="navigation">
+    <li class="active">
+        <a id="menu-idEurope" href="/inventaire/europe_controller/index_action">Europe</a>
+        <ul>
+            <li class="active">
+                <a id="menu-idFrance" href="/inventaire/europe_controller/france_action">France</a>
+                <ul>
+                    <li class="active">
+                        <a id="menu-idParis" href="/villes/fr/paris">Paris</a>
+                    </li>
+                    <li>
+                        <a id="menu-idLyon" href="/villes/fr/lyon">Lyon</a>
+                    </li>
+                    <li>
+                        <a id="menu-idMarseille" href="/villes/fr/marseille">Marseille</a>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <a id="menu-idGermany" href="/inventaire/europe_controller/germany_action">Germany</a>
+            </li>
+            <li>
+                <a id="menu-idItaly" href="/inventaire/europe_controller/italy_action">Italy</a>
+            </li>
+        </ul>
+    </li>
+</ul></pre>
+<p>There's no more top level menus available. Only remain the Europe menu branch.</p>
+<p>Note the setOnlyActiveBranch() method from the Zend View Navigation Helper.</p>
+<p>Since there's only one root menu on these conditions, we can discard this root element.</p>
+<pre class="brush: php; auto-links: true; collapse: false; first-line: 1; html-script: false; smart-tabs: true; tab-size: 4; toolbar: false; codetag">
+echo $this->navigation()->menu() 
+                        ->setOnlyActiveBranch(true)
+                        ->setRenderParents(false) ; 
+
+// will generate this html code :
+<ul class="navigation">
+    <li class="active">
+        <a id="menu-idFrance" href="/inventaire/europe_controller/france_action">France</a>
+        <ul>
+            <li class="active">
+                <a id="menu-idParis" href="/villes/fr/paris">Paris</a>
+            </li>
+            <li>
+                <a id="menu-idLyon" href="/villes/fr/lyon">Lyon</a>
+            </li>
+            <li>
+                <a id="menu-idMarseille" href="/villes/fr/marseille">Marseille</a>
+            </li>
+        </ul>
+    </li>
+    <li>
+        <a id="menu-idGermany" href="/inventaire/europe_controller/germany_action">Germany</a>
+    </li>
+    <li>
+        <a id="menu-idItaly" href="/inventaire/europe_controller/italy_action">Italy</a>
+    </li>
+</ul></pre>
+<p>Note the setRenderParents() method from the Zend View Navigation Helper</p>
+<p><strong>TIP !! You can access the instance of the Zend View Navigation Helper (menu) with this variable : $this-&gt;navigation()-&gt;menu(). From this variable, you can use all the properties and the methods defined in the Zend View Navigation Helper.</strong></p>
+<h4>Getting access to any subtree</h4>
+<p>To access to any subtree, we have to set the subtree first, then display it. Zend Navigation offers methods to select subtrees of the main navigation tree. Please see the <a href="http://framework.zend.com/manual/1.12/en/zend.navigation.containers.html#zend.navigation.containers.finding" target="_blank">Zend Navigation documentation</a> to get more detailed informations about the finding methods.</p>
+<p>For my part, i'd rather use the magic method findOneById().</p>
+<p>Now, let's pretend that we want to show all italian cities. In other words, we want to access the items under the Italy menu.</p>
+<pre class="brush: php; auto-links: true; collapse: false; first-line: 1; html-script: false; smart-tabs: true; tab-size: 4; toolbar: false; codetag">
+// first, set the subtree
+$italianCitiesOnly = $this->navigation()->findOneById('idItaly') ;
+// now show the menu but only for the subtree
+echo $this->navigation()->menu()->renderMenu($italianCitiesOnly) ;
+
+// will generate this html code :
+<ul class="navigation">
+    <li>
+        <a id="menu-idRoma" href="/villes/it/roma">Roma</a>
+    </li>
+    <li>
+        <a id="menu-idMilano" href="/villes/it/milano">Milano</a>
+    </li>
+    <li>
+        <a id="menu-idFirenze" href="/villes/it/firenze">Firenze</a>
+    </li>
+</ul></pre>
+<p>Here we go...</p>
+<p>Last but not least :</p>
+<h4>Generating hyperlink using the navigation tree</h4>
+<p>Now we can echo a menu, fully expanded or expanded on few levels only.</p>
+<p>We can show active branch and display it only.</p>
+<p>We can select and echo subtrees of the main tree only, no matter the active branch and/or the depth of the chosen item.</p>
+<p>Now, we want to get only one link...</p>
+<pre class="brush: php; auto-links: true; collapse: false; first-line: 1; html-script: false; smart-tabs: true; tab-size: 4; toolbar: false; codetag">
+$linkToJapanMenu = $this->navigation()->findOneById('idJapan') ;
+echo $this->navigation()->menu()->htmlify($linkToJapanMenu) ;
+
+// will generate this html code :
+<a id="menu-idJapan" href="/inventaire/asia_controller/japan_action">Japan</a>
+</pre>
+<p><strong>TIP !! To access the Zend Navigation instance : $this-&gt;navigation() ; From there, you will be able to use all the Zend Navigation methods for adding, removing and finding pages.</strong></p>
+<h3>Getting more</h3>
+<p>Now we know how to declare a navigation tree with the association of Zend Config and Zend Navigation or the association of a php array and Zend Navigation.</p>
+<p>We know how to instantiate Zend View Navigation Helpers.</p>
+<p>And we know how to build and show menus and submenus.</p>
+<p>There's a lot more to go.</p>
+<p>Zend Navigation allows you to add pages to an existing navigation tree, remove pages and finding set of pages. Zend Navigation Pages can be of MVC or URI type but you can create your own type. Zend Navigation Pages also allows you to interact with ACL (security), assign a different route for menu entries, define previous and next pages for menu items so they can be linked as pages in a book.</p>
+<p>Zend View Navigation Helper do have other helpers. Each of these helpers do have their own set of methods. Just go to the Zend Framework documentation and explore the possibilities of those components. The Breadcrumbs helpers will build your breadcrumbs while the Sitemap helper will create the sitemap with the correct XML scheme.</p>
+<p>Beyond those Zend components, you can extend your code by including jquery solutions, css layout...</p>
+<p>You can use Zend Translate to create an international menu.</p>
+<p>As you can see, there's a lot more to know about Zend Navigation and building menus. So enjoy !</p>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/en/tags/zend-framework">Zend Framework</a></li><li><a href="/en/tags/zend-navigation">Zend Navigation</a></li><li><a href="/en/tags/howto">HOWTO</a></li></ul>
+        </div>
+      
+
+      
+    
+
+      
+        <section id="oldcomment">
+          <h2>Old system comments</h2><article>
+              <div class="level1">
+  <h3>this is way too complicated</h3>
+  <div class="meta">anonymous 2013-09-19T07:19 </div>
+  <div class="body">this is way too complicated for something as simple as a menu rendered from a key-value pair array - what are you guys smoking?</div>
+
+  
+    
+      <div class="level2">
+        <h3>heyyy !! my first comment !!</h3>
+        <div class="meta">haclong 2013-10-23T17:00</div>
+        <div class="body">heyyy !! my first comment !!<br />
+<br />
+Zend Navigation is building the tree of your website. This is not only related to a menu rendering. It can be used by links or by sitemap building. AND it may be helpful to render a menu.<br />
+<br />
+You don't need to use Zend Navigation, even in an application built with Zend Framework. You can build your own key-value pair array and build your own menu.<br />
+<br />
+This post was dedicated to the Zend Navigation component of Zend Framework v1.<br />
+<br />
+I hope you enjoy my other posts though</div>
+      </div>
+    
+  
+  
+</div>
+
+            </article><article>
+              <div class="level1">
+  <h3>PHPUnit and TDD</h3>
+  <div class="meta">gorka 2015-05-01T21:08 </div>
+  <div class="body">The TDD metodology is the best if you want get all the best results on your development. We can use phpunit to goal this approach,</div>
+
+  
+  
+</div>
+
+            </article></section>
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>About me</h3>
+      <p>I learned coding with php several years ago, when Internet was still young. For multiple reasons, i had stopped then and missed most of this new Internet i&#39;m discovering once again. So, i feel like a newbie again and since i&#39;m ready to start over personal project, i&#39;ll share with you some of my discoveries. Beyond coding topics, i&#39;ll enjoy sharing with you several subjects such as History, Astronomy, Linguistics, Movies, Books, Music and Anime among others. I hope you&#39;ll enjoy reading this blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. All rights reserved.</p>
+        <p>Powered by <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

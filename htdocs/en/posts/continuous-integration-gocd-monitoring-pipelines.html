@@ -1,0 +1,204 @@
+<!doctype html>
+<html class="no-js" lang="en" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>Continuous Integration with GoCD - Monitoring pipelines&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">French</a>
+        <a href="/en/">English</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/en/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/en/books/0/index.html">Collections</a>
+        <a href="/en/">Home</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/en/">Home</a><i class="fas fa-angle-right"></i>Continuous Integration with GoCD - Monitoring pipelines
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>Continuous Integration with GoCD - Monitoring pipelines</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>2/27/2017, 6:59:00 PM
+        
+        <i class="fas fa-th-large"></i><!--a href="/en/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/capture_2.png" class="node-banner" />
+        
+          <p><strong>Credit</strong> : Sebastian Mantel - Unsplash </p>
+        
+      </div>
+
+      <p><p>Once pipelines are successfully set, you can go to the server dashboard and monitor the server activity.</p>
+<p>You should be able to find the dashboard here : <code>http://localhost:8153/go</code></p>
+<p>If necessary, you will need to set a hostname because <strong>Go Server</strong> won't open when you use <code>localhost</code>. In that case, you will get the dashboard here : <code>http://{hostname}:8153/go</code></p>
+<p>Using Ubuntu, you need to edit <code>/etc/hosts</code> to set a hostname.</p>
+<p>Edit and add :</p>
+<pre><code class="language-sh">// /etc/hosts
+
+127.0.0.1        {hostname}
+</code></pre>
+<p>Most of the time, you will use that page : <code>http://localhost:8153/go/pipelines</code>.</p>
+<p>On that page, you will be able to see all your pipelines by group. On the right side of the screen, you'd have a &quot;<strong>Personalize</strong>&quot; button who gonna allow you to hide the pipelines you don't want to see any longer.</p>
+<p>Each pipeline looks like a cardboard with</p>
+<ul>
+<li>the <strong>pipeline name</strong>,</li>
+<li>a <strong>direct access to the pipeline settings</strong> (it's like going to <strong>Admin &gt; Pipelines &gt; {pipeline name}</strong>)</li>
+<li>a pipeline <strong>counter</strong> (can be used when naming artifacts by using the <code>**$GO_PIPELINE_COUNTER**</code> system variable)</li>
+<li>a <strong>Compare</strong> link to compare the current build version with the previous one</li>
+<li>a <strong>Changes</strong> link to access the current build changelog</li>
+<li><strong>colored bars</strong> indicating each a different <strong>stage</strong>.</li>
+<li>a button to run pipeline</li>
+<li>a button to run the pipeline under conditions</li>
+<li>a button to pause the pipeline. When you put the pipeline on hold, the pipeline won't run automatically until you stop the pause.</li>
+</ul>
+<p><strong>Clic on the pipeline name</strong> links to the builds history. Then you can click on each stages in history and you can either check the detail of the stage run or rerun the stage.</p>
+<p><strong>Clic on the build counter</strong> leads us to a graph with all steps of our pipeline, including the dependencies.</p>
+<p><strong>Clic on a stage</strong> (green when successful and red when failed) allows us to check the detail of the stage run.</p>
+<p>For each stage, we will be able to</p>
+<ul>
+<li>find the <strong>list of jobs</strong> (In Progress, Failed or Passed).</li>
+<li>find the <strong>status of the ten last run.</strong></li>
+<li>find the pipeline <strong>dependencies</strong> (i didn't get it right though)</li>
+<li>find the <strong>datas on the material</strong> <strong>GoCD</strong> used for the build</li>
+<li>find the <strong>tests</strong> (status ? artefacts ?)</li>
+<li>find the <strong>xml conf file of the stage</strong></li>
+</ul>
+<p>If you wish to rerun each stage independantly from the others, you will have to rerun all jobs within the same stage. Impossible to run a part of jobs from the same stage.</p>
+<p>For each job (click on its name), you will be able to access datas from the job :</p>
+<ul>
+<li>the <strong>console</strong>, with <strong>GoCD</strong> output. Don't be afraid to check on the console for there might be some very useful hints on errors and blocking issues when you are setting your pipeline up.</li>
+<li>a <strong>tests report</strong> (i have any but i think i need to set a Test build type artefact)</li>
+<li>an <strong>error report</strong> when the job has failed</li>
+<li>the <strong>Artifacts</strong> tab where you can find your &quot;build artifacts&quot;</li>
+<li><strong>eventually custom tabs</strong> we added.</li>
+</ul>
+<p>Voilà</p>
+<p>Please, feel free to explore your <strong>Go CD</strong> server.</p>
+<p>Lorsque vous allez sur la page d'un job (en cliquant sur son nom), vous accéder à d'autres informations dédiées au job :</p>
+<ul>
+<li>la <strong>console</strong>, avec l'exécution de <strong>GoCD</strong> comme si vous y étiez. J'ai pu choper quelques indices dont des messages d'erreur qui m'ont aidé à configurer mon pipeline.</li>
+<li>un <strong>rapport de tests</strong> (inexistant, je pense qu'il faut définir un artifact de type Test build)</li>
+<li>si le job a échoué, vous aurez un <strong>rapport d'erreur</strong></li>
+<li>enfin, l'onglet <strong>Artifacts</strong> dans lequel vous trouverez tous vos &quot;build artifact&quot;</li>
+<li><strong>éventuellement les onglets personnalisés</strong> que nous avons fait rajouter.</li>
+</ul>
+<p>Voilà</p>
+<p>Je vous laisse explorer votre serveur <strong>Go CD</strong>.</p>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/en/tags/integration-continue">intégration continue</a></li><li><a href="/en/tags/gocd">gocd</a></li></ul>
+        </div>
+      
+
+      
+        <nav id="book-navigation">
+    
+       <li class="link-previous"><a href="/en/posts/continuous-integration-testing-project-22.html"><i class="fas fa-long-arrow-alt-left"></i> Continuous Integration - Testing the project 2/2</li>
+    
+
+    
+
+    
+        <li class="link-up"><a href="/en/books/continuous-integration-using-go-cd.html"><i class="fas fa-book-open"></i> Continuous Integration - Using Go CD</li>
+    
+</nav>
+
+      
+    
+
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>About me</h3>
+      <p>I learned coding with php several years ago, when Internet was still young. For multiple reasons, i had stopped then and missed most of this new Internet i&#39;m discovering once again. So, i feel like a newbie again and since i&#39;m ready to start over personal project, i&#39;ll share with you some of my discoveries. Beyond coding topics, i&#39;ll enjoy sharing with you several subjects such as History, Astronomy, Linguistics, Movies, Books, Music and Anime among others. I hope you&#39;ll enjoy reading this blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. All rights reserved.</p>
+        <p>Powered by <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

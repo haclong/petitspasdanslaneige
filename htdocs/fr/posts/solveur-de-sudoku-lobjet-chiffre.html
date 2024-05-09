@@ -1,0 +1,482 @@
+<!doctype html>
+<html class="no-js" lang="fr" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>Solveur de Sudoku - L&#39;objet Chiffre&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">Français</a>
+        <a href="/en/">Anglais</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/fr/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/fr/books/0/index.html">Séries</a>
+        <a href="/fr/">Accueil</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/fr/">Accueil</a><i class="fas fa-angle-right"></i>Solveur de Sudoku - L'objet Chiffre
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>Solveur de Sudoku - L'objet Chiffre</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>27/04/2014 19:54:00
+        
+        <i class="fas fa-th-large"></i><!--a href="/fr/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/Sudoku_Board_Game.jpg" class="node-banner" />
+        
+      </div>
+
+      <p><p>Notre grille de sudoku est donc prête. Mais, reconnaissons le, ce n'est pas vraiment cette partie là qui nous intéresse, n'est ce pas ? Explorons donc notre modèle... Explorons, inventons, découvrons, concevons...</p>
+<h3>Un petit rappel</h3>
+<p>Nous allons mettre en place 3 objets : le <strong>Chiffre</strong>, la <strong>Case</strong>, et la <strong>Grille</strong>.</p>
+<p>Parlons d'abord de notre objet <strong>Chiffre</strong>.</p>
+<p>L'objet <strong>Chiffre</strong> est l'ensemble des numéros possibles sur une seule case. Pour chacune des possibilités, un statut lui est associé.</p>
+<p>Appliqué au développement, cela donne plusieurs réflexions :</p>
+<ol>
+<li>on peut créer pour l'objet <strong>Chiffre</strong> une propriété par numéro. Toutefois, en y réfléchissant un peu, on s'aperçoit vite que ça va être difficile de parcourir toutes les possibilités puisque toutes les propriétés sont indépendantes les unes des autres. La conclusion évidente est donc que les possibilités doivent être gérées dans un tableau que l'on pourra parcourir librement.</li>
+<li>si on crée un tableau comprenant toutes les possibilités, il faut savoir de combien de possibilités on parle. Il y a autant de numéros possibles pour un chiffre que de numéros dans un grille de sudoku. On arrive ainsi rapidement à la conclusion qu'il faut que l'objet <strong>Chiffre</strong> connaisse la taille de la grille.</li>
+</ol>
+<p>Le tableau des possibilités peut être de cette forme :</p>
+<ul>
+<li><code>$possibilites[] = array(&quot;numero&quot; =&gt; 1; &quot;statut&quot; =&gt; &quot;statut_option&quot;) ;</code></li>
+<li><code>$possibilites[] = array(&quot;numero&quot; =&gt; 2; &quot;statut&quot; =&gt; &quot;statut_option&quot;) ;</code></li>
+</ul>
+<p>Pour récupérer un statut quand on a un numéro, il faudrait parcourir le tableau <code>$possibilites</code> dans son intégralité, sans pouvoir utiliser sa clé, et tester si la valeur &quot;numero&quot; correspond bien à la valeur qu'on cherche...</p>
+<p>Quelquechose comme ça :</p>
+<pre><code class="language-php">foreach($possibilites as $possibilite) {
+  if($possibilite['numero'] = &quot;le_numero_qu_on_cherche&quot;) {
+    return $possibilite['statut']
+  }
+}
+</code></pre>
+<p>Ce n'est pas grand chose, pas très contraignant, mais je ne sais pas... j'ai pour principe d'éviter de parcourir invariablement des tableaux... Ah tiens, il faudrait voir si on ne pourrait pas avoir un opérateur de type <em>foreach while</em>... ça pourrait être super pratique... bref...</p>
+<p>De plus, avec ce montage, en y songeant, il y aurait un peu de redondance puisqu'il y aurait la clé &quot;numero&quot; qui serait invariablement un nombre entre 1 et 9 et la clé du tableau <code>$possibilites</code> qui serait un nombre entre 0 et 8 (la plupart du temps)...</p>
+<p>Du coup, on pourrait plutôt monter notre tableau des possibilités comme ceci :</p>
+<ul>
+<li><code>$possibilites[1] = &quot;statut_option&quot; ;</code></li>
+<li><code>$possibilites[2] = &quot;statut_option&quot; ;</code></li>
+</ul>
+<p>On pourrait accéder facilement au statut si on a un numéro en faisant</p>
+<p><code>$statut = $possibilites[&quot;le_numero_qu_on_cherche&quot;] ;</code></p>
+<p>Et ça, je préfère quand même...</p>
+<p>Et bien voilà, notre objet <strong>Chiffre</strong> a donc une propriété obligatoire, un tableau <code>$possibilites</code>. La taille du tableau <code>$possibilites</code> est de la taille de la grille de sudoku. Optionnellement, on pourrait garder la taille de la grille de sudoku dans l'objet <strong>Chiffre</strong> mais honnêtement, je n'en vois pas l'utilité.</p>
+<pre><code class="language-php">// module/Application/src/Application/Model/Chiffre.php
+
+&lt;?php
+namespace Application\Model ;
+
+class Chiffre
+{
+  /**
+   * @var array $possibilites ensemble des possibilités pour une case de la grille de sudoku
+   */
+  protected $possibilites = array() ;
+}
+</code></pre>
+<p>Très rapidement, chaque numéro a un statut. Arbitrairement, on décide que un numéro peut avoir les statuts suivants :</p>
+<ul>
+<li>c'est un statut &quot;<em>possible</em>&quot; = le numéro peut être dans la case comme il peut ne pas l'être, on ne sait pas encore</li>
+<li>c'est un statut &quot;<em>éliminé</em>&quot; = le numéro ne peut pas être dans la case, en vertu des règles du sudoku</li>
+<li>c'est un statut &quot;<em>validé</em>&quot; = le numéro est dans la case, en vertu des règles du sudoku</li>
+</ul>
+<pre><code class="language-php">// module/Application/src/Application/Model/Chiffre.php
+
+&lt;?php
+namespace Application\Model ;
+
+class Chiffre
+{
+  // Ajouter les constantes
+  /**
+   * @const
+  */
+  const ELIMINE = 0 ;
+  const VALIDE = 1 ;
+  const POSSIBLE = 2 ;
+}
+</code></pre>
+<p>Commençons l'écriture des méthodes en commençant par le constructeur : celle ci va initialiser la propriété protégée <code>$figures</code> et créer autant de numéro qu'il y a de chiffres dans la grille de sudoku.</p>
+<pre><code class="language-php">// module/Application/src/Application/Model/Chiffre.php
+
+&lt;?php
+namespace Application\Model ;
+
+class Chiffre
+{
+  // ajouter le constructeur
+  /**
+   * Constructeur
+   *
+   * @param int $taille // taille de la grille de sudoku : 4, 9, 16, 25...
+   */
+  public function __construct($taille)
+  {
+    // on initialise la propriété $possibilites
+    $this-&gt;possibilites = array() ;
+    // bien penser à commencer l'index à 1 et non pas à 0 comme de coutume, puisqu'il n'y a pas de numéro 0 dans une grille de sudoku.
+    for($i=1; $i&lt;=$taille; $i++)
+    {
+      // on génère autant de numéros possibles qu'il y a de chiffres dans la grille
+      // tous les numéros sont en statut &quot;option&quot;
+      $this-&gt;possibilites[$i] = self::POSSIBLE ;
+    }
+  }
+}
+</code></pre>
+<p>Le constructeur initialisant un objet avec une propriété &quot;protégée&quot;, il n'est pas facile de rédiger un test unitaire sur ce constructeur, le test vérifiant si la propriété protégée existe dans la mesure où, puisqu'elle est protégée, on ne peut pas y accéder. Si on le souhaite néanmoins, il y a plusieurs façons d'y parvenir. Il est possible de construire nos cas de tests sur un objet comportant une instance d'un <code>ReflectionClass()</code> qui permettrait alors d'accéder aux propriétés et aux méthodes protégées. Sinon, il est également possible de construire une méthode qui retourne la propriété protégée qui nous intéresse. Dans le cas présent, j'ai trouvé une autre façon de tester la propriété $possibilites mais nous verrons cela à la fin de cet objet.</p>
+<p>Le constructeur initialise la propriété <code>$possibilites</code> avec pour chaque numéro un statut &quot;<em>POSSIBLE</em>&quot;. Voyons maintenant les méthodes pour changer le statut d'un numéro. On peut soit écrire une méthode générique où on passerait le statut dans les arguments de la méthode, ou bien, dans le cas présent et dans la mesure où on a un nombre limité et fini de statuts, on peut écrire autant de méthodes qu'il y a de statuts.</p>
+<pre><code class="language-php">// module/Application/src/Application/Model/Chiffre.php
+
+&lt;?php
+namespace Application\Model ;
+
+class Chiffre
+{
+  /**
+   * Valide un chiffre parmi les autres
+   * Elimine les autres numéros (les autres numéros possibles dans la même case)
+   *
+   * @param int $chiffre
+   *
+   * @throw \Exception renvoie une exception si on essaye de valider un numéro qui a été éliminé précédemment.
+   */
+  public function validerChiffre($chiffre)
+  {
+    // détection de l'exception
+    if($this-&gt;possibilites[$chiffre] == self::ELIMINE)
+    {
+      throw new \Exception('Impossible de valider un numéro qui a été éliminé') ;
+    }
+
+    // on commence par éliminer toutes les possibilités
+    $possibilites = array() ;
+    foreach($this-&gt;possibilites as $numero =&gt; $statut)
+    {
+      $possibilites[$numero] = self::ELIMINE ;
+    }
+    $this-&gt;possibilites = $possibilites ;
+    $this-&gt;possibilites[$chiffre] = self::VALIDE ;
+  }
+
+  /**
+   * Elimine un chiffre
+   *
+   * @param int $chiffre
+   *
+   * @throw \Exception renvoie une exception si on essaye d'éliminer un numéro qui a été validé ou initialisé précedemment.
+  */
+  public function eliminerChiffre($chiffre)
+  {
+    // détection de l'exception
+    if($this-&gt;possibilites[$chiffre] == self::VALIDE)
+    {
+      throw new \Exception('Impossible d\'éliminer un numéro qui a été initialisé ou validé') ;
+    }
+
+    $this-&gt;possibilites[$chiffre] = self::ELIMINE ;
+  }
+
+  /**
+   * Rétablit tous les numéros en statut &quot;POSSIBLE&quot;
+   */
+  public function retablirTout()
+  {
+    $possibilites = array() ;
+    foreach($this-&gt;possibilites as $numero =&gt; $statut)
+    {
+      $possibilites[$numero] = self::POSSIBLE ;
+    }
+    $this-&gt;possibilites = $possibilites ;
+  }
+}
+</code></pre>
+<p>3 statuts, 3 méthodes.</p>
+<p>Sur les 3 statuts, un statut indique qu'on sait quel chiffre occupe la case et deux autres statuts ne nous permettent pas de le savoir. Nous pouvons donc mettre en place les méthodes qui vont tester ces états.</p>
+<pre><code class="language-php">// module/Application/src/Application/Model/Chiffre.php
+
+&lt;?php
+namespace Application\Model ;
+
+class Chiffre
+{
+  /**
+   * On vérifie si le chiffre est connu par déduction
+   *
+   * return bool
+   */
+  public function estValide()
+  {
+    foreach($this-&gt;possibilites as $numero)
+    {
+      if($numero == self::VALIDE)
+      {
+        return true ;
+      }
+    }
+ 
+    return false ;
+  }
+
+  /**
+   * On vérifie si l'objet Chiffre n'est pas connu
+   *
+   * return bool
+   */
+  public function estInconnu()
+  {
+    foreach($this-&gt;possibilites as $numero)
+    {
+      if($numero == self::VALIDE)
+      {
+        return false ;
+      }
+    }
+    return true ;
+  }
+}
+</code></pre>
+<p>Nous avons désormais des méthodes pour vérifier si un chiffre est identifié ou pas et des méthodes pour changer le statut d'un numéro. Mais l'assignation est volontaire. En effet, lorsqu'on valide un numéro, la méthode admet qu'on a déjà identifié quel est le numéro qui est déduit. Mais il n'y a pas, finalement, de véritable mécanisme de déduction. Il faut donc expliquer à notre programme comment déduire un numéro.</p>
+<p>Dans une grille de sudoku de 9x9, chaque case comprend au début les 9 numéros possibles.</p>
+<p>Si un numéro est identifié dans une case, cela signifie que tous les autres numéros sont éliminés.</p>
+<p>La réciproque est alors vrai : si tous les numéros sont éliminés, alors le dernier numéro restant est obligatoirement le numéro identifié.</p>
+<pre><code class="language-php">// module/Application/src/Application/Model/Chiffre.php
+
+&lt;?php
+namespace Application\Model ;
+
+class Chiffre
+{
+  /**
+   * On vérifie qu'il ne reste plus qu'un et un seul numéro possible
+   *
+   * return bool
+   */
+  protected function estDerniereOption()
+  {
+    $i = 0 ;
+    foreach($this-&gt;possibilites as $numero)
+    {
+      if($numero == self::POSSIBLE)
+      {
+        $i++ ;
+      }
+    }
+ 
+    if($i == 1)
+    {
+      return true ;
+    }
+ 
+    return false ;
+  }
+}
+</code></pre>
+<p>Une fois qu'on sait identifier s'il ne reste qu'une seule option, on va pouvoir aller modifier la méthode <code>eliminerChiffre()</code> écrite plus haut. On lui rajoutera le raisonnement qui va permettre de valider le dernier chiffre restant.</p>
+<pre><code class="language-php">// module/Application/src/Application/Model/Chiffre.php
+
+&lt;?php
+namespace Application\Model ;
+
+class Chiffre
+{
+  /**
+   * Elimine un chiffre
+   *
+   * @param int $chiffre
+   *
+   * @throw \Exception renvoie une exception si on essaye d'éliminer un numéro qui a été validé ou initialisé précedemment.
+   */
+  public function eliminerChiffre($chiffre)
+  {
+    // détection de l'exception
+    if($this-&gt;possibilites[$chiffre] == self::VALIDE)
+    {
+      throw new \Exception('Impossible d\'éliminer un numéro qui a été initialisé ou validé') ;
+    }
+
+    $this-&gt;possibilites[$chiffre] = self::ELIMINE ;
+    if($this-&gt;estDerniereOption())
+    {
+      foreach($this-&gt;possibilites as $numero =&gt; $statut)
+      {
+        if($statut == self::POSSIBLE)
+        {
+          $this-&gt;validerChiffre($numero) ;
+        }
+      }
+    }
+  }
+}
+</code></pre>
+<p>Il ne reste plus qu'à mettre en place les méthodes qui nous serviront à retourner le bon numéro.</p>
+<p>Retourner le statut d'un numéro.</p>
+<pre><code class="language-php">// module/Application/src/Application/Model/Chiffre.php
+
+&lt;?php
+namespace Application\Model ;
+
+class Chiffre
+{
+  /**
+   * Récupérer le statut d'un numéro
+   *
+   * @param int $numero
+   *
+   * return int
+   */
+  public function getStatutDuNumero($numero)
+  {
+    return $this-&gt;possibilites[$numero] ;
+  }
+}
+</code></pre>
+<p>Retourner l'état définitif de la case : retourner le numéro si on sait quel est le numéro de la case ou ne rien retourner si on ne sait pas.</p>
+<pre><code class="language-php">// module/Application/src/Application/Model/Chiffre.php
+
+&lt;?php
+namespace Application\Model ;
+
+class Chiffre
+{
+  /**
+   * Retourner l'état définitif
+   *
+   * return string
+   */
+  public function getNumero()
+  {
+    foreach($this-&gt;possibilites as $numero =&gt; $statut)
+    {
+      if($statut == self::VALIDE)
+      {
+        return $numero ;
+      }
+    }
+    return '' ;
+  }
+}
+</code></pre>
+<p>Nous avons donc à peu près toutes nos méthodes. Ne vous en faites pas si vous n'avez pas toutes les méthodes du premier coup, vous les rajouterez au fur et à mesure que vous codez. En revanche, une des règles de la programmation orientée objet dit : <em>une classe doit être ouverte à l'extension mais fermée à la modification</em>. A l'application, cela veut dire notamment que, une fois que votre classe est utilisée, vous devez vous contraindre à ne plus modifier ses propriétés, ni ses méthodes.</p>
+<p>Si vous êtes en cours de développement, vous pouvez vous permettre de rajouter des méthodes, rarement des propriétés.</p>
+<p>Si votre application commence à être en production, il n'est pas recommandé de rajouter des nouvelles méthodes.</p>
+<p>Dites vous que si vous aviez besoin de ces méthodes, vous auriez découvert plus tôt que vous en aviez besoin. Si le besoin est tardif, alors c'est parce qu'il concerne un autre objet, une autre fonctionnalité.</p>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/fr/tags/poo">POO</a></li></ul>
+        </div>
+      
+
+      
+        <nav id="book-navigation">
+    
+       <li class="link-previous"><a href="/fr/posts/un-solveur-de-sudoku-tester-le-controleur.html"><i class="fas fa-long-arrow-alt-left"></i> Un solveur de Sudoku - Tester le contrôleur</li>
+    
+
+    
+        <li class="link-next"><a href="/fr/posts/solveur-de-sudoku-les-tests-unitaires-pour-lobjet-chiffre.html">Solveur de Sudoku - Les tests unitaires pour l&#39;objet Chiffre <i class="fas fa-long-arrow-alt-right"></i></a></li>
+    
+
+    
+        <li class="link-up"><a href="/fr/books/aborder-la-programmation-orientee-objet-par-lexemple-concevoir-un-solveur-de-sudoku.html"><i class="fas fa-book-open"></i> Aborder la programmation orientée objet par l&#39;exemple. Concevoir un solveur de sudoku</li>
+    
+</nav>
+
+      
+    
+
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>Sur moi</h3>
+      <p>J&#39;ai appris le php il y a quelques années, quand Internet était à ses débuts. Pour diverses raisons, j&#39;ai arrêté en route et j&#39;ai perdu le fil des nouveaux Internets que je redécouvre. Résultat, je me sens constamment à courir après l&#39;histoire mais je suis toujours motivée à reprendre des projets personnels. Je me propose de vous partager mes découvertes. Au delà des sujets de programmation, j&#39;aime également partager mes infos concernant notamment l&#39;Histoire, l&#39;Astronomie, la Linguistique, les Films, les Livres et les Anime. J&#39;espère que vous aimerez suivre mon blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. Tous droits réservés.</p>
+        <p>Propulsé par <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,596 @@
+<!doctype html>
+<html class="no-js" lang="en" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>CoffeeBar Application 10/19 - Building a form to place the order&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">French</a>
+        <a href="/en/">English</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/en/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/en/books/0/index.html">Collections</a>
+        <a href="/en/">Home</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/en/">Home</a><i class="fas fa-angle-right"></i>CoffeeBar Application 10/19 - Building a form to place the order
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>CoffeeBar Application 10/19 - Building a form to place the order</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>3/12/2015, 7:51:00 PM
+        
+        <i class="fas fa-th-large"></i><!--a href="/en/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/file9271237667217.jpg" class="node-banner" />
+        
+          <p><strong>Credit</strong> : Morguefile.com </p>
+        
+      </div>
+
+      <p><p>To place an order, we will build a complex form with a fieldset : a drop down list and an input text. The numbers of fieldset is infinite and we can add as many fieldset as we need. Let's do some form dependencies and javascript in today's chapter.</p>
+<p><em>NOTE : throughout the tutorial, i will reedit numerous classes and views i already talked about. On the second edition, some datas will be missing such as use keyword, extends and implements keywords etc... It doesn't mean you have to delete those existing lines. It is intended to lighten this tutorial. In the case we need to remove lines, i'll say it so plainly, even re-editing the whole part to make myself clear on that item.</em></p>
+<h3>What we gonna do</h3>
+<p>We will build a fieldset associating one drop down list, listing all menu items and, on the same fieldset, an input text, where we will be able to set the number of ordered items. If the client wish to order another menu item, it will be possible to add another fieldset.</p>
+<h3>The menu item</h3>
+<p>The menu item has a <strong>menu number</strong>, a <strong>description</strong>, a <strong>price</strong> and a <strong>flag</strong> saying if the item is a drink or not.</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Entity/MenuItem.php
+
+&lt;?php
+namespace CoffeeBar\Entity ;
+
+class MenuItem
+{
+  protected $id ; // int
+  protected $description ; // string
+  protected $price ; // float
+  protected $isDrink ; // bool
+
+  // default value for price and flag
+  public function __construct($id, $description, $price = 0.00, $isDrink = false)
+  {
+    $this-&gt;setId($id) ;
+    $this-&gt;setDescription($description) ;
+    $this-&gt;setPrice($price) ;
+    $this-&gt;setIsDrink($isDrink) ;
+  }
+ 
+  /* définir les getter et setter */
+}
+</code></pre>
+<p>A whole menu is a list of menu items. <em>Wait... wait... wait... who's thinking i'll use ArrayObject ?</em></p>
+<p>Here again, we will use static datas but i let you imagine how you can tie all this with a database.</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Entity/MenuItems.php
+
+&lt;?php
+namespace CoffeeBar\Entity ;
+
+use ArrayObject;
+
+class MenuItems extends ArrayObject
+{
+  public function __construct(Array $array=null)
+  {
+    $array = array() ;
+    $i = 0 ;
+
+    $array[] = new MenuItem($i++, 'Thé vert', 3.75, true) ;
+    $array[] = new MenuItem($i++, 'Café', 2.55, true) ;
+    $array[] = new MenuItem($i++, 'Limonade', 4.05, true) ;
+    $array[] = new MenuItem($i++, 'Soda', 4.20, true) ;
+    $array[] = new MenuItem($i++, 'Bière', 4.75, true) ;
+    $array[] = new MenuItem($i++, 'Frites', 5.25) ;
+    $array[] = new MenuItem($i++, 'Pizza', 9.80) ;
+    $array[] = new MenuItem($i++, 'Saucisses Frites', 7.75) ;
+    $array[] = new MenuItem($i++, 'Hot Dog', 7.00) ;
+    $array[] = new MenuItem($i++, 'Quiche', 6.65) ;
+
+    parent::__construct($array) ;
+  }
+}
+</code></pre>
+<p>So we do have a list (<code>**\ArrayObject**</code>). But do not forget. In a Select element, the <code>value_options</code> expects a simple array : <code>id =&gt; value</code>. No objects are allowed. So we need to have a method to extract the right datas from <code>**CoffeeBar\Entity\MenuItems**</code> and build the right array for our Select element. Obviously, the <code>id</code>, will be the <strong>menu number</strong> when the <code>value</code> would be the <strong>description</strong>.</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Entity/MenuItems.php
+
+&lt;?php
+namespace CoffeeBar\Entity ;
+
+class MenuItems ...
+{
+  // method to extract id and description and build a simple array
+  public function getSelectValues()
+  {
+    $array = array() ;
+ 
+    // we get the iterator with ArrayObject::getIterator()
+    $iterator = $this-&gt;getIterator() ;
+
+    foreach($iterator as $item)
+    {
+      $array[$item-&gt;getId()] = $item-&gt;getDescription() ;
+    }
+
+    return $array ;
+  }
+}
+</code></pre>
+<h3>Form elements</h3>
+<p>Let's see the form elements. Let's start with the Select element.</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Form/MenuSelect.php
+
+&lt;?php
+namespace CoffeeBar\Form ;
+
+use CoffeeBar\Entity\MenuItems;
+use Zend\Form\Element\Select;
+
+class MenuSelect extends Select
+{
+  protected $menus ;
+ 
+  // inject the MenuItems in the constructor
+  public function __construct(MenuItems $items)
+  {
+    $this-&gt;menus = $items ;
+  }
+
+  // assign the right array to the select element
+  // use the init() method for all customized form elements
+  public function init()
+  {
+    $this-&gt;setValueOptions($this-&gt;menus-&gt;getSelectValues()) ;
+  }
+}
+</code></pre>
+<p>Now build the customized <code>Fieldset</code> with two elements : the customized select element and the straight input text element.</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Form/MenuItemFieldset.php
+
+&lt;?php
+namespace CoffeeBar\Form ;
+
+use Zend\Form\Fieldset;
+
+class MenuItemFieldset extends Fieldset
+{
+  // use the init() method for any customized element
+  public function init()
+  {
+    $this-&gt;add(array(
+      'name' =&gt; 'id',
+      'type' =&gt; 'MenuSelect', // use the key in the Form Element Manager
+      'attributes' =&gt; array(
+        'class' =&gt; 'form-control',
+      ),
+    )) ;
+  }
+
+  public function __construct()
+  {
+    parent::__construct('menuItems') ;
+ 
+    $this-&gt;add(array(
+      'name' =&gt; 'number',
+      'options' =&gt; array(
+        'label' =&gt; ' ',
+      ),
+      'attributes' =&gt; array(
+        'value' =&gt; 1,
+        'class' =&gt; 'form-control text-right',
+        'size' =&gt; 4,
+      ),
+    )) ;
+  }
+}
+</code></pre>
+<p>We want to use a javascript so the same template (with the fieldset) will be copied as many time as needed. So we need to write that template down.</p>
+<p><em>I can't find where i have found that part so... just see how it works here.</em></p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Form/Helper/MenuItemFormCollection.php
+
+&lt;?php
+namespace CoffeeBar\Form\Helper ;
+
+use Zend\Form\View\Helper\FormCollection ;
+use Zend\Form\Element\Collection ;
+
+class MenuItemFormCollection extends FormCollection
+{
+  public function renderTemplate(Collection $collection)
+  {
+    $elementHelper = $this-&gt;getElementHelper();
+    $escapeHtmlAttribHelper = $this-&gt;getEscapeHtmlAttrHelper();
+    $fieldsetHelper = $this-&gt;getFieldsetHelper();
+    $element = $collection-&gt;getTemplateElement();
+ 
+    if ($element instanceof FieldsetInterface) {
+      $templateMarkup .= $fieldsetHelper($element);
+    }
+
+    $formRow = $this-&gt;view-&gt;plugin('FormRow') ;
+
+    $templateMarkup = '';
+    $templateMarkup .= '&lt;fieldset class=&quot;form-inline&quot;&gt;' ;
+    $templateMarkup .= $formRow($element-&gt;get('id')) . '&amp;amp;nbsp;&amp;amp;nbsp;';
+    $templateMarkup .= $formRow($element-&gt;get('number')) ;
+    $templateMarkup .= '&lt;/fieldset&gt;' ;
+
+    return sprintf(
+      $this-&gt;templateWrapper,
+      $escapeHtmlAttribHelper($templateMarkup)
+    );
+  }
+}
+</code></pre>
+<p>After our template being created as a view helper, we need to <a href="http://framework.zend.com/manual/current/en/modules/zend.view.helpers.advanced-usage.html#registering-helpers" target="_blank">declare it inside our application configuration</a> so we can invoke/call it.</p>
+<pre><code class="language-php">// module/CoffeeBar/config/module.config.php
+
+&lt;?
+return array(
+  'view_helpers' =&gt; array(
+    'invokables' =&gt; array(
+      // as usual : key =&gt; object
+      'MenuItemFormCollection' =&gt; 'CoffeeBar\Form\Helper\MenuItemFormCollection',
+    ),
+  ),
+);
+</code></pre>
+<p>The view helper is ready, let's build the form.</p>
+<p>A <strong>fieldset</strong> component we can repeat dynamically, Zend Framework 2 calls it <a href="http://http://framework.zend.com/manual/current/en/modules/zend.form.collections.html" target="_blank"><strong>Form Collection</strong></a>. Its documentation is not that bad. In the form, we will add a <code>**Zend\Form\Element\Collection**</code> element. This form element has few more options so we can set the &quot;repeat&quot; feature.</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Form/PlaceOrderForm
+
+&lt;?php
+namespace CoffeeBar\Form ;
+
+use Zend\Form\Element\Csrf;
+use Zend\Form\Form;
+
+class PlaceOrderForm extends Form
+{
+  public function init()
+  {
+    $this-&gt;add(array(
+      // this is a dedicated element from ZF2. It allows us to build repeatable fields
+      'type' =&gt; 'Zend\Form\Element\Collection',
+      'name' =&gt; 'items',
+      'options' =&gt; array(
+        'label' =&gt; 'Commandez vos plats',
+        // default number of fieldset when the form is loaded
+        'count' =&gt; 2,
+        // both following options allow us to repeat the fieldset
+        'should_create_template' =&gt; true,
+        'allow_add' =&gt; true,
+        // point to the element we want to repeat
+        'target_element' =&gt; array(
+          // this is the true object, not an alias within the form element manager
+          'type' =&gt; 'CoffeeBar\Form\MenuItemFieldset',
+        ),
+      ),
+      'attributes' =&gt; array(
+        'class' =&gt; 'form-control',
+      ),
+    ));
+  }
+
+  public function __construct()
+  {
+    parent::__construct('order') ;
+ 
+    $this-&gt;setAttribute('method', 'post') ;
+
+    // we will add the hydrator and the object later
+ 
+    // table number
+    $this-&gt;add(array(
+      'name' =&gt; 'id',
+      'type' =&gt; 'hidden',
+    )) ;
+ 
+    $this-&gt;add(new Csrf('security')) ;
+ 
+    $this-&gt;add(array(
+      'name' =&gt; 'submit',
+      'type' =&gt; 'Submit',
+      'attributes' =&gt; array(
+        'value' =&gt; 'Place order',
+        'class' =&gt; 'btn btn-default',
+      ),
+    )) ;
+  }
+}
+</code></pre>
+<p>Our <strong>form</strong> is ready. We will now load it into our <strong>Service Manager</strong>, get it in our <strong>controller</strong>, render the form in the <strong>view</strong>, including the <strong>view helper</strong> and the <strong>javascript</strong>.</p>
+<h4>Service Manager</h4>
+<pre><code class="language-php">// module/CoffeeBar/Module.php
+
+namespace CoffeeBar;
+
+use CoffeeBar\Form\MenuSelect;
+
+class Module implements FormElementProviderInterface
+{
+  // l'interface FormElementProvideInterface a la méthode getFormElementConfig()
+  public function getFormElementConfig() {
+    return array(
+      'factories' =&gt; array(
+        // déclarer l'élément de formulaire dans le Manager de formulaire
+        'MenuSelect' =&gt; function($sm) {
+          $serviceLocator = $sm-&gt;getServiceLocator() ;
+          // CoffeeBarEntity\MenuItems : clé dans le Service Manager
+          $menus = $serviceLocator-&gt;get('CoffeeBarEntity\MenuItems') ;
+          // MenuSelect : objet CoffeeBar\Form\MenuSelect
+          $select = new MenuSelect($menus) ;
+
+          return $select ;
+        },
+      ),
+    );
+  }
+
+  // on charge le service manager
+  public function getServiceConfig()
+  {
+    return array(
+      'invokables' =&gt; array(
+        'CoffeeBarEntity\MenuItems' =&gt; 'CoffeeBar\Entity\MenuItems',
+      ),
+      'factories' =&gt; array(
+        'PlaceOrderForm' =&gt; function($sm) {
+          $formManager = $sm-&gt;get('FormElementManager') ;
+          $form = $formManager-&gt;get('CoffeeBar\Form\PlaceOrderForm') ;
+
+          return $form ;
+        },
+      ),
+    ) ;
+  }
+}
+</code></pre>
+<h4>The controller</h4>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Controller/TabController.php
+
+&lt;?php
+namespace CoffeeBar\Controller ;
+
+use Zend\Mvc\Controller\AbstractActionController;
+
+class TabController extends AbstractActionController
+{
+  public function orderAction()
+  {
+    // use the Service Manager key
+    $form = $this-&gt;serviceLocator-&gt;get('PlaceOrderForm') ;
+    $request = $this-&gt;getRequest() ;
+
+    // check if the table number is in the HTTP request
+    if ($id = (int) $this-&gt;params()-&gt;fromRoute('id')) {
+      $form-&gt;get('id')-&gt;setValue($id) ;
+      // check if form is posted
+    } elseif($request-&gt;isPost()) {
+      $form-&gt;setData($request-&gt;getPost()) ;
+
+      if($form-&gt;isValid()) {
+        // process the order
+      }
+    // if there's no table number, redirect to 'open tab' page
+    } else {
+      return $this-&gt;redirect()-&gt;toRoute('tab/open');
+    }
+ 
+    $result['form'] = $form ;
+    return array('result' =&gt; $result) ;
+  }
+}
+</code></pre>
+<h4>Finally, the view</h4>
+<p>Right on the top of the view, the javascript for the 'Add a new item' button.</p>
+<pre><code class="language-php">// module/CoffeeBar/view/coffee-bar/tab/order.phtml
+
+&lt;script&gt;
+  function add_item() {
+    var currentCount = $('form fieldset fieldset').length;
+    var template = $('form fieldset &gt; span').data('template');
+    template = template.replace(/__index__/g, currentCount);
+    $('form fieldset').last().append(template);
+
+    return false;
+  }
+&lt;/script&gt;
+
+&lt;h1&gt;Passer commande&lt;/h1&gt;
+
+&lt;?php
+  $form = $this-&gt;result['form'] ;
+  $form-&gt;prepare() ;
+
+  $form-&gt;setAttribute('action', $this-&gt;url('tab/order')) ;
+  $form-&gt;setAttribute('method', 'post') ;
+?&gt;
+
+&lt;?php echo $this-&gt;form()-&gt;openTag($form) ; ?&gt;
+
+&lt;div class='form-group'&gt;
+  &lt;?php echo $this-&gt;formRow($form-&gt;get('id')) ; ?&gt;
+&lt;/div&gt;
+
+&lt;div class='form-group'&gt;
+  &lt;fieldset&gt;
+    &lt;legend&gt;&lt;?php $this-&gt;formLabel($form-&gt;get('items')) ; ?&gt;&lt;/legend&gt;
+
+    &lt;?php
+      foreach($form-&gt;get('items')-&gt;getIterator() as $fieldset)
+      {
+        echo '&lt;fieldset class=&quot;form-inline&quot;&gt;' ;
+        echo $this-&gt;formRow($fieldset-&gt;get('id')). '&amp;amp;nbsp;&amp;amp;nbsp;' ;
+        echo $this-&gt;formRow($fieldset-&gt;get('number')) ;
+        echo '&lt;/fieldset&gt;' ;
+      }
+
+      // here is our view helper
+      echo $this-&gt;MenuItemFormCollection()-&gt;renderTemplate($form-&gt;get('items'));
+    ?&gt;
+  &lt;/fieldset&gt;
+
+  &lt;button onclick=&quot;return add_item()&quot;&gt;Add a new item&lt;/button&gt;
+&lt;/div&gt;
+
+&lt;?php
+  echo $this-&gt;formRow($form-&gt;get('security')) ;
+  echo $this-&gt;formRow($form-&gt;get('submit')) ;
+  echo $this-&gt;form()-&gt;closeTag() ;
+?&gt;
+</code></pre>
+<h4>The route</h4>
+<p>Just set the route for this page</p>
+<pre><code class="language-php">// module/CoffeeBar/config/module.config.php
+
+&lt;?php
+return array(
+  'router' =&gt; array(
+    'routes' =&gt; array(
+      // add to previous routes
+      'tab' =&gt; array(
+        'child_routes' =&gt; array(
+
+          /**
+           * this URL : http://coffeebar.home/tab/order leads to the following route
+           */
+          'order' =&gt; array(
+            'type' =&gt; 'Segment',
+            'options' =&gt; array(
+              'route' =&gt; '/order[/:id]',
+              'constraints' =&gt; array(
+                'id' =&gt; '[a-zA-Z0-9_-]+',
+              ),
+              'defaults' =&gt; array(
+                'controller' =&gt; 'CoffeeBarController\Tab',
+                'action' =&gt; 'order',
+              ),
+            ),
+          ),
+        ),
+      ),
+    ),
+  ),
+) ;
+</code></pre>
+<p>Tadaaa... Isn't it nice ? Our form is working now... Working ?? Wait a minute... Not really actually. We haven't process the datas yet...</p>
+<p><em>You'll find the full application in my <a href="https://github.com/haclong/coffeebar" target="_blank">github</a></em></p>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/en/tags/zend-framework-2">zend framework 2</a></li><li><a href="/en/tags/aide-de-vue">aide de vue</a></li><li><a href="/en/tags/mvc">MVC</a></li><li><a href="/en/tags/javascript">javascript</a></li><li><a href="/en/tags/zend-form">Zend Form</a></li><li><a href="/en/tags/zend-form-collection">Zend Form Collection</a></li></ul>
+        </div>
+      
+
+      
+        <nav id="book-navigation">
+    
+       <li class="link-previous"><a href="/en/posts/coffeebar-application-919-placing-order-mixing-drinks-and-food.html"><i class="fas fa-long-arrow-alt-left"></i> CoffeeBar Application 9/19 - Placing an order, mixing drinks and food</li>
+    
+
+    
+        <li class="link-next"><a href="/en/posts/coffeebar-application-1119-processing-form.html">CoffeeBar Application 11/19 - Processing the form <i class="fas fa-long-arrow-alt-right"></i></a></li>
+    
+
+    
+        <li class="link-up"><a href="/en/books/manage-coffeebar-event-driven-programming.html"><i class="fas fa-book-open"></i> Manage a coffeebar with event driven programming</li>
+    
+</nav>
+
+      
+    
+
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>About me</h3>
+      <p>I learned coding with php several years ago, when Internet was still young. For multiple reasons, i had stopped then and missed most of this new Internet i&#39;m discovering once again. So, i feel like a newbie again and since i&#39;m ready to start over personal project, i&#39;ll share with you some of my discoveries. Beyond coding topics, i&#39;ll enjoy sharing with you several subjects such as History, Astronomy, Linguistics, Movies, Books, Music and Anime among others. I hope you&#39;ll enjoy reading this blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. All rights reserved.</p>
+        <p>Powered by <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

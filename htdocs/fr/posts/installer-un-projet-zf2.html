@@ -1,0 +1,264 @@
+<!doctype html>
+<html class="no-js" lang="fr" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>Installer un projet ZF2&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">Français</a>
+        <a href="/en/">Anglais</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/fr/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/fr/books/0/index.html">Séries</a>
+        <a href="/fr/">Accueil</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/fr/">Accueil</a><i class="fas fa-angle-right"></i>Installer un projet ZF2
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>Installer un projet ZF2</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>07/07/2015 07:21:00
+        
+        <i class="fas fa-th-large"></i><!--a href="/fr/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/lego_pieces1.jpg" class="node-banner" />
+        
+      </div>
+
+      <p><p>J'ai l'impression que je n'ai fait que des posts sur les installations de projets. Pourtant, lorsque je cherche, je ne trouve rien... Bon, je n'ai pas beaucoup cherché non plus :p
+Alors, pour moi, comme pour vous, voici ce que je fais, pour installer un projet.</p>
+<p><strong>Voici ce qu'on va installer :</strong></p>
+<ul>
+<li>Un projet** ZF2 Application Skeleton** avec <strong>composer</strong></li>
+<li>Un <strong>dépôt git</strong> avec un dépôt sur <strong>github</strong></li>
+</ul>
+<h2>Environnement</h2>
+<p>J'ai une machine <strong>Ubuntu</strong>, une installation <strong>LAMP</strong> standard avec un serveur <strong>Apache2</strong>.</p>
+<p>Si vous n'avez pas un LAMP installé sur votre Ubuntu, j'ai une astuce : utiliser <strong>Synaptic</strong> (ou bien à la ligne de commande avec <code>apt-get</code>) et installer le package <strong>phpmyadmin</strong>. Pour fonctionner, <strong>phpMyAdmin</strong> a des dépendances (évidentes) sur <strong>MySQL</strong>, sur <strong>PHP</strong> et sur <strong>Apache</strong>. Du coup, vous faites une pierre quatre coups.</p>
+<p>Après l'installation de votre LAMP, vous trouverez votre serveur web local à cette adresse (dans votre navigateur) : <code>http://localhost</code>.</p>
+<h2>Les droits des fichiers</h2>
+<p>En cas où vous ne le sauriez pas, l'<strong>utilisateur Apache</strong>, qui doit accéder (à minima en lecture) à vos fichiers pour les afficher dans le navigateur, est <code>www-data:www-data</code>.</p>
+<p><em>Si vous souhaitez le changer, il faut retrouver où le faire dans les fichiers de configuration d'Apache.</em></p>
+<p>Il fut un temps, à chaque fois que j'installais un projet, je changeais les propriétaires des fichiers : tous les répertoires et tous les fichiers appartenaient à <code>mon user</code> et au <code>groupe du user d'Apache</code>.</p>
+<p><code>sudo chown -R {moi}:www-data *</code></p>
+<p>Avec un script, il était facile de changer tous les droits en quelques commandes. Toutefois, cela devenait rébarbatif.</p>
+<p>Depuis peu, j'ai changé de stratégie. Mon user appartient désormais au groupe <code>www-data</code>. Ainsi, je n'ai plus besoin de changer les droits de mes fichiers. Par défaut, à l'installation (fait par mon user), les fichiers (et répertoires) appartiennent à mon user, mon groupe et le serveur Apache arrive à accéder à ces fichiers sans problème puisque mon user appartient également au groupe d'Apache. <em>Je ne suis pas sûr que l'explication soit juste juste mais ça marche...</em></p>
+<p>A toutes fins utiles, les droits sont <strong><code>775</code></strong> pour les répertoires et <strong><code>664</code></strong> pour les fichiers.</p>
+<p>Il faut faire attention de ne pas utiliser la commande <code>sudo</code> pour installer votre projet. Si vous utilisez <code>sudo</code>, les fichiers appartiendront à <code>root:root</code>. Le serveur Apache ne pourra pas y accéder. Si cela arrivait, rien d'irréversible, utilisez la commande <code>chown</code> pour changer les propriétaires des fichiers et répertoires.</p>
+<p><code>sudo chown -R {moi}:www-data *</code></p>
+<p>Si vous avez des répertoires où le** user d'Apache** doit écrire (les logs, le cache...), il faut probablement réajuster les droits.</p>
+<p>L'installation LAMP standard considère que votre répertoire web par défaut est <code>/var/www</code>. Toutefois, contrairement à ce qui est configuré par défaut, je préfère installer mes projets dans le répertoire de mon user. Je crée alors un répertoire dédié par projet (<code>/home/{moi}/monProjet</code>)</p>
+<p>Généralement, dans ce répertoire, je crée un répertoire pour les fichiers préparatoires, les documents, les fichiers sources des maquettes par ex et je crée un répertoire dédié au projet de développement.</p>
+<p><code>/home/{moi}/monProjet/dev</code></p>
+<h2>Les sources</h2>
+<p>Comme je souhaite séparer le répertoire du projet NetBeans des sources du projet, je crée un autre répertoire, dédié aux sources du projet.</p>
+<p><code>/home/{moi}/monProjet/dev/source</code></p>
+<p>Pour installer les sources du projet, je vais avoir besoin de <a href="http://getcomposer.org" target="_blank"><strong>Composer</strong></a>.</p>
+<h3>Installer Composer</h3>
+<p>Nous allons installer <strong>Composer</strong> et nous arranger pour que vous puissiez y faire appel pour ce projet et pour les projets suivants.</p>
+<ul>
+<li>Ouvrez un terminal</li>
+</ul>
+<p><code>curl -sS https://getcomposer.org/installer | php</code></p>
+<p>Faites attention au répertoire dans lequel vous êtes. Un fichier <code>composer.phar</code> devrait avoir y été copié/créé.</p>
+<ul>
+<li>Copiez ce fichier <code>composer.phar</code> dans le répertoire <code>/usr/bin</code></li>
+</ul>
+<p><code>mv repertoire/composer.phar /usr/bin/composer</code></p>
+<p><em>Utilisez <code>sudo</code> si nécessaire.</em></p>
+<ul>
+<li>Changez les droits pour que tous les utilisateurs puissent accéder à cette nouvelle commande <code>composer</code></li>
+</ul>
+<p><code>chmod +x /usr/bin/composer</code></p>
+<p><em>Utilisez <code>sudo</code> s'il le faut.</em></p>
+<h3>Installer les sources du projet</h3>
+<ul>
+<li>Retournez dans votre projet</li>
+</ul>
+<p><code>cd /home/{moi}/monProjet/dev/source</code></p>
+<ul>
+<li>Ouvrez un terminal.</li>
+</ul>
+<p><code>composer create-project -s dev zendframework/skeleton-application</code></p>
+<p><strong>Composer</strong> va télécharger tous les fichiers du <strong>Zend Framework 2 skeleton application</strong>, ses dépendances et installer le tout.</p>
+<h3>Mettre en place le virtual host</h3>
+<p>Dans le répertoire de développement, je crée un <strong>fichier de configuration d'Apache</strong>.</p>
+<pre><code class="language-sh">// /home/{moi}/monProjet/dev/httpd.conf
+
+Alias /alias_du_projet /home/{moi}/monProjet/dev/source/public
+
+&lt;Directory /home/{moi}/monProjet/dev/source/public&gt;
+  Options FollowSymLinks
+  DirectoryIndex index.php
+  Require all granted
+&lt;/Directory&gt;
+</code></pre>
+<h4>Ajouter ce virtual host à Apache</h4>
+<p>Dans votre console :</p>
+<p><code>sudo ln -s /home/{moi}/monProjet/dev/httpd.conf /etc/apache2/sites-available/monProjet.conf</code></p>
+<p>Si vous allez vérifier dans le répertoire <code>/etc/apache2/sites-available</code>, vous verrez le nouveau fichier <code>monProjet.conf</code> qui est un alias vers votre fichier <code>/home/{moi}/monProjet/dev/httpd.conf</code>.</p>
+<p><em>Depuis <strong>Apache 2.4</strong> (si je ne me trompe pas), il faut obligatoirement le <code>.conf</code> derrière.</em></p>
+<h4>Ajouter ce nouveau site au chargement d'Apache</h4>
+<p><code>sudo a2ensite monProjet.conf</code></p>
+<h4>Redémarrer Apache</h4>
+<p><code>sudo service apache2 reload</code></p>
+<p>L'alias indique à <strong>Apache</strong> que lorsqu'on saisit <code>http://localhost/alias_du_projet</code> dans le navigateur, <strong>Apache</strong> doit aller chercher le fichier <code>/home/{moi}/monProjet/dev/source/public/index.php</code> et afficher la page qui correspond à cette adresse. Le fichier <code>index.php</code> étant la page d'entrée de notre application, pour savoir ce qui est chargé, il faut voir ce qu'il se passe dans une <strong>application MVC de Zend Framework.</strong></p>
+<h2>Créer le projet dans Netbeans</h2>
+<p>Installer <strong>Netbeans</strong> avec <strong>synaptic</strong></p>
+<ul>
+<li>Lancer <strong>Netbeans</strong></li>
+<li>Cliquer sur <code>File &gt; New project...</code></li>
+<li>Dans la fenêtre qui s'ouvre, choisir <strong>PHP Application with Existing Source</strong></li>
+<li>Cliquer sur suivant</li>
+<li>Choisir un nom de projet du type <strong>Nom_De_Mon_Projet</strong></li>
+<li>Pointer le répertoire de sources vers <code>/home/{moi}/monProjet/dev/source</code></li>
+<li>Choisir votre <strong>version de PHP</strong> et votre <strong>encoding</strong> par défaut</li>
+<li>Cocher la case &quot;<strong>Put NetBeans metadata into a separate directory</strong>&quot;</li>
+<li>Choisir le chemin <code>/home/{moi}/monProjet/dev</code></li>
+<li><strong>NetBeans</strong> vous avertira que le répertoire choisi pour les <strong>métadonnées de NetBeans</strong> n'est pas vide. Ignorez l'avertissement et cliquer sur <strong>Suivant</strong>.</li>
+<li>Pour une <strong>application Zend Framework</strong>, choisissez <strong>Local Web Site (running on local web server)</strong></li>
+<li>Pour l'URL de votre projet, mettez <code>http://localhost/alias_du_projet</code></li>
+<li>Index File : choisissez le fichier <code>public/index.php</code></li>
+</ul>
+<p><strong>NetBeans</strong> va créer un répertoire <code>nbproject</code> qui contient toutes les métadonnées dont <strong>NetBeans</strong> a besoin pour gérer votre projet.</p>
+<p><code>/home/{moi}/monProjet/dev/nbproject</code></p>
+<p>Dans <strong>NetBeans</strong>, dans la fenêtre <strong>Projects</strong>, le nouveau projet <strong>Nom_De_Mon_Projet</strong> apparaît.</p>
+<h2>Utiliser un gestionnaire de version pour le projet</h2>
+<p>Installer <strong>git</strong> avec <strong>synaptic</strong></p>
+<h3>Initialiser votre dépôt local</h3>
+<ul>
+<li>Ouvrez <strong>NetBeans</strong></li>
+<li>Installez le plugin <strong>Git</strong></li>
+<li>Cliquez droit sur votre projet <strong>Nom_De_Mon_Projet &gt; Versioning &gt; Initializing Git Repository</strong> pour initialiser votre dépôt grâce à l'interface de <strong>NetBeans</strong>. Si le <strong>plugin git</strong> n'est pas installé dans <strong>NetBeans</strong>, vous pouvez <strong>initialiser votre dépôt git</strong> par la ligne de commande. A partir du terminal, allez sur le répertoire <code>/home/{moi}/monProjet/dev/sources</code> et tapez <code>git init</code>.</li>
+</ul>
+<h3>Installer un dépôt distant</h3>
+<ul>
+<li>Ouvrez un compte sur <a href="https://github.com" target="_blank"><strong>github</strong></a></li>
+</ul>
+<h3>Vérifier si votre poste a déjà une clé SSH installée.</h3>
+<p>Sur <strong>Ubuntu</strong>, la clé devrait être dans <code>home/{moi}/.ssh</code>.</p>
+<p>La <strong>clé SSH</strong> est composée de deux fichiers. D'un poste à l'autre, ils peuvent avoir des noms différents. Pour moi, les deux fichiers sont nommés <code>id_rsa</code> et <code>id_rsa.pub</code>. Les deux fichiers sont générés en une fois par une même application.</p>
+<p>Sur <strong>Ubuntu</strong>, il faut utiliser l'utilitaire <code>ssh-keygen</code>.
+Sur <strong>Windows</strong>, en installant l'application <strong>Git Gui</strong>, vous bénéficierez également d'un générateur de <strong>clé SSH</strong>.
+Il existe également de nombreuses autres applications pour générer les clés SSH.</p>
+<ul>
+<li>Muni de votre clé, identifiez vous sur <strong>github</strong>. Dans votre compte, menu <strong>Settings</strong> (le petit engrenage), allez dans le menu <strong>SSH Keys</strong>. Sur cet écran, vous pouvez ajoutez une nouvelle clé (<strong>Add SSH Key</strong>).</li>
+<li>Un formulaire s'ouvre. Choisissez un <strong>nom</strong> pour savoir à quel utilisateur / compte / poste correspond la clé et dans la partie <strong>key</strong>, copiez le contenu de votre <strong>clé publique</strong>. La clé publique est celle où il n'y a pas marqué <code>BEGIN PRIVATE KEY</code> (éditez le fichier pour voir le contenu de la clé).</li>
+<li>Cliquez sur <strong>Add Key</strong>.</li>
+<li>Revenez sur le répertoire de votre projet <code>/home/{moi}/monProjet/dev/sources</code></li>
+<li>Ajoutez un dépôt distant <code>git remote add {nom du repo} git@github.com:{username}/{repositoryname}.git</code></li>
+</ul>
+<p>Vous pouvez maintenant, depuis <strong>NetBeans</strong>, commiter votre code et pousser vos commits vers le dépôt distant sur <strong>github</strong>.</p>
+<h3>Dans NetBeans, pour voir vos dépôts distants</h3>
+<p>Dans le menu <strong>Team &gt; Git &gt; Repository Browser</strong>, vous avez la liste de tous vos dépôts git locaux.</p>
+<ul>
+<li>Pour chacun des dépôts, vous avez entre crochets le nom de la branche &quot;courante&quot;.</li>
+<li>Pour chacun des dépôts, vous avez également la liste des dépôts distants.</li>
+<li>Pour chacun des dépôts, vous avez la liste des branches du dépôt local ainsi que les branches des dépôts distants.</li>
+</ul>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/fr/tags/zend-framework-2">zend framework 2</a></li><li><a href="/fr/tags/netbeans">Netbeans</a></li><li><a href="/fr/tags/git">git</a></li><li><a href="/fr/tags/composer">composer</a></li><li><a href="/fr/tags/ubuntu">ubuntu</a></li><li><a href="/fr/tags/github">github</a></li><li><a href="/fr/tags/ssh">SSH</a></li><li><a href="/fr/tags/howto">HOWTO</a></li></ul>
+        </div>
+      
+
+      
+    
+
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>Sur moi</h3>
+      <p>J&#39;ai appris le php il y a quelques années, quand Internet était à ses débuts. Pour diverses raisons, j&#39;ai arrêté en route et j&#39;ai perdu le fil des nouveaux Internets que je redécouvre. Résultat, je me sens constamment à courir après l&#39;histoire mais je suis toujours motivée à reprendre des projets personnels. Je me propose de vous partager mes découvertes. Au delà des sujets de programmation, j&#39;aime également partager mes infos concernant notamment l&#39;Histoire, l&#39;Astronomie, la Linguistique, les Films, les Livres et les Anime. J&#39;espère que vous aimerez suivre mon blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. Tous droits réservés.</p>
+        <p>Propulsé par <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

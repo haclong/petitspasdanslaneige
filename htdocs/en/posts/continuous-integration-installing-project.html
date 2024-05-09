@@ -1,0 +1,264 @@
+<!doctype html>
+<html class="no-js" lang="en" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>Continuous Integration - Installing the project&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">French</a>
+        <a href="/en/">English</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/en/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/en/books/0/index.html">Collections</a>
+        <a href="/en/">Home</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/en/">Home</a><i class="fas fa-angle-right"></i>Continuous Integration - Installing the project
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>Continuous Integration - Installing the project</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>1/27/2017, 6:43:00 PM
+        
+        <i class="fas fa-th-large"></i><!--a href="/en/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->, <!--a href="/en/sites/haclong-projects.html" class="tag-sites"-->Haclong projects<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/capture_2.png" class="node-banner" />
+        
+          <p><strong>Credit</strong> : Sebastian Mantel - Unsplash </p>
+        
+      </div>
+
+      <p><p>Once the pipeline have been created in <strong>GoCD</strong>, let's see together how we can set our first build.</p>
+<p>In my <a href="/fr/content/int%C3%A9gration-continue-les-concepts-de-gocd.html">previous article</a>, we have explored how to create our very first pipeline... Not quite though. Nothing did happen once we created our pipeline. Moreover and in a very frustrating way, i didn't give away any useful settings so far...</p>
+<p>I will fix that point right after we have checked on our project.</p>
+<h2>Project features :</h2>
+<ul>
+<li><a href="https://symfony.com/doc/current/setup.html" target="_blank">Symfony 2</a> Framework</li>
+<li>No use of database <em>(if you wish to have an example of continuous integration using a connection to a database, please refer to <a href="/fr/content/ci-int%C3%A9gration-continue-avec-continuousphp.html">my other article about ContinuousPHP</a>)</em></li>
+<li>Testing with <a href="https://phpunit.de/getting-started.html" target="_blank">PHPUnit</a></li>
+<li>Remote repository using <a href="https://github.com/">github</a></li>
+</ul>
+<h2>Scenario :</h2>
+<p>Project code is local using feature branches.</p>
+<p>Once the branch is completed, we merge that branch to <em>local master branch</em>.</p>
+<p>The <em>local master branch</em> update / commit will trigger the right <strong>GoCD</strong> pipeline.</p>
+<p>When the installation of the project on <strong>Go Server</strong> and the running of tests are successful, we will give direction to <strong>GoCD</strong> to push <em>local master branch</em> to <em>remote master branch</em>.</p>
+<h4>Let's see how to do it on GoCD.</h4>
+<p>On the first step, to <strong>GoCD</strong> to run a <em>build</em>, it is mandatory that <strong>GoCD</strong> is able to install the project. <span style="color:#800080;"><em>Remember, each time the continuous integration server must make a build, it has to run the steps all over from the beginning again : fetch the sources in the repository, install the project, install dependencies, run tests, validate tests and deploy depending on the direction we gave.</em></span></p>
+<h2>The pipeline</h2>
+<p>After creating our first pipeline, let's edit it.</p>
+<p><strong>Pipeline General Options</strong></p>
+<ul>
+<li>Pipeline Name : <strong>MonPremierBuild</strong></li>
+<li>Label Template : <strong>${COUNT}</strong></li>
+<li>Automatic Pipeline locking : <strong>N</strong></li>
+<li>Automatic Pipeline scheduling : <strong>Y</strong></li>
+</ul>
+<p><strong>Pipeline Project Management</strong></p>
+<ul>
+<li>Tracking Tool : <strong>None</strong></li>
+<li>Pipeline Materials : <strong>only path to source</strong></li>
+</ul>
+<p><strong>Environnement variables</strong></p>
+<p>None defined yet. <span style="color:#800080;"><em>I need to search more about that point because it is no clear for me what use i can do with it</em></span></p>
+<p><strong>Parameters</strong></p>
+<p>None defined yet.</p>
+<p>Let's dig into stages.</p>
+<h2>The stage</h2>
+<p>Our stages are created manually and do not use templates.</p>
+<ul>
+<li>Configuration type : <strong>Define Stages</strong></li>
+</ul>
+<h3><strong>ProjectInstallation Stage</strong></h3>
+<p>I started with one <strong>stage</strong> including all was needed for one <em>build</em>. But tests was taking more and more time to run and sometimes, <strong>GoCD</strong> could run into timeout. I had to separate different <em>stages</em>of one <em>build</em>. <strong>Stages</strong> are ALWAYS run in the order we decided. So i set a first stage to install the project and then I set a second stage for the testing and deployement.</p>
+<p>For now, lets check on our first stage : installing the project.</p>
+<h4><strong>MonPremierBuild/ProjectInstallation</strong></h4>
+<p><strong>Stage Settings</strong></p>
+<ul>
+<li>Stage Name : <strong>ProjectInstallation</strong></li>
+<li>Stage Type : <strong>On success</strong> (stage starts automatically vs stage starts manually). If the previous stage is failing, then the stage won't be executed. If it is the very first stage (no stage before) then that stage will run automatically each time <strong>GoCD</strong> run a <em>build</em>.</li>
+<li>Fetch Materials : <strong>Y.</strong> <strong>GoCD</strong> MUST go fetch <em><strong>materials</strong></em> to run the stage.</li>
+<li>Never Cleanup Artifacts : <strong>N</strong>. If the stage build an <strong>artifact</strong>, this option tells <strong>GoCD</strong> NEVER cleanup <strong>artifacts</strong> stored on <strong>Go Server</strong> if option is checked and ALWAYS cleanup <strong>artifacts</strong> if option is not checked.</li>
+<li>Clean Working Directory : <strong>Y</strong>. <strong>GoCD</strong> MUST ALWAYS clean the working directory everytime it starts a new <em>build</em>when the option is checked and NEVER clean the working directory everytime it starts a new <em>build</em>when the option is not checked. Cleaning the working directory everytime will ensure us to start the <em>build</em>on a fresh install.</li>
+</ul>
+<p><strong>Environnement variables</strong></p>
+<p>None defined yet</p>
+<p><strong>Permissions</strong></p>
+<ul>
+<li><strong>Inherit from the pipeline group</strong>.</li>
+</ul>
+<p>Let's look at our jobs now.</p>
+<h2>The job</h2>
+<p>My <strong>ProjectInstallation</strong> stage does have one and only one job for now.</p>
+<h3>InstallWithComposer Job</h3>
+<h4>MonPremierBuild/ProjectInstallation/InstallWithComposer</h4>
+<p><strong>Job Settings</strong></p>
+<ul>
+<li>JobName : <strong>InstallWithComposer</strong></li>
+<li>Resources : <strong>''</strong></li>
+<li>Job Timeout : <strong>Use default (Never)</strong></li>
+<li>Run Type : <strong>Run one instance</strong>. <em><span style="color:#800080;">I don't know yet how to use the instance feature.</span></em></li>
+</ul>
+<p><strong>Artifact</strong></p>
+<p>None defined yet.</p>
+<p><strong>Environment variables</strong></p>
+<p>None defined yet.</p>
+<p><strong>Custom tab</strong></p>
+<p>None defined yet.</p>
+<p>That's it. The whole job settings are done. Now, let's get a look at our job's tasks.</p>
+<h2>The task</h2>
+<p>Actually, there's only one task for our <strong>InstallWithComposer</strong> job : the command to install our project dependencies using <strong>Composer</strong>.</p>
+<p>What we are going to do know is to ask <strong>GoCD</strong> to do AUTOMATICALLY what we would have done MANUALLY with a terminal :</p>
+<pre><code class="language-sh">composer install
+</code></pre>
+<h4>What's gonna happen :</h4>
+<p>NOTE : when we created the pipeline, whe had defined a first <em><strong>material</strong></em> which is actually our local <strong>git</strong> repository and we also set the <em><strong>branch</strong></em> <strong>GoCD</strong> needs to check.</p>
+<ul>
+<li>Once we will commit the right <em><strong>branch</strong></em> on the right <strong>git</strong> repository</li>
+<li><strong>GoCD</strong> will knows something happened</li>
+<li><strong>GoCD</strong> will clone the project from our local <strong>git</strong> repository to <code>**/var/lib/go-agent/pipelines**</code></li>
+<li><strong>GoCD</strong> will go to the project root</li>
+<li><strong>GoCD</strong> will run the task we ask him to run (namely : <code>composer install</code>)</li>
+</ul>
+<h4>What needs to be done :</h4>
+<p>Edit the task in <strong>GoCD</strong>. It is a <strong>&quot;More...&quot;</strong> type task so we need to write all the rules down.</p>
+<ul>
+<li>Command : <strong>composer</strong></li>
+<li>Arguments : <strong>install</strong></li>
+<li>Working Directory : <strong>''</strong></li>
+<li>Run If Conditions : <strong>Passed</strong> (will run automatically if the previous job is successful - if there's no previous job, so it will run automatically nonetheless)</li>
+</ul>
+<p>Very important ! You must have installed the <code>composer</code> binary in a PATH directory on your <strong>Ubuntu</strong>.</p>
+<p><strong>Copy <code>composer.phar</code> in <code>/usr/bin</code></strong></p>
+<pre><code class="language-sh">cd /usr/bin
+cp /path/to/composer.phar
+</code></pre>
+<p><strong>Make a symbolic link</strong></p>
+<pre><code class="language-sh">sudo ln -s composer.phar composer
+</code></pre>
+<p>Check <code>composer.phar</code> permissions :</p>
+<ul>
+<li>root:root - 755</li>
+</ul>
+<p>This done, we have installed the project on <strong>Go Server</strong>.</p>
+<p>Next post, we will see how to run tests. Of course, you must have tests to run them. On the other hand, as i said once, there's no senses to use a continuous integration server if you don't take the opportunity to consolidate your project with a few tests.</p>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/en/tags/integration-continue">intégration continue</a></li><li><a href="/en/tags/gocd">gocd</a></li><li><a href="/en/tags/ubuntu">ubuntu</a></li><li><a href="/en/tags/tutorial">tutorial</a></li><li><a href="/en/tags/git">git</a></li></ul>
+        </div>
+      
+
+      
+        <nav id="book-navigation">
+    
+       <li class="link-previous"><a href="/en/posts/continuous-integration-installing-gocd.html"><i class="fas fa-long-arrow-alt-left"></i> Continuous Integration - Installing GoCD</li>
+    
+
+    
+        <li class="link-next"><a href="/en/posts/continuous-integration-testing-project-12.html">Continuous Integration - Testing the project 1/2 <i class="fas fa-long-arrow-alt-right"></i></a></li>
+    
+
+    
+        <li class="link-up"><a href="/en/books/continuous-integration-using-go-cd.html"><i class="fas fa-book-open"></i> Continuous Integration - Using Go CD</li>
+    
+</nav>
+
+      
+    
+
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>About me</h3>
+      <p>I learned coding with php several years ago, when Internet was still young. For multiple reasons, i had stopped then and missed most of this new Internet i&#39;m discovering once again. So, i feel like a newbie again and since i&#39;m ready to start over personal project, i&#39;ll share with you some of my discoveries. Beyond coding topics, i&#39;ll enjoy sharing with you several subjects such as History, Astronomy, Linguistics, Movies, Books, Music and Anime among others. I hope you&#39;ll enjoy reading this blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. All rights reserved.</p>
+        <p>Powered by <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

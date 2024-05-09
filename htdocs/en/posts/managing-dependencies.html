@@ -1,0 +1,173 @@
+<!doctype html>
+<html class="no-js" lang="en" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>Managing Dependencies&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">French</a>
+        <a href="/en/">English</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/en/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/en/books/0/index.html">Collections</a>
+        <a href="/en/">Home</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/en/">Home</a><i class="fas fa-angle-right"></i>Managing Dependencies
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>Managing Dependencies</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>12/4/2014, 3:06:00 PM
+        
+        <i class="fas fa-th-large"></i><!--a href="/en/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->, <!--a href="/en/sites/haclong-projects.html" class="tag-sites"-->Haclong projects<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/jeu_de_contruction.jpg" class="node-banner" />
+        
+      </div>
+
+      <p><p>As far as I get it and though I don’t really know if i can convince you, i realize that models/entities/classes shouldn’t be dependant of each other. The less they are dependant, the better.</p>
+<p>This, translated to common words, can be sum up VERY ROUGHLY :</p>
+<p><cite>Do not use <code>new</code> keyword within any of your classes.</cite></p>
+<p>Another way to check if your class is tightly dependent : check the <code>use</code> keyword : if your object is using TOO much different objects and moreover from different modules/libraries/concepts, than we can say there’s something wrong with the way you build it up.</p>
+<p>Then, HOW to use other classes without creating new objects ?</p>
+<p>We instanciate objects and then, INJECT them into our classes.</p>
+<h3>How to inject dependencies ?</h3>
+<p>There’s different strategies :</p>
+<p>You can use the <strong>constructor</strong>, create a constructor with as many arguments as you have dependencies and set each argument to a property. From outside that object, you create all the objects you need and pass them through the constructor. With this strategy, you ensure that the dependencies are mandatory.</p>
+<p>You can use <strong>setter methods</strong>, just like for any of your property. With this strategy, you cannot be sure the dependencies are mandatory. You have to manage de default status if any.</p>
+<p>You can use <strong>interfaces</strong>, though i don’t get this right so i won’t talk about that part.</p>
+<p>Within our class, the dependency will be a property just like another and, still within the class, we will manipulate and return such property and barely not caring whether the dependency is an instance of class A or class B… All our class has to know is just HOW to use its dependency.</p>
+<p>There are exceptions to this rule :</p>
+<p><strong>Factory</strong> object HAS to use the <code>new</code> keyword. It is because they are factories. They are meant to return a new object.</p>
+<p>And for my part, I don’t inject <code>ArrayObject</code> either. I consider it as a type more than a dependency… But it is a personal point of view and i am still thinking whether it is right or wrong.</p>
+<h3>Instanciating objects</h3>
+<p>Oh… of course… I said earlier : <em>We instanciate objects and then, INJECT them into our classes.</em> I have covered roughly the injection part but now, WHERE to instanciate objects, since no classes can use the <code>new</code> keyword…</p>
+<p>We will use a higher level object. In that object, we will instanciate all our objects : the dependencies and all the other objects, with the injections whether by constructor or by setters.</p>
+<p>Zend Framework 2 has that kind of useful component : the <strong>Service Manager</strong>. I’m quite sure that other frameworks do have a similar component but i haven’t tested them yet so i don’t know how the Service Manager is called with Symfomy, Laravel etc… Just find out how to use it.</p>
+<p>The <strong>Service Manager</strong> is a kind of index where we can declare each of your classes. This is, roughly, the only component of the module where we will use all our <code>new</code> instructions and instanciate each of our objects at least once. The only one.</p>
+<h3>Using the objects</h3>
+<p>All our <strong>model</strong> objects (entities, mappers, factories, forms) are instanciated (therefore created) within the <strong>Service Manager</strong> as well as their dependencies. So, technically, you won’t need to access the <strong>Service Manager</strong> from within the model objects. Because you won’t have to call for any external classes from within your class since all the dependencies are already injected from the <strong>Service Manager</strong>.</p>
+<p>For the particular case of an array of object, the old fashioned way to do this is to have a <code>foreach</code> loop and instanciate a <code>new</code> object for each iteration. Since the object is injected only once in our object, use the <code>clone</code> functionality instead. Do the <code>foreach</code> loop and <code>clone</code> the injected dependency rather than instanciating from nowhere.</p>
+<p>It leaves the <strong>Views</strong> : objects used by the view should be pushed by the <strong>Controller</strong>. It leaves the <strong>plugins</strong>… I’ll cover that part once i’ll have to work with views plugins more…</p>
+<p>Then the <strong>Controller</strong> : Controller classes in Zend Framework implements the <strong>ServiceLocatorAware</strong> interface which allow them to access to the <strong>Service Manager</strong>.</p>
+<p>When i started to use ZF2, i was looking everywhere for tips on how to access the <strong>Service Manager</strong>. But you likely do not need that answer. You shouldn’t need that answer.</p>
+<p>I find benefits while instanciating all my objects in the <strong>Service Manager</strong> : if i ever do a refactoring of my code, rearranging the namespace, splitting one module in two differents modules, it is easy peasy… just change the links in your <strong>Service Manager</strong> and the rest of the code remain unmoved. This save my time several time.</p>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/en/tags/dependances">dépendances</a></li><li><a href="/en/tags/dependency-injection">dependency injection</a></li><li><a href="/en/tags/code">code</a></li></ul>
+        </div>
+      
+
+      
+        <nav id="book-navigation">
+    
+       <li class="link-previous"><a href="/en/posts/managing-dependencies-custom-select-element-form.html"><i class="fas fa-long-arrow-alt-left"></i> Managing Dependencies - Custom Select Element in Form</li>
+    
+
+    
+
+    
+        <li class="link-up"><a href="/en/books/managing-dependencies-examples-zend-framework-2.html"><i class="fas fa-book-open"></i> Managing Dependencies - Examples with Zend Framework 2</li>
+    
+</nav>
+
+      
+    
+
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>About me</h3>
+      <p>I learned coding with php several years ago, when Internet was still young. For multiple reasons, i had stopped then and missed most of this new Internet i&#39;m discovering once again. So, i feel like a newbie again and since i&#39;m ready to start over personal project, i&#39;ll share with you some of my discoveries. Beyond coding topics, i&#39;ll enjoy sharing with you several subjects such as History, Astronomy, Linguistics, Movies, Books, Music and Anime among others. I hope you&#39;ll enjoy reading this blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. All rights reserved.</p>
+        <p>Powered by <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

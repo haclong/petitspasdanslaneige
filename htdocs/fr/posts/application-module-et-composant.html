@@ -1,0 +1,168 @@
+<!doctype html>
+<html class="no-js" lang="fr" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>Application, module et composant&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">Français</a>
+        <a href="/en/">Anglais</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/fr/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/fr/books/0/index.html">Séries</a>
+        <a href="/fr/">Accueil</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/fr/">Accueil</a><i class="fas fa-angle-right"></i>Application, module et composant
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>Application, module et composant</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>03/04/2015 17:50:00
+        
+        <i class="fas fa-th-large"></i><!--a href="/fr/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->, <!--a href="/fr/sites/haclong-projects.html" class="tag-sites"-->Haclong projects<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/apprets-3-perles-poupee-russe-matriochka-e-332162-p1160248-d3e57_big.jpg" class="node-banner" />
+        
+      </div>
+
+      <p><p>Quand il s'agit de monter l'architecture de votre application, vous avez plusieurs modèles qui s'offrent à votre imagination. Je pense que le choix se fait en fonction de vos préférences, de la façon dont vous vous projetez dans votre projet, de la taille et/ou de la complexité de votre projet.</p>
+<p>Avec le temps, on tente tous, chacun à notre façon, de rationaliser et/ou d'optimiser notre façon d'écrire du code. Certains défendent la programmation orientée objet et d'autres lui préfèreront le procédural. Certains préfèrent tout coder depuis le début et d'autres optent pour des frameworks éprouvés. Quelle que soit votre préférence, vous pouvez structurer votre code et donner des responsabilités à différents composants de votre application.</p>
+<h3>Responsabiliser les composants</h3>
+<p>Quand je parle de responsabilité d'un composant, je pense forcément aux principes SOLID de la programmation orientée objet. Toutefois, même si vous faite de la programmation en procédural, vous pouvez trouver le concept intéressant. Le principe est d'assigner une tâche limitée pour chaque type de fichiers de votre application (des objets pour ceux qui programment en objet, des fichiers .php pour ceux qui programment en procédural).</p>
+<p>Il y a les fichiers (ou les objets) dédiés pour l'affichage à l'écran : typiquement, vous vous limiterez à utiliser les balises HTML (y compris Javascript et CSS) que dans ces fichiers. Vous utiliserez des fonctions d'affichage (echo, printf etc...) dans ces fichiers et nulle part ailleurs.</p>
+<p>A l'opposé, vous pouvez décider d'avoir des fichiers (ou des objets) dédiés pour extraire les données à partir des couches de stockage. Les couches de stockage sont la base de données, des fichiers XML, des fichiers csv, des données de web services. En procédural, ces fichiers vont</p>
+<ul>
+<li>accéder à la source de vos données (le répertoire de fichiers, le serveur FTP, la base de données),</li>
+<li>récupérer les données à partir de la source,</li>
+<li>préparer une (ou plusieurs) variable(s) pour utiliser ces données.</li>
+</ul>
+<p>En objet, on retrouve le même principe : accéder aux données, récupérer les données dans des objets, utiliser ces objets.</p>
+<p>Une fois que vous avez regroupé les fichiers (ou objets) en ensembles avec des responsabilités similaires : les fichiers qui affichent les données, les fichiers qui extraient les données, les fichiers qui traitent les données, les fichiers qui stockent les données, sans nécessairement appliquer à la lettre des modèles d'architecture définis, vous pouvez remonter vos ensembles à un niveau supérieur : les modules.</p>
+<h3>Concevoir des modules</h3>
+<p>Bundle chez Symfony, Module chez Zend Framework, le module est un ensemble de fichiers (ou d'objets) qui sont sensés couvrir une fonctionnalité de votre application... Là encore, il reste LA question qui taraude... fonctionnalité... quand commence-t-elle, quand finit-elle...</p>
+<p>Vous commencez à couper votre application en modules. Vous êtes maître en ce domaine. A vous de décider s'il est plus raisonnable / logique de découper l'application en trois, quatre, quinze ou vingt modules. L'enjeu (ou la règle) est que les modules interagissent les uns avec les autres mais qu'ils ne soient pas trop liés (afin de pouvoir les débrancher facilement). Le point déterminant, c'est que vous devez pouvoir remplacer un module par un autre sans avoir à réécrire les modules existants (qui ne sont pas changés). Bon, plus facile à dire qu'à faire, je vous l'accorde. Mais vous devez garder cet objectif en tête.</p>
+<p>Chaque module couvre une fonctionnalité. Une fonctionnalité évolue, vous faites évoluer un et un seul module. Pas d'impact pour les voisins (dans le meilleur des mondes).</p>
+<p>Chaque module est développé avec le découpage par composants responsabilisés mentionnés plus haut. Ainsi, les responsabilités sont réparties dans les objets (ou fichiers) puis de manière macro au niveau des modules. Mais on peut encore remonter d'un niveau.</p>
+<h3>Concevoir des applications</h3>
+<p>Au dessus des modules, vous avez des applications entières. La plupart des projets concerne une et une seule application et peu se sentiront concernés par ce niveau de conception. Toutefois, je me surprends, dans mes propres projets, à imaginer une brique intermédiaire, uniquement dédiée à la restitution de données par exemple.</p>
+<p>Une application classique se compose d'un accès à la couche de données stockées, d'un front communément appelé le site, et d'un back, communément appelé l'interface admin. Globalement, le back insère des données dans une base de données et le front va lire les données dans la base de données et les restituer à l'écran. Après, vous avez toujours les sites participatifs, où les utilisateurs du front peuvent inscrire des informations dans la base de données, mais dans ce cas, vous aurez également un back plus solide qui va gérer des aspects absents du front : gestion des utilisateurs, gestion des droits etc... Il y a toujours un back et un front, les deux articulés autour d'une base de données.</p>
+<p>Une fois qu'on voit ces trois éléments, on peut se livrer à plusieurs architectures différentes :</p>
+<ul>
+<li>
+<p>une seule URL, un back, un front et une base de données, tout mélangé : typiquement, un site Wordpress.</p>
+</li>
+<li>
+<p>une URL pour le front, un sous domaine pour le back, et la base de données... Ca laisse songeur. Comment développer une application back, hébergée sur le sous domaine, qui auraient les fonctionnalités pour venir enregistrer les données dans la base de données et une seconde application front, hébergée sur le domaine, qui ne pourraient que lire les infos de la base de données : sessions séparées, caches séparés : c'est pratique pour la répartition des ressources. Le back est lié à la base de données. Le front est lié à la base de données. Les changements opérés sur le front n'ont pas de conséquences sur le back et vice et versa. On peut même commencer à imaginer pour un même back, plusieurs fronts différents, chacun exploitant une partie des données stockées dans la base de données. Chaque front étant indépendant (sauf pour la base de données), modifier un front n'intervient pas sur les autres fronts. On sépare encore plus l'accès aux données et la présentation au client.</p>
+</li>
+<li>
+<p>Afin de mieux séparer encore les concepts (et responsabilités), on pourrait décider que le front n'a aucun contact sur la base de données. Il n'y a donc pas de risques que le mot de passe de la base de données circule auprès d'une grande population d'utilisateurs. Mais alors comment accéder aux données stockées dans la base par le back ? En ajoutant les web services. Le back insère les données dans la base de données. Une couche webservices restitue les données. Grâce à cette couche webservices, le développeur contrôle exactement les requêtes &quot;publiques&quot; qu'on peut faire sur son jeu de données. Ne faire que des GET, interdire les PUSH etc... Le front consommerait alors ce web services. On a complètement détaché le front de la base de données. Si cette dernière organisation semble plus complexe à énoncer, elle peut se révéler plus simple à maintenir. Toucher une des applications ne casse pas nécessairement l'autre. Limiter l'accès à la base de données a un sens aussi. Et plus concrètement, cette organisation permet de garder un back avec un modèle de site web alors que le front serait une application mobile...</p>
+</li>
+</ul>
+<p>De niveau en niveau, on a coupé, scindé, divisé, fragmenté notre application toujours en plus petites parties. Plusieurs applications séparées qui accèdent au même jeu de données. Chaque application est composée de modules en charge d'une fonctionnalité distincte. Chaque module lui même est divisé en plusieurs fichiers, chaque fichier lui même représentant un et un seul composant responsable.</p>
+<p>Même si vous décidez de vous affranchir de ce tout objet qui semble faire le buzz autour de vous et que vous décidez de conserver votre vieille programmation procédurale, vous pouvez quand même faire la démarche de découper et de scinder votre code en plus petites parties et chaque partie sera utilisée par effet d'include... J'ai relu des vieux vieux codes à moi et j'ai souris quand j'ai vu que j'avais déjà appliqué ce principe... Maladroitement, mais le principe était là.</p>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/fr/tags/architecture">architecture</a></li><li><a href="/fr/tags/code">code</a></li></ul>
+        </div>
+      
+
+      
+    
+
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>Sur moi</h3>
+      <p>J&#39;ai appris le php il y a quelques années, quand Internet était à ses débuts. Pour diverses raisons, j&#39;ai arrêté en route et j&#39;ai perdu le fil des nouveaux Internets que je redécouvre. Résultat, je me sens constamment à courir après l&#39;histoire mais je suis toujours motivée à reprendre des projets personnels. Je me propose de vous partager mes découvertes. Au delà des sujets de programmation, j&#39;aime également partager mes infos concernant notamment l&#39;Histoire, l&#39;Astronomie, la Linguistique, les Films, les Livres et les Anime. J&#39;espère que vous aimerez suivre mon blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. Tous droits réservés.</p>
+        <p>Propulsé par <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

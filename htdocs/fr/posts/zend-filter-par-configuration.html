@@ -1,0 +1,584 @@
+<!doctype html>
+<html class="no-js" lang="fr" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>Zend Filter par configuration&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">Français</a>
+        <a href="/en/">Anglais</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/fr/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/fr/books/0/index.html">Séries</a>
+        <a href="/fr/">Accueil</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/fr/">Accueil</a><i class="fas fa-angle-right"></i>Zend Filter par configuration
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>Zend Filter par configuration</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>03/02/2015 14:15:00
+        
+        <i class="fas fa-th-large"></i><!--a href="/fr/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->, <!--a href="/fr/sites/haclong-projects.html" class="tag-sites"-->Haclong projects<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/eau.jpg" class="node-banner" />
+        
+      </div>
+
+      <p><p>Après avoir vu comment on mettait en place un <code>inputFilter</code> (ensemble d'élément Input), on voit maintenant comment appliquer des filtres sur chaque élément <code>Input</code> de notre <code>inputFilter</code>.</p>
+<p>NOTE : un filtre est un transformateur : Ce qui arrive en entrée est retourné soit transformé, traduit, transcodé, crypté, compressé, tronqué...</p>
+<p>C'est la présentation des filtres en mode tableau de configuration (à utiliser avec la <code>factory</code>)</p>
+<pre><code class="language-php">'filters' =&gt; array(
+  array(
+    'name' =&gt; 'alnum' // Zend\I18n\Filter\Alnum
+    'options' =&gt; array(
+      'locale' =&gt; string $locale // default null - par ex 'en_US'
+      'allow_white_space' =&gt; bool / default false
+    ),
+  ),
+
+  array(
+    'name' =&gt; 'alpha' // Zend\I18n\Filter\Alpha
+    'options' =&gt; array(
+      'locale' =&gt; string $locale // default null - par ex 'en_US'
+      'allow_white_space' =&gt; bool / default false
+    ),
+  ),
+
+  array(
+    'name' =&gt; 'basename' // Zend\Filter\BaseName
+  ),
+
+  array(
+    'name' =&gt; 'boolean' // Zend\Filter\Boolean
+    'options' =&gt; array(
+      'translations' =&gt; array() //
+      'casting' =&gt; bool // default true
+      'type' =&gt; int $typeBooleen // default TYPE_PHP
+    ),
+  ),
+  // liste des types disponibles
+  Zend\Filter\Boolean::TYPE_BOOLEAN =&gt; 'boolean' = 1
+  Zend\Filter\Boolean::TYPE_INTEGER =&gt; 'integer' = 2
+  Zend\Filter\Boolean::TYPE_FLOAT =&gt; 'float' = 4
+  Zend\Filter\Boolean::TYPE_STRING =&gt; 'string' = 8
+  Zend\Filter\Boolean::TYPE_ZERO_STRING =&gt; 'zero' = 16
+  Zend\Filter\Boolean::TYPE_EMPTY_ARRAY =&gt; 'array' = 32
+  Zend\Filter\Boolean::TYPE_NULL =&gt; 'null' = 64
+  Zend\Filter\Boolean::TYPE_PHP =&gt; 'php' = 127
+  Zend\Filter\Boolean::TYPE_FALSE_STRING =&gt; 'false' = 128
+  Zend\Filter\Boolean::TYPE_LOCALIZED =&gt; 'localized' = 256
+  Zend\Filter\Boolean::TYPE_ALL =&gt; 'all' = 511
+
+  array(
+    'name' =&gt; 'callback' // Zend\Filter\Callback
+    'options' =&gt; array(
+      'callback' =&gt; string // default null
+      'callback_params' =&gt; array() // paramètres du callback
+    ),
+  ),
+
+  array(
+    'name' =&gt; 'compress' // Zend\Filter\Compress
+    'options' =&gt; array(
+      'adapter' =&gt; string $adapter // default 'Gz'
+      'options' =&gt; array() ; // options en fonction de l'adapter
+
+      // $adapter == 'Bz2'
+      'adapter' =&gt; 'Bz2' // 'Zend\Filter\Compress\Bz2',
+      'options' =&gt; array(
+        'blocksize' =&gt; int // default 4 - blocksize to use from 0 - 9
+        'archive' =&gt; string // archive to use - default null
+      ),
+
+      // $adapter == 'Gz'
+      'adapter' =&gt; 'Gz' // 'Zend\Filter\Compress\Gz',
+      'options' =&gt; array(
+        'level' =&gt; int // default 9 - Compression level 0-9
+        'archive' =&gt; string // archive to use - default null
+        'mode' =&gt; string // compression mode 'compress'|'deflate' - default 'compress'
+      ),
+
+      // $adapter == 'Lzf'
+      'adapter' =&gt; 'Lzf' // 'Zend\Filter\Compress\Lzf', no options
+
+      // $adapter == 'Rar'
+      'adapter' =&gt; 'Rar' // 'Zend\Filter\Compress\Rar',
+      'options' =&gt; array(
+        'callback' =&gt; string // callback to use - default null
+        'archive' =&gt; string // archive to use - default null
+        'password' =&gt; string // password to use - default null
+        'target' =&gt; string // default '.'
+      ),
+
+      // $adapter == 'Snappy'
+      'adapter' =&gt; 'Snappy' // 'Zend\Filter\Compress\Snappy', no options
+
+      // $adapter == 'Tar'
+      'adapter' =&gt; 'Tar' // 'Zend\Filter\Compress\Tar',
+      'options' =&gt; array(
+        'archive' =&gt; string // archive to use - default null
+        'mode' =&gt; string // compression mode 'Gz'|'Bz2' - default null
+        'target' =&gt; string // default '.'
+      ),
+
+      // $adapter == 'Zip'
+      'adapter' =&gt; 'Zip' // 'Zend\Filter\Compress\Zip',
+      'options' =&gt; array(
+        'archive' =&gt; string // archive to use - default null
+        'target' =&gt; string // default null
+      ),
+    ),
+  ),
+
+  array(
+    'name' =&gt; 'decompress' // 'Zend\Filter\Decompress',
+    'options' =&gt; array(
+      // voir filtre 'compress'
+    ),
+  ),
+
+  array(
+    'name' =&gt; 'datetimeformatter' // 'Zend\Filter\DateTimeFormatter',
+    'options' =&gt; array(
+      'format' =&gt; string // date format accepted by date()
+    ),
+  ),
+
+  array(
+    'name' =&gt; 'digits' // 'Zend\Filter\Digits',
+  ),
+
+  array(
+    'name' =&gt; 'dir' // 'Zend\Filter\Dir',
+  ),
+
+  array(
+    'name' =&gt; 'encrypt' // 'Zend\Filter\Encrypt',
+    'options' =&gt; array(
+      'adapter' =&gt; string $adapter // Encryption adapter
+
+      // $adapter == 'BlockCipher'
+      // http://php.net/manual/en/book.mcrypt.php
+      // voir la doc de Zend\Crypt\BlockCipher pour détail http://framework.zend.com/manual/current/en/modules/zend.crypt.block-cipher.html
+      'adapter' =&gt; 'BlockCipher' // Zend\Filter\Encrypt\BlockCipher
+      'key' =&gt; string //
+      'key_iteration' =&gt; int // default 5000
+      'algorithm' =&gt; string // default 'aes'
+      'hash' =&gt; string // default 'sha256'
+      'vector' =&gt;
+      'compression' =&gt; // default null
+      'mode' =&gt; string // default 'cbc'
+      // http://php.net/manual/en/mcrypt.constants.php
+      'mode_directory' =&gt; string // default : path to mcrypt mode extension
+
+      // $adapter == 'Openssl'
+      // http://fr2.php.net/manual/en/book.openssl.php
+      'adapter' =&gt; 'Openssl' // Zend\Filter\Encrypt\Openssl
+      'public' =&gt; array()
+      'private' =&gt; array()
+      'envelope' =&gt; array()
+      'passphrase' =&gt; string
+      'compression' =&gt; //
+      'package' =&gt; //
+    ),
+  ),
+
+  array(
+    'name' =&gt; 'decrypt' // 'Zend\Filter\Decrypt',
+    'options' =&gt; array(
+      // voir filtre 'encrypt'
+    ),
+  ),
+
+  array(
+    'name' =&gt; 'htmlentities' // 'Zend\Filter\HtmlEntities',
+    // voir la doc de http://fr2.php.net/manual/en/function.htmlentities.php
+    'options' =&gt; array(
+      'quotestyle' =&gt; // correspond à l'argument $flag de la fonction htmlentities()
+      // valeurs acceptées ENT_COMPAT (default), ENT_QUOTES, ENT_NOQUOTES
+      'charset' =&gt; // correspond à l'argument $encoding
+      'doublequote' =&gt; // correspond à l'argument $double_encode
+    ),
+  ),
+
+  array(
+    'name' =&gt; 'inflector' // 'Zend\Filter\Inflector',
+    // http://framework.zend.com/manual/current/en/modules/zend.filter.inflector.html
+    'options' =&gt; array(
+      'pluginManager' =&gt; instanceof \Zend\Filter\FilterPluginManager
+      'target' =&gt; 
+      'rules' =&gt; array()
+      'throwTargetExceptionOn' =&gt; bool // default false
+      'targetReplacementIdentifier' =&gt; string
+    ),
+  ),
+
+  array(
+    'name' =&gt; 'int' // 'Zend\Filter\Int',
+  ),
+
+  array(
+    'name' =&gt; 'null' // 'Zend\Filter\Null',
+    'options' =&gt; array(
+      'type' =&gt; in $typeNull // default TYPE_ALL
+    ),
+  ),
+  // liste des type disponible
+  Zend\Filter\Null::TYPE_BOOLEAN =&gt; 'boolean' = 1
+  Zend\Filter\Null::TYPE_INTEGER =&gt; 'integer' = 2
+  Zend\Filter\Null::TYPE_EMPTY_ARRAY =&gt; 'array' = 4
+  Zend\Filter\Null::TYPE_STRING =&gt; 'string' = 8
+  Zend\Filter\Null::TYPE_ZERO_STRING =&gt; 'zero' = 16
+  Zend\Filter\Null::TYPE_FLOAT =&gt; 'float' = 32
+  Zend\Filter\Null::TYPE_ALL =&gt; 'all' = 63
+
+  array(
+    'name' =&gt; 'numberformat' // 'Zend\I18n\Filter\NumberFormat',
+    'options' =&gt; array(
+      'locale' =&gt; string // default null, string de type 'en_US'
+      'style' =&gt; NumberFormatter::DEFAULT_STYLE //
+      // http://php.net/manual/en/class.numberformatter.php#intl.numberformatter-constants.unumberformatstyle
+      'type' =&gt; NumberFormatter::TYPE_DOUBLE //
+      // http://www.php.net/manual/class.numberformatter.php#intl.numberformatter-constants.types
+    ),
+  ),
+
+  array(
+    'name' =&gt; 'numberparse' // 'Zend\I18n\Filter\NumberParse',
+    'options' =&gt; array(
+      'locale' =&gt; string // default null, string de type 'en_US'
+      'style' =&gt; NumberFormatter::DEFAULT_STYLE //
+      // http://php.net/manual/en/class.numberformatter.php#intl.numberformatter-constants.unumberformatstyle
+      'type' =&gt; NumberFormatter::TYPE_DOUBLE //
+      // http://www.php.net/manual/class.numberformatter.php#intl.numberformatter-constants.types
+    ),
+  ),
+
+  array(
+    'name' =&gt; 'pregreplace' // 'Zend\Filter\PregReplace',
+    'options' =&gt; array(
+      'pattern' =&gt; string // default null - regex
+      'replacement' =&gt; string // default '' - regex
+    ),
+  ),
+
+  array(
+    'name' =&gt; 'realpath' // 'Zend\Filter\RealPath',
+    'options' =&gt; array(
+      'exists' =&gt; bool // default true - check if path exists
+    ),
+  ),
+
+  array(
+    'name' =&gt; 'stringtolower' // 'Zend\Filter\StringToLower',
+    'options' =&gt; array(
+      'encoding' =&gt; string // encoding string - default null
+    ),
+  ),
+
+  array(
+    'name' =&gt; 'stringtoupper' // 'Zend\Filter\StringToUpper',
+    'options' =&gt; array(
+      'encoding' =&gt; string // encoding string - default null
+    ),
+  ),
+
+  array(
+    'name' =&gt; 'stringtrim' // 'Zend\Filter\StringTrim',
+    'options' =&gt; array(
+      'charlist' =&gt; array() // encoding string - default null
+    ),
+  ),
+
+  array(
+    'name' =&gt; 'stripnewlines' // 'Zend\Filter\StripNewlines',
+  ),
+
+  array(
+    'name' =&gt; 'striptags' // 'Zend\Filter\StripTags',
+    'options' =&gt; array(
+      'allowTags' =&gt; array() // list of allowed tags
+      'allowAttribs' =&gt; array() // list of allowed attributes
+      'allowComments' =&gt; bool // are comments allowed
+    ),
+  ),
+
+  array(
+    'name' =&gt; 'urinormalize' // 'Zend\Filter\UriNormalize',
+    // http://framework.zend.com/manual/current/en/modules/zend.uri.html
+    'options' =&gt; array(
+      'defaultScheme' =&gt; string // scheme string
+      'enforcedScheme' =&gt; string // scheme string
+    ),
+  ),
+),
+</code></pre>
+<p>Les filtres spécifiquement sur les mots</p>
+<pre><code class="language-php">'filters' =&gt; array(
+  array(
+    'name' =&gt; 'wordcamelcasetodash' // 'Zend\Filter\Word\CamelCaseToDash',
+  ),
+
+  array(
+    'name' =&gt; 'wordcamelcasetoseparator' // 'Zend\Filter\Word\CamelCaseToSeparator',
+    'options' =&gt; array(
+      'separator' =&gt; string // ''
+    ),
+  ),
+
+  array(
+    'name' =&gt; 'wordcamelcasetounderscore' // 'Zend\Filter\Word\CamelCaseToUnderscore',
+  ),
+
+  array(
+    'name' =&gt; 'worddashtocamelcase' // 'Zend\Filter\Word\DashToCamelCase',
+  ),
+
+  array(
+    'name' =&gt; 'worddashtoseparator' // 'Zend\Filter\Word\DashToSeparator',
+    'options' =&gt; array(
+      'separator' =&gt; string // ''
+    ),
+  ),
+
+  array(
+    'name' =&gt; 'worddashtounderscore' // 'Zend\Filter\Word\DashToUnderscore',
+  ),
+
+  array(
+    'name' =&gt; 'wordseparatortocamelcase' // 'Zend\Filter\Word\SeparatorToCamelCase',
+    'options' =&gt; array(
+      'separator' =&gt; string // ''
+    ),
+  ),
+
+  array(
+    'name' =&gt; 'wordseparatortodash' // 'Zend\Filter\Word\SeparatorToDash',
+    'options' =&gt; array(
+      'separator' =&gt; string // ''
+    ),
+  ),
+
+  array(
+    'name' =&gt; 'wordseparatortoseparator' // 'Zend\Filter\Word\SeparatorToSeparator',
+    'options' =&gt; array(
+      'searchSeparator' =&gt; string // ''
+      'replaceSeparator' =&gt; string // ''
+    ),
+  ),
+
+  array(
+    'name' =&gt; 'wordunderscoretocamelcase' // 'Zend\Filter\Word\UnderscoreToCamelCase',
+  ),
+
+  array(
+    'name' =&gt; 'wordunderscoretodash' // 'Zend\Filter\Word\UnderscoreToDash',
+  ),
+
+  array(
+    'name' =&gt; 'wordunderscoretoseparator' =&gt; 'Zend\Filter\Word\UnderscoreToSeparator',
+    'options' =&gt; array(
+      'separator' =&gt; string // ''
+    ),
+  ),
+),
+</code></pre>
+<p>Filtre spécifiques sur les fichiers</p>
+<pre><code class="language-php">'filters' =&gt; array(
+  array(
+    'name' =&gt; 'fileencrypt' // 'Zend\Filter\File\Encrypt',
+    'options' =&gt; array(
+      'adapter' =&gt; string $adapter // Encryption adapter
+      'filename' =&gt; string
+
+      // $adapter == 'BlockCipher'
+      // http://php.net/manual/en/book.mcrypt.php
+      // voir la doc de Zend\Crypt\BlockCipher pour détail http://framework.zend.com/manual/current/en/modules/zend.crypt.block-cipher.html
+      'adapter' =&gt; 'BlockCipher' // Zend\Filter\Encrypt\BlockCipher
+      'key' =&gt; string //
+      'key_iteration' =&gt; int // default 5000
+      'algorithm' =&gt; string // default 'aes'
+      'hash' =&gt; string // default 'sha256'
+      'vector' =&gt;
+      'compression' =&gt; // default null
+      'mode' =&gt; string // default 'cbc'
+      // http://php.net/manual/en/mcrypt.constants.php
+      'mode_directory' =&gt; string // default : path to mcrypt mode extension
+
+      // $adapter == 'Openssl'
+      // http://fr2.php.net/manual/en/book.openssl.php
+      'adapter' =&gt; 'Openssl' // Zend\Filter\Encrypt\Openssl
+      'public' =&gt; array()
+      'private' =&gt; array()
+      'envelope' =&gt; array()
+      'passphrase' =&gt; string
+      'compression' =&gt; //
+      'package' =&gt; //
+    ),
+  ),
+
+  array(
+    'name' =&gt; 'filedecrypt' // 'Zend\Filter\File\Decrypt',
+    'options' =&gt; array(
+      // voir filtre 'fileencrypt'
+    ),
+  ),
+
+  array(
+    'name' =&gt; 'filelowercase' // 'Zend\Filter\File\LowerCase',
+    'options' =&gt; array(
+      'encoding' =&gt; string // encoding string - default null
+    ),
+  ),
+
+  array(
+    'name' =&gt; 'fileuppercase' // 'Zend\Filter\File\UpperCase',
+    'options' =&gt; array(
+      'encoding' =&gt; string // encoding string - default null
+    ),
+  ),
+
+  array(
+    'name' =&gt; 'filerename' // 'Zend\Filter\File\Rename',
+    'options' =&gt; array(
+      'target' =&gt; string // default &quot;*&quot;
+      'source' =&gt; string // default &quot;*&quot;
+      'overwrite' =&gt; bool // default false
+      'randomize' =&gt; bool // default false
+    ),
+  ),
+
+  array(
+    'name' =&gt; 'filerenameupload' // 'Zend\Filter\File\RenameUpload',
+    'options' =&gt; array(
+      'target' =&gt; string // default &quot;*&quot;
+      'overwrite' =&gt; bool // default false
+      'randomize' =&gt; bool // default false
+      'use_upload_name' =&gt; bool // default false
+      'use_upload_extension' =&gt; bool // default false
+    ),
+  ),
+),
+</code></pre>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/fr/tags/configuration">configuration</a></li><li><a href="/fr/tags/zf2">ZF2</a></li><li><a href="/fr/tags/zend-framework-2">zend framework 2</a></li><li><a href="/fr/tags/factory">factory</a></li></ul>
+        </div>
+      
+
+      
+        <nav id="book-navigation">
+    
+       <li class="link-previous"><a href="/fr/posts/zend-navigation-avec-configuration.html"><i class="fas fa-long-arrow-alt-left"></i> Zend Navigation avec configuration</li>
+    
+
+    
+        <li class="link-next"><a href="/fr/posts/zend-validator-avec-configuration.html">Zend Validator avec configuration <i class="fas fa-long-arrow-alt-right"></i></a></li>
+    
+
+    
+        <li class="link-up"><a href="/fr/books/configuration-dans-zend-framework-2.html"><i class="fas fa-book-open"></i> Configuration dans Zend Framework 2</li>
+    
+</nav>
+
+      
+    
+
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>Sur moi</h3>
+      <p>J&#39;ai appris le php il y a quelques années, quand Internet était à ses débuts. Pour diverses raisons, j&#39;ai arrêté en route et j&#39;ai perdu le fil des nouveaux Internets que je redécouvre. Résultat, je me sens constamment à courir après l&#39;histoire mais je suis toujours motivée à reprendre des projets personnels. Je me propose de vous partager mes découvertes. Au delà des sujets de programmation, j&#39;aime également partager mes infos concernant notamment l&#39;Histoire, l&#39;Astronomie, la Linguistique, les Films, les Livres et les Anime. J&#39;espère que vous aimerez suivre mon blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. Tous droits réservés.</p>
+        <p>Propulsé par <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

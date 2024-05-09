@@ -1,0 +1,133 @@
+<!doctype html>
+<html class="no-js" lang="en" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>HOWTO - Creating an online manual with DocBook&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">French</a>
+        <a href="/en/">English</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/en/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/en/books/0/index.html">Collections</a>
+        <a href="/en/">Home</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/en/">Home</a><i class="fas fa-angle-right"></i>HOWTO - Creating an online manual with DocBook
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>HOWTO - Creating an online manual with DocBook</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>7/30/2012, 4:54:00 PM
+        
+        <i class="fas fa-th-large"></i><!--a href="/en/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/old-books.jpg" class="node-banner" />
+        
+      </div>
+
+      <p><p>DocBook is a XML schema used to create any kind of documentation. Its first purpose was to focus on technical documentation but since its format is large, with a full set of markups matching any kind of book formats, it can be used to write many different books now, including essays and novels.</p>
+<p>DocBook claims that it can be used &quot;out of the box&quot;, making its usage sound really easy. And it is really easy indeed. You'll have to grab several meaningful markup to write the rough skeleton of your book (one <strong>book</strong> divided in <strong>chapter</strong>s. Each <strong>chapter</strong> having <strong>paragraph</strong>s etc...). If you are planning to use (and you will) the matching DocBook XSL stylesheets package, you won't have to worry about chapter numbering and table of content generation. All those nice features will be generated at the publication step. However, when it comes to a more detailed purpose, you'll need to read the documentation further, meaning altogether the <a href="http://www.docbook.org/tdg5/en/html/docbook.html" target="_blank">DocBook Definitive Guide</a>, the <a href="http://www.sagehill.net/docbookxsl/index.html" target="_blank">DocBook XSL Stylesheets Complete Guide</a> and the <a href="http://docbook.sourceforge.net/release/xsl/current/doc/" target="_blank">DocBook XSL Stylesheets Reference Documentation</a>.</p>
+<p>The purpose of this tutorial will be to create an online API manual. We will include few nice features to customize further the rendering of our book.</p>
+</p>
+
+      <ul>
+        
+           <li><a href="/en/posts/howto-creating-online-manual-using-docbook-getting-ready.html">HOWTO - Creating an online manual using DocBook - Getting ready</a></li>
+        
+           <li><a href="/en/posts/howto-creating-online-manual-docbook-book.html">HOWTO - Creating an online manual with DocBook - The Book</a></li>
+        
+           <li><a href="/en/posts/howto-creating-online-manual-docbook-customization.html">HOWTO - Creating an online manual with DocBook - Customization</a></li>
+        
+      </ul>
+
+      
+
+      <nav id="book-navigation">
+    
+
+    
+        <li class="link-next"><a href="/en/posts/howto-creating-online-manual-using-docbook-getting-ready.html">HOWTO - Creating an online manual using DocBook - Getting ready <i class="fas fa-long-arrow-alt-right"></i></a></li>
+    
+
+    
+</nav>
+
+    
+    </article>
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>About me</h3>
+      <p>I learned coding with php several years ago, when Internet was still young. For multiple reasons, i had stopped then and missed most of this new Internet i&#39;m discovering once again. So, i feel like a newbie again and since i&#39;m ready to start over personal project, i&#39;ll share with you some of my discoveries. Beyond coding topics, i&#39;ll enjoy sharing with you several subjects such as History, Astronomy, Linguistics, Movies, Books, Music and Anime among others. I hope you&#39;ll enjoy reading this blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. All rights reserved.</p>
+        <p>Powered by <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

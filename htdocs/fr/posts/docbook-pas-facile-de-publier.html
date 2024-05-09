@@ -1,0 +1,196 @@
+<!doctype html>
+<html class="no-js" lang="fr" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>Docbook, pas facile de publier&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">Français</a>
+        <a href="/en/">Anglais</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/fr/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/fr/books/0/index.html">Séries</a>
+        <a href="/fr/">Accueil</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/fr/">Accueil</a><i class="fas fa-angle-right"></i>Docbook, pas facile de publier
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>Docbook, pas facile de publier</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>28/06/2012 07:05:00
+        
+        <i class="fas fa-th-large"></i><!--a href="/fr/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/books.jpg" class="node-banner" />
+        
+      </div>
+
+      <p><p>Il y a quelques semaines, j'ai décidé de créer un manuel avec docbook. J'ai trouvé le manuel <a href="http://www.docbook.org/tdg/en/html/docbook.html" target="_blank">Docbook Definitive Guide</a> et malgré le fait que je ne l'ai pas lu intégralement, j'ai pu me faire une assez bonne idée générale de ce qu'il en retournait. Puis, j'ai essayé de publier le manuel en utilisant le paquet <strong>Docbook-Xsl</strong> disponible sur la toile. Comme vous le savez sûrement, si vous avez lu mon <a href="/en/posts/nice-meet-you-mr-docbook.html">post précédent à ce sujet</a>, j'ai tenté une première méthode de publication &quot;quick &amp; dirty&quot; de mon manuel et cela marche plutôt bien. Bien sûr, maintenant, il s'agit de passer aux choses sérieuses.</p>
+<p><strong>Version &quot;Quick &amp; Dirty&quot;</strong></p>
+<p>Comme on l'a déjà dit, on peut transformer un fichier .xml en une jolie vue HTML à partir du moment qu'on ajoute une déclaration <em>xml-stylesheet</em> dans le fichier XML.</p>
+<p><code>&lt;?xml-stylesheet type=&quot;text/xsl&quot; href=&quot;chemin_du_repertoire_de_docbook_xsl/html/docbook.xsl&quot;?&gt;</code></p>
+<p>Après avoir ajouté cette déclaration, il suffit juste d'accéder au fichier XML (un simple glisser / déposer devrait faire l'affaire) par votre navigateur favori. Le contenu du fichier XML devrait maintenant s'afficher comme une page HTML.</p>
+<p>Mais avec cette méthode, vous ne pouvez utiliser que la transformation <code>html/docbook.xsl</code>. Il n'est pas possible de voir ce que ça peut donner en utilisant la transformation <code>html/chunk.xsl</code> parce que cette feuille de style (<code>html/chunk.xsl</code>) va créer un ensemble de fichiers HTML. Le navigateur ne saura pas quel est la page HTML que vous souhaitez afficher. On va avoir besoin d'un processeur XSL (xslt processor).</p>
+<p><strong>Introduction au processeur XSL</strong></p>
+<p>Il y a plusieurs processeurs XSL sur le marché. Le <a href="http://www.sagehill.net/docbookxsl/index.html" target="_blank">Docbook XSL : The Complete Guide</a> liste les processeurs les plus connus : <strong>Saxon</strong>, <strong>Xalan</strong>, <strong>xsltproc</strong>, <strong>MSXSL</strong> etc... Pour ma part, la plupart d'entre eux me disent quelque chose mais je n'ai jamais eu l'occasion d'en installer un seul finalement.</p>
+<p>J'ai un moment espéré que mon éditeur XML (Altova) inclus un processeur XSL mais tout ce qu'il peut faire s'apparente à la version &quot;Quick &amp; Dirty&quot; en plus joli... Ajoutez à cela, Altova est incapable de valider le code XML parce qu'il n'y a pas de DTD déclarée convenablement (mais d'après la documentation de Docbook 5, il n'y a plus besoin de déclarer une DTD parce que le schéma est de type RELAX-NG)...</p>
+<p>Puis j'ai réalisé que j'avais un IDE plus puissant : Eclipse. Le seul hic : je ne sais pas utiliser Eclipse. Un ami me l'a installé parce qu'il avait besoin que je collabore sur un de ces projets en java. Il avait besoin que je commite quelques CSS et quelques feuilles de styles XSL. Ainsi, pour ce que je sais, la version d'Eclipse qui est installé sur mon poste est une version basée sur la version Ganymède incluant un ensemble de packages personnalisés. En d'autres termes : ne pas y toucher de trop près parce que, quoi que je fasse, ça va casser... En fait, je n'utilise plus Eclipse, le projet s'étant achevé il y a quelques mois déjà... J'ai juste gardé Eclipse, au cas où...</p>
+<p>J'ai trouvé un tutorial pas à pas pour publier un manuel docbook en utilisant le processeur <strong>Xalan</strong> avec Eclipse. Mais le tutorial s'applique à la version Europa d'Eclipse.... J'ai néanmoins tenté de suivre le tutorial. J'ai créé mon projet, ajouté mes fichiers XML, mes fichiers XSL et le .jar de <strong>Xalan</strong>. J'ai écrit le fichier <code>build.xml</code> de <strong>Ant</strong> exactement comme le tutorial m'a dit de faire. Ca n'a jamais fonctionné. J'ai récupéré une erreur et il manquait un paquet... Bon... Comme de toutes façons, mon objectif est seulement de publier mon manuel et pas du tout d'apprendre à paramétrer <strong>Ant</strong>, je n'ai pas voulu me plonger dans de la documentation superflue qui ne me concernait que de loin.</p>
+<p>J'ai retenté avec le .jar de <strong>Saxon</strong>. J'ai changé vaguement le <code>build.xml</code> de la manière la plus cohérente. Cette fois-ci, le processeur semblait être plus coopératif mais maintenant, le processeur prétend que les entités utilisées dans mon fichier XML n'existent pas. Comme cela ne marche toujours pas mais qu'en même temps, il me reste des pistes à explorer, j'ai juste effacer mon projet dans Eclipse.</p>
+<p>Comme le projet qui traîne sur mon Eclipse publiait des fichiers XML avec des fichiers XSL, je me suis dit qu'il était peut être possible de truquer un peu le projet existant en ajoutant de nouveaux fichiers XSL et de nouveaux fichiers XML aux nombreuses librairies java du projet. J'ai copié tous les fichiers de mon manuel dans le projet de mon ami. J'ai mis à jour ses fichiers de configuration pour que cela corresponde aux noms de mes fichiers. J'ai lancé la transformation... Echec. L'application de mon ami me retourne qu'il ne sait pas trouver ma transformation... Que j'ai fini par renommer pour que cela corresponde à la nomenclature du projet existant... Bon, de toutes façons, cette verrue ne me plaît pas non plus... Je ne vais pas insister...</p>
+<p>La piste Eclipse finissant en impasse pour le moment, je me tourne vers d'autres solutions. Microsoft par exemple, possède son propre processeur xsl. C'est peut être la meilleure solution finalement. J'ai installé le fichier <code>msxsl.exe</code> dans le répertoire <code>C:/Windows/System32</code>. Je l'ai lancé en ligne de commande. J'ai obtenu une erreur qui semble se situer dans le package d'origine des feuilles de styles Docbook XSL... Quelque chose au sujet d'une variable ou de paramètres qui n'est pas du type attendu... Pas question d'aller modifier le paquet Docbook XSL.</p>
+<p>Nouvelle tentative : J'ai essayé d'installer le processeur <strong>xsltproc</strong>. La plupart des pages sur la toile font références au <a href="http://www.zlatkovic.com/libxml.en.html" target="_blank">site de Igor Zlatkovic</a>, où je pourrais trouver les fichiers binaires pour exécuter <code>xsltproc</code>. D'après la documentation, il semblerait qu'il faille dézipper tous les fichiers .zip (au moins 4) et aller copier / coller tous les fichiers binaires dans le répertoire <code>C:\Windows\System32</code>. Ce qui ne me plaît pas beaucoup dans la mesure où il s'agit de mélanger des fichiers binaires tiers avec les fichiers systèmes de Windows.</p>
+<p>Découragée, j'ai décidé d'installer le même processeur <strong>xsltproc</strong> sur ma machine linux. Après un simple <code>apt get</code> fastoche, j'ai réussi à publier mon manuel sans aucun problème (sauf quelques balises docbook qui ne semblent pas être prise en charge par les feuilles de styles XSL). Je verrais ça plus tard. Je tente la publication en utilisant <code>html/chunk.xsl</code> et là aussi, succès.</p>
+<p>Retour donc à mon poste Windows où j'ai installé les binaires de Igor Zlatkovic avec succès</p>
+<ul>
+<li>Sur le site de Igor Zlatkovic, il faut télécharger les paquets suivantes : <code>iconv</code>, <code>libxml2</code>, <code>libxslt</code>, <code>zlib</code>. L'exécutable <code>xsltproc</code> se trouve dans le zip <code>libxslt</code>. Il fallait le savoir !</li>
+<li>Dézipper toutes les archives</li>
+<li>Si, comme moi, vous ne souhaitez pas mélanger les torchons et les serviettes, il faut créer un répertoire (par ex : <code>C:\Program Files\xsltproc</code>)</li>
+<li>Dans chacune des archives (dézippées), il faut copier tous les fichiers <code>bin/*.dll</code> et <code>bin/*.exe</code> dans le répertoire <code>C:\Program Files\xsltproc</code>.</li>
+</ul>
+<p><strong>1ere contrôle : est-ce que xsltproc s'exécute correctement ?</strong></p>
+<ul>
+<li>Ouvrir une fenêtre MS-Dos (Command Prompt)</li>
+<li>Parcourir les répertoires jusqu'au répertoire correct : dans notre cas : <code>C:\Program Files\xsltproc</code>.</li>
+<li>Taper <code>xsltproc</code> dans la fenêtre MS-Dos. La page d'aide de <strong>xsltproc</strong> devrait s'afficher dans la fenêtre. Cela signifie que <strong>xsltproc</strong> fonctionne correctement.</li>
+</ul>
+<p>Le test est positif. On peut essayer de publier notre premier manuel en tapant (dans la fenêtre de MS-Dos)</p>
+<pre><code class="language-sh"> xsltproc chemin_absolu_vers_le_répertoire_de_docbook_xsl/html/docbook.xsl chemin_absolu_vers_votre_docbook/docbook.xml
+</code></pre>
+<p>Pour le moment, on obtiendra juste le contenu du fichier HTML qui va s'afficher dans la fenêtre de commande. Excepté le fait que le HTML s'affiche à l'intérieur de la fenêtre et non pas dans un fichier, on peut déjà voir qu'il y a deux problèmes ici :</p>
+<ol>
+<li>quand on souhaite publier notre manuel, il faut qu'on se parcourt les répertoires jusqu'à notre répertoire <code>xsltproc/</code> d'abord.</li>
+<li>puis, on doit taper les longs chemins jusqu'à nos fichiers XSL et XML</li>
+</ol>
+<p>Ceci est assez pénible. Voila ce qu'on voudrait dans le meilleur des mondes : être capable de naviguer jusqu'au répertoire où se situe notre manuel (en espérant que nos fichiers XSL et XML se situent au même endroit) et lancer <code>xsltproc</code> de là. Cela nous permettrait de raccourcir les chemins à taper dans la ligne de commande.</p>
+<p>Cela signifie qu'il doit être possible d'exécuter <code>xsltproc</code> de n'importe où. Pour cela, il faut ajouter son répertoire à la variable d'environnement <code>PATH</code>. Sur Internet, il est assez facile de trouver un tutorial pour mettre à jour la variable <code>PATH</code> adapté à votre version de Windows.</p>
+<p>Pour Windows XL en tout cas, on trouvera la variable <code>PATH</code> ici : &quot;Poste de travail &gt; Propriétés &gt; Avancé &gt; Variables d'environnement&quot;. Là, on peut éditer la variable système &quot;Path&quot;. A la fin de la ligne &quot;Valeur de la variable&quot;, il faut ajouter le chemin du répertoire contenant les fichiers binaires de <strong>xsltproc</strong> (dans notre cas, <code>C:\Program Files\xsltproc</code>). Il ne faut pas ajouter le dernier slash. Et il semblerait qu'il faille redémarrer Windows. En tout cas, c'est ce que j'ai fini par faire.</p>
+<p><strong>2d contrôle : est-ce que xsltproc s'exécute correctement de n'importe où ?</strong></p>
+<ul>
+<li>Pour contrôler ce point, il faut ouvrir une fenêtre MS-Dos.</li>
+<li>Vérifier que vous n'êtes pas dans le répertoire de <strong>xsltproc</strong>.</li>
+<li>Taper <code>xsltproc</code> de là. La page d'aide de <strong>xsltproc</strong> devrait s'afficher dans la fenêtre. Cela signifie que <strong>xsltproc</strong> fonctionne correctement.</li>
+</ul>
+<p>Le test est positif. De nouveau, on peut essayer de publier notre manuel.</p>
+<pre><code class="language-sh">xsltproc -o index.html chemin_relatif_vers_le_répertoire_docbook_xsl/html/docbook.xsl chemin_relatif_vers_votre_docbook/docbook.xml
+</code></pre>
+<p>Notez qu'on a ajouté <code>-o index.html</code>. Cela indique le nom du fichier dans lequel on veut mettre ce qui est retourné par le processeur. Désormais, le contenu HTML qui s'affichait dans la fenêtre MS-Dos est dans le fichier <code>index.html</code>.</p>
+<p>Glisser-déposer le fichier <code>index.html</code> dans votre navigateur préféré. Voici votre manuel. Pas aussi joli que vous l'auriez voulu et pas aussi parfait que vous l'auriez souhaité mais bon, il est là après tout.</p>
+<p>Pour ma part, les feuilles de styles Docbook XSL facilitent grandement le boulot et publient facilement un premier brouillon de mon manuel. Mais je vois encore des problèmes :</p>
+<ol>
+<li>Le layout est plutôt brut... Je n'en suis pas très fan.</li>
+<li>Le sommaire (TOC) semble parfois être mal placé (à mon opinion)</li>
+<li>Certaines balises Docbook 5 ne sont pas prises en charge. Je suppose qu'il va falloir que je le fasse moi même.</li>
+</ol>
+<p>CONCLUSION : Je vais devoir :</p>
+<ol>
+<li>Créer une feuille de styles CSS correcte pour améliorer le layout du book</li>
+<li>Paramétrer un peu le rendu des feuilles de styles Docbook XSL</li>
+<li>Personnaliser le rendu de fond en développant mes propres feuilles XSL.</li>
+</ol>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/fr/tags/docbook">docbook</a></li><li><a href="/fr/tags/xml">xml</a></li><li><a href="/fr/tags/xslt">xslt</a></li></ul>
+        </div>
+      
+
+      
+    
+
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>Sur moi</h3>
+      <p>J&#39;ai appris le php il y a quelques années, quand Internet était à ses débuts. Pour diverses raisons, j&#39;ai arrêté en route et j&#39;ai perdu le fil des nouveaux Internets que je redécouvre. Résultat, je me sens constamment à courir après l&#39;histoire mais je suis toujours motivée à reprendre des projets personnels. Je me propose de vous partager mes découvertes. Au delà des sujets de programmation, j&#39;aime également partager mes infos concernant notamment l&#39;Histoire, l&#39;Astronomie, la Linguistique, les Films, les Livres et les Anime. J&#39;espère que vous aimerez suivre mon blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. Tous droits réservés.</p>
+        <p>Propulsé par <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

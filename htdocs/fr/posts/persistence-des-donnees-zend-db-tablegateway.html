@@ -1,0 +1,307 @@
+<!doctype html>
+<html class="no-js" lang="fr" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>Persistence des données - Zend Db TableGateway&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">Français</a>
+        <a href="/en/">Anglais</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/fr/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/fr/books/0/index.html">Séries</a>
+        <a href="/fr/">Accueil</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/fr/">Accueil</a><i class="fas fa-angle-right"></i>Persistence des données - Zend Db TableGateway
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>Persistence des données - Zend Db TableGateway</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>11/07/2014 13:11:00
+        
+        <i class="fas fa-th-large"></i><!--a href="/fr/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/nature-morte-6_2.jpg" class="node-banner" />
+        
+          <p><strong>Crédit</strong> : Stefano Paolini </p>
+        
+      </div>
+
+      <p><p>En architecture trois tiers, le troisième tiers est la couche d'accès aux données. Afin d'accéder à votre couche d'accès aux données, <strong>Zend Framework</strong> a créé la classe <strong>TableGateway</strong> (et consoeurs).</p>
+<h3>Périmètre</h3>
+<p>Dans les grosses lignes (et c'est ma vision, d'autres auront une autre vision de la chose), votre application ne travaille qu'avec des objets. Vous développez une application avec un développement orienté objet, comme son nom l'indique, vous ne manipulez que des objets.</p>
+<p>Donc, en EXAGERANT, les objets, éclatés, itérés et affichés entre des balises HTML ou dans un json, c'est la première des couches d'une architecture trois tiers : c'est la couche présentation. C'est la partie où on ne fait que des echo, où on gère les javascripts, les css et les balises HTML.</p>
+<p>Dans l'autre sens, dès que vous devez éclater votre objet pour le remettre au format d'une base de données, le nettoyer etc... c'est la troisième couche : celle qui accède aux données.</p>
+<p>Du coup, on peut dire que** la couche d'accès aux données commence à la base de données (et donc la requête) et finit au moment où on retourne un objet (complet de préférence)**.</p>
+<p>Pour vous en convaindre, testez <strong>Doctrine</strong> : c'est exactement ce qu'il fait. Du coup, vous ne manipulez que des objets... vous en avez même oublié comment s'écrit une requête SQL.</p>
+<h3>Votre propre couche d'accès aux données</h3>
+<p>Fi de <strong>Doctrine</strong>, vous saurez bien faire votre code vous même.</p>
+<h4>A partir de la base de données</h4>
+<p>Pour cela, vous allez commencer par utiliser la classe <a href="http://framework.zend.com/manual/2.3/en/modules/zend.db.table-gateway.html" target="_blank"><strong>Zend Db TableGateway</strong></a>. Beaucoup de tutoriaux vous indiqueront comment faire. Maintenant, les tutoriaux vous montrent toujours des exemples simples, voire idéaux. Evidemment, dans la vraie vie, ce ne sera jamais le cas...</p>
+<p>Les options qui s'offrent à vous (et je ne vous donnerais pas la réponse, je ne l'ai pas encore trouvée moi même) :</p>
+<ul>
+<li>soit vous faites un <strong>TableGateway</strong> par objet métier, et le <strong>TableGateway</strong> comporte une requête SQL avec plusieurs jointures entre vos tables et avec le résultat d'une telle requête, vous instanciez des objets à partir des champs requêtés... Je pense toutefois que ce sont des <strong>TableGateway</strong> complexe à maintenir et pas toujours facile à réutiliser.</li>
+<li>soit vous faites un <strong>TableGateway</strong> par objet métier, et les jointures s'effectuent dans un second temps, dans une couche intermédiaire. Dans ce cas, il faut se renseigner sur les performances d'un tel choix : est-ce plus coûteux de requêter itérativement sur une table de la base de données, ou bien vaut-il mieux requêter sur tous les enregistrements d'une table pour filtrer ensuite les résultats côté applicatif ? Il y a des partisans pour les deux solutions. A vous de vous faire votre idée. Même si les instructions ORDER BY, WHERE, LIMIT dans MySQL semblent super pratique, est-ce la solution la plus économique de laisser la requête faire les tris à la place de notre application ?</li>
+</ul>
+<h4>Hydrater les données</h4>
+<p>Oui, le mot à la mode, c'est hydrater... Mais quand vous cherchez sur Google, vous avez plein de conseils santé sur la manière la plus efficace de s'hydrater... pas tout à fait notre champ de recherche...</p>
+<p>Vous allez devoir convertir les données retournées dans la requête (typiquement des <em>strings</em> la plupart du temps), vers des types de vos propriétés.</p>
+<p>L'exemple le plus parlant est un champ <em>Date</em>. Dans la table MySQL, le type du champ est forcément <strong>DATETIME</strong>, <strong>DATE</strong> ou <strong>TIMESTAMP</strong> (un type MySQL quoi). Une fois que vous aurez fait un SELECT dessus, vous allez récupérer une <em>string</em>. Mais ce serait tellement plus logique que la donnée soit un objet <a href="http://fr.php.net/manual/fr/class.datetime.php" target="_blank"><strong>DateTime</strong></a>. Comme ça, pas de problème pour manipuler les dates si nécessaire, et quand il s'agira d'afficher la date à l'écran (un peu plus tard dans notre application), un <code>$date-&gt;format('c')</code> serait tellement plus pratique.</p>
+<p>Comme Zend Framework le présente (y compris dans quelques tutoriaux), il existe maintenant des classes <strong>Hydrator</strong> qui permettent de convertir un tableau de données en un objet en faisant correspondre pour clé du tableau en entrée son format au format de la propriété de l'objet (ça ne vous dit rien ça ? convertir d'une <em>string</em> à un <strong>DateTime</strong> ?) Il faudra donc soit utiliser <a href="http://framework.zend.com/manual/2.3/en/modules/zend.stdlib.hydrator.html" target="_blank">les hydrators existant dans Zend Framework</a>, soit créer vos propres hydrators. N'hésitez pas à ajouter des stratégies aux hydrators existants (<a href="https://juriansluiman.nl/article/125/strategies-for-hydrators-a-practical-use-case" target="_blank">voir les conseils de Jurian Sluiman ici</a>). Comme ça, vous pourrez surclasser certaines règles des hydrators existants. De même, <a href="http://www.masterzendframework.com/tutorial/zendframework2-hydrators-models-tablegateway-pattern" target="_blank">Matthew Setter dans son blog</a> nous propose d'écrire notre propre hydrator avec la possibilité de faire le mapping (nom de colonne / nom de la propriété) dans la configuration de l'hydrator.</p>
+<p>Les hydrators sont simplissimes d'utilisation. Quand on transforme un tableau de données en un objet, on <strong>hydrate</strong>. Quand on transforme un objet en tableau de données, on <strong>extracte</strong>. Il y encore peu, on pouvait faire la même chose avec <code>$this-&gt;toArray()</code> pour extraire les données, mais si on voulait extraire les données vers différentes destinations (<code>XML, JSON, HTML FORM, MYSQL</code>), on était peut être contraint de reconvertir une fois après encore.</p>
+<p>Zend Framework 2 propose 3 hydrators de base :</p>
+<h5>Zend\Stdlib\Hydrator\ArraySerializable</h5>
+<p>pour que celui ci fonctionne, il faut impérativement que l'objet ait une méthode <code>exchangeArray()</code> ou <code>populate()</code> pour hydrater et une méthode <code>getArrayCopy()</code> pour extraire.</p>
+<pre><code class="language-php">class MonObjet
+{
+    protected $prop1 ;
+    protected $prop2 ;
+    protected $prop3 ; // cette propriété ne vient pas de l'exterieur et n'est pas extraite
+
+    public function exchangeArray(array $data)
+    {
+        $this-&gt;prop1 = $data['donnee1'] ;
+        $this-&gt;prop2 = $data['donnee2'] ;
+    }
+
+    public function getArrayCopy()
+    {
+        $array = array() ;
+        $array['donnee1'] = $this-&gt;prop1 ;
+        $array['donnee2'] = $this-&gt;prop2 ;
+        return $array ;
+    }
+}
+</code></pre>
+<p>C'est tout. Quand vous utilisez l'hydrator, les données seront automatiquement assignées.</p>
+<h5>Zend\Stdlib\Hydrator\ClassMethods</h5>
+<p>pour que cet hydrator fonctionne, il suffit que l'objet ait des setters et des getters et que le nom des propriétés correspondent aux données du tableau</p>
+<pre><code class="language-php">class MonObjet
+{
+    protected $prop1 ;
+
+    public function setProp1($prop1)
+    {
+        $this-&gt;prop1 = $prop1 ;
+    }
+
+    public function getProp1()
+    {
+        return $this-&gt;prop1 ;
+    }
+}
+</code></pre>
+<p>Tout simplement. J'ai toutefois lu quelque part que cet hydrator était assez coûteux en ressources... à voir...</p>
+<h5>Zend\Stdlib\Hydrator\ObjectProperty</h5>
+<p>la dernière implémentation standard de Zend Framework 2. Pour que cet hydrator fonctionne, il suffit que la propriété soit publique. En revanche TOUTES les propriétés publiques seront extraites...</p>
+<pre><code class="language-php">class MonObjet
+{
+    public $prop1 ; // sera hydraté et sera extrait
+    protected $prop2 ; // ne sera pas hydraté et ne sera pas extrait
+}
+</code></pre>
+<p>Grâce aux hydrators, vous avez désormais transformés le résultat de la requête de votre <strong>TableGateway</strong> en un objet.</p>
+<p>Soit vous le faites en deux temps :</p>
+<pre><code class="language-php">public function fetchAll()
+{
+    // en principe, ces dépendances sont déclarées dans le Service Manager.
+    $this-&gt;hydrator = new Zend\Stdlib\Hydrator\ClassMethods&lt;span style=&quot;color: #339933;&quot;&gt;;&lt;/span&gt;
+    $this-&gt;objet = new MON_MODULE\Entities\Objet ;
+    $this-&gt;tableGateway = new Zend\Db\TableGateway\TableGateway ('Produit', $dbAdapter) ;
+    
+    // on récupère le tableau des résultats de la requête.
+    // resultSet sera la classe ResultSet par défaut de Zend Framework
+    $resultSet = $this-&gt;tableGateway-&gt;select() ;
+
+    // on construit un autre tableau contenant cette fois des objets.
+    $collection = array() ;
+    foreach($resultSet as $result)
+    {
+        $collection[] = $this-&gt;hydrator-&gt;hydrate($result, $this-&gt;object) ;
+    }
+    return $collection ;
+}
+</code></pre>
+<p>Prétendons que nous avons une table <code>Produit</code> sur laquelle pointe notre <code>tableGateway</code>. La table <code>Produit</code> a 15 enregistrements.</p>
+<p>Prétendons que les dépendances sont gérées dans le <strong>Service Manager</strong> et correctement injectées là où il faut (<code>Module.php</code> ou <code>module.config.php</code>)</p>
+<p><code>$resultSet</code> devrait être un premier tableau contenant 15 tableaux associatifs (chaque tableau = un enregistrement de la table <code>Produit</code>).</p>
+<p>On peut accéder à un champ de chaque enregistrement en faisant <code>$resultSet[$i]['nomProduit']</code></p>
+<p><code>$collection</code> devrait donc en principe être un autre tableau de la même taille que <code>$resultSet</code> mais contenant cette fois 15 objets (chaque objet = un enregistrement de la table <code>Produit</code>).</p>
+<p>Pour accéder à un champ de chaque enregistrement, on ferait <code>$collection[$i]-&gt;getNomProduit()</code> (évidemment, la méthode correspond aux méthodes définies dans l'objet <code>$objet</code>).</p>
+<p>Soit on le fait en un temps :</p>
+<pre><code class="language-php">public function fetchAll()
+{
+    // en principe, ces dépendances sont déclarées dans le Service Manager.
+    $this-&gt;objet = new MON_MODULE\Entities\Objet ;
+    $this-&gt;hydrator = new Zend\Stdlib\Hydrator\ClassMethods ;
+    $this-&gt;resultSet = new Zend\Db\ResultSet\HydratingResultSet($this-&gt;hydrator, $this-&gt;objet) ;
+    $this-&gt;tableGateway = new Zend\Db\TableGateway\TableGateway ('Produit', $dbAdapter, null, $this-&gt;resultSet) ;
+    
+    // on récupère le tableau des résultats de la requête.
+    // resultSet sera la classe HydratingResultSet tel que défini au moment où on a construit notre TableGateway
+    $resultSet = $this-&gt;tableGateway-&gt;select() ;
+
+    foreach($resultSet as $result)
+    {
+        echo ($result instanceOf MON_MODULE\Entities\Objet) ; // TRUE
+    }
+}
+</code></pre>
+<p>Et voila, en deux coups de cuillères à pot, c'est fait...</p>
+<h3>Presque fini</h3>
+<p>Evidemment, ça c'est l'explication du modèle simple : un objet = une table et hop, roulez jeunesse ! Forcément, dans la vraie vie, un objet = une multitude de tables, ne serait ce que les tables de références où vous aurez qu'une liste d'ID dans votre table initiale et qu'il va falloir les valeurs de chaque ID...</p>
+<p>Du coup, ma conclusion, c'est qu'il faut rajouter un niveau de manipulation après encore, un niveau dans lequel on aggrègerait les objets les uns avec les autres pour enfin obtenir un objet propre, complet et manipulable par l'application.</p>
+<p>Dans l'état actuel de ma réflexion, ça reviendrait à faire quelque choses comme ça :</p>
+<pre><code class="language-php">foreach($produitsResultSet as $produit)
+{
+    $categorie_id = $produit-&gt;getCategorieId() ;
+    $produit-&gt;setCategoryObject($categoriesResultSet-&gt;getById($categorie_id)) ; // attention, getById() ne génère pas de requête SQL, c'est une recherche dans le tableau $categoriesResultSet uniquement, plus de lien avec la base de données à ce niveau
+    $produit-&gt;setRayonObjet($rayonsResultSet-&gt;getById($produit-&gt;getRayonId()) ;
+}
+</code></pre>
+<p>Je ne suis pas vraiment convaincu que ce soit la stratégie à faire, mais pour le moment, j'en suis là...</p>
+<h3>Reflexions pour la fin</h3>
+<p>NB : En principe vous avez deux jeux d'hydrator : l'hydrator qui fait la conversion entre l'enregistrement MySQL et votre objet et un second hydrator qui fait la conversion entre votre objet et les champs d'un formulaire HTML. Typiquement, encore une fois, vous verrez l'intérêt quand vous commencerez à manipuler les dates.</p>
+<p>Dans la base de données : type <strong>DATETIME</strong></p>
+<p>Dans l'objet : classe <code>DateTime()</code></p>
+<p>Dans le formulaire : <em>string</em></p>
+<p>De la base de données vers l'objet -&gt; on passe d'une <em>string</em> (<code>Y-m-d H:i:s</code>) vers <code>new DateTime() ;</code> (hydratation)</p>
+<p>De l'objet vers le formulaire -&gt; de préférence, on ne convertit pas à ce moment là. Le formatage doit se faire dans les aides de vues. De mémoire, les aides de vues des <code>Zend\Form\Element\Date</code> font très bien ce boulot. (extraction)</p>
+<p>Du formulaire vers l'objet -&gt; on passe d'une <em>string</em> (par ex <code>d/m/Y</code>) vers <code>new DateTime() ;</code> (hydratation)</p>
+<p>De l'objet vers la base de données -&gt; on passe de <strong>DateTime</strong> à une <em>string</em> formatée (<code>Y-m-d H:i:s</code>) (extraction)</p>
+<p>Il est impossible de faire quelque chose d'évolutif si vous faites l'économie d'un hydrator.</p>
+<p>Pour ceux qui utilisent <strong>Doctrine</strong>, ils n'ont qu'un seul hydrator à développer (celui qui se situe entre l'objet et le formulaire), mais en fait, <strong>Doctrine</strong> gère dans sa librairie l'autre hydrator. Du coup, en pratique, ils ont EFFECTIVEMENT deux hydrators...</p>
+<p>Sur ce, ceux qui auraient une proposition à me faire sur comment mapper mes objets élégamment, je suis preneur... la plupart des réponses que j'obtiens est : <strong>Doctrine</strong> fait ça très bien... ce qui n'est pas une réponse en soit à mon sens.</p>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/fr/tags/hydrator">hydrator</a></li><li><a href="/fr/tags/architecture-trois-tiers">architecture trois tiers</a></li><li><a href="/fr/tags/acces-aux-donnees">accès aux données</a></li><li><a href="/fr/tags/zend-framework-2">zend framework 2</a></li><li><a href="/fr/tags/poo">POO</a></li><li><a href="/fr/tags/modele">modèle</a></li></ul>
+        </div>
+      
+
+      
+    
+
+      
+        <section id="oldcomment">
+          <h2>Commentaires historiques</h2><article>
+              <div class="level1">
+  <h3>À noter l'existence de la</h3>
+  <div class="meta">Jo_Labricole 2014-10-13T21:45 </div>
+  <div class="body">À noter l'existence de la classe AbstractDbMapper du projet ZfcBase<br />
+<br />
+<a href="https://github.com/ZF-Commons/ZfcBase/blob/master/src/ZfcBase/Mapper/AbstractDbMapper.php" target="_blank">https://github.com/ZF-Commons/ZfcBase/blob/master/src/ZfcBase/Mapper/Ab…</a><br />
+<br />
+Qui, je trouve, permet de créer des modèles de persistance plus facilement. (Quand on ne veut pas utiliser Doctrine !)</div>
+
+  
+  
+</div>
+
+            </article><article>
+              <div class="level1">
+  <h3>Oui effectivement, sorti de</h3>
+  <div class="meta">haclong 2014-10-16T16:42 </div>
+  <div class="body">Oui effectivement, sorti de Doctrine, il existe également les autres librairies qui font de l'ORM (c'est ORM, c'est ça ?... bref, qui font la même chose...)</div>
+
+  
+  
+</div>
+
+            </article></section>
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>Sur moi</h3>
+      <p>J&#39;ai appris le php il y a quelques années, quand Internet était à ses débuts. Pour diverses raisons, j&#39;ai arrêté en route et j&#39;ai perdu le fil des nouveaux Internets que je redécouvre. Résultat, je me sens constamment à courir après l&#39;histoire mais je suis toujours motivée à reprendre des projets personnels. Je me propose de vous partager mes découvertes. Au delà des sujets de programmation, j&#39;aime également partager mes infos concernant notamment l&#39;Histoire, l&#39;Astronomie, la Linguistique, les Films, les Livres et les Anime. J&#39;espère que vous aimerez suivre mon blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. Tous droits réservés.</p>
+        <p>Propulsé par <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,205 @@
+<!doctype html>
+<html class="no-js" lang="fr" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>Je passe à Zend Framework 2 !!&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">Français</a>
+        <a href="/en/">Anglais</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/fr/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/fr/books/0/index.html">Séries</a>
+        <a href="/fr/">Accueil</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/fr/">Accueil</a><i class="fas fa-angle-right"></i>Je passe à Zend Framework 2 !!
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>Je passe à Zend Framework 2 !!</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>26/03/2013 18:11:00
+        
+        <i class="fas fa-th-large"></i><!--a href="/fr/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/ZendFramework.png" class="node-banner" />
+        
+          <p><strong>Crédit</strong> : zend framework </p>
+        
+      </div>
+
+      <p><p>Finalement, au rythme où je vais, deux options s'offrent à moi : soit je finis mes applications en Zend Framework 1 et j'enchaine direct avec leur refactoring en Zend Framework 2, soit je passe directement à Zend Framework 2 en reprenant tout depuis le début avec la nouvelle librairie.</p>
+<p>Comme pour la plupart du temps, le choix final se fera suite à un concours de circonstances d'une part et à une bonne réflexion d'autre part. L'argument déterminant reste le choix tout récent d'un nouvel hébergeur. J'ai souscrit à une solution <a href="https://www.gandi.net/hosting/" target="_blank">Simple Hosting chez Gandi</a>, en plus de l'hébergement mutualisé que j'ai déjà chez <a href="http://www.online.net" target="_blank">Online</a>.</p>
+<h3>Installer une application Zend Framework 2</h3>
+<p>Comme pour Zend Framework 1, il faut télécharger un squelette d'application qui servira de structure de base pour le développement d'une application web. L'offre Simple Hosting de Gandi est presque parfaite pour suivre les instructions d'installation de l'application tel que recommandées dans le manuel de Zend Framework 2. Sur l'espace d'hébergement Gandi en Simple Hosting, vous pouvez avoir git d'une part, l'accès à la console d'autre part en se connectant en SSH et une connexion FTP classique (SFTP en fait, mais c'est pratiquement pareil). Il est donc aisé de suivre le manuel de Zend Framework et d'installer son application en utilisant le fameux <a href="http://getcomposer.org/" target="_blank">Composer</a>.</p>
+<p>Toutefois, pour ceux qui ont des solutions d'hébergements mutualisés, je sais que tous les hébergeurs n'offrent pas autant de possibilités. Je vois deux difficultés majeures :</p>
+<ul>
+<li>l'impossibilité d'accéder aux outils en ligne de commande : <code>git</code> et <code>composer</code>, et</li>
+<li>la structure d'un espace d'hébergement où il n'y a pas de répertoire <code>public/</code> à part, permettant la sécurisation des fichiers de l'application hors de l'espace d'accès public.</li>
+</ul>
+<p>Il y a pour ma part 3 cas possibles. Essayons de déterminer dans quel cas vous vous situez. Le but de ce test est d'afficher le fameux &quot;Hello world !&quot; lorsque vous vous connectez sur <a href="http://mon.domaine.tld">http://mon.domaine.tld</a></p>
+<ol>
+<li>Pour cela, créez un fichier <code>index.html</code> dans lequel vous aurez écrit une page HTML basique avec le fameux &quot;Hello World !&quot;.</li>
+<li>Connectez vous en FTP sur votre hébergement pour déposer votre fichier.</li>
+</ol>
+<ul>
+<li>Si vous déposez le fichier dans <em><strong>/mon.domaine/public/index.html</strong></em> : vous êtes dans le <strong>cas A</strong></li>
+<li>Si vous déposez le fichier dans <em><strong>/mon.domaine/autre_repertoire_public/index.html</strong></em> : vous êtes dans le <strong>cas B</strong></li>
+<li>Si vous déposez le fichier dans <em><strong>/mon.domaine/index.html</strong></em> : vous êtes dans le <strong>cas C</strong></li>
+</ul>
+<p>A titre indicatif, si vous êtes hébergé par Gandi, vous êtes dans le cas B et si vous êtes hébergé par Online, vous êtes dans le cas C.</p>
+<h4>Voici comment adapter l'installation d'une application Zend Framework 2.</h4>
+<p>Maintenant que nous avons une idée de la situation d'hébergement que vous avez, nous pouvons installer notre application.</p>
+<ol>
+<li>Téléchargez le <a href="https://github.com/zendframework/ZendSkeletonApplication" target="_blank">squelette d'application</a> mis à disposition sur github.</li>
+<li>Dézippez le.</li>
+<li>(Ré)-organisez les répertoires :</li>
+</ol>
+<ul>
+<li>Si vous êtes dans le cas A, vous n'avez rien à faire</li>
+<li>Si vous êtes dans le cas B, renommez le répertoire <code>public/</code> du squelette d'application par le nom fourni par votre hébergeur (<em><strong>autre_repertoire_public/</strong></em>)</li>
+<li>Si vous êtes dans le cas C et que vous êtes un crack en redirection d'URL ce qui n'est pas mon cas, vous gardez le répertoire <code>public/</code> et vous écrivez le fichier <code>.htaccess</code> qui va bien. Mais si vous êtes un crack en redirection d'URL, normalement, vous n'avez pas besoin de suivre ce tutoriel.</li>
+<li>Si vous êtes dans le cas C et que vous ne comprenez rien à la redirection d'URL comme moi, vous déplacez le contenu du répertoire <code>public/</code> et vous remontez tout d'un niveau. Normalement, les répertoires <code>css/</code>, <code>js/</code> et <code>img/</code> ainsi que les deux fichiers <code>.htaccess</code> et <code>index.php</code> se retrouvent au même niveau que les autres répertoires du squelette (<code>config/</code>, <code>vendor/</code>, <code>module/</code> et <code>data/</code>). Attention, si vous êtes dans le cas C mais que vous utilisez <code>git</code> et/ou <code>composer</code>, il faut modifier les chemins dans les fichiers qui vont bien. Ce cas de figure n'est pas traité ici.</li>
+</ul>
+<ol start="4">
+<li>Dans chacun des répertoires de l'application, il faut mettre un fichier <code>.htaccess</code> pour protéger les fichiers de l'application. Le fichier <code>.htaccess</code> comprend une ligne unique :</li>
+</ol>
+<pre><code class="language-sh"> deny from all
+</code></pre>
+<ol start="5">
+<li>Déposez les fichiers et répertoires à la racine de votre espace d'hébergement (répertoire <strong>mon.domaine</strong>)</li>
+</ol>
+<p>On vient de déposer le squelette d'application de Zend Framework 2. Il nous reste à mettre en place la librairie. Cette partie est prise en charge par <strong>Composer</strong> si vous pouvez accéder à <strong>Composer</strong>. Si vous n'accédez pas à <strong>Composer</strong>, comme pour la majorité des personnes en hébergement mutualisé, voici ce qu'il faut faire :</p>
+<ol>
+<li>Téléchargez la <a href="http://framework.zend.com/downloads/latest" target="_blank">version minimale</a> de la librairie Zend Framework 2.</li>
+<li>Dézippez l'archive.</li>
+<li>Renommez le répertoire <code>ZendFramework-minimal-2.1.4/</code> en <code>ZF2/</code>.</li>
+<li>Déposez le répertoire <code>ZF2/</code> dans le répertoire <code>vendor/</code> du squelette d'application.</li>
+</ol>
+<p>Ouvrez un navigateur et connectez vous sur votre site.</p>
+<p>En principe, ça devrait marcher.</p>
+<h3>Derniers réglages</h3>
+<p>Si vous souhaitez faire l'installation dans un sous-répertoire, il faut modifier le fichier <code>index.php</code>. Pour ajuster les chemins si nécessaire, il faut éditer le fichier <code>index.php</code> et modifier la ligne 6</p>
+<pre><code class="language-php">chdir(dirname(__DIR__)) ;
+</code></pre>
+<p>Cette ligne pointe en pratique sur le répertoire qui comprend tous les répertoires de l'application : <code>config/</code>, <code>vendor/</code>, <code>module/</code> et <code>data/</code>. Si vous déplacez vos répertoires de l'application, il faut modifier cette ligne et lui indiquer le nouveau chemin des répertoires.</p>
+<h3>Installation en localhost</h3>
+<p>Le plus simple reste quand même de faire toute l'installation sur votre serveur apache/php local, faire les développements et tout envoyer sur votre hébergement en FTP...</p>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/fr/tags/zend-framework-2">zend framework 2</a></li><li><a href="/fr/tags/web-application">web application</a></li><li><a href="/fr/tags/gandi">gandi</a></li></ul>
+        </div>
+      
+
+      
+    
+
+      
+        <section id="oldcomment">
+          <h2>Commentaires historiques</h2><article>
+              <div class="level1">
+  <h3>Merci pour ce tuto c'est</h3>
+  <div class="meta">webeur 2013-08-11T16:35 </div>
+  <div class="body">Merci pour ce tuto c'est génial</div>
+
+  
+  
+</div>
+
+            </article></section>
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>Sur moi</h3>
+      <p>J&#39;ai appris le php il y a quelques années, quand Internet était à ses débuts. Pour diverses raisons, j&#39;ai arrêté en route et j&#39;ai perdu le fil des nouveaux Internets que je redécouvre. Résultat, je me sens constamment à courir après l&#39;histoire mais je suis toujours motivée à reprendre des projets personnels. Je me propose de vous partager mes découvertes. Au delà des sujets de programmation, j&#39;aime également partager mes infos concernant notamment l&#39;Histoire, l&#39;Astronomie, la Linguistique, les Films, les Livres et les Anime. J&#39;espère que vous aimerez suivre mon blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. Tous droits réservés.</p>
+        <p>Propulsé par <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

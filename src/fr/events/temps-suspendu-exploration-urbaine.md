@@ -43,5 +43,3 @@ Samedi et dimanche de 13h à 18h<br class="manualbr" />
 Fermé les jours fériés
 
 **Gratuit**
-
-

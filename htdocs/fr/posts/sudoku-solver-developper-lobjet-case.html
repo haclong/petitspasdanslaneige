@@ -1,0 +1,342 @@
+<!doctype html>
+<html class="no-js" lang="fr" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>Sudoku Solver - Développer l&#39;objet Case&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">Français</a>
+        <a href="/en/">Anglais</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/fr/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/fr/books/0/index.html">Séries</a>
+        <a href="/fr/">Accueil</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/fr/">Accueil</a><i class="fas fa-angle-right"></i>Sudoku Solver - Développer l'objet Case
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>Sudoku Solver - Développer l'objet Case</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>01/05/2014 21:58:00
+        
+        <i class="fas fa-th-large"></i><!--a href="/fr/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/Sudoku_Board_Game.jpg" class="node-banner" />
+        
+      </div>
+
+      <p><p>Notre objet <strong>Chiffre</strong> est écrit et pratiquement complet. Nous allons passer à l'objet <strong>Case</strong> qui est beaucoup plus simple à appréhender. &quot;Case&quot; est un mot clé, notre objet s'appellera &quot;CaseSudoku&quot;.</p>
+<p>L'objet <strong>CaseSudoku</strong> a pour propriétés les coordonnées de la case : colonne, ligne et région et toutes les valeurs possibles et/ou définitive de la case avec un objet <strong>Chiffre</strong>.</p>
+<p>Dans le cadre d'une grille de sudoku de niveau difficile, on résoud la grille avec une approche empirique, avec des hypothèses. Lorsqu'on émet une hypothèse, on considère qu'il y a sur chaque case de la grille un second numéro qui applique les raisonnements qui sont issus de l'hypothèse émise. Si l'hypothèse se révèle fausse, alors le second numéro est réputé comme nul. Si l'hypothèse s'avère vraie, alors le second numéro est validé et rejoint la grille initiale. Il faudra donc prévoir un second <strong>Chiffre</strong> pour pouvoir conserver l'état de la grille qui aurait été &quot;validée&quot;.</p>
+<pre><code class="language-php">// module/Application/src/Application/Model/CaseSudoku.php
+
+&lt;?php
+namespace Application\Model ;
+
+class CaseSudoku
+{
+  /**
+   * Numéro de colonne
+   *
+   * @var int
+   */
+  protected $colonne ;
+
+  /**
+   * Numéro de ligne
+   *
+   * @var int
+   */
+  protected $ligne ;
+
+  /**
+   * Numero de région
+   *
+   * @var int
+   */
+  protected $region ;
+
+  /**
+   * Objet Chiffre qui est manipulé
+   *
+   * @var Chiffre
+   */
+  public $chiffre ;
+
+  /**
+   * Objet Chiffre validé
+   *
+   * @var Chiffre
+   */
+  protected $sauvegarde ;
+}
+</code></pre>
+<p>La propriété <code>$chiffre</code> retourne une instance de l'objet <strong>Chiffre</strong> qu'on a développé. Grâce à la propriété <code>$chiffre</code>, on peut accéder à toutes les méthodes publiques de notre objet <strong>Chiffre</strong>. On peut ainsi accéder à ce type de manipulation :</p>
+<ul>
+<li><code>$this-&gt;chiffre-&gt;validerChiffre($chiffre) ;</code></li>
+<li><code>$this-&gt;chiffre-&gt;eliminerChiffre($chiffre) ;</code></li>
+<li><code>$this-&gt;chiffre-&gt;retablirTout() ;</code></li>
+<li><code>$this-&gt;chiffre-&gt;estValide() ;</code></li>
+<li><code>$this-&gt;chiffre-&gt;estInconnu() ;</code></li>
+<li><code>$this-&gt;chiffre-&gt;getStatutDuNumero($numero) ;</code></li>
+<li><code>$this-&gt;chiffre-&gt;getNumero() ;</code></li>
+</ul>
+<p>On considère les manipulations suivantes sur l'objet <strong>CaseSudoku</strong> :</p>
+<ul>
+<li>Créer la case avec le chiffre et les coordonnées de la case</li>
+<li>Sauvegarder le chiffre avant d'émettre une hypothèse et récupérer le chiffre sauvegardé si l'hypothèse aboutit sur une impossibilité.</li>
+<li>Récupérer les propriétés de la case</li>
+</ul>
+<pre><code class="language-php">// module/Application/src/Application/Model/CaseSudoku.php
+
+&lt;?php
+namespace Application\Model ;
+
+class CaseSudoku
+{
+  /**
+   * Constructeur
+   *
+   * @param int $region Numero de region
+   * @param int $colonne Numero de colonne
+   * @param int $ligne Numero de ligne
+   * @param int $taille Taille de la grille de sudoku -
+   * Souvenez vous, il nous faut la taille de la grille pour créer notre objet Chiffre.
+   */
+  public function __construct($region, $ligne, $colonne, $taille)
+  {
+    $this-&gt;colonne = $colonne ;
+    $this-&gt;ligne = $ligne ;
+    $this-&gt;region = $region ;
+    $this-&gt;chiffre = new Chiffre($taille) ;
+  }
+
+  /**
+   * Retourner le numéro de colonne
+   *
+   * @return string
+   */
+  public function getColonne()
+  {
+    return $this-&gt;colonne ;
+  }
+
+  /**
+   * Retourner le numéro de ligne
+   *
+   * @return string
+   */
+  public function getLigne()
+  {
+    return $this-&gt;ligne ;
+  }
+
+  /**
+   * Retourner le numéro de région
+   *
+   * @return string
+   */
+  public function getRegion()
+  {
+    return $this-&gt;region ;
+  }
+}
+</code></pre>
+<p>Mettons maintenant en place les méthodes pour sauvegarder le chiffre et, si nécessaire, le restaurer.</p>
+<p>La première idée, plus proche du mécanisme naturel, est de commencer à résoudre la grille et, si la grille s'avère difficile, créer une grille temporaire avec laquelle on avancera progressivement. Ce raisonnement est possible mais il nécessite une manipulation supplémentaire : il faut savoir quand on travaille sur la grille &quot;sérieuse&quot; et quand on travaille sur la grille &quot;temporaire&quot;. On commencerait sur la grille &quot;sérieuse&quot; et en cas où on serait bloqué, il faudrait basculer toute la logique (et toutes les méthodes) sur la grille temporaire le temps de débloquer la situation... Et si on débloque la situation, il faudrait reporter l'hypothèse initiale sur la grille sérieuse et continuer dans le raisonnement... Cela ajoute un niveau de complexité dont on n'a pas besoin. Au lieu de cela, on va travailler sur une grille &quot;courante&quot; et une grille &quot;sauvegardée&quot;. On va s'efforcer de résoudre la grille sur la grille &quot;courante&quot;. Dans le cas où on serait bloqué, alors on fait une sauvegarde de la grille juste avant d'être bloqué et on continue de travailler sur la grille &quot;courante&quot;. Si on finit dans une impossibilité, alors on récupère la grille sauvegardée et on réémet une nouvelle hypothèse. Dans ce cas, la grille &quot;sauvegardée&quot; n'est jamais manipulée excepté le fait de la créer au moment où on fait la sauvegarde et le moment où on restaure le dernier point de sauvegarde.</p>
+<pre><code class="language-php">// module/Application/src/Application/Model/CaseSudoku.php
+
+&lt;?php
+namespace Application\Model ;
+
+class CaseSudoku
+{
+  /**
+   * Sauvegarder la propriété chiffre (qui représente l'avancée de la résolution de la grille)
+   *
+   * @return Chiffre
+   */
+  public function sauvegarderChiffre()
+  {
+    $this-&gt;sauvegarde = clone $this-&gt;chiffre ;
+  }
+
+  /**
+   * Restaurer à partir de la sauvegarde
+   *
+   * @return Chiffre
+   */
+  public function restaurerChiffre()
+  {
+    $this-&gt;chiffre = clone $this-&gt;sauvegarde ;
+  }
+}
+</code></pre>
+<p>Voir l'instruction <code>clone</code> qui permet de copier un objet. Si on n'écrit que</p>
+<pre><code class="language-php">$this-&gt;sauvegarde = $this-&gt;chiffre ;
+</code></pre>
+<p>on n'arrivera pas à faire ce qu'on souhaite faire. En effet, si on modifie une information dans <code>$this-&gt;chiffre</code>, alors <code>$this-&gt;sauvegarde</code> sera également modifié parce que <code>$this-&gt;sauvegarde</code> et <code>$this-&gt;chiffre</code> pointent vers la même information.</p>
+<p>En revanche, avec</p>
+<pre><code class="language-php">$this-&gt;sauvegarde = clone $this-&gt;chiffre ;
+</code></pre>
+<p>alors si on modifie une information dans <code>$this-&gt;chiffre</code>, alors <code>$this-&gt;sauvegarde</code> restera non modifié. Ce qu'on veut faire.</p>
+<p>Vu d'ici, l'objet <strong>CaseSudoku</strong> est fini. Cool. Mettons en place les tests unitaires avant d'aller plus loin.</p>
+<h3>Les tests unitaires</h3>
+<pre><code class="language-php">// module/Application/test/ApplicationTest/Model/CaseSudokuTest.php
+
+&lt;?php
+namespace ApplicationTest\Model ;
+
+use Application\Model\CaseSudoku ;
+use PHPUnit_Framework_TestCase ;
+
+class CaseSudokuTest extends PHPUnit_Framework_TestCase
+{
+  public function testCaseSudokuInitial()
+  {
+    $g = new CaseSudoku(1, 2, 3, 4) ;
+ 
+    $this-&gt;assertSame($g-&gt;getColonne(), 3) ;
+    $this-&gt;assertSame($g-&gt;getLigne(), 2) ;
+    $this-&gt;assertSame($g-&gt;getRegion(), 1) ;
+    $this-&gt;assertObjectHasAttribute('size', $g-&gt;chiffre) ;
+  }
+ 
+  public function testSauvegarderChiffre()
+  {
+    $g = new CaseSudoku(1, 2, 3, 4) ;
+    $g-&gt;chiffre-&gt;validerChiffre(3) ;
+    $this-&gt;assertSame($g-&gt;chiffre-&gt;getNumero(), 3) ;
+    
+    $g-&gt;sauvegarderChiffre() ;
+    $g-&gt;chiffre-&gt;retablirTout() ;
+    $this-&gt;assertSame($g-&gt;chiffre-&gt;getNumero(), '') ;
+    
+    $g-&gt;restaurerChiffre() ;
+    $this-&gt;assertSame($g-&gt;chiffre-&gt;getNumero(), 3) ;
+  }
+}
+</code></pre>
+<p>Lancer les tests. Tout devrait bien se passer.</p>
+<p>Et voila ! Notre objet <strong>CaseSudoku</strong> est terminé. Dans le prochain article, nous nous attaquerons à l'objet <strong>Grille</strong>. La <strong>Grille</strong> est l'objet qui sera manipulé par le contrôleur. On peut considérer que c'est notre objet &quot;principal&quot;.</p>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/fr/tags/poo">POO</a></li><li><a href="/fr/tags/phpunit">phpunit</a></li></ul>
+        </div>
+      
+
+      
+        <nav id="book-navigation">
+    
+       <li class="link-previous"><a href="/fr/posts/solveur-de-sudoku-les-tests-unitaires-pour-lobjet-chiffre.html"><i class="fas fa-long-arrow-alt-left"></i> Solveur de Sudoku - Les tests unitaires pour l&#39;objet Chiffre</li>
+    
+
+    
+        <li class="link-next"><a href="/fr/posts/le-solveur-de-sudoku-mettre-en-place-la-grille.html">Le solveur de Sudoku - Mettre en place la grille <i class="fas fa-long-arrow-alt-right"></i></a></li>
+    
+
+    
+        <li class="link-up"><a href="/fr/books/aborder-la-programmation-orientee-objet-par-lexemple-concevoir-un-solveur-de-sudoku.html"><i class="fas fa-book-open"></i> Aborder la programmation orientée objet par l&#39;exemple. Concevoir un solveur de sudoku</li>
+    
+</nav>
+
+      
+    
+
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>Sur moi</h3>
+      <p>J&#39;ai appris le php il y a quelques années, quand Internet était à ses débuts. Pour diverses raisons, j&#39;ai arrêté en route et j&#39;ai perdu le fil des nouveaux Internets que je redécouvre. Résultat, je me sens constamment à courir après l&#39;histoire mais je suis toujours motivée à reprendre des projets personnels. Je me propose de vous partager mes découvertes. Au delà des sujets de programmation, j&#39;aime également partager mes infos concernant notamment l&#39;Histoire, l&#39;Astronomie, la Linguistique, les Films, les Livres et les Anime. J&#39;espère que vous aimerez suivre mon blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. Tous droits réservés.</p>
+        <p>Propulsé par <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

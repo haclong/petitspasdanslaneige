@@ -1,0 +1,293 @@
+<!doctype html>
+<html class="no-js" lang="fr" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>Solveur de Sudoku - Route et Contrôleur&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">Français</a>
+        <a href="/en/">Anglais</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/fr/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/fr/books/0/index.html">Séries</a>
+        <a href="/fr/">Accueil</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/fr/">Accueil</a><i class="fas fa-angle-right"></i>Solveur de Sudoku - Route et Contrôleur
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>Solveur de Sudoku - Route et Contrôleur</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>05/04/2014 18:05:00
+        
+        <i class="fas fa-th-large"></i><!--a href="/fr/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/Sudoku_Board_Game.jpg" class="node-banner" />
+        
+      </div>
+
+      <p><p>On a eu la brillante idée de rendre la taille de la grille de sudoku variable. Il va donc falloir prévoir un moyen pour sélectionner la taille de la grille.</p>
+<p>Le mécanisme est le suivant :</p>
+<ul>
+<li>dans la vue, on crée une interface qui va permettre à l'utilisateur de choisir la taille de sa grille (soit une liste déroulante, soit des liens)</li>
+<li>en fonction du choix opéré sur l'interface, le paramètre va être envoyé dans le contrôleur.</li>
+<li>le contrôleur récupère le paramètre pour l'exploiter (typiquement, pour envoyer cette information au modèle)</li>
+</ul>
+<h3>Une gestion par lien</h3>
+<p>On va opter pour la gestion par des liens.</p>
+<p><strong>La vue :</strong></p>
+<p>Il faudra donc créer un lien pour chaque taille de grille. Chaque lien appellera toujours le même contrôleur (inutile de créer des contrôleurs différents en fonction de la taille de la grille de sudoku) et chaque lien comportera, sans nul doute, un paramètre qui indiquera la taille de la grille.</p>
+<p><strong>La route :</strong></p>
+<p>Dans le cadre d'un application montée avec Zend Framework, si on introduit un paramètre dans une URL, il faut que ce paramètre soit &quot;pris en charge&quot; par la route. Il faudra donc aller modifier la route pour qu'elle sache qu'on peut - optionnellement - lui envoyer un paramètre.</p>
+<p><strong>Le contrôleur :</strong></p>
+<p>Une fois que la route sait prendre un charge un paramètre, le contrôleur saura comment récupérer ce paramètre.</p>
+<p>Passons aux choses sérieuses</p>
+<p>Si vous avez gardé le <strong>ZendApplicationSkeleton</strong> en l'état, on va modifier le layout et utiliser à profit le bandeau de navigation pour positionner les liens qui correspondent aux tailles de la grille.</p>
+<pre><code class="language-php">// module/Application/view/layout/layout.phtml
+...
+&lt;nav class=&quot;navbar navbar-inverse navbar-fixed-top&quot; role=&quot;navigation&quot;&gt;
+  &lt;div class=&quot;container&quot;&gt;
+    &lt;div class=&quot;navbar-header&quot;&gt;
+      &lt;button type=&quot;button&quot; class=&quot;navbar-toggle&quot; data-toggle=&quot;collapse&quot; data-target=&quot;.navbar-collapse&quot;&gt;
+        &lt;span class=&quot;icon-bar&quot;&gt;&lt;/span&gt;
+        &lt;span class=&quot;icon-bar&quot;&gt;&lt;/span&gt;
+        &lt;span class=&quot;icon-bar&quot;&gt;&lt;/span&gt;
+      &lt;/button&gt;
+      
+      &lt;div class=&quot;navbar-brand&quot;&gt;&lt;?php echo $this-&gt;translate('Sudoku Solver') ?&gt;&lt;/div&gt;
+    &lt;/div&gt;
+ 
+    &lt;div class=&quot;collapse navbar-collapse&quot;&gt;
+      &lt;ul class=&quot;nav navbar-nav&quot;&gt;
+        // ajouter les tailles des grilles à chaque lien
+        &lt;li class=&quot;active&quot;&gt;&lt;a href=&quot;&lt;?php echo $this-&gt;url('home') ?&gt;4&quot;&gt;&lt;?php echo $this-&gt;translate('4x4') ?&gt;&lt;/a&gt;&lt;/li&gt;
+        &lt;li class=&quot;active&quot;&gt;&lt;a href=&quot;&lt;?php echo $this-&gt;url('home') ?&gt;9&quot;&gt;&lt;?php echo $this-&gt;translate('9x9') ?&gt;&lt;/a&gt;&lt;/li&gt;
+        &lt;li class=&quot;active&quot;&gt;&lt;a href=&quot;&lt;?php echo $this-&gt;url('home') ?&gt;16&quot;&gt;&lt;?php echo $this-&gt;translate('16x16') ?&gt;&lt;/a&gt;&lt;/li&gt;
+        &lt;li class=&quot;active&quot;&gt;&lt;a href=&quot;&lt;?php echo $this-&gt;url('home') ?&gt;25&quot;&gt;&lt;?php echo $this-&gt;translate('25x25') ?&gt;&lt;/a&gt;&lt;/li&gt;
+      &lt;/ul&gt;
+    &lt;/div&gt;&lt;!--/.nav-collapse --&gt;
+  &lt;/div&gt;
+&lt;/nav&gt;
+</code></pre>
+<p><code>$this-&gt;translate()</code> est par défaut dans le <strong>ZendApplicationSkeleton</strong>. Toutefois, nous n'avons pas véritablement besoin de sa fonction. On pourrait tout aussi bien s'en passer.</p>
+<p><code>&lt;?php echo $this-&gt;url('home') ?&gt;</code> construit le lien vers la route nommée comme la &quot;home&quot; de l'application. <code>&lt;a href=&quot;&lt;?php echo $this-&gt;url('home') ?&gt;9&quot;&gt;</code> induit que la route nommée &quot;<em>home</em>&quot; admet des paramètres dans l'url. C'est comme si on écrivait <code>&lt;a href=&quot;ma_home.php?taille=9&quot;&gt;</code> en plus joli.</p>
+<h3>Modifions maintenant la route</h3>
+<pre><code class="language-php">// module/Application/config/module.config.php
+
+return array(
+  'router' =&gt; array(
+    'routes' =&gt; array(
+      'home' =&gt; array(
+        'type' =&gt; 'segment', // on précise au gestionnaire de route que la route attend des paramètres optionnels
+        'options' =&gt; array(
+          'route' =&gt; '/[:size]', //on rajoute le paramètre dans la route. Et c'est tout.
+          'defaults' =&gt; array(
+            'controller' =&gt; 'Application\Controller\Index', // le nom &quot;invokable&quot; défini dans le même fichier module.config.php
+            'action' =&gt; 'index',
+          ),
+        ),
+      ),
+    ),
+  ),
+);
+</code></pre>
+<p>Le paramétrage est simplissime et se greffe facilement sur la route initiale. Au passage, on en profite pour nommer le paramètre (size), pour qu'on puisse le retrouver dans le controleur.</p>
+<p><strong>TODO :</strong> il faudrait, pour être correct, filtrer le paramètre (<code>size</code>) avec une liste finie de valeur possible. En effet, on ne voudrait pas que l'utilisateur s'amuse à générer une grille de sudoku de 8 cases de côté par exemple en saisissant manuellement <code>&lt;a href=&quot;http://localhost/SudokuSolver/8&quot;&gt;http://localhost/SudokuSolver/8&lt;/a&gt;</code> dans sa barre d'adresse, n'est ce pas ?</p>
+<h3>Passons maintenant au contrôleur</h3>
+<pre><code class="language-php">// module/Application/src/Application/Controller/IndexController.php
+
+&lt;?php
+namespace Application\Controller;
+
+use Zend\Mvc\Controller\AbstractActionController;
+use Zend\View\Model\ViewModel;
+
+class IndexController extends AbstractActionController
+{
+  public function indexAction()
+  {
+    // pour retrouver le paramètre dans l'url
+    // dans la route, on a nommé le paramètre 'size'
+    // si aucune paramètre n'est passé, mettre 9 par défaut
+    $size = (int) $this-&gt;params()-&gt;fromRoute('size', 9) ;
+
+    // on se souvient que le tableau $grille doit comporter des clés numérotées à partir de 1 pour que le calcul des limites de région tombe juste.
+    for($i = 1; $i&lt;=$size; $i++)
+    {
+      for($j = 1; $j &lt;= $size; $j++)
+      {
+        $array[$i][$j] = $i . ' - ' . $j ;
+      }
+    }
+ 
+    $view = array(
+      'grille' =&gt; $array,
+    ) ;
+    return $view ;
+  }
+}
+</code></pre>
+<p>Maintenant que notre contrôleur génère lui même le tableau <code>$grille</code>, on peut aller supprimer le tableau <code>$grille</code> créé à la main dans notre vue <code>index.phtml</code>.</p>
+<pre><code class="language-php">// module/Application/view/application/index/index.phtml
+
+&lt;table class=&quot;sudoku_grid&quot;&gt;
+  &lt;?php
+    // $grille est maintenant envoyé par le contrôleur.
+    foreach($grille as $num_ligne =&gt; $ligne)
+    {
+  ?&gt;
+
+  &lt;tr&gt;
+
+    &lt;?php
+      foreach($ligne as $num_colonne =&gt; $cellule)
+      {
+        // calculer les styles pour les régions
+        $bordure_bas = &quot;&quot; ;
+        $bordure_droite = &quot;&quot; ;
+          
+        if($num_ligne % sqrt(count($grille)) == 0) {
+          $bordure_bas = &quot; region_border_bottom&quot; ;
+        }
+
+        if($num_colonne % sqrt(count($ligne)) == 0) {
+          $bordure_droite = &quot; region_border_right&quot; ;
+        }
+
+        // ajouter les styles dans la balise &lt;td&gt;
+        print(&quot;&lt;td class=\&quot;sudoku_case&quot;. $bordure_droite.$bordure_bas.&quot;\&quot;&gt;
+          &lt;input type=\&quot;text\&quot; size=\&quot;1\&quot; name=\&quot;k[&quot;.$num_ligne.&quot;][&quot;.$num_colonne.&quot;]\&quot; value=\&quot;&quot; . $cellule . &quot;\&quot;/&gt;
+          &lt;/td&gt;&quot;) ;
+      }
+    ?&gt;
+  
+  &lt;/tr&gt;
+
+  &lt;?php
+    }
+  ?&gt;
+
+&lt;/table&gt;
+</code></pre>
+<p>Ouvrez votre navigateur favori : <code>http://localhost/SudokuSolver</code></p>
+<p>Un tableau-plus-basique-que-ça-tu-meurs s'affiche. De 9x9 cases. Testez les liens et vous pourrez constatez que votre tableau change de taille.</p>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/fr/tags/zend-framework-2">zend framework 2</a></li></ul>
+        </div>
+      
+
+      
+        <nav id="book-navigation">
+    
+       <li class="link-previous"><a href="/fr/posts/un-solveur-de-sudoku-preparer-la-vue.html"><i class="fas fa-long-arrow-alt-left"></i> Un solveur de Sudoku - Préparer la vue</li>
+    
+
+    
+        <li class="link-next"><a href="/fr/posts/un-solveur-de-sudoku-tester-le-controleur.html">Un solveur de Sudoku - Tester le contrôleur <i class="fas fa-long-arrow-alt-right"></i></a></li>
+    
+
+    
+        <li class="link-up"><a href="/fr/books/aborder-la-programmation-orientee-objet-par-lexemple-concevoir-un-solveur-de-sudoku.html"><i class="fas fa-book-open"></i> Aborder la programmation orientée objet par l&#39;exemple. Concevoir un solveur de sudoku</li>
+    
+</nav>
+
+      
+    
+
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>Sur moi</h3>
+      <p>J&#39;ai appris le php il y a quelques années, quand Internet était à ses débuts. Pour diverses raisons, j&#39;ai arrêté en route et j&#39;ai perdu le fil des nouveaux Internets que je redécouvre. Résultat, je me sens constamment à courir après l&#39;histoire mais je suis toujours motivée à reprendre des projets personnels. Je me propose de vous partager mes découvertes. Au delà des sujets de programmation, j&#39;aime également partager mes infos concernant notamment l&#39;Histoire, l&#39;Astronomie, la Linguistique, les Films, les Livres et les Anime. J&#39;espère que vous aimerez suivre mon blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. Tous droits réservés.</p>
+        <p>Propulsé par <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

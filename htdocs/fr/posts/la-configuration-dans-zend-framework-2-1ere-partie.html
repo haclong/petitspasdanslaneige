@@ -1,0 +1,394 @@
+<!doctype html>
+<html class="no-js" lang="fr" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>La configuration dans Zend Framework 2 - 1ere partie&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">Français</a>
+        <a href="/en/">Anglais</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/fr/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/fr/books/0/index.html">Séries</a>
+        <a href="/fr/">Accueil</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/fr/">Accueil</a><i class="fas fa-angle-right"></i>La configuration dans Zend Framework 2 - 1ere partie
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>La configuration dans Zend Framework 2 - 1ere partie</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>17/05/2013 20:08:00
+        
+        <i class="fas fa-th-large"></i><!--a href="/fr/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->, <!--a href="/fr/sites/haclong-projects.html" class="tag-sites"-->Haclong projects<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/musictechnique.jpg" class="node-banner" />
+        
+      </div>
+
+      <p><p>Une application MVC développée avec Zend Framework 2 se structure grâce à des modules. La volonté de l'équipe de développement de Zend Framework est de créer des unités indépendantes les unes des autres. Cela permet de développer des modules qui peuvent facilement être branché et débranché d'une application. Afin de faciliter cet effet plugin, il faut savoir que chaque module embarque avec lui son propre fichier de configuration (contrairement à Zend Framework 1 qui concentrait la configuration dans un seul fichier de configuration).</p>
+<p>Mais que faut il savoir devant la démultiplication des fichiers de config ?</p>
+<h3>Prérequis</h3>
+<p>Vous avez installé Zend Framework 2.0 ou 2.1 et vous avez installé le <a href="https://github.com/zendframework/ZendSkeletonApplication" target="_blank"><strong>ZendSkeletonApplication</strong></a> utile pour démarrer une application MVC développée avec Zend Framework 2.</p>
+<p>La configuration, dans le cadre d'une application &quot;standard&quot; de Zend Framework 2, se présente comme un tableau php.</p>
+<p>Chaque fichier de configuration présente invariablement la même structure :</p>
+<pre><code class="language-php">&lt;?php
+ return array() ;
+?&gt;
+</code></pre>
+<p>Il ne tient qu'à vous de compléter le tableau.</p>
+<h3>Utiliser la configuration</h3>
+<p>Zend Framework 2 a les composants nécessaires pour charger / concaténer les informations des différents tableaux de configuration pour que l'on puisse les utiliser.</p>
+<p>Dans la pratique, on aura forcément besoin de la configuration à partir d'une classe. N'importe laquelle. Concrètement, il faudra que cette classe puisse appeler la classe <code>ServiceLocator</code>. Si vous trouvez un chemin pour arriver jusqu'à <code>ServiceLocator</code>, alors vous trouverez votre configuration.</p>
+<p>En partant du <strong>ZendSkeletonApplication</strong>, sans trop se fouler, voici comment on peut arriver jusqu'à notre <code>ServiceLocator</code>.</p>
+<h4>Par la classe Module</h4>
+<p>Dans tous les callback de la fonction <code>getServiceConfig()</code> du fichier <code>Module.php</code>. (Dans les différents tutoriaux sur Zend Framework 2, cette fonction sert à configurer et gérer les dépendances de vos différents services).</p>
+<pre><code class="language-php">// Module.php
+
+public function getServiceConfig()
+{
+  return array(
+    'factories' =&gt; array(
+      'monService' =&gt; function ($serviceManager) { // par défaut, la fonction passe le service manager en paramètre. Ne me demandez pas comment. C'est comme ça.
+        $maConfiguration = $serviceManager-&gt;get('config') ; 
+        // ou
+        $maConfiguration = $serviceManager-&gt;get('Configuration') ; // les deux fonctionnent.
+      },
+    ),
+  ) ;
+}
+</code></pre>
+<h4>Dans toutes les fonctions liées au gestionnaire d'événement</h4>
+<pre><code class="language-php">// Module.php
+
+public function onLoadModulesPost($event) // par défaut, la fonction passe un objet $event. La bonne question à se poser, c'est quelle est la liste complète des fonctions on* qu'on peut utiliser.
+{
+  $maConfiguration = $event-&gt;getConfigListener()-&gt;getMergedConfig(false) ;
+  // ou
+  $maConfiguration = $event-&gt;getApplication()-&gt;getServiceManager()-&gt;get('Configuration') ;
+}
+</code></pre>
+<h4>Par les contrôleurs</h4>
+<p>La classe <a href="http://framework.zend.com/manual/2.2/en/modules/zend.mvc.controllers.html#the-abstractactioncontroller" target="_blank"><code>AbstractActionController</code></a> implémente <code>ServiceLocatorAwareInterface</code>. Ainsi, à partir de n'importe lequel de vos contrôleurs, vous pouvez accéder à votre configuration.</p>
+<pre><code class="language-php">// monController.php
+
+function myFunction() // pas forcément une action et pas forcément une fonction publique non plus. Du moment qu'elle est dans une classe controlleur qui étends AbstractActionController
+{
+  $maConfiguration = $this-&gt;getServiceLocator()-&gt;get('Configuration') ;
+}
+</code></pre>
+<h4>Par d'autres classes (dont les vôtres)</h4>
+<p>Si vous souhaitez accéder à votre configuration à partir d'autres classes (ni <code>Module</code>, ni contrôleurs), vous pouvez soit implémenter <code>ServiceLocatorAwareInterface</code>, soit charger votre configuration au moment de l'appel à votre classe.</p>
+<p>Si votre classe implémente <a href="http://framework.zend.com/manual/2.2/en/modules/zend.service-manager.quick-start.html" target="_blank"><code>ServiceLocatorAwareInterface</code></a>, d'après la documentation de Zend Framework 2, vous êtes tenu de rajouter ces deux fonctions à votre classe : <code>setServiceLocator()</code> et <code>getServiceLocator()</code></p>
+<pre><code class="language-php">// maClasse.php
+
+class maClasse implements ServiceLocatorAwareInterface
+{
+  protected $services;
+
+  // fonction à ajouter selon ServiceLocatorAwareInterface
+  public function setServiceLocator(ServiceLocatorInterface $serviceLocator)
+  {
+    $this-&gt;services = $serviceLocator ;
+  }
+
+  // fonction à ajouter selon ServiceLocatorAwareInterface
+  public function getServiceLocator()
+  {
+    return $this-&gt;services ;
+  }
+}
+</code></pre>
+<pre><code class="language-php">// Module.php
+
+public function getServiceConfig()
+{
+  return array(
+    'invokables'=&gt; array(
+      'maClasse' =&gt; 'maClasse' ;
+    ),
+  ) ;
+}
+</code></pre>
+<p><strong>NOTE</strong><em>Je n'ai pas réussi à implémenter correctement ServiceLocatorAwareInterface. D'après ce que j'ai vu sur les forums, il semblerait que ce soit comme ça qu'il faille faire. Dans la mesure où je suis quand même obligé de charger ma classe dans le Service Manager et que je rajoute des lignes supplémentaires dans le code de ma classe, j'ai préféré opter pour la version où la configuration est injectée dans mon service à l'instanciation de ce dernier.</em></p>
+<p>Pour injecter la configuration à l'instanciation de votre classe, voici ce que vous pouvez faire :</p>
+<pre><code class="language-php">// Module.php
+
+public function getServiceConfig()
+{
+  return array(
+    'factories' =&gt; array(
+      'maClasse' =&gt; function ($serviceManager) { 
+        $maConfiguration = $serviceManager-&gt;get('Configuration') ;
+        $maClasse = new maClasse() ;
+        $maClasse-&gt;setConfig($maConfiguration) ; // c'est par là que j'envoie ma configuration à ma classe.
+        return $maClasse ; 
+      },
+    ),
+  ) ;
+}
+</code></pre>
+<pre><code class="language-php">// maClasse.php
+
+class maClasse
+{
+  protected $config ;
+
+  public function setConfig($config)
+  {
+    $this-&gt;config = $config ;
+  }
+}
+</code></pre>
+<h3>Accéder aux clés de configuration</h3>
+<p>Une fois que vous avez récupéré le tableau de configuration (<code>$maConfiguration</code>), vous l'utilisez comme un tableau php standard. Voici dans les grosses mailles des fichiers de configuration répartis un peu partout dans votre application.</p>
+<pre><code class="language-php">// module/Module1/config/module.config.php
+
+&lt;?php
+return array(
+  'myModule1Key' =&gt; array(),
+) ;
+</code></pre>
+<pre><code class="language-php">// module/Module2/config/module.config.php
+
+&lt;?php
+return array(
+  'myModule2Key' =&gt; array(),
+);
+</code></pre>
+<pre><code class="language-php">// config/application.config.php
+
+&lt;?php
+return array(
+  'myAppliKey1' =&gt; array(),
+  'myAppliKey2' =&gt; array(), // il peut y avoir plusieurs clés par fichier de configuration, bien sûr.
+);
+</code></pre>
+<pre><code class="language-php">// config/autoload/global.php
+
+&lt;?php
+return array(
+  'myGlobalKey' =&gt; array(),
+);
+</code></pre>
+<pre><code class="language-php">// config/autoload/local.php
+
+&lt;?
+return array(
+  'myLocalKey' =&gt; array(),
+);
+</code></pre>
+<p>Pour accéder à chacune de ces clés de configuration :</p>
+<pre><code class="language-php">$maConfiguration = $serviceManager-&gt;get('Configuration') ;
+$configurationDuModule1 = $maConfiguration['myModule1Key'] ;
+$configurationDuModule2 = $maConfiguration['myModule2Key'] ;
+$configurationGlobal = $maConfiguration['myGlobalKey'] ;
+</code></pre>
+<h3>Chemin pour les fichiers de configuration</h3>
+<p>Dans la classe <code>Module</code>, il y a une fonction, obligatoire, qui définit le chemin vers votre fichier de config :</p>
+<pre><code class="language-php">//Module.php
+
+public function getConfig()
+{
+  return include __DIR__ . '/config/module.config.php' ;
+}
+</code></pre>
+<p>Tel que défini là, le fichier se trouve donc dans <code>module/monModule/config/module.config.php</code>. Il permet donc de définir un fichier <code>module.config.php</code> par module.</p>
+<p>Il faut également compter sur le fichier de configuration de l'application.</p>
+<pre><code class="language-php">// index.php
+
+Zend\Mvc\Application::init(require 'config/application.config.php')-&gt;run() ;
+</code></pre>
+<p>Ce fichier, comme indiqué, se situe dans <code>config/</code></p>
+<p>Le fichier <code>config/application.config.php</code></p>
+<ul>
+<li>liste les modules qui doivent être chargés,</li>
+<li>définit le chemin où l'application peut trouver les modules</li>
+<li>définit le chemin où des fichiers de configuration supplémentaires seront chargés en dernier dans l'application (surchargeant les options de configuration si certaines clés apparaissent en double)</li>
+</ul>
+<pre><code class="language-php">//application.config.php
+
+//liste des modules qui doivent être chargés
+'modules' =&gt; array(),
+
+//le chemin où on peut trouver des modules
+'module_listener_options' =&gt; array(
+  'module_paths' =&gt; array(
+    './module',
+    './vendor',
+  ),
+),
+
+//chemin et regex des fichiers de configuration supplémentaires
+'module_listener_options' =&gt; array(
+  'config_glob_paths' =&gt; array(
+    'config/autoload/{,*.}{global,local}.php',
+  ),
+),
+</code></pre>
+<h3>Les différents fichiers config</h3>
+<h4>config/application.config.php</h4>
+<p>C'est le fichier de configuration principal de votre application.</p>
+<p>La gestion de la priorité sur l'ordre de chargement des modules est gérée par le <a href="http://framework.zend.com/manual/2.2/en/modules/zend.module-manager.module-autoloader.html" target="_blank"><strong>Module Manager</strong></a>. Cela est utile de le savoir dans le cas où un de vos modules redéfinit un service ou un tableau qui a déjà été défini par un autre module.</p>
+<p>D'après la documentation, si deux modules portent le même nom (chacun dans un chemin différent), alors le premier que le <strong>Module Manager</strong> trouvera sera retenu.</p>
+<p>Par défaut, vous pouvez mettre vos modules soit dans le répertoire <code>module/</code> du <strong>ZendSkeletonApplication</strong>, soit dans le répertoire <code>vendor/</code>.</p>
+<p>En fait, le répertoire <code>vendor/</code> est un répertoire utilisé par <strong>Composer</strong> principalement. <strong>Composer</strong>, quand il gère les dépendances, organise les modules installés avec une arborescence qu'il gère lui même. Il crée ensuite des alias que l'application Zend utilise. Du coup, dans la clé '<code>modules</code>', il faut lister le namespace du module et non pas essayer de saisir le chemin du module. <strong>Composer</strong> fera le lien.</p>
+<p><strong>Par ex</strong></p>
+<p>Si vous installez le module <strong>BjyProfiler</strong> en utilisant <strong>Composer</strong>, vous allez avoir cette structure :</p>
+<ul>
+<li>Le fichier <code>Module.php</code> du module <strong>BjyProfiler</strong> va avoir ce chemin : <code>vendor/bjyoungblood/bjy-profiler/Module.php</code></li>
+<li>Le fichier <code>Module.php</code> définit le namespace du module (<strong>BjyProfiler</strong>)</li>
+<li>Pour ajouter le module à votre application, il faut ajouter '<strong>BjyProfiler</strong>' (le namespace) à votre fichier <code>config/application.config.php</code>, dans la clé '<code>modules</code>'.</li>
+</ul>
+<p>Toute l'astuce se situe au niveau de <code>vendor/composer/autoload_namespace.php</code> qui va faire le lien entre le namespace <strong>BjyProfiler</strong> et le chemin <code>bjyoungblood/bjy-profiler</code>. Il ne sert à rien d'éditer les fichiers de <strong>Composer</strong>. Il les réécrit quand on fait un <code>composer update</code> ou une nouvelle <code>composer install</code>.</p>
+<p>Si vous souhaitez mettre des modules dans le répertoire <code>vendor/</code> sans passer par <strong>Composer</strong>, il faudra appliquer les mêmes règles que dans le répertoire <code>module/</code> :</p>
+<p><code>vendor/{NAMESPACE}</code></p>
+<h4>module_path/monModule/config/module.config.php</h4>
+<p>Les fichiers de configuration des modules : chaque module attends obligatoirement un fichier de configuration.</p>
+<p>Si votre module n'a pas besoin d'options de configuration pour fonctionner, vous êtes tenu de créer le fichier <code>module.config.php</code> qui doit retourner un tableau vide. En l'absence du fichier, l'application retourne une exception.</p>
+<pre><code class="language-php">// module_path/monModule/config/module.config.php
+
+return array() ;
+</code></pre>
+<h4>Les fichiers de configuration supplémentaires</h4>
+<p>D'après l'instruction suivante :</p>
+<pre><code class="language-php">//config/application.config.php
+
+'module_listener_options' =&gt; array(
+  'config_glob_paths' =&gt; array(
+    'config/autoload/{,*.}{global,local}.php',
+  ),
+),
+</code></pre>
+<p>des fichiers de configuration supplémentaires peuvent être chargés automatiquement par l'application s'ils se situent à ce chemin : <code>config/autoload/</code> et si le nom du fichier satisfait la regex définie.</p>
+<p>Ainsi, les fichiers suivants seront automatiquement chargés comme des fichiers de configuration :</p>
+<ul>
+<li><code>config/autoload/global.php</code></li>
+<li><code>config/autoload/maconfig.global.php</code></li>
+<li><code>config/autoload/monautreconfig.global.php</code></li>
+<li><code>config/autoload/local.php</code></li>
+<li><code>config/autoload/maconfig.local.php</code></li>
+<li><code>config/autoload/monautreconfig.local.php</code></li>
+</ul>
+<p>Zend Framework 2 utilise les fonctionnalités de <strong>git</strong>. Il y a donc un fichier <code>config/autoload/.gitignore</code> qui est défini par défaut. Dans ce fichier, il est déclaré que <strong>git</strong> doit ignorer les fichiers <code>local.php</code> et <code>*.local.php</code>. Ainsi, les fichiers <code>local.php</code> pourront contenir spécifiquement les informations sensibles ainsi que les différences de paramétrage relatives à l'environnement (<em>development</em>, <em>test</em>, <em>prod</em>). Evan Coury a un excellent <a href="http://blog.evan.pro/environment-specific-configuration-in-zend-framework-2" target="_blank">article</a> à cet effet.</p>
+<p>Une astuce est de créer systématiquement un fichier <code>local.php.dist</code> qui contiendra toutes les clés nécessaires au fonctionnement de votre application mais qui ne contiendra pas les valeurs de ces clés (qui sont, généralement, des informations sensibles).</p>
+<p>Après avoir vu où se situaient les fichiers de configuration, comment on pouvait accéder à la configuration, comment on pouvait nommer les fichiers de configuration, nous voici arrivé au terme de cette première partie sur les fichiers de configuration d'une application montée avec Zend Framework 2.</p>
+<p>Dans la seconde partie, nous verrons comment utiliser/écrire un fichier de configuration.</p>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/fr/tags/zend-framework-2">zend framework 2</a></li><li><a href="/fr/tags/application">application</a></li><li><a href="/fr/tags/configuration">configuration</a></li></ul>
+        </div>
+      
+
+      
+        <nav id="book-navigation">
+    
+
+    
+        <li class="link-next"><a href="/fr/posts/la-configuration-dans-zend-framework-2-2nde-partie.html">La configuration dans Zend Framework 2 - 2nde partie <i class="fas fa-long-arrow-alt-right"></i></a></li>
+    
+
+    
+        <li class="link-up"><a href="/fr/books/configuration-dans-zend-framework-2.html"><i class="fas fa-book-open"></i> Configuration dans Zend Framework 2</li>
+    
+</nav>
+
+      
+    
+
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>Sur moi</h3>
+      <p>J&#39;ai appris le php il y a quelques années, quand Internet était à ses débuts. Pour diverses raisons, j&#39;ai arrêté en route et j&#39;ai perdu le fil des nouveaux Internets que je redécouvre. Résultat, je me sens constamment à courir après l&#39;histoire mais je suis toujours motivée à reprendre des projets personnels. Je me propose de vous partager mes découvertes. Au delà des sujets de programmation, j&#39;aime également partager mes infos concernant notamment l&#39;Histoire, l&#39;Astronomie, la Linguistique, les Films, les Livres et les Anime. J&#39;espère que vous aimerez suivre mon blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. Tous droits réservés.</p>
+        <p>Propulsé par <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

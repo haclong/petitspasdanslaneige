@@ -1,0 +1,166 @@
+<!doctype html>
+<html class="no-js" lang="fr" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>Intégration continue - exploration&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">Français</a>
+        <a href="/en/">Anglais</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/fr/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/fr/books/0/index.html">Séries</a>
+        <a href="/fr/">Accueil</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/fr/">Accueil</a><i class="fas fa-angle-right"></i>Intégration continue - exploration
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>Intégration continue - exploration</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>13/10/2015 07:55:00
+        
+        <i class="fas fa-th-large"></i><!--a href="/fr/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->, <!--a href="/fr/sites/haclong-projects.html" class="tag-sites"-->Haclong projects<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/engrenages.jpg" class="node-banner" />
+        
+      </div>
+
+      <p><p>Je tourne mon attention sur l'<a href="https://fr.wikipedia.org/wiki/Int%C3%A9gration_continue">intégration continue</a>... C'est pas la première fois que je fais ça et on va dire que je fais ça <em>encore</em> une fois. Pour le moment, je ne suis pas très loin et je manque surtout de méthodologie.</p>
+<p>J'ai fait un peu de recherche. Pêle mêle, pour faire de l'intégration continue, il faut</p>
+<ul>
+<li>un système de contrôle de version (<a href="https://git-scm.com/">git</a> pour moi, si vous avez bien suivi)</li>
+<li>une librairie de tests unitaires (<a href="https://phpunit.de/">phpUnit</a>, de base, mais il y a également <a href="http://codeception.com/">codeception</a>)</li>
+<li>un programme pour faire les build (là, c'est flou...)</li>
+<li>un serveur d'intégration continue (là, c'est flou...)</li>
+</ul>
+<h2>Vertu de l'intégration continue</h2>
+<p>Tout le monde vous dira qu'en 2015, l'intégration continue, c'est super cool. C'est Agile. C'est fiable. Plus vous intégrer régulièrement, moins vous risquez de tomber sur les problèmes irrésolubles des sources qui sont tellement différents les uns des autres que ça devient un véritable casse-tête pour les réconcilier... Et puis, si vous avez un process d'intégration continue fiable, le truc travaille tout seul pour vous et <em>théoriquement</em> vous avez moins à faire une fois que vous avez fini de développer votre module / application. CQFD.</p>
+<p>Je reste persuadée que l'intégration continue est un process à explorer et à maîtriser. La fiabilité, ça me plaît comme argument. Et si en prime, quelqu'un peut se charger de faire les vérifications à ma place, ça m'arrange. Du coup, je persévère et j'essaie de mettre la théorie en pratique.</p>
+<p>Oui mais voilà. J'ai des interrogations. Des trucs pas clairs dans les coins.</p>
+<h2>Zones à éclaircir</h2>
+<p>D'un côté, j'ai <a href="http://www.martinfowler.com/articles/continuousIntegration.html">Martin Fowler</a> qui explique que globalement, lorsque vous faites de l'intégration continue, vous devriez être capable de prendre votre dernier build, d'appuyer sur un bouton et hop, le truc se déploie tout seul, s'installe tout seul et vous êtes heureux, aucun problème à signaler.</p>
+<p>De l'autre côté, j'ai des questions qui, pour le moment, ne trouvent pas réponses :</p>
+<ul>
+<li>Lorsqu'on installe le <a href="https://github.com/zendframework/ZendSkeletonApplication">Zend Framework Skeleton</a>, on nous recommande bien de ne pas inclure dans les fichiers commités les fichiers de paramétrages (les données de connexion à la base de données par ex, ça peut être utile)</li>
+<li>Si le projet s'installe tout seul avec le dernier build, et que si on admet que - comme le dit Martin Fowler dans son article - on doit pouvoir installer le projet sur une machine vierge, cela signifie qu'à son installation, le projet génère le script pour la base de données... mais alors, si on utilise le même build pour déployer en production, il serait malvenu que ce même script écrase la base de données en production...</li>
+</ul>
+<p>Quelque part, je pense que mon raisonnement est totalement absurde. Comme pour certains sujets, je dois le prendre par le mauvais angle et je n'arrive pas à trouver l'angle juste par lequel tout s'éclairera. Toutefois, étalant ici mes doutes, je me dis en même temps que je ne vois pas très bien ce qu'est un <strong>build</strong>.</p>
+<h2>Le build</h2>
+<p>Le build est issu d'un script d'automatisation. Dans ce script d'automatisation, on va pouvoir générer la documentation du projet, faire exécuter les tests unitaires, les tests d'intégration etc qu'en sais-je encore, vérifier le code etc... Mais ce que je n'ai pas encore très bien compris, c'est le lien qu'il y a entre le script d'automatisation et les éléments qui me posent problèmes comme les fichiers de configuration d'une part et le script de la base de données...</p>
+<p>Si j'ai tout compris, le build va utiliser les sources qu'on veut déployer, lancer le script de build dessus pour vérifier que les sources tiennent le &quot;choc&quot; et si le build est valide, les sources sont validées. C'est à peu près cela que ça veut dire... Du coup, j'ai plusieurs options :</p>
+<ul>
+<li>avoir un build différent par étape d'intégration continue. Ainsi, le build à utiliser sur la machine de developpement (tel que décrit par Martin Fowler) et le build à utiliser pour mettre à jour un projet en production avec la dernière release ne serait pas le même. Le premier intègrerait les scripts de base de données alors que le second n'intègrerait que les mises à jour de la structure de la base de données...</li>
+<li>le build ne sert qu'à valider les sources mais ne sert pas à déployer... Cette option contredit le témoignage que j'ai lu sur un <a href="http://www.jamesshore.com/Agile-Book/ten_minute_build.html">article de James Shore</a> dans lequel il met en avant l'avantage de pouvoir déployer un projet grâce à une commande build. A moins que ce build là ne correspond pas à un build d'intégration continue (enfin, si, mais ça revient à ma première option, c'est pas tout à fait le même)</li>
+</ul>
+<h2>La boîte à outils</h2>
+<p>Comme vous pouvez le constater, mon enquête n'est pas finie.</p>
+<p>En terme d'outillage, j'ai trouvé <a href="http://www.go.cd/">Go CD</a> qui peut faire l'affaire pour le serveur d'intégration continue. Il y a bien <a href="https://travis-ci.org/">TravisCI</a> aussi, très apprécié sur le marché. Je réfléchis à l'utilisation d'une solution en ligne mais comme je tatônne, j'éprouve une pudeur à étaler mes échecs sur la toile... J'ai regardé du côté de <a href="http://jenkins-ci.org/">Jenkins</a> mais je n'ai malheureusement jamais réussi à le paramétrer et le faire fonctionner sur mon environnement de développement. Sur ce point, Go CD a donc l'avantage puisque lui au moins, il a fonctionné.</p>
+<p>De mémoire, Go CD intègre le moteur de script... sinon, j'ai vu un peu ce que <a href="https://ant.apache.org/">Ant </a>pouvait offrir même si je n'ai pas tout compris de ce côté là. Je suppose qu'au pire, je peux écrire mes scripts en ligne de commande... même si ce ne doit pas être l'option la plus efficace.</p>
+<h2>Demain</h2>
+<p>Evidemment, après l'intégration continue, le déploiement continu... mais là, c'est une autre histoire.</p>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/fr/tags/integration-continue">intégration continue</a></li><li><a href="/fr/tags/code">code</a></li><li><a href="/fr/tags/programming">programming</a></li></ul>
+        </div>
+      
+
+      
+    
+
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>Sur moi</h3>
+      <p>J&#39;ai appris le php il y a quelques années, quand Internet était à ses débuts. Pour diverses raisons, j&#39;ai arrêté en route et j&#39;ai perdu le fil des nouveaux Internets que je redécouvre. Résultat, je me sens constamment à courir après l&#39;histoire mais je suis toujours motivée à reprendre des projets personnels. Je me propose de vous partager mes découvertes. Au delà des sujets de programmation, j&#39;aime également partager mes infos concernant notamment l&#39;Histoire, l&#39;Astronomie, la Linguistique, les Films, les Livres et les Anime. J&#39;espère que vous aimerez suivre mon blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. Tous droits réservés.</p>
+        <p>Propulsé par <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

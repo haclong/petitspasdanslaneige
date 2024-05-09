@@ -1,0 +1,203 @@
+<!doctype html>
+<html class="no-js" lang="fr" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>Un solveur de Sudoku - Tester le contrôleur&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">Français</a>
+        <a href="/en/">Anglais</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/fr/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/fr/books/0/index.html">Séries</a>
+        <a href="/fr/">Accueil</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/fr/">Accueil</a><i class="fas fa-angle-right"></i>Un solveur de Sudoku - Tester le contrôleur
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>Un solveur de Sudoku - Tester le contrôleur</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>15/04/2014 18:37:00
+        
+        <i class="fas fa-th-large"></i><!--a href="/fr/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/Sudoku_Board_Game.jpg" class="node-banner" />
+        
+      </div>
+
+      <p><p>Dernier petit détour avant les festivités : le test unitaire pour le contrôleur. On en n'a pas vraiment besoin pour cette application, mais j'en ai profité pour voir comment on pouvait faire ça.</p>
+<pre><code class="language-php">// module/Application/test/ApplicationTest/Controller/IndexControllerTest.php
+
+&lt;?php
+namespace ApplicationTest\Controller ;
+
+use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
+
+class IndexControllerTest extends AbstractHttpControllerTestCase
+{
+  protected $traceError = true;
+
+  // dire à Zend Test où est le fichier de configuration de l'application. Apparemment, il faut un chemin absolu. Dans la mesure où les tests unitaires doivent se faire sur l'environnement de développement (très probablement en local), cette contrainte ne devrait pas poser de problème. Encore moins avec le fait que je ne développe pas en collaboratif.
+  public function setUp()
+  {
+    $this-&gt;setApplicationConfig(
+      include '{chemin_de_votre_serveur_web}/SudokuSolver/config/application.config.php'
+    ) ;
+    parent::setUp() ;
+  }
+ 
+  public function testIndexActionCanBeAccessed()
+  {
+    // dire à Zend Test que c'est l'url qu'on envoie à l'application.
+    $this-&gt;dispatch('/') ;
+    // Affirmer qu'à cette adresse, la réponse HTTP sera positive (200)
+    $this-&gt;assertResponseStatusCode(200) ;
+    // Affirmer qu'à cette adresse, le module qui est chargé est le module &quot;Application&quot;
+    $this-&gt;assertModuleName('Application') ;
+    // Affirmer qu'à cette adresse, le contrôleur qui est chargé est le contrôleur &quot;Application\Controller\Index&quot; (le nom du controleur est défini dans le tableau 'invokables' du fichier config/module.config.php du module.)
+    $this-&gt;assertControllerName('Application\Controller\Index') ;
+    // Affirmer qu'à cette adresse, la classe du controleur est IndexController.
+    $this-&gt;assertControllerClass('IndexController') ;
+    // Affirmer qu'à cette adresse, la route qui est utiliser par le gestionnaire de route est la route nommée 'home'.
+    $this-&gt;assertMatchedRouteName('home') ;
+  }
+
+  public function testGridSizeCanBeAccessed()
+  {
+    // dire à Zend Test que c'est l'url qu'on envoie à l'application. Cette fois ci, on a rajouté une valeur pour size.
+    $this-&gt;dispatch('/9') ;
+
+    // vérifier que le paramètre &quot;size&quot; est bien identifié par l'application et que le paramètre est égal à 9.
+    $this-&gt;assertTrue($this-&gt;getApplication()-&gt;getMvcEvent()-&gt;getRouteMatch()-&gt;getParam('size') == 9) ;
+    $this-&gt;assertResponseStatusCode(200) ;
+ 
+    $this-&gt;assertModuleName('Application') ;
+    $this-&gt;assertControllerName('Application\Controller\Index') ;
+    $this-&gt;assertControllerClass('IndexController') ;
+    $this-&gt;assertMatchedRouteName('home') ;
+  }
+}
+</code></pre>
+<p>Dans netbeans, lancer les tests : <code>Menu Run &gt; Test Project (Alt + F6)</code></p>
+<p>Une fenêtre Test Results doit s'ouvrir et en principe, les tests devraient passer sans problème.</p>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/fr/tags/zend-framework-2">zend framework 2</a></li><li><a href="/fr/tags/phpunit">phpunit</a></li><li><a href="/fr/tags/netbeans">Netbeans</a></li></ul>
+        </div>
+      
+
+      
+        <nav id="book-navigation">
+    
+       <li class="link-previous"><a href="/fr/posts/solveur-de-sudoku-route-et-controleur.html"><i class="fas fa-long-arrow-alt-left"></i> Solveur de Sudoku - Route et Contrôleur</li>
+    
+
+    
+        <li class="link-next"><a href="/fr/posts/solveur-de-sudoku-lobjet-chiffre.html">Solveur de Sudoku - L&#39;objet Chiffre <i class="fas fa-long-arrow-alt-right"></i></a></li>
+    
+
+    
+        <li class="link-up"><a href="/fr/books/aborder-la-programmation-orientee-objet-par-lexemple-concevoir-un-solveur-de-sudoku.html"><i class="fas fa-book-open"></i> Aborder la programmation orientée objet par l&#39;exemple. Concevoir un solveur de sudoku</li>
+    
+</nav>
+
+      
+    
+
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>Sur moi</h3>
+      <p>J&#39;ai appris le php il y a quelques années, quand Internet était à ses débuts. Pour diverses raisons, j&#39;ai arrêté en route et j&#39;ai perdu le fil des nouveaux Internets que je redécouvre. Résultat, je me sens constamment à courir après l&#39;histoire mais je suis toujours motivée à reprendre des projets personnels. Je me propose de vous partager mes découvertes. Au delà des sujets de programmation, j&#39;aime également partager mes infos concernant notamment l&#39;Histoire, l&#39;Astronomie, la Linguistique, les Films, les Livres et les Anime. J&#39;espère que vous aimerez suivre mon blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. Tous droits réservés.</p>
+        <p>Propulsé par <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

@@ -13,8 +13,10 @@ media:
   url: https://unsplash.com/@bartros
 
 tags:
-  - "next"
-  - "resolutions"
+  - next
+  - resolutions
+  - eleventy
+  - jamstack
 
 sites:
   - "Haclong projects"
@@ -93,3 +95,8 @@ J'ai donc mis en place deux pipelines.
 Le premier va pousser le fichier markdown sur mon premier repository, le second va pousser sur le second repository et copier les fichiers html sur le serveur de prod.
 
 Et ceci est mon tout premier blog avec Eleventy.
+
+*** EDIT ***
+ok... j'ai un peu complexifié les choses avec mes deux dépôts. En fait, l'application Utterance ne fonctionne pas avec cette architecture. Je ne peux pas séparer les pages sources (.md) dans un dépôt et les pages finales (.hml) dans un second dépôt. Utterance ne retrouve pas ses petits... Je vais donc remettre tous les projets dans un seul dépôt - obligatoirement github. 
+
+J'avoue que je procrastine un peu

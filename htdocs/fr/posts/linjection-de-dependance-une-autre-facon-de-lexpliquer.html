@@ -1,0 +1,408 @@
+<!doctype html>
+<html class="no-js" lang="fr" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>L&#39;injection de dépendance, une autre façon de l&#39;expliquer&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">Français</a>
+        <a href="/en/">Anglais</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/fr/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/fr/books/0/index.html">Séries</a>
+        <a href="/fr/">Accueil</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/fr/">Accueil</a><i class="fas fa-angle-right"></i>L'injection de dépendance, une autre façon de l'expliquer
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>L'injection de dépendance, une autre façon de l'expliquer</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>19/05/2015 12:41:00
+        
+        <i class="fas fa-th-large"></i><!--a href="/fr/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/b17a8ea53cf35133ff578301dcf9149514b52e94.jpg" class="node-banner" />
+        
+      </div>
+
+      <p><p>Bon, j'ai du déjà faire cet exercice. Je le referrais encore probablement. Mais je vous (re) présente une explication sur l'injection de dépendance : en quoi c'est utile, pourquoi la faire.</p>
+<h2>Injection de dépendance</h2>
+<p>Tout part d'une volonté initiale de limiter les dépendances entre nos objets et, si on étend cette logique, on veut également limiter la dépendance entre nos différents modules. Afin de limiter les dépendances d'une classe à l'autre, il ne faut pas qu'une classe qui a besoin d'une autre classe l'appelle par son nom.
+Dans la vraie vie, c'est le même principe. Que faites vous si vous voulez consommer du pain ?</p>
+<pre><code class="language-php">classe Moi
+{
+  function JeVeuxDuPain()
+  {
+    $boulangerie = new BoulangerieDeMonQuartier() ;
+    $pain = $boulangerie-&gt;fournitLePain() ;
+  }
+}
+</code></pre>
+<p>Vous voulez du pain, vous vous adressez à la boulangerie de votre quartier qui va vous fournir du pain.</p>
+<p>Mais que se passe-t-il en Août quand la boulangerie est fermée ? ou quand vous êtes en vacances loin de chez vous ? Que devient la classe <code>Moi</code> ?</p>
+<p>Forcément, vous allez avoir une erreur : la classe <code>BoulangerieDeMonQuartier()</code> n'est pas disponible. Vous serez obligé de mettre à jour votre classe <code>Moi</code> comme ceci :</p>
+<pre><code class="language-php">classe Moi (mise à jour)
+{
+  function JeVeuxDuPain()
+  {
+    $boulangerie = new BoulangerieDuLieuDeMesVacances() ;
+    $pain = $boulangerie-&gt;fournitLePain() ;
+  }
+}
+</code></pre>
+<p>Je ne vous parle même pas de l'aberration de faire une classe <code>Moi2</code>...</p>
+<p>Et à votre retour de vacances, il va falloir remettre les choses d'aplomb en réutilisant votre bonne vieille classe <code>BoulangerieDeMonQuartier()</code>.</p>
+<p>Ce problème peut semble minime exprimé ici mais imaginez le démultiplié à l'échelle d'une application : votre pain, un marteau, vos courses, le boucher, les fruits et légumes, le plombier, les assurances... Ce problème est ce qu'on appelle un problème de dépendance fortes entre les différentes classes de votre application.</p>
+<p>Pour limiter les problèmes de dépendances entre les classes de votre application, on est arrivé à la conclusion que les instanciations de classes devaient se situer à l'extérieur de votre classe.</p>
+<p>Dans la vraie vie, c'est ce que vous faites quand vous dites :</p>
+<ul>
+<li>J'ai repéré le boulanger (celui qui fournit le pain)</li>
+<li>J'ai repéré la quincaillerie (celui qui fournit le marteau)</li>
+<li>J'ai repéré le boucher (celui qui fournit la viande)</li>
+<li>etc...</li>
+</ul>
+<p>Et quand vous voulez consommer du pain, voici ce que vous faites maintenant :</p>
+<pre><code class="language-php">classe Moi (avec peu de dépendance)
+{
+  function __construct(FournisseurDePain $boulangerieLaPlusProche)
+  {
+    $this-&gt;monFournisseurDePain = $boulangerieLaPlusProche ;
+  }
+
+  function JeVeuxDuPain()
+  {
+    $pain = $this-&gt;monFournisseurDePain-&gt;fournitLePain() ;
+  }
+}
+</code></pre>
+<p>lorsqu'on instancie la classe Moi, on lui fournit l'adresse de la boulangerie la plus proche</p>
+<pre><code class="language-php">$moi = new Moi(new BoulangerieDeMonQuartier) ;
+$moi-&gt;JeVeuxDuPain() ;
+</code></pre>
+<p>et lorsqu'on est en vacances, on fait :</p>
+<pre><code class="language-php">$moi = new Moi(new BoulangerieDuLieuDeMesVacances) ;
+$moi-&gt;JeVeuxDuPain() ;
+&lt;/pre&gt;
+</code></pre>
+<p>Evidemment, me direz vous, vous êtes QUAND MEME obligé de changer la classe qui fournit le pain. Mais cette fois ci, vous le faites dans des niveaux supérieurs de votre application. Plutôt dans les niveaux qui utilisent et organisent ces classes (comme un contrôleur par ex) et non plus dans les entrailles de votre code... Moins vous touchez aux rouages du truc, moins vous avez de chance de planter le truc...</p>
+<p>Maintenant, on peut encore remonter tout ça dans un niveau encore supérieur. Et c'est là que le gestionnaire de service intervient.</p>
+<p>Globalement ça va donner maintenant :</p>
+<pre><code class="language-php">class GestionnaireDeService {
+    $fournisseurDePain = new BoulangerieDeMonQuartier() ;
+    $fournisseurDeFruitsEtLegumes = new PrimeurDeMonQuartier() ;
+    // etc...
+}
+</code></pre>
+<p>et pour instancier Moi :</p>
+<pre><code class="language-php">$moi = new Moi($gestionnaireDeService-&gt;fournisseurDePain)
+$moi-&gt;JeVeuxDuPain() ;
+</code></pre>
+<p>Bon, c'est du pseudo code tout ça mais j'espère que vous entrevoyez le principe quand même.</p>
+<h2>Comment faire</h2>
+<p>Pour gérer (et injecter) les dépendances, vous avez plusieurs méthodes à votre disposition.</p>
+<h3>Injection par le constructeur</h3>
+<h4>La classe Moi</h4>
+<pre><code class="language-php">classe Moi 
+{
+  // on déclare la dépendance dans le constructeur
+  function __construct(FournisseurDePain $boulangerieLaPlusProche)
+  {
+    $this-&gt;monFournisseurDePain = $boulangerieLaPlusProche ;
+  }
+
+  function JeVeuxDuPain()
+  {
+    $pain = $this-&gt;monFournisseurDePain-&gt;fournitLePain() ;
+  }
+}
+</code></pre>
+<h4>Utiliser la classe Moi dans un fichier php (hors MVC) :</h4>
+<pre><code class="language-php">&lt;?php
+  $boulangerie = new BoulangerieDeMonQuartier() ;
+  $moi = new Moi($boulangerie) ;
+  echo $moi-&gt;JeVeuxDuPain() ;
+</code></pre>
+<h4>Utiliser la classe Moi dans un contrôleur :</h4>
+<pre><code class="language-php">class IndexController
+{
+  function indexAction
+  {
+    $boulangerie = new BoulangerieDeMonQuartier() ;
+    $moi = new Moi($boulangerie) ;
+    return $moi-&gt;JeVeuxDuPain() ;
+  }
+}
+</code></pre>
+<h4>Instancier les dépendances avec un gestionnaire de service</h4>
+<pre><code class="language-php">class GestionnaireDeService
+{
+  function setFournisseurDePain()
+  {
+    $fournisseurDePain = new BoulangerieDeMonQuartier() ;
+  }
+
+  function getFournisseurDePain()
+  {
+    return $fournisseurDePain ;
+  }
+}
+
+// soit dans un fichier php direct 
+&lt;?php
+  $boulangerie = $gestionnaireDeService-&gt;getFournisseurDePain() ;
+  $moi = new Moi($boulangerie) ;
+  echo $moi-&gt;JeVeuxDuPain() ;
+
+// soit dans un controleur 
+class IndexController
+{
+  function indexAction
+  {
+    $boulangerie = $gestionnaireDeService-&gt;getFournisseurDePain() ;
+    $moi = new Moi($boulangerie) ;
+    return $moi-&gt;JeVeuxDuPain() ;
+  }
+}
+</code></pre>
+<h4>Full gestionnaire de service</h4>
+<p>Parce que même la classe <code>Moi</code> peut changer après tout</p>
+<pre><code class="language-php">class GestionnaireDeService
+{
+  function getFournisseurDePain()
+  {
+    $fournisseurDePain = new BoulangerieDeMonQuartier() ;
+    return $fournisseurDePain ;
+  }
+
+  function getMoi()
+  {
+    $moi = new Moi($this-&gt;getFournisseurdePain()) ;
+    return $moi ;
+  }
+}
+
+// soit dans un fichier php direct 
+&lt;?php
+  $moi = $gestionnaireDeService-&gt;getMoi() ;
+  echo -&gt;JeVeuxDuPain() ;
+
+// soit dans un controleur 
+class IndexController
+{
+  function indexAction
+  {
+    $moi = $gestionnaireDeService-&gt;getMoi() ;
+    return $moi-&gt;JeVeuxDuPain() ;
+  }
+}
+</code></pre>
+<h3>Injection par les setters</h3>
+<h4>La classe Moi</h4>
+<pre><code class="language-php">classe Moi 
+{
+  protected $monFournisseurDePain ;
+
+  // on déclare la dépendance dans les setters
+  function setMonFournisseurDePain(FournisseurDePain $boulangerieLaPlusProche)
+  {
+    $this-&gt;monFournisseurDePain = $boulangerieLaPlusProche ;
+  }
+
+  function JeVeuxDuPain()
+  {
+    $pain = $this-&gt;monFournisseurDePain-&gt;fournitLePain() ;
+  }
+}
+</code></pre>
+<h4>Utiliser la classe Moi dans un fichier php (hors MVC) :</h4>
+<pre><code class="language-php">&lt;?php
+  $boulangerie = new BoulangerieDeMonQuartier() ;
+  $moi = new Moi() ;
+  $moi-&gt;setMonFournisseurDePain($boulangerie) ;
+  echo $moi-&gt;JeVeuxDuPain() ;
+</code></pre>
+<h4>Utiliser la classe Moi dans un contrôleur :</h4>
+<pre><code class="language-php">class IndexController
+{
+  function indexAction
+  {
+    $boulangerie = new BoulangerieDeMonQuartier() ;
+    $moi = new Moi() ;
+    $moi-&gt;setMonFournisseurDePain($boulangerie) ;
+    return $moi-&gt;JeVeuxDuPain() ;
+  }
+}
+</code></pre>
+<h4>Instancier les dépendances avec un gestionnaire de service</h4>
+<pre><code class="language-php">class GestionnaireDeService
+{
+  function setFournisseurDePain()
+  {
+    $fournisseurDePain = new BoulangerieDeMonQuartier() ;
+  }
+  
+  function getFournisseurDePain()
+  {
+    return $fournisseurDePain ;
+  }
+}
+
+// soit dans un fichier php direct 
+&lt;?php
+  $boulangerie = $gestionnaireDeService-&gt;getFournisseurDePain() ;
+  $moi = new Moi() ;
+  $moi-&gt;setMonFournisseurDePain($boulangerie) ;
+  echo $moi-&gt;JeVeuxDuPain() ;
+
+// soit dans un controleur 
+class IndexController
+{
+  function indexAction
+  {
+    $boulangerie = $gestionnaireDeService-&gt;getFournisseurDePain() ;
+    $moi = new Moi() ;
+    $moi-&gt;setMonFournisseurDePain($boulangerie) ;
+    return $moi-&gt;JeVeuxDuPain() ;
+  }
+}
+</code></pre>
+<h4>Full gestionnaire de service</h4>
+<p>Parce que même la classe <code>Moi</code> peut changer après tout</p>
+<pre><code class="language-php">class GestionnaireDeService
+{
+  function getFournisseurDePain()
+  {
+    $fournisseurDePain = new BoulangerieDeMonQuartier() ;
+    return $fournisseurDePain ;
+  }
+
+  function getMoi()
+  {
+    $moi = new Moi() ;
+    $moi-&gt;setMonFournisseurDePain($this-&gt;getFournisseurdePain()) ;
+    return $moi ;
+  }
+}
+
+// soit dans un fichier php direct 
+&lt;?php
+  $moi = $gestionnaireDeService-&gt;getMoi() ;
+  echo -&gt;JeVeuxDuPain() ;
+
+// soit dans un controleur 
+class IndexController
+{
+  function indexAction
+  {
+    $moi = $gestionnaireDeService-&gt;getMoi() ;
+    return $moi-&gt;JeVeuxDuPain() ;
+  }
+}
+</code></pre>
+<p>Plus vous parvenez à abstraire votre code, vous détacher de votre boulangerie et si vous focalisez sur le fournisseur de pain (peu importe la boulangerie), alors vous parviendrez à créer des codes de plus en plus souples et malléables. Attention toutefois de ne pas pousser trop loin et d'obtenir l'effet contraire... ce qui serait bien dommange.</p>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/fr/tags/code">code</a></li><li><a href="/fr/tags/injection-de-dependance">injection de dépendance</a></li><li><a href="/fr/tags/gestionnaire-de-service">gestionnaire de service</a></li></ul>
+        </div>
+      
+
+      
+    
+
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3></h3>
+      <p></p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. Tous droits réservés.</p>
+        <p>Propulsé par <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

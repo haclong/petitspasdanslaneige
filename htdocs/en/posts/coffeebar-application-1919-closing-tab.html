@@ -1,0 +1,472 @@
+<!doctype html>
+<html class="no-js" lang="en" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>CoffeeBar Application 19/19 - Closing the tab&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">French</a>
+        <a href="/en/">English</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/en/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/en/books/0/index.html">Collections</a>
+        <a href="/en/">Home</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/en/">Home</a><i class="fas fa-angle-right"></i>CoffeeBar Application 19/19 - Closing the tab
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>CoffeeBar Application 19/19 - Closing the tab</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>6/9/2015, 8:27:00 PM
+        
+        <i class="fas fa-th-large"></i><!--a href="/en/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/file9271237667217.jpg" class="node-banner" />
+        
+          <p><strong>Credit</strong> : Morguefile.com </p>
+        
+      </div>
+
+      <p><p>To check out a tab, we only need one field in a form. If the amount paid is less than the invoice, it is impossible to checkout the tab. If the amount paid is more than the invoice, we count the difference as a tip.</p>
+<p><em>NOTE : throughout the tutorial, i will reedit numerous classes and views i already talked about. On the second edition, some datas will be missing such as use keyword, extends and implements keywords etc... It doesn't mean you have to delete those existing lines. It is intended to lighten this tutorial. In the case we need to remove lines, i'll say it so plainly, even re-editing the whole part to make myself clear on that item.</em></p>
+<h2>Processing the datas</h2>
+<p>Taking care of the form in the controller</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Controller/TabController.php
+
+&lt;?php
+namespace CoffeeBar\Controller ;
+
+use CoffeeBar\Exception\MustPayEnough;
+use CoffeeBar\Exception\TabAlreadyClosed;
+
+class TabController
+{
+  public function closeAction()
+  {
+    $openTabs = $this-&gt;serviceLocator-&gt;get('OpenTabs') ;
+
+    $form = $this-&gt;serviceLocator-&gt;get('CloseTabForm') ;
+
+    $request = $this-&gt;getRequest() ;
+
+    $id = (int) $this-&gt;params()-&gt;fromRoute('id') ;
+
+    // check if the table number is in the HTTP Request
+    if (isset($id)) 
+    {
+      // check if the form is posted
+      if($request-&gt;isPost()) 
+      {
+        $form-&gt;setData($request-&gt;getPost()) ;
+ 
+        try {
+          $form-&gt;isValid() ;
+
+          // processing of datas is here
+          // there's nothing really because when the form is valid
+          // we bind the form datas to the object (closeTab) with the hydrator
+          // we don't need to manipulate the closeTab object in the controller
+          // so basically, we're done
+
+          $this-&gt;flashMessenger()-&gt;addMessage('La note a été fermée avec succès');
+          return $this-&gt;redirect()-&gt;toRoute('tab/opened');
+        // amount paid not enough
+        } catch (MustPayEnough $e) {
+          $this-&gt;flashMessenger()-&gt;addErrorMessage($e-&gt;getMessage());
+          return $this-&gt;redirect()-&gt;toRoute('tab/close', array('id' =&gt; $id));
+        // tab already closed
+        } catch (TabAlreadyClosed $e) {
+          $this-&gt;flashMessenger()-&gt;addErrorMessage($e-&gt;getMessage()) ;
+          return $this-&gt;redirect()-&gt;toRoute('tab/opened') ;
+        }
+      }
+    }
+
+    $result['status'] = $status ;
+    $result['form'] = $form ;
+    return array('result' =&gt; $result) ;
+  }
+}
+</code></pre>
+<h2>The Tab Story</h2>
+<p>When we submit the form, the <code>**CoffeeBar\Command\CloseTab**</code> is bound. With the <code>**Zend\Stdlib\Hydrator\ArraySerializable**</code> hydrator and the <code>CloseTab::populate()</code> method, we have triggered a '<em>closeTab</em>' event at the very moment the <code>**CoffeeBar\Command\CloseTab**</code> object is bound. Now, our <strong>TabAggregate</strong> service will listen to the event and do whatever it has to do with the tab story.</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Service/TagAggregate.php
+
+&lt;?php
+namespace CoffeeBar\Service ;
+
+use CoffeeBar\Event\TabClosed;
+use CoffeeBar\Exception\MustPayEnough;
+use CoffeeBar\Exception\TabAlreadyClosed;
+
+class TabAggregate
+{
+  public function attach(EventManagerInterface $events)
+  {
+    $this-&gt;listeners[] = $events-&gt;attach('closeTab', array($this, 'onCloseTab')) ;
+    $this-&gt;listeners[] = $events-&gt;attach('tabClosed', array($this, 'onTabClosed')) ;
+  }
+
+  public function onCloseTab($events)
+  {
+    $closeTab = $events-&gt;getParam('closeTab') ;
+
+    $story = $this-&gt;loadStory($closeTab-&gt;getId()) ;
+
+    // $story-&gt;getItemsServedValue() = tab total of all served items
+    // $closeTab-&gt;getAmountPaid() = amount paid from the closeTabForm
+    if($story-&gt;getItemsServedValue() &gt; $closeTab-&gt;getAmountPaid())
+    {
+      throw new MustPayEnough('Le solde n\'y est pas, compléter l\'addition') ;
+    }
+    // check if tab still opened
+    if(!$story-&gt;isTabOpened())
+    {
+      throw new TabAlreadyClosed('La note est fermée') ;
+    }
+
+    $tabClosed = new TabClosed() ;
+    $tabClosed-&gt;setId($closeTab-&gt;getId()) ;
+    $tabClosed-&gt;setAmountPaid($closeTab-&gt;getAmountPaid()) ;
+    $tabClosed-&gt;setOrderValue($story-&gt;getItemsServedValue()) ;
+    $tabClosed-&gt;setTipValue($closeTab-&gt;getAmountPaid() - $story-&gt;getItemsServedValue()) ;
+
+    $this-&gt;events-&gt;trigger('tabClosed', $this, array('tabClosed' =&gt; $tabClosed)) ;
+  }
+ 
+  public function onTabClosed($events)
+  {
+    $tabClosed = $events-&gt;getParam('tabClosed') ;
+ 
+    $story = $this-&gt;loadStory($tabClosed-&gt;getId()) ;
+    // now we close the tab
+    $story-&gt;closeTab() ;
+    $this-&gt;saveStory($tabClosed-&gt;getId(), $story) ;
+  }
+}
+</code></pre>
+<p>Check both our exceptions extending the php <code>**\Exception**</code> class.</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Exception/MustPayEnough.php
+
+&lt;?php
+namespace CoffeeBar\Exception ;
+
+use Exception;
+
+class MustPayEnough extends Exception {}
+</code></pre>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Exception/TabAlreadyClosed.php
+
+&lt;?php
+namespace CoffeeBar\Exception ;
+
+use Exception;
+
+class TabAlreadyClosed extends Exception {}
+</code></pre>
+<p>Here the <code>**CoffeeBar\Event\TabClosed**</code> event, but you already know what's inside.</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Event/TabClosed.php
+
+&lt;?php
+namespace CoffeeBar\Event ;
+
+class TabClosed
+{
+  protected $id; // int (guid) - id unique de la note
+  protected $amountPaid; // double
+  protected $orderValue; // double
+  protected $tipValue; // double
+
+  // getters &amp;amp; setters
+}
+</code></pre>
+<p>Please note that we have more properties in the <code>**CoffeeBar\Event\TabClosed**</code> class than in the <code>**CoffeeBar\Command\CloseTab**</code> class. The <code>**CoffeeBar\Command\CloseTab**</code> has only two properties : the <strong>id</strong> (unique) and the <strong>amount paid</strong> (<code>$amountPaid</code>), while the <code>**CoffeeBar\Event\TabClosed**</code> has two more properties : the <strong>tip</strong> (<code>$tipValue</code>) and the** total amount of the tab** (<code>$orderValue</code>).</p>
+<p>With the '<em>tabClosed</em>' event, we're closing the tab. Finally.</p>
+<h2>The Open Tabs list</h2>
+<p>With the '<em>tabClosed</em>' event, we remove the tab from the open tabs list.</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Service/OpenTabs.php
+
+&lt;?php
+namespace CoffeeBar\Service ;
+
+class OpenTabs implements ListenerAggregateInterface
+{
+  public function attach(EventManagerInterface $events)
+  {
+    $this-&gt;listeners[] = $events-&gt;attach('tabClosed', array($this, 'onTabClosed')) ;
+  }
+
+  /**
+   * Listener to tabClosed event
+   * unset the tab from the TodoByTab list
+   * @param Events $events
+   */
+  public function onTabClosed($events)
+  {
+    $tabClosed = $events-&gt;getParam('tabClosed') ;
+
+    $this-&gt;loadTodoByTab() ;
+    $this-&gt;todoByTab-&gt;offsetUnset($tabClosed-&gt;getId()) ;
+    $this-&gt;saveTodoByTab() ;
+  }
+}
+</code></pre>
+<p>Tadaa.. We're done.</p>
+<h2>Keep track of events</h2>
+<p>When using events this way, it is easy to imagine a way to keep history of a tab (and store it into the database). All we have to do is to store each events into a <code>TabStory::$eventsLoaded</code> property.</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Entity/TabStory/TabStory.php
+&lt;?php
+class TabStory
+{
+ protected $eventsLoaded ; // array - liste des événements
+
+ public function __construct()
+ {
+ $this-&gt;eventsLoaded = array() ;
+ }
+
+ public function addEvents($event) {
+ $this-&gt;eventsLoaded[] = $event ;
+ }
+
+ public function getEventsLoaded() {
+ return $this-&gt;eventsLoaded ;
+ }
+}
+&lt;/pre&gt;
+</code></pre>
+<p>In the <strong>TabAggregate</strong> service, when we save the tab story, we will take the opportunity to save the events too.</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Service/TabAggregate.php
+
+&lt;?php
+class TabAggregate
+{
+  // les autres méthodes
+
+  public function onTabOpened($events)
+  {
+    $tabOpened = $events-&gt;getParam('tabOpened') ;
+    $story = $this-&gt;loadStory($tabOpened-&gt;getId()) ;
+    $story-&gt;addEvents($tabOpened) ; // add the event in the tab story
+    // do things
+    $this-&gt;saveStory($tabOpened-&gt;getId(), $story) ;
+  }
+ 
+  public function onDrinksOrdered($events)
+  {
+    $drinksOrdered = $events-&gt;getParam('drinksOrdered') ;
+    $story = $this-&gt;loadStory($drinksOrdered-&gt;getId()) ;
+    $story-&gt;addEvents($drinksOrdered) ; // add the event in the tab story
+
+    // do things
+ 
+    $this-&gt;saveStory($drinksOrdered-&gt;getId(), $story) ;
+  }
+ 
+  public function onFoodOrdered($events)
+  {
+    $foodOrdered = $events-&gt;getParam('foodOrdered') ;
+    $story = $this-&gt;loadStory($foodOrdered-&gt;getId()) ;
+    $story-&gt;addEvents($foodOrdered) ; // add the event in the tab story
+    
+    // do things
+ 
+    $this-&gt;saveStory($foodOrdered-&gt;getId(), $story) ;
+  }
+ 
+  public function onDrinksServed($events)
+  {
+    $drinksServed = $events-&gt;getParam('drinksServed') ;
+    $story = $this-&gt;loadStory($drinksServed-&gt;getId()) ;
+    $story-&gt;addEvents($drinksServed) ;
+ 
+    // do things
+ 
+    $this-&gt;saveStory($drinksServed-&gt;getId(), $story) ;
+  }
+
+  public function onFoodPrepared($events)
+  {
+    $foodPrepared = $events-&gt;getParam('foodPrepared') ;
+    $story = $this-&gt;loadStory($foodPrepared-&gt;getId()) ;
+    $story-&gt;addEvents($foodPrepared) ;
+ 
+    // do things
+ 
+    $this-&gt;saveStory($foodPrepared-&gt;getId(), $story) ;
+  }
+
+  public function onFoodServed($events)
+  {
+    $foodServed = $events-&gt;getParam('foodServed') ;
+    $story = $this-&gt;loadStory($foodServed-&gt;getId()) ;
+    $story-&gt;addEvents($foodServed) ;
+ 
+    // do things
+ 
+    $this-&gt;saveStory($foodServed-&gt;getId(), $story) ;
+  }
+ 
+  public function onTabClosed($events)
+  {
+    $tabClosed = $events-&gt;getParam('tabClosed') ;
+    $story = $this-&gt;loadStory($tabClosed-&gt;getId()) ;
+    $story-&gt;addEvents($tabClosed) ;
+    
+    // do things
+    
+    $this-&gt;saveStory($tabClosed-&gt;getId(), $story) ;
+  }
+}
+</code></pre>
+<p>If we'd like to keep the commands as well, you ought to know that you won't be able to serialize classes with an** Event Manager** within. It is not clear why but you just can't... So you'll have to use the magic method <code>__sleep()</code> and decide which properties you want to be serialized (and which one won't be... <em>hint</em>: the <code>$events</code> properties for example...)</p>
+<h2>Extensions</h2>
+<p>We can extends our application, of course.</p>
+<p>We can add an accounting workflow. Counting the amount earned in one day : total paid, total served, total of tips, tips per waiter... This will be rather easy.</p>
+<p>We can also allow to amend the tab : cancel food which are not prepared yet and drinks which are not served yet.</p>
+<p>The events object (<code>**CoffeeBar\Event**</code>) and commands object (<code>**CoffeeBar\Command**</code>) do not extends any other objects. If you want to use <a href="http://fr2.php.net/manual/fr/language.oop5.typehinting.php" target="_blank">type hinting</a>, it is better to use <strong>interfaces</strong>. One interface for events object and the other for the commands object.</p>
+<h2>Notes</h2>
+<p>With this tutorial, pretty long (and i didn't expect it to be that long) and with a lot of repetition, i wish to point out two observations :</p>
+<h3>Observation A :</h3>
+<p>When you need to rendering things on screen (using Zend Framework 2), you need (always)</p>
+<ol>
+<li>a route</li>
+<li>a controller (and don't forget to put it in the configuration)</li>
+<li>a view</li>
+<li>a navigation</li>
+<li>a Service Manager because every thing goes through it - i mean it. EVERYTHING. More than what has been done in this tutorial.</li>
+</ol>
+<p><strong>Any other classes belong to the business model.</strong></p>
+<h3>Observation B :</h3>
+<p>On the other side, we can list two kinds of classes :</p>
+<ul>
+<li><strong>Controller</strong>, <strong>Form</strong>, <strong>Service</strong>, <strong>View Helpers</strong> and <strong>Action Helpers</strong> will be used for the rendering.</li>
+<li><strong>Hydrators</strong>, <strong>Exception</strong>, <strong>Entity</strong>, <strong>Listeners</strong> and anything else will be used for the processing of datas.</li>
+</ul>
+<p>If we want to be fair, my <strong>TabAggregate</strong> class shouldn't be a service. It is not helping the rendering whatsoever. It is not even sending any objects to any views. It is not even being called by anything except being present in the Event Manager as a listener. So maybe it is more a listener than a service... On the other hand, the <strong>OpenTabs</strong> service build specific objects (<code>**TabStatus**</code>, <code>**TabInvoice**</code>) which are used by the view.</p>
+<p>I know... it is quibbling (?) but it might be useful to get organized with the entities...</p>
+<h2>Conclusion</h2>
+<p>I really hope you enjoyed that tutorial and i hope it wasn't too long and too boring. I hope you learned few things here and there (i have) and i'm not being too confused, using too much shortcuts and not too messy with events and Events...</p>
+<p>The source do have comments either in english or in french. Mostly in french for the explanatory part. I have translated most of the comments in this tutorial series though.</p>
+<p>I know my dependencies management is very very very bad throughout the tutorial series. DO NOT DO LIKE ME. It is DEFINITELY unwise to use the keyword '<code>new</code>' within your source. You can fix that if you feel to. Although, if we can sort all the classes between two kinds of objects : those for rendering and those for processing, i'm thinking about a logic to keep some classes heavy dependants and some other less dependants... It's unclear. And maybe unwise. I have no idea what i'm telling right now... Just don't take this into account. I'm absolutely not in position to give any recommandations about that point.</p>
+<p>Anyway, thanks for reading this. See you next time.</p>
+<p><em>You'll find the full application in my <a href="https://github.com/haclong/coffeebar" target="_blank">github</a></em></p>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/en/tags/zend-framework-2">zend framework 2</a></li><li><a href="/en/tags/oop">OOP</a></li><li><a href="/en/tags/programmation-evenementielle">programmation événementielle</a></li></ul>
+        </div>
+      
+
+      
+        <nav id="book-navigation">
+    
+       <li class="link-previous"><a href="/en/posts/coffeebar-application-1819-bill-last-not-least.html"><i class="fas fa-long-arrow-alt-left"></i> CoffeeBar Application 18/19 - The bill, last but not least</li>
+    
+
+    
+
+    
+        <li class="link-up"><a href="/en/books/manage-coffeebar-event-driven-programming.html"><i class="fas fa-book-open"></i> Manage a coffeebar with event driven programming</li>
+    
+</nav>
+
+      
+    
+
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>About me</h3>
+      <p>I learned coding with php several years ago, when Internet was still young. For multiple reasons, i had stopped then and missed most of this new Internet i&#39;m discovering once again. So, i feel like a newbie again and since i&#39;m ready to start over personal project, i&#39;ll share with you some of my discoveries. Beyond coding topics, i&#39;ll enjoy sharing with you several subjects such as History, Astronomy, Linguistics, Movies, Books, Music and Anime among others. I hope you&#39;ll enjoy reading this blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. All rights reserved.</p>
+        <p>Powered by <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,392 @@
+<!doctype html>
+<html class="no-js" lang="en" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>CoffeeBar Application 11/19 - Processing the form&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">French</a>
+        <a href="/en/">English</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/en/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/en/books/0/index.html">Collections</a>
+        <a href="/en/">Home</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/en/">Home</a><i class="fas fa-angle-right"></i>CoffeeBar Application 11/19 - Processing the form
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>CoffeeBar Application 11/19 - Processing the form</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>3/19/2015, 7:52:00 PM
+        
+        <i class="fas fa-th-large"></i><!--a href="/en/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/file9271237667217.jpg" class="node-banner" />
+        
+          <p><strong>Credit</strong> : Morguefile.com </p>
+        
+      </div>
+
+      <p><p>We have now created our place order form, with that nice repeat-my-fields feature in the previous chapter. In today's chapter, we will process the form, binding it to an object and, of course, triggering our events.</p>
+<p><em>NOTE : throughout the tutorial, i will reedit numerous classes and views i already talked about. On the second edition, some datas will be missing such as use keyword, extends and implements keywords etc... It doesn't mean you have to delete those existing lines. It is intended to lighten this tutorial. In the case we need to remove lines, i'll say it so plainly, even re-editing the whole part to make myself clear on that item.</em></p>
+<p>For our form, we will create an <em>object which will match the form fields</em> (an <strong>id</strong> and a <strong>list of items in the order</strong>).* For each items*, there is, of course, a <em>dedicated object as well</em>with the number of the menu item and the number of the item in the order.</p>
+<h2>The item in the order</h2>
+<p>The <code>**CoffeeBar\Entity\TabStory\OrderItem**</code> targets an item being ordered in the order : either food or drink and how many times it has been ordered.</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Entity/TabStory/OrderItem.php
+
+&lt;?php
+namespace CoffeeBar\Entity\TabStory ;
+
+class OrderItem
+{
+  protected $id ; // menu number
+  protected $number ; // ordered times
+
+  // getters &amp;amp; setters
+}
+</code></pre>
+<p>It is impossible to use here our <code>**CoffeeBar\Entity\TabStory\OrderedItem**</code> created earlier because there's no direct match between the <code>**CoffeeBar\Entity\TabStory\OrderedItem**</code> object and the datas we will get from the form. The <code>**CoffeeBar\Entity\TabStory\OrderedItem**</code> will be processed by the <code>**CoffeeBar\Command\PlaceOrder**</code> command.</p>
+<p>As a reminder, <code>**CoffeeBar\Entity\TabStory\OrderedItem**</code> holds all the informations of a menu item : its <strong>menu number</strong>, its <strong>description</strong>, its <strong>price</strong> and <strong>if it is a drink or not</strong> also.</p>
+<p>But, when we validate the form, the datas we get from the form are <strong>menu number</strong> and <strong>how many times</strong> the item has been ordered only.</p>
+<p>Now we set this new object to our fieldset. For each 'menu item/number' pair, we will instanciate a new <code>**CoffeeBar\Entity\TabStory\OrderItem**</code> object.</p>
+<p>As for the hydratation, since we don't need to use customized methods, we can use the straight <code>**Zend\Stdlib\Hydrator\ClassMethods**</code> available in Zend Framework 2. But of course, you can use your favorite hydrator if you want.</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Form/MenuItemFieldset.php
+
+&lt;?php
+namespace CoffeeBar\Form ;
+
+use Zend\Stdlib\Hydrator\ClassMethods;
+use CoffeeBar\Entity\TabStory\OrderItem ;
+
+class MenuItemFieldset extends Fieldset
+{
+  public function __construct()
+  {
+    // add the hydrator and the object in the constructor
+    // or add them in the Service Manager, as you want
+    $this-&gt;setHydrator(new ClassMethods()) ;
+    $this-&gt;setObject(new OrderItem()) ;
+  }
+}
+</code></pre>
+<h2>The Form</h2>
+<p>Now set an object to the form.</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Form/PlaceOrderForm.php
+
+&lt;?php
+namespace CoffeeBar\Form ;
+
+use CoffeeBar\Entity\TabStory\OrderModel;
+use Zend\Stdlib\Hydrator\ArraySerializable;
+
+class PlaceOrderForm extends Form
+{
+  public function __construct()
+  {
+    // ajouter dans le constructeur
+    $this-&gt;setHydrator(new ArraySerializable()) ;
+    $this-&gt;setObject(new OrderModel) ;
+  }
+}
+</code></pre>
+<p>Here again, it is not mandatory to use the <code>**Zend\Stdlib\Hydrator\ArraySerializable**</code> hydrator... We can use the <code>**Zend\Stdlib\Hydrator\ClassMethods**</code> hydrator as well.</p>
+<p>Here is the <code>**CoffeeBar\Entity\TabStory\OrderModel**</code> object.</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Entity/TabStory/OrderModel.php
+
+&lt;?php
+namespace CoffeeBar\Entity\TabStory ;
+
+class OrderModel
+{
+  protected $id ; // int - table number
+  protected $items ; // array de CoffeeBar\Entity\TabStory\OrderItem
+ 
+  // getters &amp;amp; setters
+
+  // mandatory methods when we use ArraySerializable
+  public function populate($data = array()) {
+    isset($data['id']) ? $this-&gt;setId($data['id']) : null;
+    isset($data['items']) ? $this-&gt;setItems($data['items']) : null;
+  }
+
+  // mandatory methods when we use ArraySerializable
+  public function getArrayCopy() {
+    return array(
+      'id' =&gt; $this-&gt;id,
+      'items' =&gt; $this-&gt;items,
+    ) ;
+  }
+}
+</code></pre>
+<h2>Processing the form</h2>
+<p>Once the form <code>**CoffeeBar\Form\PlaceOrderForm**</code> has been submitted, we will get a <code>**CoffeeBar\Entity\TabStory\OrderModel**</code> object with an <code>$id</code> (<strong>table number</strong>) and an array <code>$items</code> (<strong>items in the order</strong>). We will need to process those datas and transform them into a <code>**CoffeeBar\Command\PlaceOrder**</code> object with a <strong>unique id</strong> (guid) and a <code>**CoffeeBar\Entity\TabStory\OrderedItems**</code> object.</p>
+<p>We need to find <em>the unique id of a tab by its table number</em>.</p>
+<p>Which one of our object allow us to access all our opened tabs ?? Here it is, the <code>**CoffeeBar\Entity\OpenTabs\TodoByTab**</code>, stored in the '<em>openTabs</em>' cache index and reachable through the <strong>OpenTabs</strong> service.</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Service/OpenTabs.php
+
+&lt;?php
+namespace CoffeeBar\Service ;
+
+use CoffeeBar\Entity\OpenTabs\TabStatus;
+
+class OpenTabs
+{
+  /**
+   * return the unique id of the tab
+   * @param int $table - table number
+   * @return id (guid)
+   */
+  public function tabIdForTable($table)
+  {
+    $this-&gt;loadTodoByTab() ;
+    foreach($this-&gt;todoByTab-&gt;getArrayCopy() as $k =&gt; $v)
+    {
+      if($v-&gt;getTableNumber() == $table)
+      {
+        return $k ;
+      }
+    }
+
+    return NULL ;
+  }
+}
+</code></pre>
+<h3>The controller</h3>
+<p>Then, in our controller, let's focus on the <code>**CoffeeBar\Entity\TabStory\OrderModel**</code> from the validated form.</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Controller/TabController.php
+
+&lt;?php
+namespace CoffeeBar\Controller ;
+
+use CoffeeBar\Entity\TabStory\OrderModel;
+use Zend\Mvc\Controller\AbstractActionController;
+
+class TabController extends AbstractActionController
+{
+  public function orderAction()
+  {
+    // use the key in the Service Manager 
+    $form = $this-&gt;serviceLocator-&gt;get('PlaceOrderForm') ;
+    $request = $this-&gt;getRequest() ;
+
+    // check if table number is in the HTTP request
+    if ($id = (int) $this-&gt;params()-&gt;fromRoute('id')) {
+      $form-&gt;get('id')-&gt;setValue($id) ;
+
+    // check if form has been posted
+    } elseif($request-&gt;isPost()) {
+      $form-&gt;setData($request-&gt;getPost()) ;
+
+      // make sure form is valid (the object then is bound)
+      if($form-&gt;isValid()) {
+        // here we are
+        $orderModel = $form-&gt;getObject() ; // CoffeeBar\Entity\TabStory\OrderModel
+        $tableNumber = $orderModel-&gt;getId() ;
+
+        // gets CoffeeBar\Service\OpenTabs
+        $openTabs = $this-&gt;serviceLocator-&gt;get('OpenTabs') ;
+
+        // gets CoffeeBar\Command\PlaceOrder
+        $placeOrder = $this-&gt;serviceLocator-&gt;get('PlaceOrderCommand') ;
+
+        // create OrderedItems from the OrderModel
+        $items = $this-&gt;assignOrderedItems($orderModel) ;
+
+        // calling PlaceOrder::placeOrder() will trigger a 'placeOrder' event
+        // PlacerOrder::placeOrder(guid, OrderedItems)
+        $placeOrder-&gt;placeOrder($openTabs-&gt;tabIdForTable($tableNumber), $items) ;
+
+        return $this-&gt;redirect()-&gt;toRoute('tab/status', array('id' =&gt; $tableNumber));
+      }
+    // if there's no table number in the HTTP request, redirect to the 'open new tab' page
+    } else {
+      return $this-&gt;redirect()-&gt;toRoute('tab/open');
+    }
+ 
+    $result['form'] = $form ;
+
+    return array('result' =&gt; $result) ;
+  }
+
+  // iterate on the OrderModel items and build the OrderedItems object
+  protected function assignOrderedItems(OrderModel $model)
+  {
+    $items = $this-&gt;serviceLocator-&gt;get('OrderedItems') ;
+
+    // gets MenuItems
+    $menu = $this-&gt;serviceLocator-&gt;get('CoffeeBarEntity\MenuItems') ;
+
+    foreach($model-&gt;getItems() as $item)
+    {
+      for($i = 0; $i &lt; $item-&gt;getNumber(); $i++)
+      {
+        $orderedItem = clone $this-&gt;serviceLocator-&gt;get('OrderedItem') ;
+        $orderedItem-&gt;setId($item-&gt;getId()) ;
+        $orderedItem-&gt;setDescription($menu-&gt;getById($item-&gt;getId())-&gt;getDescription()) ;
+        $orderedItem-&gt;setPrice($menu-&gt;getById($item-&gt;getId())-&gt;getPrice()) ;
+        $orderedItem-&gt;setIsDrink($menu-&gt;getById($item-&gt;getId())-&gt;getIsDrink()) ;
+
+        $items-&gt;offsetSet(NULL, $orderedItem) ;
+      }
+    }
+
+    return $items ;
+  }
+}
+</code></pre>
+<p>We use a <code>clone</code> keyword so we can 'instanciate' the <code>**CoffeeBar\Entity\TabStory\OrderedItem**</code> several times without using the <code>new</code> keyword. This is a recommandation to limit dependencies constraints. Actually, i should use more <code>clone</code> and <strong>Service Manager</strong> throughout my application... i've been lazy.</p>
+<h3>The Service Manager</h3>
+<pre><code class="language-php">// module/CoffeeBar/Module.php
+
+&lt;?php
+namespace CoffeeBar;
+
+use CoffeeBar\Command\PlaceOrder;
+
+class Module
+{
+  public function getServiceConfig()
+  {
+    return array(
+      'invokables' =&gt; array(
+        'OrderedItems' =&gt; 'CoffeeBar\Entity\TabStory\OrderedItems',
+        'OrderedItem' =&gt; 'CoffeeBar\Entity\TabStory\OrderedItem',
+      ),
+      'factories' =&gt; array(
+        'PlaceOrderCommand' =&gt; function($sm) {
+          $events = $sm-&gt;get('TabEventManager') ;
+          $placeOrder = new PlaceOrder() ;
+          $placeOrder-&gt;setEventManager($events) ;
+
+          return $placeOrder ;
+        },
+      ),
+    ) ;
+  }
+}
+</code></pre>
+<p>Now, this is how we can, with a simple trick, transform a <code>**CoffeeBar\Entity\TabStory\OrderModel**</code> (table number and array of <code>**CoffeeBar\Entity\TabStory\OrderItem**</code>) object on a <code>**CoffeeBar\Command\PlaceOrder**</code> (tab guid and <code>**CoffeeBar\Entity\TabStory\OrderedItems**</code>). A '<em>placeOrder</em>' event has been triggered. <strong>TabAggregate</strong> has been listening to that event and two more events have been triggered : '<em>drinksOrdered</em>' and '<em>foodOrdered</em>'.</p>
+<p>All best practices i have found on internet recommend to build slim controller. I think so too. On my opinion, i would have put the <code>TabController::assignOrderedItems(OrderModel $model)</code> method within a service... But again, this method has a dependency on the <code>**CoffeeBar\Entity\MenuItems**</code>. In the meanwhile, the method is not quite thick : all it does is to get the menu items informations and clone <code>**CoffeeBar\Entity\TabStory\OrderedItem**</code> with the ordered items number. With a right constructor for the <code>**CoffeeBar\Entity\TabStory\OrderedItem**</code>, the method can look lighter finally.</p>
+<p>Next, let's see what we have with both <em>'drinksOrdered</em>' and '<em>foodOrdered</em>' events.</p>
+<p><em>You'll find the full application in my <a href="https://github.com/haclong/coffeebar" target="_blank">github</a></em></p>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/en/tags/zend-framework-2">zend framework 2</a></li><li><a href="/en/tags/mvc">MVC</a></li><li><a href="/en/tags/oop">OOP</a></li><li><a href="/en/tags/programmation-evenementielle">programmation événementielle</a></li></ul>
+        </div>
+      
+
+      
+        <nav id="book-navigation">
+    
+       <li class="link-previous"><a href="/en/posts/coffeebar-application-1019-building-form-place-order.html"><i class="fas fa-long-arrow-alt-left"></i> CoffeeBar Application 10/19 - Building a form to place the order</li>
+    
+
+    
+        <li class="link-next"><a href="/en/posts/coffeebar-application-1219-processing-order.html">CoffeeBar Application 12/19 - Processing the order <i class="fas fa-long-arrow-alt-right"></i></a></li>
+    
+
+    
+        <li class="link-up"><a href="/en/books/manage-coffeebar-event-driven-programming.html"><i class="fas fa-book-open"></i> Manage a coffeebar with event driven programming</li>
+    
+</nav>
+
+      
+    
+
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>About me</h3>
+      <p>I learned coding with php several years ago, when Internet was still young. For multiple reasons, i had stopped then and missed most of this new Internet i&#39;m discovering once again. So, i feel like a newbie again and since i&#39;m ready to start over personal project, i&#39;ll share with you some of my discoveries. Beyond coding topics, i&#39;ll enjoy sharing with you several subjects such as History, Astronomy, Linguistics, Movies, Books, Music and Anime among others. I hope you&#39;ll enjoy reading this blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. All rights reserved.</p>
+        <p>Powered by <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

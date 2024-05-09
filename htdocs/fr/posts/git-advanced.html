@@ -1,0 +1,267 @@
+<!doctype html>
+<html class="no-js" lang="fr" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>Git advanced&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">Français</a>
+        <a href="/en/">Anglais</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/fr/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/fr/books/0/index.html">Séries</a>
+        <a href="/fr/">Accueil</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/fr/">Accueil</a><i class="fas fa-angle-right"></i>Git advanced
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>Git advanced</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>08/01/2015 16:15:00
+        
+        <i class="fas fa-th-large"></i><!--a href="/fr/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/Git-Logo-1788C.png" class="node-banner" />
+        
+      </div>
+
+      <p><p>Il y a bientôt 2 ans... oh la la que le temps passe, je découvrais git. J'ai depuis pris un peu de galons. Quoique...</p>
+<p>J'ai toujours un vocabulaire tout aussi approximatif, mi anglais mi français dès qu'on approche d'un lexique spécialisé, et je tâtonne toujours dans les coins mais malgré tout, et heureusement, j'y vois plus clair.</p>
+<p>Parfois.</p>
+<h2>Ce qui a changé</h2>
+<h3>Les outils</h3>
+<p>Sur <strong>Windows</strong>, il y a maintenant <a href="http://git-scm.com/download/win" target="_blank">Git Gui</a> qui est super facile à utiliser.</p>
+<p>Sur <strong>Ubuntu</strong>, je n'ai rien trouvé d'aussi bien pour le moment... J'ai installé plusieurs applications mais je n'ai pas encore trouvé mon bonheur. Il reste bien sûr la ligne de commande, et les vrais de vrais ne jurent que par elle mais, j'aime les guirlandes et les coins chromés du coup, je préfèrerais quand même un truc graphique...</p>
+<p>J'ai changé la version de mon IDE et le <strong>plugin git</strong> depuis a des fonctionnalités intéressantes. J'ai actuellement <strong>NetBeans 8.0.x</strong>.</p>
+<h3>Les dépôts</h3>
+<p>Finalement, je ne travaille pas avec le dépôt disponible sur mon hébergement <strong>Gandi</strong>. Les contraintes du dépôt unique par virtual hosts peut être... je ne sais pas. D'un autre côté, le dépôt git sur Gandi est fonctionnel. il n'y a pas d'interface graphique, d'éditeurs etc... pour manipuler son dépôt. Il y a tout juste un explorateur de dépôt, pour voir ce qu'il y a dedans.</p>
+<p>J'ai opté pour les deux serveurs <a href="https://github.com/" target="_blank"><strong>github</strong> </a>(bien sûr) et <a href="https://bitbucket.org/" target="_blank"><strong>bitbucket</strong></a>.</p>
+<p>Pour rappel, <strong>github</strong> est le serveur gratuit de <strong>git</strong>, le plus répandu et le plus célèbre. Il est public ce qui veut dire que tous vos dépôts sont visibles pour tout un chacun. Vous pouvez toutefois avoir des dépôts privés (avec un accès réservé donc) mais il faut alors souscrire un abonnement avec des frais.</p>
+<p>De son côté, <strong>bitbucket</strong> est également gratuit pour un usage privé. Il devient payant lorsqu'on veut mettre en place des dépôts partagés par plus de 5 utilisateurs, on va dire des projets &quot;professionnels&quot; donc. (<em>je sais, c'est discutable</em>)</p>
+<p>J'ai appris depuis que les solutions mutualisées de <strong>1&amp;1</strong> ont également des dépôts <strong>git</strong>. Je n'ai pas encore essayé chez eux.</p>
+<p>Oh oui, j'ai appris que le terme exact français pour repository, c'est dépôt :p</p>
+<h3>Commencer un projet avec un dépôt distant.</h3>
+<h4>Dans le sens <strong>dépôt local vers dépôt distant</strong> :</h4>
+<ul>
+<li>Sur votre répertoire du projet, initialiser le dépôt :</li>
+</ul>
+<p><code>git init</code></p>
+<ul>
+<li>puis, ajout d'un dépôt distant :</li>
+</ul>
+<p><code>git remote add {remote_name} {path/to/remote}</code></p>
+<p>Typiquement, si vous travaillez sur le dépôt <strong>Gandi</strong>, je crois que c'est comme ça qu'il vaut mieux faire mais mes tests avec <strong>Gandi</strong> remontent à longtemps... il faudra vérifier.</p>
+<p>Si vous souhaitez créer un dépôt <strong>git</strong> sur des sources existantes, c'est également comme ça qu'il faut s'y prendre. N'oubliez pas de faire <code>git add</code> pour ajouter vos fichiers au dépôt local et <code>git push</code> pour pousser les fichiers vers le dépôt distant.</p>
+<p>Si vous travaillez avec <strong>github</strong> et <strong>bitbucket</strong>, il faut aller sur ladite plateforme, créer le dépôt (ne serait-ce que pour avoir l'url du dépôt) et faire <code>git remote</code> après sur votre dépôt local.</p>
+<h4>Dans le sens <strong>dépôt distant vers dépôt local</strong> :</h4>
+<ul>
+<li>Initialiser votre dépôt distant.</li>
+</ul>
+<p>Pour <strong>github</strong> et <strong>bitbucket</strong>, il suffit de cliquer sur le bouton &quot;nouveau dépôt&quot;. L'url du dépôt va apparaître sur la page du dépôt (en principe, sur la droite sur les deux plateformes) avec une commande <code>git clone</code> à copier puis à coller.</p>
+<ul>
+<li>Sur votre répertoire du projet (machine locale), faire</li>
+</ul>
+<p><code>git clone {path/to/remote}</code></p>
+<p>Cette commande va faire</p>
+<p><code>git init</code>
+<code>git remote add origin {path/to/remote}</code>
+<code>git fetch</code>
+<code>git merge</code></p>
+<p>Direct... tout en un coup. Vous n'aurez rien à faire.</p>
+<p>Le <strong>remote</strong> va systématiquement s'appeler <em>origin</em>. C'est comme ça.</p>
+<p>Sur un projet, vous pouvez ajoutez autant de <strong>remote</strong> que vous le souhaitez. Il suffit de faire un <code>git remote add {remote_name} {path/to/remote}</code> autant de fois que vous le voulez. Quand vous souhaitez pousser vos commits, il suffit de choisir sur lequel de vos dépôts distants vous souhaitez pousser. Vous pouvez même vous créer un second dépôt git sur votre machine locale sur laquelle pousser les sources, pour un backup par ex.</p>
+<h2>Introduire les branches</h2>
+<p>Travailler avec <strong>git</strong> donne les avantages suivants :</p>
+<ul>
+<li>dépôt central partagé entre plusieurs pour les sources, comme ça, tout le monde est à niveau (mais pas de contrainte maitre/esclave sur un serveur technique central.</li>
+<li>backup du code en cas où</li>
+</ul>
+<p>Mais cela a un intérêt supplémentaire qui donne toute sa puissance à <strong>git</strong> : le suivi des niveaux de sources différents sur un même projet. Fini le temps où on avait deux répertoire : PROD et DEV sur un seul projet et l'un était la copie de l'autre... Tout est au même endroit... oui oui, c'est bien ce que j'ai dit. (<em>oui, je sais, pour les pro du SCM, je ne vous apprends rien... en même temps, les pro ne lisent jusqu'ici que par politesse</em>).</p>
+<p>Pour cela, il faut travailler avec les <strong>branches</strong>. Et c'est là que vous aurez accès à toute l'efficacité de <strong>git</strong>.</p>
+<p>Pour comprendre les branches, il faut presque se dire que ce sont des versions. La version <em>dev</em>, la version <em>integration</em>, la version <em>long-term</em>, la version <em>main</em> etc... Chaque version sera un aspect différent du même projet, avancé à différents niveaux de développement. Chaque version est une branche.</p>
+<p>Les interfaces graphiques vous créent une branche comme un rien, du coup, je perds un peu les commandes mais effectivement, la commande est simple aussi.</p>
+<p>Sur un dépôt <strong>git</strong> (en principe, sur le local mais tous les dépôts étant équivalents, pas de serveur et pas de client, vous pouvez le faire à partir de n'importe quel dépôt), vous avez en principe une branche ouverte sur votre dépôt (le HEAD). Si vous commencez avec git, vous devriez être sur la branche <em>master</em>. La branche <em>master</em> n'est pas plus importante, plus principale ou plus complète que n'importe quelles autres (futures) branches de votre dépôt. C'est juste que <code>git init</code> crée la branche <em>master</em>par défaut. Il aurait pu l'appeler <em>first</em> ou <em>main</em> ou même <em>toto</em>, c'était la même chose. D'ailleurs, vous pouvez également changer son nom si cela vous chante... Il suffit de mettre votre propre lexique en place.</p>
+<p>Dans le répertoire de travail, vous avez tous les fichiers de votre projet.</p>
+<p>Ajoutez tous les fichiers à ajouter (<code>git add</code>).</p>
+<p>Faites le point de sauvegarde (<code>git commit</code>).</p>
+<p>A partir de là, quand tout est commité, vous pouvez créer votre branche. (Vous pouvez également le faire avant le commit mais tout ce qui n'a pas été commité pourrait bien être perdu si vous ne les commitez pas... à vous de voir).</p>
+<p><code>git branch dev</code></p>
+<p>On a créé une branche nommée <em>dev</em>qui est la copie de la branche <em>master</em> sur laquelle on est.</p>
+<p>Mais vous êtes toujours sur votre branche <em>master</em>.</p>
+<p>Si vous souhaitez voir le contenu d'une autre branche, il faut faire</p>
+<p><code>git checkout dev</code></p>
+<p>Votre répertoire de travail n'a pas été modifié parce que pour le moment, <em>dev</em> et <em>master</em> sont identiques. Si vous avez un graphique de votre dépôt git, vous verrez que <em>master</em> et <em>dev</em> portent le même numéro de commit.</p>
+<p>Travaillez maintenant sur votre <em>dev</em> et commitez. Dans le graphique, <em>dev</em> a un numéro différent de <em>master</em>.</p>
+<p>Si vous faites</p>
+<p><code>git checkout master</code></p>
+<p>les modifications faites sur <em>dev</em>auront disparu et vous retrouverez <em>master</em> tel que vous l'avez laissé.</p>
+<p>Et de checkout en checkout, vous pourrez passer d'une branche à l'autre.</p>
+<p>Bon, évidemment, éviter de sauter d'une branche à l'autre comme un cabri. Si vous êtes un dev, il y a de fortes chances que vous vous concentriez sur une branche <em>dev</em>, histoire de pas polluer la branche <em>master</em> avec vos expérimentations et votre code en devenir.</p>
+<p>Si vous êtes un intégrateur, vous serez peut être sur une branche <em>integration</em> dédiée pour la mise en forme du site web.</p>
+<p>Conservez une branche &quot;propre de tous bugs&quot;... genre la version prête à déployer...</p>
+<h3>Organiser les branches</h3>
+<p>Fautes d'avoir les bons mots clés, je n'ai pas trouvé beaucoup d'informations sur comment travailler avec les branches. Toutefois, j'ai fini par trouver. Il existe une méthode, désormais célèbre semblerait-il, communément appelé <strong>gitflow</strong>, mise en place par <a href="http://nvie.com/posts/a-successful-git-branching-model/" target="_blank"><strong>Vincent Driessen</strong></a>.</p>
+<p>Le modèle a tellement convaincu qu'il existe un <a href="http://danielkummer.github.io/git-flow-cheatsheet/" target="_blank">package</a> pour appliquer le robuste workflow de Vincent. Evidemment, sa parole ne faisant pas évangile, vous n'êtes pas obligé d'appliquer le process à la lettre. Mais c'est intéressant de savoir et pour ma part, ça m'a fait découvrir d'autres possibilités dans ma petite vie de développeur.</p>
+<h3>Gitflow</h3>
+<p>Voici le process de <strong>gitflow</strong> dans les grandes lignes.</p>
+<p>Un projet a 2 branches principales : <em>master</em>, <em>develop</em> (appelez les comme vous voulez, je pense que je vais utiliser <em>master</em> et <em>dev</em> mais ce n'est que mon avis)</p>
+<ul>
+<li><em>master</em> est le reflet de la prod (ou de la prochaine prod en tout cas)</li>
+<li><em>dev</em> est la branche de dev, comme son nom l'indique.</li>
+</ul>
+<p>Quand ce qui est en <em>dev</em> est stabilisé, on tague le lot de changements, on commite et on pousse en prod. Bon, c'est dit TREEEEES vite.</p>
+<p>D'après le workflow de Vincent Driessen, chaque fois que quelque chose est poussé sur <em>master</em>, cela signifie que les sources peuvent être déployée en production AVEUGLEMENT... <em>je résume, mais c'est l'idée</em>.</p>
+<p>A côté de ces 2 branches principales, <strong>gitflow</strong> manipule des branches 'mineures', qui devraient être détruites quand on n'en a plus l'usage. Ces branches mineures se classent en trois catégories :</p>
+<ul>
+<li>features</li>
+<li>releases</li>
+<li>hot fixes</li>
+</ul>
+<h4>Branches de type 'feature'</h4>
+<p>Les branches de type <em>features</em> sont des fonctionnalités à développer sur le long terme. Il vaut mieux créer une branche dédiée afin de pas pourrir la branche de dev principale. Notamment, s'il faut revenir en arrière, vous allez avoir, dans l'historique de votre dépôt / branche des commits qui viennent de tous les côtés de tout le monde, ce qui n'est pas très lisible et pratique pour le retour arrière.</p>
+<p>Les branches <em>feature</em> sont des branches à partir de la branche <em>develop</em> et il existe une branche <em>feature</em> par fonctionnalités (pratiquement) ou, pour un dev, une expérimentation / une amélioration sur une feature existante.</p>
+<p>Pour la nomenclature, Vincent Driessen donne des recommandations : les branches <em>feature</em> peuvent s'appeler n'importe comment, excepté les 'mots clés' suivants : <em>master</em>, <em>develop</em>, <em>release-</em>* et *hotfix-**.</p>
+<p>Quand la feature est développée et considérée stable, on fusionne le contenu de cette branche <em>feature</em> à la branche <em>develop</em>, on gère les problèmes de conflits et on détruit la branche <em>feature</em>.</p>
+<p>Lorsqu'on fusionne (<code>merge</code>) la branche <em>feature</em> sur la branche <em>develop</em>, Vincent Driessen recommande d'utiliser l'option <code>--no-ff</code> qui permet de charger toute la branche <em>feature</em> en un seul commit historique. C'est plus pratique pour le retour arrière (si nécessaire) : au lieu de revenir 15 commits en arrière, on ne retourne que d'un seul commit, celui qui représente la fusion.</p>
+<h4>Branches de type 'release'</h4>
+<p>Les branches de type <em>releases</em> sont des branches de préprod. On crée une branche dédiée pour chaque nouvelle version (avec son lot de nouvelles fonctionnalités) pour bloquer la nouvelle version une fois pour toute et pour lui appliquer les dernières vérifications et idéalement, les scénarii de tests. C'est une branche sur laquelle il y a toujours des développements appliqués puisque, suivant ce qui résultera des tests, il y aura des ajustements à faire.</p>
+<p>Les branches <em>release</em> sont des branches à partir de la branche <em>develop</em>. Il existe une branche <em>release</em> chaque fois qu'une prochaine version est prête. De préférence, il n'y a pas plusieurs branches <em>releases</em> en concurrence.</p>
+<p>C'est sur la branche <em>release</em> qu'on fixe le numéro de version. Pour la nomenclature, la branche s'appelle <em>release-{numéro_de_version}</em>.</p>
+<p>Quand la release est stable et valide, on fusionne son contenu sur la branche <em>master</em>, on gère les conflits possibles. Afin de reporter les petits ajustements finaux sur la branche <em>develop</em>, on n'oublie pas de fusionner le contenu de la branche <em>release</em> sur la branche <em>develop</em> également. On détruit la branche <em>release</em> une fois qu'elle a été fusionnée sur <em>master</em> et sur <em>develop</em>.</p>
+<h4>Branche de type 'hot fix'</h4>
+<p>Les branches de type <em>hot fixes</em> sont des branches pour patcher des bugs en prod non détecté lors des mises en prod précédentes. Comme pour <em>release</em>, et en fonction des délais estimés de résolution de certains bugs de production, il y a peu de raisons d'avoir plusieurs branches <em>hotfix</em> concurrentes.</p>
+<p>Les branches <em>hotfix</em> sont des branches à partir de la branche <em>master</em>.</p>
+<p>Lorsque le(s) bug(s) sont fixés, on donne un numéro de version mineure, on fusionne le contenu de la branche sur la branche <em>master</em>, on gère les conflits. Afin de reporter les correctifs sur la branche <em>develop</em>, on n'oublie pas de fusionner le contenu de la branche <em>hotfix</em> sur la branche <em>develop</em> également. En fonction de la présence ou non d'une branche <em>release</em>, il faut peut être également reporter les correctifs sur la branche <em>release</em> afin de ne pas relivrer le bug en prod. La branche <em>hotfix</em> une fois fusionnée dans les autres branches, est détruite.</p>
+<p>Ce workflow me semble très intéressant. Certains n'adhèreront pas du tout. Pour des raisons d'absence d'équipe, je n'ai pas eu l'occasion de l'éprouver mais je compte bien me monter une version adaptée dès que possible. Je redoute fortement les problèmes de conflits et je pense qu'il va y avoir d'inévitables mélangeages de pinceaux avant qu'on s'en sorte.</p>
+<h3>Branches et dépôts</h3>
+<p>Si vous avez créés plusieurs branches sur votre dépôt local, il est aisé de pousser ces branches sur les dépôts distants :</p>
+<p><code>git push {remote-name} {branch-name}</code></p>
+<p>on choisit le dépôt distant sur lequel on veut pousser et on choisit la branche qu'on veut pousser et voilaaaa !</p>
+<p>Je suppose que pour <code>git fetch</code>, ça doit être le même principe. Je dois avouer que je laisse le plugin de Netbeans me guider ici.</p>
+<h2>Supprimer des fichiers dans le dépôt</h2>
+<p>Une chose qu'aucun outil graphique ne m'a permis de faire : supprimer des fichiers dans le dépôt git.</p>
+<p>J'ai commité par erreur des librairies sur mes différents dépôts local et distant mais c'étaient des fichiers que je ne veux pas conserver dans le dépôt. Toutefois, j'en ai besoin pour travailler, il faut donc que je conserve ces fichiers.</p>
+<p>Une fois que les fichiers (qui doivent être ignorés) ont été commité une fois, les rajouter après coup dans <code>.gitignore</code> ne sert à rien. Il faut les supprimer du dépôt.</p>
+<p>La solution brutale est</p>
+<ul>
+<li>de supprimer les fichiers du répertoire de travail,</li>
+<li>et de commiter dans le dépôt local</li>
+<li>puis de pousser le commit sur les dépôts distants</li>
+<li>avant de remettre les fichiers à leur place</li>
+<li>et de paramétrer gitignore comme il faut.</li>
+</ul>
+<p>C'est une solution brutale et vous n'êtes pas certain qu'il n'existe pas déjà un dépôt quelque part avec vos fichiers dedans... résultat, il réapparaîtront tôt ou tard au moment d'une fusion.</p>
+<p>La meilleure solution est de <strong>supprimer les fichiers du dépôt</strong> (aucune incidence sur le répertoire de travail, du coup, vos fichiers restent intouchés).</p>
+<p>Mais voila.</p>
+<p>Aucune interface graphique à ma disposition ne me permettait de supprimer des fichiers du dépôt. Il a fallu revenir aux basiques : la ligne de commande.</p>
+<p><code>git rm {liste des fichiers}</code>
+<code>git commit</code></p>
+<p>et voilaaaa...</p>
+<p>Voila mes derniers badges avec git :)</p>
+<p>J'espère que mon post a pu vous être utile. Vous trouverez un lien vers un <a href="http://www.synbioz.com/blog/git-adopter-un-modele-de-versionnement-efficace" target="_blank">article de Nicolas Cavigneaux</a> qui explique en détail de process de Vincent Driessen pour ceux qui ne sont pas à l'aise avec la langue de Shakespeare.</p>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/fr/tags/git">git</a></li><li><a href="/fr/tags/scm">scm</a></li><li><a href="/fr/tags/github">github</a></li><li><a href="/fr/tags/bitbucket">bitbucket</a></li></ul>
+        </div>
+      
+
+      
+    
+
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>Sur moi</h3>
+      <p>J&#39;ai appris le php il y a quelques années, quand Internet était à ses débuts. Pour diverses raisons, j&#39;ai arrêté en route et j&#39;ai perdu le fil des nouveaux Internets que je redécouvre. Résultat, je me sens constamment à courir après l&#39;histoire mais je suis toujours motivée à reprendre des projets personnels. Je me propose de vous partager mes découvertes. Au delà des sujets de programmation, j&#39;aime également partager mes infos concernant notamment l&#39;Histoire, l&#39;Astronomie, la Linguistique, les Films, les Livres et les Anime. J&#39;espère que vous aimerez suivre mon blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. Tous droits réservés.</p>
+        <p>Propulsé par <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

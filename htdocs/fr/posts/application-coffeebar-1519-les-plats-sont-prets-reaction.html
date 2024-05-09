@@ -1,0 +1,413 @@
+<!doctype html>
+<html class="no-js" lang="fr" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>Application CoffeeBar 15/19 - Les plats sont prêts, réaction.&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">Français</a>
+        <a href="/en/">Anglais</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/fr/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/fr/books/0/index.html">Séries</a>
+        <a href="/fr/">Accueil</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/fr/">Accueil</a><i class="fas fa-angle-right"></i>Application CoffeeBar 15/19 - Les plats sont prêts, réaction.
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>Application CoffeeBar 15/19 - Les plats sont prêts, réaction.</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>21/04/2015 14:02:00
+        
+        <i class="fas fa-th-large"></i><!--a href="/fr/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/file9271237667217.jpg" class="node-banner" />
+        
+          <p><strong>Crédit</strong> : Morguefile.com </p>
+        
+      </div>
+
+      <p><p>Les plats sont préparés et prêts à servir. L'événement 'foodPrepared' a été déclenché. Voyons ce qu'il déclenche dans nos différents observers.</p>
+<p><em>NOTE : le long du tutoriel, je vais vous faire rééditer des classes et des vues sur lesquels on sera déjà passé. Il va y avoir des parties qui n'apparaitront plus systématiquement au second passage : typiquement les use, les instructions extends, implements etc... Cela ne veut pas dire qu'il faut les retirer. C'est juste pour alléger le code. S'il faut retirer du code, soit je vous remettrais le passage intégralement, pour voir ce qui a disparu, soit je vous signalerais qu'il faut effacer une ligne pour la remplacer par une autre.</em></p>
+<h2>Voici ce qu'on peut dire</h2>
+<ul>
+<li>Dans l'<em>historique de la note</em>, les plats qui figurent dans la liste <code>TabStory::$outstandingFood</code> seront retirés de cette liste mais seront déplacés vers une nouvelle liste <code>TabStory::$preparedFood</code>.</li>
+<li>Concernant la <em>todo list du chef</em> cuisine, les <em>plats préparés vont disparaître</em> de sa liste de plats à préparer.</li>
+<li>Concernant la <em>liste des notes actives</em>, les éléments qui étaient dans la liste <code>Tab::$itemsInPreparation</code> seront déplacés dans la liste <code>Tab::$itemsToServe</code>.</li>
+</ul>
+<h2>L'historique de la note</h2>
+<p>Les plats commandés mais pas encore préparés sont stockés dans chacune des listes <code>TabStory::$outstandingFood</code>. Pour chaque numéro de menu correspondant à un plat préparé, il faut identifier à quel <em>index</em> est stocké ce plat dans le tableau <code>TabStory::$outstandingFood</code> afin de pouvoir supprimer cet index.</p>
+<p>La propriété <code>TabStory::$outstandingFood</code> est un objet de type <code>CoffeeTab\Entity\TabStory\OrderedItems</code> (héritant de <code>\ArrayObject</code>). Il nous faut la méthode qui, avec le numéro de menu, peut retourner l'<em>index</em> de ce numéro dans la propriété <code>TabStory::$outstandingFood</code>.</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Entity/TabStory/OrderedItems.php
+
+&lt;?php
+namespace CoffeeBar\Entity\TabStory ;
+
+class OrderedItems extends ArrayObject
+{
+  // $id = numéro de menu en argument
+  public function getKeyById($id)
+  {
+    $iterator = $this-&gt;getIterator() ;
+ 
+    // on parcourt tout le tableau
+    foreach($iterator as $key =&gt; $value)
+    {
+      // on vérifie à quel moment on a une $value qui correspond au numéro de menu en argument.
+      // quand on a une correspondance (positive), on retourne l'index de cette $value.
+      if($value-&gt;getId() == $id) 
+      {
+        return $key ;
+      }
+    }
+  }
+}
+</code></pre>
+<p>Les plats préparés sont stockés dans une nouvelle propriété <code>TabStory::$preparedFood</code>.</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/TabStory/TabStory.php
+
+&lt;?php
+namespace CoffeeBar\Entity\TabStory ;
+
+class TabStory
+{
+  protected $preparedFood ; // CoffeeBar/Entity/TabStory/OrderedItems
+ 
+  public function __construct()
+  {
+    $this-&gt;preparedFood = new OrderedItems() ;
+  }
+
+  public function getPreparedFood() 
+  {
+    return $this-&gt;preparedFood;
+  }
+
+  public function addPreparedFood($food) 
+  {
+    foreach($food as $item)
+    {
+      $this-&gt;preparedFood-&gt;offsetSet(NULL, $item) ;
+    }
+  }
+}
+</code></pre>
+<p>Allons maintenant supprimer les plats préparés de la liste <code>TabStory::$outstandingFood</code> et allons les rajouter dans la liste <code>TabStory::$preparedFood</code></p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Service/TabAggregate.php
+
+&lt;?php
+class TabAggregate
+{
+  ...
+ 
+  public function attach(EventManagerInterface $events)
+  {
+    $this-&gt;listeners[] = $events-&gt;attach('foodPrepared', array($this, 'onFoodPrepared')) ;
+  }
+
+  public function onFoodPrepared($events)
+  {
+    $foodPrepared = $events-&gt;getParam('foodPrepared') ;
+ 
+    $story = $this-&gt;loadStory($foodPrepared-&gt;getId()) ;
+ 
+    foreach($foodPrepared-&gt;getFood() as $food)
+    {
+      // idenfier la clé du plat préparé dans la liste $outstandingFood
+      $key = $story-&gt;getOutstandingFood()-&gt;getKeyById($food) ;
+ 
+      if($key !== null)
+      {
+        // récupérer l'élément OrderedItem correspondant à la clé
+        $value = $story-&gt;getOutstandingFood()-&gt;offsetGet($key) ;
+
+        // supprimer l'élément dans la liste $outstandingFood avec la clé
+        $story-&gt;getOutstandingFood()-&gt;offsetUnset($key) ;
+
+        // ajouter l'élément dans la liste $preparedFood
+        $story-&gt;getPreparedFood()-&gt;offsetSet(NULL, $value) ;
+      }
+    }
+    $this-&gt;saveStory($foodPrepared-&gt;getId(), $story) ;
+  }
+}
+</code></pre>
+<p>Voilà pour l'historique de la note.</p>
+<h2>Todolist du chef</h2>
+<p>Voyons maintenant ce qu'il se passe pour la todoList du chef cuisinier : quand le plat est préparé, il faut le retirer de la liste du chef, bien sûr.</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Service/ChefTodoList.php
+
+&lt;?php
+namespace CoffeeBar\Service;
+
+class ChefTodoList implements ListenerAggregateInterface
+{
+  public function attach(EventManagerInterface $events)
+  {
+    $this-&gt;listeners[] = $events-&gt;attach('foodPrepared', array($this, 'onFoodPrepared')) ;
+  }
+
+  public function onFoodPrepared($events)
+  {
+    $foodPrepared = $events-&gt;getParam('foodPrepared') ;
+
+    $this-&gt;loadTodoList() ;
+
+    foreach($this-&gt;todoList as $key =&gt; $item)
+    {
+      // si l'id unique de la note dans la todolist correspond
+      // à l'id unique de la note dans l'événement $foodPrepared'
+      if($item-&gt;getTab() == $foodPrepared-&gt;getId())
+      {
+        $groupKey = $key ;
+        $group = $item ;
+      }
+    }
+ 
+    // $foodPrepared-&gt;getFood retourne la liste des numéros de menu préparés
+    foreach($foodPrepared-&gt;getFood() as $food)
+    {
+      // il faut identifier la clé du plat préparé dans la todoList du chef
+      $key = $group-&gt;getKeyByMenuNumber($food) ;
+      if($key !== null)
+      {
+        // retirer le plat préparé de la todolist du chef
+        $group-&gt;getItems()-&gt;offsetUnset($key) ;
+      }
+    }
+ 
+    // s'il n'y a plus d'éléments dans la propriété TodoListGroup::items
+    // alors retirer l'élément TodoListGroup
+    if(count($group-&gt;getItems()) == 0)
+    {
+      $this-&gt;todoList-&gt;offsetUnset($groupKey) ;
+    }
+ 
+    $this-&gt;saveTodoList() ;
+  }
+}
+</code></pre>
+<p>Ici encore, identifions l'élément avec le numéro de menu, cette fois ci dans l'objet <code>CoffeeBar\Entity\ChefTodoList</code></p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Entity/ChefTodoList/TodoListGroup.php
+
+&lt;?php
+namespace CoffeeBar\Entity\ChefTodoList;
+
+class TodoListGroup {
+  // $menuNumber = numéro de menu passé en argument
+  public function getKeyByMenuNumber($menuNumber)
+  {
+    // itération sur le tableau $items
+    foreach($this-&gt;getItems() as $key =&gt; $value)
+    {
+      // si une valeur est trouvée, correspondant au numéro de menu passé en argument
+      // retourner l'index
+      if($value-&gt;getMenuNumber() == $menuNumber)
+      {
+        return $key ;
+      }
+    }
+  }
+}
+</code></pre>
+<h2>Liste des notes ouvertes</h2>
+<p>Et maintenant, au tour de la liste des notes ouvertes</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Service/OpenTabs.php
+
+&lt;?php
+namespace CoffeeBar\Service ;
+
+use CoffeeBar\Entity\OpenTabs\TabStatus;
+
+class OpenTabs
+{
+  public function attach(EventManagerInterface $events)
+  {
+    $this-&gt;listeners[] = $events-&gt;attach('foodPrepared', array($this, 'onFoodPrepared')) ;
+  }
+
+  /**
+   * Move the prepared items from the itemsInPreparation list to the itemsToServe list
+   * @param Events $events
+   */
+  public function onFoodPrepared($events)
+  {
+    $foodPrepared = $events-&gt;getParam('foodPrepared') ;
+
+    $this-&gt;loadTodoByTab() ;
+    $tab = $this-&gt;todoByTab-&gt;offsetGet($foodPrepared-&gt;getId()) ;
+ 
+    // on récupère la liste des numéros de menu des plats préparés
+    foreach($foodPrepared-&gt;getFood() as $food)
+    {
+      // ici aussi, on récupère l'index du tableau avec le numéro de menu
+      $key = $tab-&gt;getItemsInPreparation()-&gt;getKeyByMenuNumber($food) ;
+      if($key !== null)
+      {
+        // on récupère l'élément stocké à cet index
+        $value = $tab-&gt;getItemsInPreparation()-&gt;offsetGet($key) ;
+
+        // on ajoute l'élément à la liste de $itemsToServe
+        $tab-&gt;getItemsToServe()-&gt;addItem($value) ;
+
+        // on supprime l'élément de la liste $itemsInPreparation
+        $tab-&gt;getItemsInPreparation()-&gt;offsetUnset($key) ;
+      }
+    }
+    $this-&gt;todoByTab-&gt;offsetSet($foodPrepared-&gt;getId(), $tab) ;
+    $this-&gt;saveTodoByTab() ;
+  }
+}
+</code></pre>
+<p>La propriété <code>Tab::$itemsInPreparation</code> est un objet de type <code>CoffeeBar\Entity\OpenTabs\ItemsArray</code>. Ici encore, mettons en place la même méthode : identifier l'index du tableau à l'aide du numéro de menu.</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Entity/OpenTabs/ItemsArray.php
+
+&lt;?php
+namespace CoffeeBar\Entity\OpenTabs ;
+
+class ItemsArray extends ArrayObject
+{
+  public function getKeyByMenuNumber($menuNumber)
+  {
+    $iterator = $this-&gt;getIterator() ;
+ 
+    foreach($iterator as $key =&gt; $value)
+    {
+      if($value-&gt;getMenuNumber() == $menuNumber)
+      {
+        return $key ;
+      }
+    }
+  }
+}
+</code></pre>
+<h3>Conclusion</h3>
+<p>Ainsi, quand l'événement '<em>foodPrepared</em>' est déclenché :</p>
+<ul>
+<li>les plats préparés disparaissent de la todolist du chef cuisinier</li>
+<li>les plats préparés disparaissent de la liste <code>Tab::$itemsInPreparation</code> et rejoignent la liste <code>Tab::$itemsToServe</code></li>
+<li>les plats préparés disparaissent de la liste <code>TabStory::$outstandingFood</code> et rejoignent la liste <code>TabStory::$preparedFood</code></li>
+</ul>
+<p>Il reste à servir tout ça.</p>
+<p><em>Vous trouverez l'intégralité de l'application sur mon <a href="https://github.com/haclong/coffeebar" target="_blank">github</a></em></p>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/fr/tags/zend-framework-2">zend framework 2</a></li><li><a href="/fr/tags/oop">OOP</a></li><li><a href="/fr/tags/events">events</a></li><li><a href="/fr/tags/event-manager">Event Manager</a></li><li><a href="/fr/tags/programmation-evenementielle">programmation événementielle</a></li></ul>
+        </div>
+      
+
+      
+        <nav id="book-navigation">
+    
+       <li class="link-previous"><a href="/fr/posts/application-coffeebar-1419-marquer-les-plats-prepares.html"><i class="fas fa-long-arrow-alt-left"></i> Application CoffeeBar 14/19 - Marquer les plats préparés</li>
+    
+
+    
+        <li class="link-next"><a href="/fr/posts/application-coffeebar-1619-afficher-la-todo-list-du-staff.html">Application CoffeeBar 16/19 - Afficher la todo list du staff <i class="fas fa-long-arrow-alt-right"></i></a></li>
+    
+
+    
+        <li class="link-up"><a href="/fr/books/gerer-un-cafe-avec-une-programmation-evenementielle.html"><i class="fas fa-book-open"></i> Gérer un café avec une programmation événementielle</li>
+    
+</nav>
+
+      
+    
+
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>Sur moi</h3>
+      <p>J&#39;ai appris le php il y a quelques années, quand Internet était à ses débuts. Pour diverses raisons, j&#39;ai arrêté en route et j&#39;ai perdu le fil des nouveaux Internets que je redécouvre. Résultat, je me sens constamment à courir après l&#39;histoire mais je suis toujours motivée à reprendre des projets personnels. Je me propose de vous partager mes découvertes. Au delà des sujets de programmation, j&#39;aime également partager mes infos concernant notamment l&#39;Histoire, l&#39;Astronomie, la Linguistique, les Films, les Livres et les Anime. J&#39;espère que vous aimerez suivre mon blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. Tous droits réservés.</p>
+        <p>Propulsé par <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

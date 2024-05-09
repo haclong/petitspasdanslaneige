@@ -1,0 +1,276 @@
+<!doctype html>
+<html class="no-js" lang="en" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>HOWTO - Creating an online manual using DocBook - Getting ready&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">French</a>
+        <a href="/en/">English</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/en/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/en/books/0/index.html">Collections</a>
+        <a href="/en/">Home</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/en/">Home</a><i class="fas fa-angle-right"></i>HOWTO - Creating an online manual using DocBook - Getting ready
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>HOWTO - Creating an online manual using DocBook - Getting ready</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>7/31/2012, 12:13:00 PM
+        
+        <i class="fas fa-th-large"></i><!--a href="/en/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->, <!--a href="/en/sites/haclong-projects.html" class="tag-sites"-->Haclong projects<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/old-books.jpg" class="node-banner" />
+        
+      </div>
+
+      <p><p>Although i've already exposed my attempts to publish a DocBook manual, my purpose here is to give straight forward directives to achieve a Docbook manual.</p>
+<h2>Purpose</h2>
+<p>We will create an online manual very like the <a href="http://www.php.net/manual/en/" target="_blank">php.net manual</a>. The book content will be divided into several HTML pages. Each main parts will have its own table of contents. Classes and functions in the book will be able to reference each other. We will be able to browse the book page per page or go up to the table of content.</p>
+<h2>Requirements</h2>
+<p>To achieve a DocBook manual, we will need</p>
+<ul>
+<li>XSL stylesheets to style and template our book</li>
+<li>an XSL processor to publish our book</li>
+</ul>
+<p>As for your competences, you'll need to know</p>
+<ul>
+<li>some few things about <a href="http://www.w3.org/TR/REC-xml/" target="_blank">XML schemes</a> : Document type declaration, well-formedness and validation constraints</li>
+<li>few other things about <a href="http://www.w3.org/TR/xslt" target="_blank">XSL</a> and <a href="http://www.w3.org/TR/xpath/" target="_blank">XPATH</a></li>
+<li>few things about <a href="http://www.w3.org/TR/CSS21/" target="_blank">CSS</a> too</li>
+</ul>
+<p>Those won't be covered at all in this tutorial.</p>
+<h2>Installing xsltproc on Windows system</h2>
+<p>As for a XSL processor, we will install <strong>xsltproc</strong> which is a light processor working with command-line. Of course, if you already have a XSL processor installed on your computer, you can skip this step.</p>
+<ol>
+<li>go to <a href="http://www.zlatkovic.com/libxml.en.html" target="_blank">Igor Zlatkovic's website</a></li>
+<li>go to <a href="ftp://ftp.zlatkovic.com/libxml/" target="_blank">Igor Zlatkovic's download area</a></li>
+<li>download the following packages :</li>
+</ol>
+<ul>
+<li>iconv-x.x.x.win32.zip</li>
+<li>libxml2-x.x.x.win32.zip</li>
+<li>libxslt-x.x.x.win32.zip</li>
+<li>zlib-x.x.x.win32.zip</li>
+</ul>
+<ol start="4">
+<li>create a <strong>xsltproc</strong> directory on your computer</li>
+<li>unzip all downloaded archives inside your xsltproc directory</li>
+</ol>
+<p>You should get this arborescence :</p>
+<pre><code>path/to/xsltproc_dir/
+---iconv-x.x.x.win32/
+------bin/
+------include/
+------lib/
+---libxml2-x.x.x.win32/
+------bin/
+------include/
+---------libxml/
+------lib/
+---libxslt-x.x.x.win32/
+------bin/
+------include/
+---------libexslt/
+---------libxslt/
+------lib/
+---zlib-x.x.x/
+------bin/
+------include/
+------lib/
+</code></pre>
+<ol start="6">
+<li>copy/paste all the bin/<em>.dll and all the bin/</em>.exe found in each archives into your xsltproc directory</li>
+</ol>
+<p>You should now have all those files and directories in your xsltproc directory</p>
+<pre><code>path/to/xsltproc_dir
+---iconv.dll
+---iconv.exe
+---libexslt.dll
+---libxml2.dll
+---libxslt.dll
+---minigzip.exe
+---xmlcatalog.exe
+---xmllint.exe
+---xsltproc.exe
+---zlib1.dll
+---iconv-x.x.x.win32/
+------bin/
+------include/
+------lib/
+---libxml2-x.x.x.win32/
+------bin/
+------include/
+---------libxml/
+------lib/
+---libxslt-x.x.x.win32/
+------bin/
+------include/
+---------libexslt/
+---------libxslt/
+------lib/
+---zlib-x.x.x/
+------bin/
+------include/
+------lib/
+</code></pre>
+<h3>Adding xsltproc directory to the PATH variable</h3>
+<p>Since the binary <strong>xsltproc.exe</strong> should be able to run from anywhere on the computer, we'll have to add its path to the PATH environment variable.</p>
+<p>For Windows XP users,</p>
+<ol>
+<li>go here : <strong>My Computer &gt; Properties &gt; Advanced &gt; Environment Variables</strong>.</li>
+<li>in the <strong>System variables</strong> area, edit the <strong>Path</strong> system variables</li>
+<li>add the path for your xsltproc directory at the end of the variable value line (which can reveal to be quite long). Do not forget to add a semicolon (;) as separator and do not add trailing slash.</li>
+<li>restart computer</li>
+</ol>
+<p>For non XP users : please refer to the numerous documentation available out there to make this working.</p>
+<h2>Installing xsltproc on Ubuntu</h2>
+<p>I guess an <strong>apt-get xsltproc</strong> should do the trick.</p>
+<h2>Getting the DocBook XSL stylesheets package</h2>
+<ol>
+<li>go to the <a href="http://sourceforge.net/projects/docbook/files/#files" target="_blank">Sourceforge DocBook XSL download area</a></li>
+<li>go to <strong>docbook-xsl-ns</strong> project and choose the latest version</li>
+<li>download the archive (either the .zip or the .tar.bz2)</li>
+<li>unzip the archive</li>
+</ol>
+<h2>Preparing the filesystem</h2>
+<p>Now that the XSL processor is ready, we can prepare the filesystem for our book.</p>
+<p>Create the following filesystem :</p>
+<pre><code>path/to/your/book_directory/
+---html/
+------css/
+---sources/
+------xml/
+------xsl/
+------myxsl/
+</code></pre>
+<p>Copy/Paste the content of the unzipped docbook-xsl-ns archive into the <strong>book_directory/sources/xsl</strong> directory</p>
+<ul>
+<li>The DocBook XSL stylesheets will be hosted in the <strong>sources/xsl/</strong> directory</li>
+<li>Your book (XML pages) will be in the <strong>sources/xml/</strong> directory</li>
+<li>Your book (HTML pages) will be in the <strong>html/</strong> directory</li>
+</ul>
+<h2>Getting an XML Editor</h2>
+<p>I do not really fancy WYSIWYG XML Editor. I'm strongly convinced that those tools made their own arrangement with your final code and you won't get what really want to have. I may be very wrong about this point and I definitively have to take time to install some editors but I don't feel like spending time to do that.</p>
+<p>Anyway, through the network, you'll learn that there's <a href="http://www.xmlmind.com/" target="_blank">XMLMind</a> or <a href="http://www.syntext.com/" target="_blank">Syntext Serna</a> free XML editors which are able to handle DocBook format and there's also <a href="http://www.oxygenxml.com/" target="_blank">OxygenXML</a> which is not free but looks real nice through its numerous screenshots.</p>
+<p>Follow this tutorial to learn how to create an online manual using DocBook !! Stay tuned !</p>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/en/tags/howto">HOWTO</a></li><li><a href="/en/tags/docbook">docbook</a></li><li><a href="/en/tags/xml">xml</a></li></ul>
+        </div>
+      
+
+      
+        <nav id="book-navigation">
+    
+
+    
+        <li class="link-next"><a href="/en/posts/howto-creating-online-manual-docbook-book.html">HOWTO - Creating an online manual with DocBook - The Book <i class="fas fa-long-arrow-alt-right"></i></a></li>
+    
+
+    
+        <li class="link-up"><a href="/en/books/howto-creating-online-manual-docbook.html"><i class="fas fa-book-open"></i> HOWTO - Creating an online manual with DocBook</li>
+    
+</nav>
+
+      
+    
+
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>About me</h3>
+      <p>I learned coding with php several years ago, when Internet was still young. For multiple reasons, i had stopped then and missed most of this new Internet i&#39;m discovering once again. So, i feel like a newbie again and since i&#39;m ready to start over personal project, i&#39;ll share with you some of my discoveries. Beyond coding topics, i&#39;ll enjoy sharing with you several subjects such as History, Astronomy, Linguistics, Movies, Books, Music and Anime among others. I hope you&#39;ll enjoy reading this blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. All rights reserved.</p>
+        <p>Powered by <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

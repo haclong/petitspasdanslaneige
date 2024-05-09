@@ -1,0 +1,305 @@
+<!doctype html>
+<html class="no-js" lang="fr" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>Solveur de Sudoku - Résoudre des grilles plus compliquées&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">Français</a>
+        <a href="/en/">Anglais</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/fr/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/fr/books/0/index.html">Séries</a>
+        <a href="/fr/">Accueil</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/fr/">Accueil</a><i class="fas fa-angle-right"></i>Solveur de Sudoku - Résoudre des grilles plus compliquées
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>Solveur de Sudoku - Résoudre des grilles plus compliquées</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>04/06/2014 22:53:00
+        
+        <i class="fas fa-th-large"></i><!--a href="/fr/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/Sudoku_Board_Game.jpg" class="node-banner" />
+        
+      </div>
+
+      <p><p>Notre solveur de sudoku sait maintenant résoudre des grilles de sudoku très simples. Il sait placer des chiffres dans les cases en éliminant les chiffres possibles dans chacune des cases jusqu'au dernier chiffre possible. C'est le résultat du premier niveau de déduction. Voyons maintenant le second niveau.</p>
+<p>Nous avons déterminé (arbitrairement) deux niveaux de déduction.</p>
+<p>Le premier niveau dit : un chiffre placé dans une case élimine le même chiffre parmi les chiffres possibles dans les cases qui se situent sur la même ligne, la même colonne et la même région. D'élimination en élimination, un chiffre peut être validé si il est le dernier chiffre qui reste possible dans une case.</p>
+<p>Le second niveau dit : dans un même ensemble de cases (une ligne, une colonne ou une région), si un chiffre est éliminé dans toutes les cases mais reste possible dans une dernière case, alors il est forcément validé dans cette dernière case.</p>
+<p>Afin de réaliser ce raisonnement, on va travailler par ensemble de cases :</p>
+<ul>
+<li>il faut récupérer toutes les cases de l'ensemble</li>
+<li>dans chaque ensemble, il faut compter le nombre de cases dans lesquelles un chiffre est possible</li>
+<li>il restera à tester si le chiffre possible apparaît une fois ou plus d'une fois dans l'ensemble de case.</li>
+</ul>
+<pre><code class="language-php">// module/Application/src/Application/Model/Solveur.php
+
+&lt;?php
+namespace Application\Model ;
+
+class Solveur
+{
+  /**
+   * Sélectionner le nombre de cases où le chiffre est possible
+   *
+   * @param int $col Numéro de la colonne
+   * @param int $chiffre Chiffre à sélectionner
+   *
+   * @return array
+   */
+  protected function getOptionsDansColonne($col, $chiffre)
+  {
+    $cases = array() ;
+    foreach($this-&gt;grille-&gt;selectionnerCasesDeColonne($col) as $case) {
+      if($case-&gt;chiffre-&gt;getStatutDuNumero($chiffre) == 2) {
+        $cases[] = $case ;
+      }
+    }
+    return $cases ;
+  }
+
+  /**
+   * Valider un numéro s'il est le dernier d'un groupe de cases
+   *
+   * @return void
+   */
+  public function validerChiffreDansColonne()
+  {
+    $tailleGrille = $this-&gt;grille-&gt;getTaille() ;
+ 
+
+    for($col=1; $col&lt;=$tailleGrille; $col++) {
+      for($chiffre=1; $chiffre&lt;=$tailleGrille; $chiffre++) {
+        $array = $this-&gt;getOptionsDansColonne($col, $chiffre) ;
+        if($this-&gt;estDerniereOptionDansGroupe($array)) {
+          // n'oubliez pas, $array est un tableau d'objet CaseSudoku
+          // s'il n'y a qu'une seule option qui reste dans les cases, alors il n'existe qu'une seule case dans $array
+          // par conséquent, la case ne peut être que $array[0]
+          $this-&gt;grille-&gt;validerChiffre($array[0]-&gt;getLigne(), $col, $chiffre) ;
+        }
+      }
+    }
+  }
+
+  /**
+   * Vérifier qu'il ne reste qu'une seule position pour un chiffre
+   *
+   * @param array $array tableau php des cases d'un même ensemble de cases
+   *
+   * @return bool
+   */
+  protected function estDerniereOptionDansGroupe($array)
+  {
+    if (count($array) == 1) {
+      return true ;
+    }
+    return false ;
+  }
+}
+</code></pre>
+<p>Avec la méthode <code>validerChiffreDansColonne()</code>, on a parcouru les colonnes de la grille les unes après les autres. Pour chacune des colonnes, on a compté le nombre de fois qu'un chiffre était en statut <em>POSSIBLE</em>. Si pour une colonne et pour un chiffre, il ne reste qu'une seule option possible, alors on valide le chiffre dans cette case.</p>
+<p>Il faut construire sur le même modèle la validation des chiffres sur les lignes et dans les régions.</p>
+<p>Je pense qu'il y a d'autres moyens pour arriver au même résultat. Je pense notamment qu'il y a un moyen de compter et de valider le numéro en même temps. Ainsi, si un chiffre est en statut <em>POSSIBLE</em> dans au moins deux cases, on pourrait sortir de la boucle et on passerait au numéro suivant... Je vous laisse expérimenter et améliorer cette partie...</p>
+<p>Une fois qu'on sait faire cette déduction, on peut aller modifier notre méthode <code>deduit()</code>. Pour rappel, notre méthode <code>deduit()</code> est exécutée à chaque boucle. Tant qu'il est possible de continuer dans les déductions, la méthode retourne <em>true</em>. S'il n'est plus possible de faire des déductions, alors la méthode retourne <em>false</em> et on sort de la boucle.</p>
+<p>Pour le moment, la méthode <code>deduit()</code> ne fait qu'éliminer les numéros possibles dans la ligne, la colonne et la région, lorsqu'un numéro est validé dans une case. A éliminer les possibilités les unes après les autres, d'autres chiffres seront validés, pour lesquels on va relancer le processus d'élimination des numéros possibles. Ainsi de suite...</p>
+<p>Notre méthode <code>deduit()</code> a toutefois un test qui vérifie si des déductions ont été réalisées au terme de l'itération, puisqu'on compare l'état de remplissage de la grille de sudoku avant l'itération et l'état de la grille après l'itération.</p>
+<p>On considérera que si le processus d'élimination des numéros possibles ne suffit pas pour résoudre la grille, on finira par tomber sur une itération où la grille sortante est identique à la grille entrante. On sera alors en situation de boucle infinie. Il faut alors dire à notre méthode <code>deduit()</code> de changer de stratégie et d'observer les colonnes les unes après les autres en essayant de valider les dernières options de chaque colonne. Une fois qu'on aura validé des numéros dans les colonnes, on rebouclera sur l'élimination des numéros possibles jusqu'à ce qu'on retombe - de nouveau - sur une boucle infinie. Si l'observation des colonnes n'apporte aucun résultat, alors - on est toujours en boucle infinie - on va reporter notre attention sur l'observation des lignes. Si des chiffres ont été validés suite à cette étape, on va reboucler sur l'élimination des numéros possibles, puis on réobservera les colonnes, puis les lignes et enfin les régions.</p>
+<pre><code class="language-php">// module/Application/src/Application/Model/Solveur.php
+
+&lt;?php
+namespace Application\Model ;
+
+class Solveur
+{
+  /**
+   * Algorythme de déduction
+   *
+   * @param array $iteration
+   *
+   * @return bool / false si on est dans l'incapacité de continuer
+   */
+  protected function deduit($iteration)
+  {
+    // si on est dans une boucle infinie, cela signifie qu'on ne peut plus continuer de déduire.
+    if($this-&gt;boucleInfinie($iteration)) {
+      // il faut tenter de déduire un chiffre dans les colonnes.
+      $this-&gt;validerChiffreDansColonne() ;
+      // on réinitialise l'entrée de tableau $tentatives[$iteration]
+      $this-&gt;tentatives[$iteration] = array() ;
+      // on assigne le dernier état de la grille dans l'entrée de tableau $tentatives[$iteration]
+      $this-&gt;tentatives[$iteration] = $this-&gt;photo($this-&gt;grille) ;
+      // si on a validé des chiffres dans une ou dans plusieurs colonnes, nous ne sommes pas dans le cas d'une boucle infinie. Du coup, on continue à éliminer les options unes à unes avec la méthode eliminerOptions() ;
+      // en revanche, si aucun chiffre n'a été validé, on est dans une boucle infinie et on sort de la boucle.
+      if($this-&gt;boucleInfinie($iteration)) {
+        return false ;
+      }
+    }
+
+    // on élimine les chiffres possibles dans la ligne, colonne et région d'un chiffre qui a été validé.
+    $this-&gt;eliminerOptions() ;
+
+    // retourner true va nous permettre de continuer de boucler
+    return true ;
+  }
+}
+</code></pre>
+<p>Tester ce code avec une grille un peu plus complexe.</p>
+<p>Le code complété de la méthode <code>deduit()</code>.</p>
+<pre><code class="language-php">protected function deduit($iteration)
+{
+  // si, après avoir éliminé toutes les options disponibles, on rencontre une boucle infinie, on essaie de déterminer les chiffres dans  les colonnes.
+  if($this-&gt;boucleInfinie($iteration)) {
+    $this-&gt;validerChiffreDansColonne() ;
+    $this-&gt;tentatives[$iteration] = array() ;
+    $this-&gt;tentatives[$iteration] = $this-&gt;photo($this-&gt;grille) ;
+    
+    // si, après avoir éliminé toutes les options, validé les chiffres dans les colonnes, re-éliminé toutes les options, on rencontre une boucle infinie, on essaie de déterminer les chiffres dans les lignes.
+    if($this-&gt;boucleInfinie($iteration)) {
+      $this-&gt;validerChiffreDansLigne() ;
+      $this-&gt;tentatives[$iteration] = array() ;
+      $this-&gt;tentatives[$iteration] = $this-&gt;photo($this-&gt;grille) ;
+ 
+      // si, après avoir éliminé toutes les options, valider les chiffres dans les colonnes, relancer l'élimination des options, valider les chiffres dans les lignes, relance l'élimination des options, on est finalement bloqué par une boucle infinie, on lancer la recherche derniers numéros en utilisant la méthode validerChiffreDansRegion()
+      if($this-&gt;boucleInfinie($iteration)) {
+        $this-&gt;validerChiffreDansRegion() ;
+        $this-&gt;tentatives[$iteration] = array() ;
+        $this-&gt;tentatives[$iteration] = $this-&gt;photo($this-&gt;grille) ;
+ 
+        if($this-&gt;boucleInfinie($iteration)) {
+          return false ;
+        }
+      }
+    }
+  }
+
+  $this-&gt;eliminerOptions() ;
+
+  // retourner true va nous permettre de continuer de boucler
+  return true ;
+}
+</code></pre>
+<p>Si on lance notre solveur maintenant, il devrait résoudre des grilles de difficulté intermédiaire... sous réserve des fluctuations des qualifications des grilles...</p>
+<p>Toutefois, il arrive toujours un moment où, malgré les deux raisonnements précédents sur chacune des lignes, chacune des colonnes et chacune des régions, on ne parvienne pas à résoudre une grille. Tous les joueurs de Sudoku le savent déjà, arrivé à ce moment là, il faut commencer à travailler avec des hypothèses.</p>
+<p>Nous verrons ensemble la solution que j'ai choisi d'appliquer pour mettre en place mes hypothèses.</p>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/fr/tags/poo">POO</a></li></ul>
+        </div>
+      
+
+      
+        <nav id="book-navigation">
+    
+       <li class="link-previous"><a href="/fr/posts/solveur-de-sudoku-mise-en-place-dans-le-controleur.html"><i class="fas fa-long-arrow-alt-left"></i> Solveur de Sudoku - Mise en place dans le contrôleur</li>
+    
+
+    
+
+    
+        <li class="link-up"><a href="/fr/books/aborder-la-programmation-orientee-objet-par-lexemple-concevoir-un-solveur-de-sudoku.html"><i class="fas fa-book-open"></i> Aborder la programmation orientée objet par l&#39;exemple. Concevoir un solveur de sudoku</li>
+    
+</nav>
+
+      
+    
+
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>Sur moi</h3>
+      <p>J&#39;ai appris le php il y a quelques années, quand Internet était à ses débuts. Pour diverses raisons, j&#39;ai arrêté en route et j&#39;ai perdu le fil des nouveaux Internets que je redécouvre. Résultat, je me sens constamment à courir après l&#39;histoire mais je suis toujours motivée à reprendre des projets personnels. Je me propose de vous partager mes découvertes. Au delà des sujets de programmation, j&#39;aime également partager mes infos concernant notamment l&#39;Histoire, l&#39;Astronomie, la Linguistique, les Films, les Livres et les Anime. J&#39;espère que vous aimerez suivre mon blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. Tous droits réservés.</p>
+        <p>Propulsé par <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

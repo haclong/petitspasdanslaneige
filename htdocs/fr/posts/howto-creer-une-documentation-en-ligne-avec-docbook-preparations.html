@@ -1,0 +1,276 @@
+<!doctype html>
+<html class="no-js" lang="fr" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>HOWTO - Créer une documentation en ligne avec DocBook  - Préparations&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">Français</a>
+        <a href="/en/">Anglais</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/fr/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/fr/books/0/index.html">Séries</a>
+        <a href="/fr/">Accueil</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/fr/">Accueil</a><i class="fas fa-angle-right"></i>HOWTO - Créer une documentation en ligne avec DocBook  - Préparations
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>HOWTO - Créer une documentation en ligne avec DocBook  - Préparations</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>31/07/2012 21:04:00
+        
+        <i class="fas fa-th-large"></i><!--a href="/fr/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->, <!--a href="/fr/sites/haclong-projects.html" class="tag-sites"-->Haclong projects<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/old-books.jpg" class="node-banner" />
+        
+      </div>
+
+      <p><p>Malgré le fait que j'ai déjà exposé ici mes tentatives pour publier un document DocBook, mon but cette fois ci est de donner des instructions plus claires pour arriver à créer une vraie documentation DocBook.</p>
+<h2>Objet</h2>
+<p>Nous allons créer une documentation en ligne assez proche de ce qu'on peut trouver avec le <a href="http://fr.php.net/manual/fr/manual.php" target="_blank">manuel en ligne du site php.net</a>. Le contenu du livre va être réparti sur plusieurs pages HTML. Chaque section principale aura son propre sommaire. Les classes et les fonctions du livre vont pouvoir se référencer mutuellement. Nous serons capable de parcourir le livre de page en page ou bien de remonter au sommaire de la section courante.</p>
+<h2>Prérequis</h2>
+<p>Pour faire une documentation <strong>DocBook</strong>, nous allons avoir besoin de :</p>
+<ul>
+<li>feuilles de style XSL pour mettre en forme notre livre</li>
+<li>un processeur XSL pour publier notre livre</li>
+</ul>
+<p>Quant à vos compétences, vous devrez connaître :</p>
+<ul>
+<li>les bases concernant les <a href="http://www.w3.org/TR/REC-xml/" target="_blank">schémas XML</a> : la déclaration du type de document (Document Type Declaration), les notions de documents bien formés et valides</li>
+<li>les bases concernant <a href="http://www.w3.org/TR/xslt" target="_blank">la norme XSL</a> et <a href="http://www.w3.org/TR/xpath/">XPATH</a></li>
+<li>les bases des <a href="http://www.w3.org/TR/CSS21/" target="_blank">CSS</a> également</li>
+</ul>
+<p>Ces sujets ne seront pas du tout abordés dans ce tutoriel.</p>
+<h2>Installer xsltproc sur un système Windows</h2>
+<p>Comme processeur XSL, nous allons installer <strong>xsltproc</strong> qui me semble être un processeur léger qui fonctionne en ligne de commande. Bien entendu, si vous avez déjà un processeur XSL sous la main, vous pouvez passer à l'étape suivante.</p>
+<ol>
+<li>aller sur le <a href="http://www.zlatkovic.com/libxml.en.html" target="_blank">site de Igor Zlatkovic</a></li>
+<li>sur le site de Igor Zlatkovic, aller sur sa <a href="ftp://ftp.zlatkovic.com/libxml/" target="_blank">page de téléchargement (download area)</a></li>
+<li>télécharger les paquets suivants :</li>
+</ol>
+<ul>
+<li><code>iconv-x.x.x.win32.zip</code></li>
+<li><code>libxml2-x.x.x.win32.zip</code></li>
+<li><code>libxslt-x.x.x.win32.zip</code></li>
+<li><code>zlib-x.x.x.win32.zip</code></li>
+</ul>
+<ol start="4">
+<li>créer un répertoire <code>xsltproc/</code> sur votre poste</li>
+<li>dézipper toutes les archives téléchargées dans le répertoire <code>xsltproc/</code></li>
+</ol>
+<p>Vous devriez obtenir ce type d'arborescence :</p>
+<pre><code>chemin/pour/xsltproc_rep/
+---iconv-x.x.x.win32/
+------bin/
+------include/
+------lib/
+---libxml2-x.x.x.win32/
+------bin/
+------include/
+---------libxml/
+------lib/
+---libxslt-x.x.x.win32/
+------bin/
+------include/
+---------libexslt/
+---------libxslt/
+------lib/
+---zlib-x.x.x/
+------bin/
+------include/
+------lib/
+</code></pre>
+<ol start="6">
+<li>copier/coller tous les fichiers <code>bin/*.dll</code> and <code>bin/*.exe</code> trouvés dans chacune des archives dans le répertoire <code>xsltproc/</code></li>
+</ol>
+<p>Vous devriez maintenant obtenir ce type d'arborescence dans le répertoire <code>xsltproc/</code></p>
+<pre><code>chemin/pour/xsltproc_rep/
+---iconv.dll
+---iconv.exe
+---libexslt.dll
+---libxml2.dll
+---libxslt.dll
+---minigzip.exe
+---xmlcatalog.exe
+---xmllint.exe
+---xsltproc.exe
+---zlib1.dll
+---iconv-x.x.x.win32/
+------bin/
+------include/
+------lib/
+---libxml2-x.x.x.win32/
+------bin/
+------include/
+---------libxml/
+------lib/
+---libxslt-x.x.x.win32/
+------bin/
+------include/
+---------libexslt/
+---------libxslt/
+------lib/
+---zlib-x.x.x/
+------bin/
+------include/
+------lib/
+</code></pre>
+<h3>Ajouter le répertoire xsltproc à la variable PATH</h3>
+<p>Dans la mesure où l'exécutable <code>xsltproc.exe</code> doit pouvoir être lancé de n'importe où sur le disque, nous allons rajouter le répertoire <code>xsltproc/</code> à la variable d'environnement <code>Path</code>.</p>
+<p>Pour les utilisateurs de Windows XP,</p>
+<ol>
+<li>aller ici : <strong>Poste de travail &gt; Propriétés &gt; Avancé &gt; Variables d'environnement</strong>.</li>
+<li>dans les <strong>variables système</strong>, éditer la variable de système <code>Path</code></li>
+<li>ajouter le chemin pour votre répertoire <code>xsltproc/</code> à la fin du champ <strong>Valeur de la variable</strong> (attention, elle peut être assez longue). Mettre un point virgule (;) pour séparateur et ne pas inclure le dernière slash du chemin.</li>
+<li>redémarrer</li>
+</ol>
+<p>Pour les autres utilisateurs Windows : merci de vous reférer à la documentation disponible en ligne pour réaliser cette étape.</p>
+<h2>Installer xsltproc sur Ubuntu</h2>
+<p>Je suppose qu'un simple <code>apt-get xsltproc</code> fera tout à fait l'affaire...</p>
+<h2>Récupérer le paquet de feuilles de style DocBook XSL</h2>
+<ol>
+<li>aller sur les <a href="http://sourceforge.net/projects/docbook/files/#files" target="_blank">pages de téléchargement du projet <strong>DocBook XSL</strong> sur Sourceforge</a></li>
+<li>aller dans le projet <strong>docbook-xsl-ns</strong> et choisissez la dernière version</li>
+<li>télécharger l'archive (le .zip ou le .tar.bz2)</li>
+<li>dézipper l'archive</li>
+</ol>
+<h2>Préparer votre répertoire</h2>
+<p>Maintenant que le processeur XSL est prêt, nous pouvons préparer nos répertoires pour notre livre.</p>
+<p>Créer ce type d'arborescence :</p>
+<pre><code>chemin/pour/le/répertoire/de/votre/livre
+---html/
+------css/
+---sources/
+------xml
+------xsl/
+------myxsl/
+</code></pre>
+<p>Copier/Coller le contenu dézippé de *<strong>docbook-xsl-ns</strong> dans <code>répertoire/de/votre/livre/sources/xsl/</code></p>
+<ul>
+<li>Les feuilles de styles <strong>DocBook XSL</strong> vont être dans le répertoire <code>sources/xsl/</code></li>
+<li>Les pages XML de votre livre seront dans le répertoire <code>sources/xml/</code></li>
+<li>Les pages HTML de votre livre seront dans le répertoire <code>html/</code></li>
+</ul>
+<h2>Installer un éditeur XML</h2>
+<p>Je ne suis décidemment pas fan des éditeurs XML WYSIWYG. Je reste convaincue que ces outils font leurs propres arrangements de votre code et qu'au final, vous n'obtenez pas vraiment ce que vous attendiez. Je dois très certainement être complètement à côté de la plaque, depuis le temps que ces outils s'améliorent et je devrais, un de ces jours, prendre un temps certain pour installer quelques éditeurs pour apprendre à les utiliser, mais là maintenant tout de suite, je ne suis pas trop dans cet objectif.</p>
+<p>Enfin, de toutes les façons, vous pourrez découvrir sur le réseau<a href="http://www.xmlmind.com/" target="_blank">XMLMind</a> or <a href="http://www.syntext.com/" target="_blank">Syntext Serna</a> qui sont deux éditeurs XML gratuits, capables de gérer le format DocBook. Vous pourrez également trouver <a href="http://www.oxygenxml.com/" target="_blank">OxygenXML</a> qui semble très intéressant et très riche (merci les très nombreuses captures d'écran disponibles sur leur site) mais qui n'est pas gratuit.</p>
+<p>Attendez la suite de ce tutoriel pour apprendre à créer votre manuel en ligne en utilisant DocBook !</p>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/fr/tags/howto">HOWTO</a></li><li><a href="/fr/tags/docbook">docbook</a></li><li><a href="/fr/tags/xml">xml</a></li></ul>
+        </div>
+      
+
+      
+        <nav id="book-navigation">
+    
+
+    
+        <li class="link-next"><a href="/fr/posts/howto-creer-une-documentation-en-ligne-avec-docbook-le-fond.html">HOWTO - Créer une documentation en ligne avec DocBook - Le fond <i class="fas fa-long-arrow-alt-right"></i></a></li>
+    
+
+    
+        <li class="link-up"><a href="/fr/books/howto-creer-un-manuel-en-ligne-avec-docbook.html"><i class="fas fa-book-open"></i> HOWTO - Créer un manuel en ligne avec DocBook</li>
+    
+</nav>
+
+      
+    
+
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>Sur moi</h3>
+      <p>J&#39;ai appris le php il y a quelques années, quand Internet était à ses débuts. Pour diverses raisons, j&#39;ai arrêté en route et j&#39;ai perdu le fil des nouveaux Internets que je redécouvre. Résultat, je me sens constamment à courir après l&#39;histoire mais je suis toujours motivée à reprendre des projets personnels. Je me propose de vous partager mes découvertes. Au delà des sujets de programmation, j&#39;aime également partager mes infos concernant notamment l&#39;Histoire, l&#39;Astronomie, la Linguistique, les Films, les Livres et les Anime. J&#39;espère que vous aimerez suivre mon blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. Tous droits réservés.</p>
+        <p>Propulsé par <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

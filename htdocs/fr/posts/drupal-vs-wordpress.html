@@ -1,0 +1,245 @@
+<!doctype html>
+<html class="no-js" lang="fr" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>Drupal vs Wordpress&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">Français</a>
+        <a href="/en/">Anglais</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/fr/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/fr/books/0/index.html">Séries</a>
+        <a href="/fr/">Accueil</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/fr/">Accueil</a><i class="fas fa-angle-right"></i>Drupal vs Wordpress
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>Drupal vs Wordpress</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>28/06/2014 12:23:00
+        
+        <i class="fas fa-th-large"></i><!--a href="/fr/sites/haclong-projects.html" class="tag-sites"-->Haclong projects<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/wordpressVdrupal.jpg" class="node-banner" />
+        
+      </div>
+
+      <p><p>Vous voilà prêt, vous voilà tout chaud sur les chapeaux de roues prêt à en découdre avec la toile... Vous allez affronter le monde entier, crier au monde vos passions, vos coups de coeur, vos coups de gueule... Vous allez avoir votre propre site !!</p>
+<p>Mais voilà... Où ? Quand ? Comment ? et finalement, lequel ? Face à la centaine d'options et de possibilités qui s'offraient à vous, vous hésitez encore entre Wordpress et Drupal... Wordpress ? Drupal ?</p>
+<h3>Les solutions</h3>
+<p>Pour créer son propre site, Dieu merci, de nos jours, plus la peine de connaître la programmation. Il y a des choses toutes prêtes pour ça, il n'y a qu'à se servir. Parmi ces choses, il y a les CMS. <strong>Drupal</strong> et <strong>Wordpress</strong> en sont des représentants mais ils ne sont pas seuls dans cette catégorie. Ce sont toutefois les seuls que j'ai testé à ce jour, du coup, plutôt que de répéter le ressenti glané sur le web sur d'autres outils, je préfère vous présenter ces deux là.</p>
+<h3>Les prérequis techniques</h3>
+<p><strong><a href="https://www.drupal.org/" target="_blank">Drupal</a></strong> et <strong><a href="http://wordpress.org/" target="_blank">Wordpress</a></strong> sont équivalents : deux packages en PHP, sur la même version de PHP à quelques versions mineures près, avec une base de données MySQL derrière pour stocker les données. En principe, vous ne devriez avoir aucun problème pour trouver un hébergeur convenable pour votre site avec ce type de prérequis.</p>
+<p><strong>Wordpress</strong> propose toutefois une solution d'hébergement en ligne, sur <a href="https://wordpress.com/" target="_blank">Wordpress.com</a>. Nous ne parlerons pas du tout de cette solution.</p>
+<h3>L'installation</h3>
+<p>Pour installer les deux (on ne parle donc pas de Wordpress.com mais d'un package Wordpress à installer soi même), il faut se munir des informations de votre base de données : code utilisateur (user), nom de la base (base), mot de passe (password) et adresse de votre base (host).</p>
+<p>Il faut dézipper l'archive de chacun des deux packages. A l'adresse, dans le navigateur, la page d'installation devrait apparaître à l'écran. On y définit le nom du site, le nom de l'administrateur et les informations de connexion à la base de données. <strong>Drupal</strong> le fait en plusieurs écrans alors que <strong>Wordpress</strong> a une installation plus rapide. Les deux solutions ont une installation en anglais sur leur site d'origine mais les versions traduites du package se trouve assez facilement sur la toile.</p>
+<p><strong>Drupal</strong> propose en plus une installation multilingue (il faut télécharger <a href="https://www.drupal.org/project/l10n_install" target="_blank">le bon package</a>) qui ajoute une étape à l'installation et qui permet d'installer <strong>Drupal</strong> dans la langue de notre choix, l'installeur se chargeant de télécharger les fichiers de langues qu'il faut.</p>
+<p>Une fois installé, c'est là, à mon humble opinion, que ça se corse.</p>
+<h3>La prise en main</h3>
+<p>Les deux sites d'administration (back office) sont équivalents mais on va découvrir rapidement que celui de <strong>Drupal</strong> peut rapidement se densifier.</p>
+<p><strong>Wordpress</strong> est à mon sens plus simple à prendre en main. Il comprend dans son core des fonctionnalités qui facilite beaucoup la vie d'un bloggeur moyen :</p>
+<ul>
+<li>la réécriture d'url, pour avoir des chemins plus simples et, au passage, un SEO conforme à ce qui se fait de nos jours,</li>
+<li>le titre de l'article affiché dans le titre du navigateur (conforme aux recommandations SEO)</li>
+<li>un éditeur de texte wysiwyg complet et fonctionnel avec insertion d'image dans chaque article.</li>
+<li>la possibilité de &quot;programmer&quot; un article afin qu'il s'affiche à la date prévue.</li>
+</ul>
+<p>Il n'y a toutefois aucune options pour gérer le multilingue en natif dans <strong>Wordpress</strong>.</p>
+<p>Pour <strong>Drupal</strong>, l'installation donne accès à une solution qui semble austère. Si on vient de <strong>Wordpress</strong>, on va s'apercevoir que la réécriture d'url n'est pas implémentée par défaut dans le core de <strong>Drupal</strong>. Il faut donc installer un, voire plusieurs modules pour avoir accès à cette fonctionnalité.</p>
+<p>De même, le titre de l'article dans le titre du navigateur ou même l'interface utilisateur comprenant l'insertion d'images et/ou l'éditeur WYSIWYG n'est pas installé dans le core non plus.</p>
+<p>En revanche, <strong>Drupal</strong> a d'autres cordes à son arc qui peut faciliter la vie d'un site associatif par ex :</p>
+<ul>
+<li>possibilité d'étendre les fonctionnalités de son site avec</li>
+<li>des sondages avec des choix multiples,</li>
+<li>des forums et</li>
+<li>des pages hiérarchisées en livres (ou manuel)</li>
+<li>un formulaire de contact</li>
+<li>possibilité d'avoir des articles en plusieurs langues</li>
+<li>et concernant les permissions des utilisateurs, possibilité de créer un nombre infini de rôles.</li>
+</ul>
+<p>Mon sentiment avec <strong>Drupal</strong>, c'est qu'il faut installer beaucoup de modules complémentaires au package d'origine pour réussir à avoir ce qu'on pourrait qualifier d'un &quot;blog-de-base&quot;... L'enjeu est alors de savoir ce qu'on entend par &quot;de-base&quot;. Je peux difficilement imaginer un <strong>Drupal</strong> tout sec, sans modules complémentaires. En fait, pour mon utilisation, certains modules sont tellement indispensables que j'aurais tendance à me demander pourquoi ils ne sont pas inclus par défaut dans la distribution de base... Je me rends bien compte que s'ils étaient vraiment indispensables, ils y seraient, dans le package de base...</p>
+<h3>Extension</h3>
+<p>Pour étendre son <strong>Wordpress</strong>, on peut rechercher à partir des pages de son site le thème ou le plugin <strong>Wordpress</strong> qui convient et installer le plugin ou le thème en quelques clics. C'est très très pratique et c'est un confort d'utilisation que j'apprécie.</p>
+<p>Toutefois, c'est mon ressenti personnel, je trouve que le dépôt de plugin <strong>Wordpress</strong> est plutôt anarchique. Il y a beaucoup de projets qui portent les mêmes noms, qui font les mêmes choses. Il faut être attentif parce que ce qui différencie un plugin d'un autre peut être soit son activité (activement maintenu ou pas), soit la présence d'une option en plus ou en moins.</p>
+<p>Pour <strong>Drupal</strong>, les extensions (thèmes et modules) se trouvent sur le site de <a href="https://www.drupal.org/download" target="_blank">Drupal.org</a>. Il faut faire ses courses là-bas et, depuis la version 7, soit copier l'URL de l'archive du module (ou thème) pour l'installer à partir de l'administration du site, ou télécharger l'archive, la transférer en FTP dans les répertoires de son site <strong>Drupal</strong> et activer le module installé. Somme toutes, il y a pas mal de manipulation pour installer une extension, même si la possibiliter de donner l'URL du module et laisser <strong>Drupal</strong> faire le reste est déjà un confort (par rapport à la version 6).</p>
+<p>Comme pour <strong>Wordpress</strong>, il y a beaucoup de modules redondants, mais certains modules ont su s'imposer par rapport aux autres dans leur domaine et sont reconnus par la communauté entière. Vous trouverez par ex difficilement un module concurrent à Views ou un concurrent à Panel. En revanche, effectivement, si vous recherchez un module pour gérer les média sociaux, c'est actuellement l'anarchie... Il y en a partout et pour tout le monde...</p>
+<p><strong>Drupal</strong> a beaucoup de modules qui sont indispensables aux autres modules... Des sortes de librairies communes. Qui, toujours d'après mon sentiment, ne sont utilisées que par un seul module (sentiment nécessairement arbitraire, souvenez-vous en)... Du coup, vous vous retrouvez rapidement à installer plusieurs modules pour une seule fonctionnalité. De même, là où un plugin <strong>Wordpress</strong> calcule, affiche et choisit en même temps, <strong>Drupal</strong> va parfois favoriser un module pour calculer, un module pour afficher et enfin un module pour choisir... Résultat : une démultiplication galopante des modules installés pour <strong>Drupal</strong> avec une gestion claire des dépendances entre modules. Même si le sentiment d'installer un module de plus est assez irritant, l'écosystème des modules <strong>Drupal</strong> est plutôt stable, les pages respectives de chaque module avertissant clairement s'il y a des risques d'incompatibilité avec l'un ou l'autre des modules.</p>
+<h3>Customisation</h3>
+<p>Concernant les possibilités de personnalisation et d'amélioration, à mon sens, <strong>Drupal</strong> l'emporte haut la main. En utilisant l'interface d'administration seule, il est possible d'étendre certains composants du package (hors modules complémentaires).</p>
+<p><strong>Drupal</strong> comme <strong>Wordpress</strong> possèdent deux types de posts différents : les <strong>articles</strong> d'une part, qui sont généralement la partie &quot;vivante&quot; de votre blog, et les <strong>pages</strong> statiques d'autre part, qui sont la partie constante du site. En plus de ces deux types de posts, <strong>Drupal</strong> permet de créer d'autres types de posts, totalement au choix de l'utilisateur. Pour chacun des types de posts, il est possible d'ajouter autant de nouveaux champs que l'on souhaite, incluant des champs média pouvant constituer une gallerie, des listes déroulantes d'options et des champs de saisie de texte libre. Grâce à cette possibilité, <strong>Drupal</strong> peut permettre de monter assez rapidement des articles de types fiches techniques ou fiche d'annuaires ou même des FAQ, incluant beaucoup de champs prédéfinis afin de catégoriser et typer les fiches. Cette possibilité permet à <strong>Drupal</strong> d'étendre ses fonctionnalités au delà du blog et/ou des sites d'informations vers des sites communautaires, des applications de type gestion de projet, ou des bases de connaissance.</p>
+<p>En plus des rôles définis par défaut par <strong>Drupal</strong>, il est possible de rajouter autant de rôle qu'on le souhaite et, pour chacun des rôles créés, il est possible de donner accès à des fonctionnalités ou à des composants particuliers incluant l'accès à certains types de posts mais pas à d'autres et même l'accès à certains champs d'un type de post et pas à d'autres.</p>
+<p>Pour améliorer et personnaliser chez <strong>Wordpress</strong>, on se retrouve assez rapidement à éditer les scripts php de <strong>Wordpress</strong> et altérer le code source du package assez vite. On trouve ainsi multitudes de tutoriaux, y compris dans le <a href="http://codex.wordpress.org/fr:Accueil" target="_blank"><strong>Codex</strong> </a>de <strong>Wordpress</strong> pour expliquer quelle est la fonction à utiliser pour arriver à ses fins. Les tutoriaux étant assez simple et la structure des fichiers de <strong>Wordpress</strong> également claire, un bloggeur motivé peut facilement mettre les mains dans le moteur et bidouiller le code de son site sans trop de craintes (quoi que...). Peut être parce que je n'ai jamais essayé et peut être parce que <strong>Drupal</strong> applique une séparation des concepts plus stricte, il y a très peu de tutoriaux pour &quot;bidouiller&quot; son <strong>Drupal</strong>. Sinon, on passe assez rapidement du côté des équipes de développement de <strong>Drupal</strong> (module, thème ou core).</p>
+<p>Dans cette optique, <strong>Drupal</strong> propose beaucoup de thèmes de base à partir desquels un chacun peut appliquer sa propre personnalisation en utilisant les librairies javascript et/ou css livrées dans le thème de base pour positionner les composants de son site. Là encore, <strong>Drupal</strong> considère que sa responsabilité est de délivrer du contenu. Le web designer applique le thème qu'il a créé en utilisant ses compétences en expérience utilisateur. Il devient d'ailleurs de plus en plus difficile de trouver un thème décent et prêt à l'emploi pour <strong>Drupal</strong>.</p>
+<p>Afin d'assister le web designer, <strong>Drupal</strong> a à disposition des modules pour rationaliser et uniformiser les tailles des fichiers média indépendamment du thème utilisé.</p>
+<p>Du côté de <strong>Wordpress</strong>, je trouve que la séparation des concepts est plus floue. En fonction du thème que vous aurez choisi pour votre site, vous pourrez avoir la possibilité de faire des rendus &quot;différents&quot; en fonction des formats mis à disposition par le thème installé. Ca me gêne (même si cela contribue à la richesse du thème choisi) parce qu'au moment où on crée son contenu, on choisit également son rendu. Or, un contenu doit être différencié d'un autre contenu de par sa nature (ou sa fonction ou son propos) mais non pas par son rendu. Cela signifie que pour <strong>Wordpress</strong>, il faut être capable, à la fois, de distinguer sémantiquement son contenu et choisir son rendu en plus. Il faut plus de discipline de ce côté puisque <strong>Wordpress</strong> - nativement - est très peu directif sur ce point.</p>
+<p><strong>Drupal</strong> est un package plus lourd parce que une grosse partie de sa customisation se fait soit par modules interposés, soit directement dans son core.</p>
+<p><strong>Wordpress</strong> offre des modules dans une certaine mesure mais dès qu'on souhaite personnaliser son site, il semblerait qu'il faille utiliser surtout le php directement.</p>
+<h3>Administration</h3>
+<p>La mise à jour du core de <strong>Wordpress</strong> se fait soit automatiquement, soit un message sur l'administration de <strong>Wordpress</strong> nous invite à mettre le site à jour en cliquant sur un bouton, sur le site.</p>
+<p>Du côté de <strong>Drupal</strong>, d'après configuration, un mail peut être envoyé à l'administrateur pour recommander d'installer la dernière version du core. La mise à jour d'une version mineure de <strong>Drupal</strong> nécessite le téléchargement de l'archive de <strong>Drupal</strong>, le lancement d'un client FTP, la sauvegarde des fichiers de configuration et de la base de données par sécurité, la mise en maintenance du site <strong>Drupal</strong>, la mise à jour des fichiers <strong>Drupal</strong> par FTP, la mise à jour de la base de données par script, la réactivation du site <strong>Drupal</strong>... Du lourd donc...</p>
+<p>La mise à jour des thèmes, plugins et modules se fait toute seule, à partir des deux sites d'administration, en cliquant sur les liens &quot;Mettre à jour&quot; qui vont bien... Toutefois, du côté de <strong>Wordpress</strong>, à la mise à jour d'une version du core de <strong>Wordpress</strong>, un plugin peut se désactiver automatiquement parce que sa compatibilité avec la nouvelle version du core n'a pas été vérifié et que le développeur ne peut assurer la compatibilité de son plugin. Cela peut s'avérer extrêmement gênant surtout si vous avez confié l'utilisation du site à un noob et que vous ne repassez que très rarement sur l'administration du site pour dépanner votre noob... Aucun mail n'est parti pour vous prévenir...</p>
+<p>A contrario, ce n'est pas parce qu'un plugin ne s'est pas désactivé qu'on peut garantir sa compatibilité avec le nouveau core...</p>
+<p><strong>Drupal</strong> semble garantir ses versions majeures. Un module fonctionne toujours sur la même version majeure de <strong>Drupal</strong> et ce, malgré les différentes mises à jour du core. En revanche, il n'y a aucune compatibilité entre deux versions majeures de <strong>Drupal</strong>. Cela signifie qu'il y a nécessairement une migration à prévoir lorsqu'on décide de changer de version (majeure) de <strong>Drupal</strong>. Concernant la communauté <strong>Drupal</strong>, cela signifie également qu'il faut redévelopper son module pour la nouvelle version de <strong>Drupal</strong>. Cela signifie enfin que le développeur d'un module peut décider de ne plus maintenir son module pour la version suivante de <strong>Drupal</strong>.</p>
+<h3>En définitive...</h3>
+<p>En définitive, <strong>Wordpress</strong> et <strong>Drupal</strong> sont deux outils complets et performants. En revanche, il est important de mesurer à l'avance pour quelle utilisation ils sont destinés.</p>
+<p><strong>Wordpress</strong> s'adresse à des bloggeurs essentiellement. La possibilité que <strong>Wordpress</strong> offre de pouvoir hacker directement son core permet effectivement à n'importe quel utilisateur de faire ce qu'il souhaite de l'outil. Toutefois, je considère que lorsque j'utilise un outil réputé &quot;clé en main&quot;, ce n'est pas pour le hacker lourdement pour arriver à mes fins. Surtout qu'il existe d'autres outils qui permettent d'y arriver. Mais ce n'est que mon opinion personnelle...</p>
+<p><strong>Drupal</strong> s'adresse à des communautés ou des sites plus ambitieux qui sortent du schéma du blog &quot;simple&quot;. La possibilité de définir d'autres typologies de contenu permet d'étendre l'utilisation de l'outil pour créer soit des base de données de connaissances, des annuaires, des catalogues, des aggrégateurs de flux, la gestion d'un site communautaire... Son installation et les modules prérequis au lancement en font toutefois rapidement un outil très dense. Je pense qu'on peut faire l'économie de certains modules mais il faudrait alors hacker volontairement <strong>Drupal</strong>...</p>
+<p>En définitive, si le projet est défini et qu'il se limite aux capacités de <strong>Wordpress</strong>, je choisirais cet outil pour son confort d'utilisation et sa simplicité.</p>
+<p>Mais si le projet commence dans le flou avec le discours qui finit en &quot;et on verra...&quot; (notez bien les trois petits points), alors j'aurais tendance à préférer <strong>Drupal</strong>, m'assurant ainsi un maximum de souplesse et la possibilité d'adapter rapidement le site au besoin de l'utilisateur.</p>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/fr/tags/drupal">Drupal</a></li><li><a href="/fr/tags/wordpress">Wordpress</a></li><li><a href="/fr/tags/cms">CMS</a></li></ul>
+        </div>
+      
+
+      
+    
+
+      
+        <section id="oldcomment">
+          <h2>Commentaires historiques</h2><article>
+              <div class="level1">
+  <h3>Wordpress vs Drupal</h3>
+  <div class="meta">haclong 2014-07-02T16:54 </div>
+  <div class="body">Ah tiens ! dans le match Wordpress vs Drupal, je viens de découvrir que Wordpress peut gérer des articles privés et/ou protégé par mot de passe...<br />
+<br />
+De mémoire, il me semble que Drupal ne peut pas faire ça...<br />
+<br />
+Par contre, on peut créer dans Drupal un type dédié (privé) et donner accès à ce type de contenu qu'à certaines personnes... Un peu plus long à faire mais c'est jouable.<br />
+<br />
+En revanche, typiquement, j'ai livré un Wordpress qui fonctionnait bien. Sauf qu'à une mise à jour du core, le plugin multilingue a décidé de se désactiver... Noter qu'on ne peut pas le réactiver parce que dans l'écran d'administration des extensions, il est toujours considéré comme activé... on ne peut pas réactivé un plugin activé qui vous annonce qu'il s'est automatiquement désactivé... Du coup, la fonctionnalité ne marche plus...<br />
+<br />
+Typiquement, c'est ce type de comportement que je ne supporte pas dans Wordpress : ça donne une impression d'instabilité...</div>
+
+  
+  
+</div>
+
+            </article><article>
+              <div class="level1">
+  <h3>Plugin payants</h3>
+  <div class="meta">haclong 2014-07-02T17:24 </div>
+  <div class="body">Je commence à comprendre pourquoi il y a tellement d'extensions payantes à Wordpress...<br />
+<br />
+A chaque fois que le core est mis à jour, il semblerait que rien ne garantisse que votre plugin/thème soigneusement testé fonctionne toujours...<br />
+<br />
+Du coup, si vous développez des plugins, il faut "courir" après le développement du core pour se tenir à la page... Et à chaque mise à jour, il faut retester votre plugin intégralement pour garantir sa compatibilité avec la nouvelle version... C'est contraignant et ça demande du temps... Un développeur bénévole n'a pas nécessairement envie de revenir sur son dev tous les 45 jours par ex...</div>
+
+  
+  
+</div>
+
+            </article><article>
+              <div class="level1">
+  <h3>Excellent article très complet</h3>
+  <div class="meta">haclong 2014-09-16T18:00 </div>
+  <div class="body">Je viens de tomber sur un excellent article très complet sur le match Wordpress vs Drupal<br />
+<br />
+Je trouve que la partie Multilingue, sur la fin est abordé de manière vraiment très succinte par rapport aux autres sujets traités dans le post mais peut être que l'auteur n'a jamais eu à maintenir des sites multilingues... qui pour le coup, est mon lot quotidien..<br />
+<br />
+<a href="http://techczech.net/2012/07/28/drupal-wordpress-choice/" target="_blank">The Drupal/WordPress choice: A guide for individuals, small organizations and the Internet</a></div>
+
+  
+  
+</div>
+
+            </article></section>
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>Sur moi</h3>
+      <p>J&#39;ai appris le php il y a quelques années, quand Internet était à ses débuts. Pour diverses raisons, j&#39;ai arrêté en route et j&#39;ai perdu le fil des nouveaux Internets que je redécouvre. Résultat, je me sens constamment à courir après l&#39;histoire mais je suis toujours motivée à reprendre des projets personnels. Je me propose de vous partager mes découvertes. Au delà des sujets de programmation, j&#39;aime également partager mes infos concernant notamment l&#39;Histoire, l&#39;Astronomie, la Linguistique, les Films, les Livres et les Anime. J&#39;espère que vous aimerez suivre mon blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. Tous droits réservés.</p>
+        <p>Propulsé par <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>
