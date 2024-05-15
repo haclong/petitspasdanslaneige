@@ -1,6 +1,6 @@
 ---
 title: Eleventy, la suite
-permalink: fr/posts/eleventy-la-suite.html
+permalink: fr/posts/eleventy-la-suite2.html
 date: 2024-05-08T11:09
 slug: eleventy-la-suite
 layout: post
