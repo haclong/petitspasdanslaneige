@@ -6,17 +6,19 @@ slug: eleventy-la-suite
 layout: post
 lang: fr
 author: haclong
-
 tags:
   - jamstack
   - eleventy
   - blog
-
 sites:
   - Développement
   - Haclong projects
-
 summary: Précédemment, je vous ai annoncé que j'ai mis en production mon nouveau blog. Voici les premières conclusions
+media:
+  path: /img/teaser/free-nomad-NrE-c_ba_ew-unsplash_cropped.png
+  credit: free nomad
+  url: https://unsplash.com/@passimage
+  name: Henningsvær
 ---
 ## Précédemment, dans Petits Pas dans la Neige
 Je vous la fais rapidos.
