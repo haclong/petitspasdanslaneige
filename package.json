@@ -1,19 +1,15 @@
 {
   "name": "haclong' eleventy",
   "version": "1.0.0",
-  "description": "",
+  "main": "index.js",
   "scripts": {
-    "build": "npx @11ty/eleventy",
-    "serve": "npx @11ty/eleventy --serve"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "keywords": [],
   "author": "haclong",
+  "license": "ISC",
+  "description": "",
   "devDependencies": {
-    "@11ty/eleventy": "^2.0.1",
-    "@11ty/eleventy-img": "^3.1.0",
-    "@11ty/eleventy-plugin-syntaxhighlight": "^5.0.0"
-  },
-  "dependencies": {
-    "bootstrap": "^5.3.0-alpha1",
-    "moment-timezone": "^0.5.43"
+    "@11ty/eleventy": "^2.0.1"
   }
 }
