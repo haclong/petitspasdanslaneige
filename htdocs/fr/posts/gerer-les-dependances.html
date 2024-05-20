@@ -1,0 +1,176 @@
+<!doctype html>
+<html class="no-js" lang="fr" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>Gérer les dépendances&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">Français</a>
+        <a href="/en/">Anglais</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/fr/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/fr/books/0/index.html">Séries</a>
+        <a href="/fr/">Accueil</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/fr/">Accueil</a><i class="fas fa-angle-right"></i>Gérer les dépendances
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>Gérer les dépendances</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>04/12/2014 20:46:00
+        
+        <i class="fas fa-th-large"></i><!--a href="/fr/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->, <!--a href="/fr/sites/haclong-projects.html" class="tag-sites"-->Haclong projects<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/jeu_de_contruction.jpg" class="node-banner" />
+        
+      </div>
+
+      <p><p>Pour ce que j'ai compris et même si je doute d'avoir les capacités pour vous convaincre, je réalise que les modèles/entités/classes ne devraient pas développer de dépendance les unes aux autres. Moins elles sont dépendantes, mieux est le code.</p>
+<p>Grosso modo, on peut également résumer cela par :</p>
+<p><strong>Interdiction formelle d'utiliser le mot clé <code>new</code> dans n'importe laquelle de vos classes.</strong></p>
+<p>Une autre façon de vérifier si votre classe est dépendante (voire fortement dépendante) : vérifier le mot clé <code>use</code> : si votre classe use beaucoup (trop) d'objets différents, et pire, d'objets de différents modules/différentes librairies/différents concepts, alors on peut commencer à se dire que quelquechose est pourri dans votre code...</p>
+<p>Mais alors, COMMENT utiliser les autres classes si on net peut pas créer de nouveaux objets ?</p>
+<p>On instancie les objets d'abord, et ensuite, on les INJECTE dans nos classes.</p>
+<h3>Injecter les dépedances ?</h3>
+<p>Il y a plusieurs stratégies :</p>
+<p>Vous pouvez utiliser le <strong>constructeur</strong> : créer un constructeur avec autant d'arguments qu'il y a de dépendances et pour chaque argument, l'assigner à une propriété de la classe. De l'extérieur de la classe, vous créer tous les objets dont vous avez besoin et vous les passez à la classe par le constructeur. Avec cette stratégie, vous contrôlez que les dépendances obligatoires sont bien présentes et assignées.</p>
+<p>Vous pouvez utiliser les <strong>manipulateurs</strong> (<strong>setter methods</strong>), comme pour n'importe quel autre propriété. Avec cette stratégie en revanche, vous ne pouvez vous assurez de la présence obligatoire d'une dépendance. Il faudra songer à gérer les cas par défaut s'il manque une dépendance.</p>
+<p>Vous pouvez utiliser les <strong>interfaces</strong>, mais comme je n'ai pas bien compris comment cela fonctionnait, je n'en parlerais pas ici.</p>
+<p>A l'intérieur de la classe, la dépendance sera une propriété comme une autre et nous la manipulerons et la retournerons (si besoin) et pratiquement, nous n'accorderons que peu d'intérêt à savoir si la dépendance est une instance d'une classe A ou d'une classe B. Tout ce que notre classe aura besoin de savoir sera juste COMMENT utiliser la dépendance.</p>
+<p>Pour assurer le bon fonctionnement du code toutefois, nous n'oublierons pas d'implémenter les interfaces afin de nous assurer que la classe A et la classe B ont les mêmes méthodes...</p>
+<p>Je dois toutefois noter des exceptions :</p>
+<p>Une classe <strong>Factory</strong> DOIT utiliser le mot clé <code>new</code>. Parce que ce sont des factories. Elles sont faites pour retourner un nouvel objet...</p>
+<p>Pour ma part, je n'injecte pas <code>ArrayObject</code> non plus. Je considère que c'est plus un type plutôt qu'une dépendance... Mais c'est un point de vue personnel et je suis toujours en train de me demander si c'est une bonne ou une mauvaise idée.</p>
+<h3>Instancier les objects</h3>
+<p>Oui oui, je sais... J'ai dit : <em>On instancie les objets d'abord, et ensuite, on les INJECTE dans nos classes</em>. J'ai rapidement expliqué comment on faisait pour injecter les dépendances mais maintenant, il reste la partie instanciation d'objets... MAIS OU instancier les objets, puisque aucune classe n'est autorisée à utiliser le mot clé <code>new</code>…</p>
+<p>Nous allons utiliser un objet à un niveau supérieur. Dans cette objet, nous instancierons TOUS nos objets : les dépendances ainsi que tous les autres objets et nous gèrerons les injections à ce moment là.</p>
+<p>Zend Framework 2 a ce type de composant très utile : le <strong>Service Manager</strong>. Il est certain que les autres frameworks ont des composants similaires mais comme je n'ai pas encore travaillé avec, je ne sais pas comment le Service Manager s'appelle chez Symfony ou chez Laravel... Il faudra juste l'identifier et voir comment l'utiliser.</p>
+<p>Le <strong>Service Manager</strong> est comme un index où on déclare chacune de nos classes. Il est le seul composant de notre module où on pourra utiliser le mot clé <code>new</code> et c'est le seul endroit où on instanciera chaque objet une fois. C'est là et nul part ailleurs.</p>
+<h3>Utiliser les objects</h3>
+<p>Tous les objets de notre modèle (entités, mappers, factories, formulaires) ont été instanciés à l'intérieur du <strong>Service Manager</strong> ainsi que leurs dépendances. Ainsi, techniquement, on n'aura plus à accéder au <strong>Service Manager</strong> de l'intérieur des objets de notre modèle.</p>
+<p>Dans le cas particuler des tableaux d'objets, l'ancienne façon de faire est de faire une boucle <code>foreach</code> et d'instancier un <code>new</code> objet à chaque itération. Mais voilà que notre objet a été injecté, une seule fois. Il faudra alors utiliser le mot clé <code>clone</code>. Faire la boucle <code>foreach</code> et <code>clone</code> l'objet qui a été injecté plutôt que de l'instancier de nulle part et ruiner nos beaux efforts pour conserver un code indépendant et propret...</p>
+<p>Reste les <strong>Views</strong> : Les objets qui sont utilisés par un template de view devrait être transmis via le <strong>Controller</strong>. Il restera les <strong>plugins</strong>… Je traiterais ce point quand j'aurais travaillé un peu plus intensivement avec eux.</p>
+<p>Puis les <strong>Controllers</strong> : Les Contrôleurs dans Zend Framework implémentent l'interface <strong>ServiceLocatorAware</strong> qui permet au contrôleur d'accéder au <strong>Service Manager</strong>.</p>
+<p>Quand j'ai commencé à travailler avec ZF2, je cherchais partout comment accéder au <strong>Service Manager</strong>. Mais en réalité, vous n'avez pas besoin de savoir ça. Vous ne devriez pas avoir besoin d'accéder à cette information.</p>
+<p>Je trouve des bénéfices à instancier tous mes objets dans le <strong>Service Manager</strong> : s'il me vient l'envie (ou le besoin) de faire un refactoring de mon code, réarranger l(es) espace(s) de nom ou couper un module en deux modules différents, c'est super simple. Il suffit juste de modifier les liens dans le <strong>Service Manager</strong> et le reste du code reste intouché. Cela me surprend toujours que le module fonctionne toujours alors que j'ai massivement déplacé tous mes éléments sans égards...</p>
+<p>Je sais que les développeurs débutants vont opter pour un développement from scratch, à partir de rien (par Développeur débutant, je pense surtout à ceux qui vont apprendre sur le tas, difficilement, avec les tutoriaux trouvés sur le web). Parce qu'ils auront le sentiment de maîtriser ce qu'ils font (il n'y a rien de pire que de faire un bout de code et d'avoir une erreur qui référence la ligne 438 d'une classe d'une librairie que vous ne connaissez pas...) et qu'ils penseront qu'ils restent ainsi indépendants de librairies exterieures. Indépendant des librairies extérieure = peu de contraintes de dépendance. Ils se trompent. Les contraintes de dépendances ne concernent pas uniquement les liens entre vos classes et les classes d'autres librairies, mais elles concernent SURTOUT les liens qui attachent une de vos classes à une autre de vos classes...</p>
+<p>La gestion des dépendances est une réflexion saine qui permet de rendre votre site plus modulaire, plus souple, et plus facile à faire évoluer.</p>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/fr/tags/dependances">dépendances</a></li><li><a href="/fr/tags/dependency-injection">dependency injection</a></li><li><a href="/fr/tags/code">code</a></li></ul>
+        </div>
+      
+
+      
+        <nav id="book-navigation">
+    
+       <li class="link-previous"><a href="/fr/posts/gerer-les-dependances-utiliser-linjection-dans-le-controleur.html"><i class="fas fa-long-arrow-alt-left"></i> Gérer les dépendances - Utiliser l&#39;injection dans le controleur</li>
+    
+
+    
+
+    
+        <li class="link-up"><a href="/fr/books/gerer-les-dependances-avec-zend-framework-2.html"><i class="fas fa-book-open"></i> Gérer les dépendances avec Zend Framework 2</li>
+    
+</nav>
+
+      
+    
+
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>Sur moi</h3>
+      <p>J&#39;ai appris le php il y a quelques années, quand Internet était à ses débuts. Pour diverses raisons, j&#39;ai arrêté en route et j&#39;ai perdu le fil des nouveaux Internets que je redécouvre. Résultat, je me sens constamment à courir après l&#39;histoire mais je suis toujours motivée à reprendre des projets personnels. Je me propose de vous partager mes découvertes. Au delà des sujets de programmation, j&#39;aime également partager mes infos concernant notamment l&#39;Histoire, l&#39;Astronomie, la Linguistique, les Films, les Livres et les Anime. J&#39;espère que vous aimerez suivre mon blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. Tous droits réservés.</p>
+        <p>Propulsé par <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

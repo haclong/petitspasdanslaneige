@@ -1,0 +1,169 @@
+<!doctype html>
+<html class="no-js" lang="fr" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>Aborder la programmation orientée objet par l&#39;exemple. Concevoir un solveur de sudoku.&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">Français</a>
+        <a href="/en/">Anglais</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/fr/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/fr/books/0/index.html">Séries</a>
+        <a href="/fr/">Accueil</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/fr/">Accueil</a><i class="fas fa-angle-right"></i>Aborder la programmation orientée objet par l'exemple. Concevoir un solveur de sudoku.
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>Aborder la programmation orientée objet par l'exemple. Concevoir un solveur de sudoku.</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>09/03/2014 14:50:00
+        
+        <i class="fas fa-th-large"></i><!--a href="/fr/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/Sudoku_Board_Game.jpg" class="node-banner" />
+        
+      </div>
+
+      <p><p>Avec le prétexte de développer un solveur de sudoku, nous allons aborder plusieurs aspects de la programmation orientée objet.</p>
+<p>Durant ce tutorial en plusieurs épisodes, nous allons voir comment</p>
+<ul>
+<li>concevoir le modèle objet de notre sudoku en nous attardant sur les options possibles</li>
+<li>créer les tests unitaires sur notre modèle</li>
+</ul>
+<p>L'architecture MVC et le traitement du formulaire va être confiée au framework Zend Framework. On va assumer que vous maîtrisez un minimum le mécanisme qui lie le contrôleur à la vue. Ce point sera à peine abordé.</p>
+<p>Mon environnement :</p>
+<ul>
+<li>Ubuntu 13.04</li>
+<li>Netbeans 7.0.1</li>
+<li>Xdebug 2.2.1</li>
+<li>PhpUnit 3.7.27</li>
+<li>Apache 2.2.22</li>
+<li>PHP 5.4.9</li>
+<li>Zend Framework 2.2</li>
+</ul>
+</p>
+
+      <ul>
+        
+           <li><a href="/fr/posts/le-solveur-de-sudoku-preparer-le-projet.html">Le solveur de sudoku - Préparer le projet</a></li>
+        
+           <li><a href="/fr/posts/le-solveur-de-sudoku-concevoir-les-objets.html">Le solveur de sudoku - Concevoir les objets</a></li>
+        
+           <li><a href="/fr/posts/un-solveur-de-sudoku-preparer-la-vue.html">Un solveur de Sudoku - Préparer la vue</a></li>
+        
+           <li><a href="/fr/posts/solveur-de-sudoku-route-et-controleur.html">Solveur de Sudoku - Route et Contrôleur</a></li>
+        
+           <li><a href="/fr/posts/un-solveur-de-sudoku-tester-le-controleur.html">Un solveur de Sudoku - Tester le contrôleur</a></li>
+        
+           <li><a href="/fr/posts/solveur-de-sudoku-lobjet-chiffre.html">Solveur de Sudoku - L&#39;objet Chiffre</a></li>
+        
+           <li><a href="/fr/posts/solveur-de-sudoku-les-tests-unitaires-pour-lobjet-chiffre.html">Solveur de Sudoku - Les tests unitaires pour l&#39;objet Chiffre</a></li>
+        
+           <li><a href="/fr/posts/sudoku-solver-developper-lobjet-case.html">Sudoku Solver - Développer l&#39;objet Case</a></li>
+        
+           <li><a href="/fr/posts/le-solveur-de-sudoku-mettre-en-place-la-grille.html">Le solveur de Sudoku - Mettre en place la grille</a></li>
+        
+           <li><a href="/fr/posts/solveur-de-sudoku-ajouter-des-hypotheses.html">Solveur de Sudoku - Ajouter des hypothèses</a></li>
+        
+           <li><a href="/fr/posts/solveur-de-sudoku-developper-le-solveur.html">Solveur de Sudoku - Développer le solveur</a></li>
+        
+           <li><a href="/fr/posts/solveur-de-sudoku-la-grille-suite.html">Solveur de Sudoku - La grille, suite</a></li>
+        
+           <li><a href="/fr/posts/solveur-de-sudoku-mise-en-place-dans-le-controleur.html">Solveur de Sudoku - Mise en place dans le contrôleur</a></li>
+        
+           <li><a href="/fr/posts/solveur-de-sudoku-resoudre-des-grilles-plus-compliquees.html">Solveur de Sudoku - Résoudre des grilles plus compliquées</a></li>
+        
+      </ul>
+
+      
+
+      <nav id="book-navigation">
+    
+
+    
+        <li class="link-next"><a href="/fr/posts/le-solveur-de-sudoku-preparer-le-projet.html">Le solveur de sudoku - Préparer le projet <i class="fas fa-long-arrow-alt-right"></i></a></li>
+    
+
+    
+</nav>
+
+    
+    </article>
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>Sur moi</h3>
+      <p>J&#39;ai appris le php il y a quelques années, quand Internet était à ses débuts. Pour diverses raisons, j&#39;ai arrêté en route et j&#39;ai perdu le fil des nouveaux Internets que je redécouvre. Résultat, je me sens constamment à courir après l&#39;histoire mais je suis toujours motivée à reprendre des projets personnels. Je me propose de vous partager mes découvertes. Au delà des sujets de programmation, j&#39;aime également partager mes infos concernant notamment l&#39;Histoire, l&#39;Astronomie, la Linguistique, les Films, les Livres et les Anime. J&#39;espère que vous aimerez suivre mon blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. Tous droits réservés.</p>
+        <p>Propulsé par <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

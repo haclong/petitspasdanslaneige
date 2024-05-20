@@ -1,0 +1,297 @@
+<!doctype html>
+<html class="no-js" lang="en" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>Try Catch blocks&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">French</a>
+        <a href="/en/">English</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/en/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/en/books/0/index.html">Collections</a>
+        <a href="/en/">Home</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/en/">Home</a><i class="fas fa-angle-right"></i>Try Catch blocks
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>Try Catch blocks</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>10/20/2015, 8:03:00 AM
+        
+        <i class="fas fa-th-large"></i><!--a href="/en/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/capture_0.png" class="node-banner" />
+        
+      </div>
+
+      <p><p>Lately, someone asked me to explain the <strong>try catch</strong> and how it works.</p>
+<h2>What is it ?</h2>
+<p><strong>Try/catch</strong> is a mecanism who allows you to handle <strong>exceptions</strong> in your application.</p>
+<h2>Say it again ?</h2>
+<p>Programming in object is like having a set of russian dolls : one object A calling for an object B calling for an objet C calling for an object D. Each objects knows which object it has called and each object returned values are used by the caller object.</p>
+<p>A calls for B. B calls for C. C calls for D. D returns values to C. C will process those values and return processed values to B. B will process those values and return processed values to A. And so on. A don't know D and nobody care. The chain is perfect.</p>
+<p>But what if something goes wrong ? Shouldn't A be noticed ?</p>
+<p>We could use the same process :</p>
+<p>D returns the error code to C. C barely process the error code and pass it to B. B pass the error code to A. That could work just fine. But in object programming, it might be tricky, because then, C will expect (from D) either a valid return values, either an error code. Though C does not need that error code, it will have to deal with it. Then C will pass that same error code to B who expects, of course, either valid return values from C, either an error code which does not mean anything to B. Now B has to deal with it though B does not need it. Of course, C and B do already have error codes they have to deal with on the other hand, but not that one so why bother ? Then B will finally pass that error code to A and A have to use that error code finally because everybody is passing that error code from D to A so, at least, somebody has to use it in a way or another !</p>
+<p>This is very cumbersome, not very efficient and just imagine what could happen if you need D to return a second error code... Each objects in between will have to deal with that new code. I can't imagine the kind of switch case we could generate !</p>
+<h2>Is there another way to do it ?</h2>
+<p>Since other languages have already usage of the <strong>try/catch</strong> syntax and it works just fine, PHP adopts that syntax since PHP 5.x. Basically, on one side, when you have an exception (an error) and you want it handled correctly, you just want to <strong>throw</strong> that exception. Just <strong>throw</strong> it. Somewhere. Anywhere. Just like a bottle in the sea. And hope somebody would catch it.</p>
+<p>On the other side, you want to <strong>try</strong> something. And you just want to check if that something has thrown any exception... who knows ? So you <strong>try</strong> and if there's any exception thrown, the code will <strong>catch</strong> it for you. Once the exception is caught, you'll know what to do with it.</p>
+<p>Let's see it :</p>
+<pre><code class="language-php">try {
+  $A-Team-&gt;execute($planA) ;
+  echo &quot;Let's celebrate ! &quot; ;
+} catch (\Exception $exception) {
+  echo &quot;something goes wrong somewhere&quot; ;
+}
+</code></pre>
+<p>Let's see the A-Team class :</p>
+<pre><code class="language-php">class A-Team
+{
+  function execute($plan)
+  {
+    $plan-&gt;executeSteps() ;
+  }
+}
+</code></pre>
+<p>now the PlanA class :</p>
+<pre><code class="language-php">class PlanA
+{
+  function executeSteps()
+  {
+    foreach($this-&gt;steps as $step)
+    {
+      $step-&gt;run() ;
+      if($step-&gt;failed == TRUE)
+      {
+        throw new Exception() ;
+      }
+    }
+  }
+}
+</code></pre>
+<p>If one step of the plan fails, it will throw a <code>new Exception</code>. The main code will <code>catch</code> the <code>exception</code> no matter how deep it is thrown from and it will stop the execution of the plan.</p>
+<p>Either the mission is successful and everybody can celebrate the victory, either we get &quot;<em>something goes wrong somewhere</em>&quot; message. Note that if an exception is thrown, we won't read &quot;<em>Let's celebrate !</em>&quot; string. The code will jump straight to the catch block.</p>
+<p>You can nest several try/catch : if plan A failed, try plan B.</p>
+<pre><code class="language-php">try {
+  $A-Team-&gt;execute('PlanA') ;
+} catch (\Exception $exception) {
+  try {
+    $A-Team-&gt;execute('PlanB') ;
+  } catch (\Exception $exception) {
+    echo &quot;something goes wrong somewhere&quot; ;
+  }
+}
+</code></pre>
+<p>But the &quot;<em>Something goes wrong somewhere</em>&quot; message is not very helpful, is it ? We'd like to know more of it.</p>
+<p>Let's see this case :</p>
+<pre><code class="language-php">try {
+  $user-&gt;findByName('John Doe') ;
+} catch (NotFoundException $exception) {
+  echo $exception-&gt;getMessage() ;
+} catch (DuplicateNameException $exception) {
+  echo $exception-&gt;getMessage() ;
+}
+</code></pre>
+<p>And take a closer look at our <code>$user</code> class :</p>
+<pre><code class="language-php">class User
+{
+  function find($name) {
+    $result = $this-&gt;select($name) ;
+    
+    if(count($result) &gt; 1)
+    {
+      throw new DuplicateNameException('There is more than one result, narrow your search criteria') ;
+    }
+ 
+    if(count($result) == 0)
+    {
+      throw new NotFoundException('There is no result for your search') ;
+    }
+  
+    return $result ;
+  }
+}
+</code></pre>
+<p>As we can see, for one <code>$user-&gt;find()</code> method, we prepare 2 differents <code>exceptions</code>. Depending on the result, we will throw either one or another <code>exception</code> and only if there's only one result will it be used properly.</p>
+<p>Note that the <code>DuplicateNameException()</code> class and the <code>NotFoundException()</code> class inherit from the <strong><code>PHP Exception</code></strong> class and that's all. For more info on the <code>**Exception**</code> class, please refer to the <a href="http://be2.php.net/manual/en/class.exception.php">official documentation</a>.</p>
+<p>But of course, last but not least, we can try and catch exceptions from... would i say it, anybody.</p>
+<pre><code class="language-php">try {
+  $gandalf-&gt;fight('Balrog') ;
+  $frodo-&gt;save('Gandalf') ;
+} catch (FailedFightException $e) {
+  echo &quot;Run you fools !&quot;
+} catch (FailSavingException $e) {
+  $frodo-&gt;weep() ;
+}
+</code></pre>
+<p>In the <strong>Inception</strong> movie, at <em>Reality Level</em>, everybody is asleep and from outside observator, nothing happen to them. When they'll wake up, the mission will be either a success, or a failure.</p>
+<pre><code class="language-php">$reality-&gt;startMission() ;
+</code></pre>
+<p>but then, if we take a closer look :</p>
+<pre><code class="language-php">class Reality {
+  function startMission() {
+    try {
+      $this-&gt;takeAPlane() ;
+      $level1-&gt;startMission($yusuf) ;
+    } catch (Level1KickException $e) {
+      $everybody-&gt;wakeup() ;
+    }
+  }
+}
+</code></pre>
+<p>then diving in</p>
+<pre><code class="language-php">class level1 {
+  function startMission($dreamer) {
+    try {
+      $dreamer-&gt;driveACar() ;
+      $level2-&gt;startMission($arthur) ;
+    } catch (Level2KickException $e) {
+      $dreamer-&gt;wakeup() ;
+    }
+    
+    if(timeOut())
+    {
+      throw new Level1KickException() ;
+    }
+  }
+}
+</code></pre>
+<p>then diving deeper in</p>
+<pre><code class="language-php">class level2 {
+  function startMission($dreamer) {
+    try {
+      $dreamer-&gt;setBombInHotel() ;
+      $level3-&gt;startMission($eames) ;
+    } catch (Level3KickException() $e) {
+      $dreamer-&gt;wakeup() ;
+    }
+
+    if(timeOut())
+    {
+      throw new Level2KickException() ;
+    } 
+  }
+}
+</code></pre>
+<p>and then</p>
+<pre><code class="language-php">class level3 {
+  function startMission($dreamer) {
+    $dreamer-&gt;setBunkerSettings() ;
+    $dreamer-&gt;takingBunker() ;
+ 
+    if(timeOut())
+    {
+      throw new Level3KickException() ;
+    }
+  }
+}
+</code></pre>
+<p>Hehe, i have not quite understood the movie right, i don't think so. But when i was looking for examples to explain the try/catch, that movie and the way each levels are locked one inside the other just makes me feel like it is a good image to use. Well... it was just for the fun and i hope it has at least helped some of you to get the try/catch command. Don't think too hard of Inception because then, you'll be saying that I didn't get the movie at all :)</p>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/en/tags/programming">programming</a></li><li><a href="/en/tags/php">PHP</a></li></ul>
+        </div>
+      
+
+      
+    
+
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3></h3>
+      <p></p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. All rights reserved.</p>
+        <p>Powered by <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

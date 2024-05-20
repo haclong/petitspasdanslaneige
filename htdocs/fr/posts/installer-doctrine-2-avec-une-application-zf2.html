@@ -1,0 +1,416 @@
+<!doctype html>
+<html class="no-js" lang="fr" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>Installer Doctrine 2 avec une application ZF2&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">Français</a>
+        <a href="/en/">Anglais</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/fr/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/fr/books/0/index.html">Séries</a>
+        <a href="/fr/">Accueil</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/fr/">Accueil</a><i class="fas fa-angle-right"></i>Installer Doctrine 2 avec une application ZF2
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>Installer Doctrine 2 avec une application ZF2</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>07/07/2014 11:56:00
+        
+        <i class="fas fa-th-large"></i><!--a href="/fr/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/ateneo03.jpg" class="node-banner" />
+        
+      </div>
+
+      <p><p>Pour gérer la couche persistence des données, Zend Framework 2 propose <a href="http://framework.zend.com/manual/2.3/en/modules/zend.db.table-gateway.html" target="_blank"><strong>Zend Db TableGateway</strong></a>. <strong>Zend Db TableGateway</strong> est un bon composant du framework mais demande un peu d'investissement. En remplacement au <strong>TableGateway</strong>, vous pouvez ajouter la librairie <a href="http://docs.doctrine-project.org/projects/doctrine-orm/en/latest/" target="_blank"><strong>Doctrine</strong></a> à votre application.</p>
+<h3>Doctrine</h3>
+<p><strong>Doctrine</strong> a ses partisans et ses détracteurs. Une fois que le paramétrage est fait, <strong>Doctrine</strong> fait les choses toutes seules... c'est magique.</p>
+<p>Magique et donc super pratique... Certains n'aimeront pas le côté magique. D'autres en seront fans... Mais pour choisir votre camp, il faut l'installer, bien sûr.</p>
+<h3>Prérequis</h3>
+<p>Vous avez installé <a href="https://github.com/zendframework/ZendSkeletonApplication" target="_blank"><strong>Zend Skeleton Application</strong></a> (encore lui). Et vous avez <a href="https://getcomposer.org/" target="_blank"><strong>composer</strong></a> installé.</p>
+<h3>Installation</h3>
+<p>Vérifier que votre version de <strong>composer</strong> est toujours d'actualité :</p>
+<pre><code class="language-sh">sudo php composer.phar self-update
+</code></pre>
+<p>Installer le module <strong>Doctrine</strong>.</p>
+<p>Ce module installera toutes les dépendances qui vont bien, la librairie <strong>Doctrine</strong> au passage donc.</p>
+<pre><code class="language-sh">sudo php composer.phar require doctrine/doctrine-orm-module:0.7.*
+</code></pre>
+<p>Pendant votre développement, vous aurez besoin du module <strong>zend-developer-tools</strong> afin de vérifier que la magie de <strong>Doctrine</strong> ne génère pas des requêtes un peu trop lourdes par exemple.</p>
+<pre><code class="language-sh">sudo php composer.phar require zendframework/zend-developer-tools:dev-master
+</code></pre>
+<p>Copier le fichier de config de <strong>Zend Developer Tools</strong> dans le répertoire d'autoload de configuration.</p>
+<pre><code class="language-sh">sudo cp vendor/zendframework/zend-developer-tools/config/zenddevelopertools.local.php.dist config/autoload/zdt.local.php
+</code></pre>
+<p>Mettre le fichier d'index à jour</p>
+<pre><code class="language-php">// public/index.php
+define('REQUEST_MICROTIME', microtime(true));
+</code></pre>
+<p>Une fois que toutes les librairies sont installées, n'oublions pas de les activer.</p>
+<pre><code class="language-php">// config/application.config.php
+
+return array(
+  'modules' =&gt; array(
+    'DoctrineModule',
+    'DoctrineORMModule',
+    'ZendDeveloperTools',
+    'Application',
+  ),
+) ;
+</code></pre>
+<h3>Configuration</h3>
+<p>Configuration de <strong>Doctrine</strong> :</p>
+<pre><code class="language-php">// module/MON_MODULE/config/module.config.php
+
+&lt;?php
+return array(
+  'doctrine' =&gt; array(
+    'driver' =&gt; array(
+      // vous êtes libre de mettre la clé que vous voulez ici pour déclarer ce que sont et où sont vos entités
+      'MON_MODULE_entities' =&gt; array(
+        // Doctrine admet d'autres classes pour paramétrer les entitées (YAML ou XML)
+        // voir la doc de Doctrine
+        'class' =&gt; 'Doctrine\ORM\Mapping\Driver\AnnotationDriver',
+        'cache' =&gt; 'array',
+        // Chemin où on trouvera la définition de les entités de votre modèle
+        'paths' =&gt; array(__DIR__ . '/../src/MON_MODULE/pathToEntities'),
+      ),
+      // cette clé semble être obligatoire et fixe
+      'orm_default' =&gt; array(
+        'drivers' =&gt; array(
+          // pour être PSR, le namespace va forcément correspondre au path déclaré plus haut.
+          'MODULE_NAMESPACE\pathToEntities' =&gt; 'MON_MODULE_entities',
+        ),
+      ),
+    ),
+  ),
+);
+</code></pre>
+<p>Configurer la connection à la base de données</p>
+<pre><code class="language-php">// config/autoload/doctrine.local.php
+// ne pas oublier .local. pour que le fichier soit ignoré par git (vérifier le fichier config/autoload/.gitignore si nécessaire)
+
+&lt;?php
+return array(
+  'doctrine' =&gt; array(
+    'connection' =&gt; array(
+      // veillez à ce que ce soit la même clé que dans le fichier module.config.php
+      'orm_default' =&gt; array(
+        // Doctrine a d'autres drivers. Voir la doc
+        'driverClass' =&gt; 'Doctrine\DBAL\Driver\PDOMySql\Driver',
+        'params' =&gt; array(
+          'host' =&gt; 'YOUR_HOST',
+          'port' =&gt; 3306,
+          'user' =&gt; 'YOUR_MYSQL_USER',
+          'password' =&gt; 'YOUR_USER_PASSWORD',
+          'dbname' =&gt; 'YOUR_BASE_NAME',
+          'driverOptions' =&gt; array('1002' =&gt; 'SET NAMES utf8') // UTF-8 support
+        ),
+      ),
+    ),
+  ),
+);
+</code></pre>
+<p>Voila ! <strong>Doctrine</strong> est installé.</p>
+<p>Bon, installé, c'est bien, mais comment l'utiliser ?</p>
+<h3>Faire de vos entités des entités reconnues par Doctrine</h3>
+<p>Souvenez vous, nous avons dit que le driver pour mapper nos entités était <strong>AnnotationDriver</strong> (voir le fichier <code>module.config.php</code>).</p>
+<p>Du coup, dans chacune de nos entités, nous allons rajouter les annotations style <strong>Doctrine</strong> qui vont bien.</p>
+<pre><code class="language-php">// /module/MON_MODULE/src/MON_MODULE/pathToEntities/MonObjet.php
+
+&lt;?php
+namespace MON_MODULE\pathToEntites ;
+
+use Doctrine\ORM\Mapping as ORM ;
+
+// Toutes les annotations Doctrine telles que décrite dans leur documentation doivent être déclarée dans l'espace de nom ORM
+/**
+ * @ORM\Entity // dans la doc de Doctrine, l'annotation est @Entity tout court
+ * @ORM\Table (name=&quot;mysql_table&quot;) // @Table dans la documentation Doctrine
+ */
+class MonObjet
+{
+    /**
+     * @ORM\Column(type=&quot;string&quot;, length=32, name=&quot;nom_de_ma_colonne&quot;)
+     */
+    protected $propriete ;
+}
+</code></pre>
+<p>Ajoutez également les annotations pour chacune des propriétés de votre objet (propriétés qui a un sens dans la base de données, bien sûr).</p>
+<p>Si vos tables existent déjà, pour chacune des entités, rajoutez l'annotation <code>@Table (name=&quot;nom_de_votre_table&quot;)</code>.</p>
+<p>Si le nom de vos champs ne corresponds pas au nom de la propriété, rajoutez pour chaque propriété avec un nom différent l'annotation <code>@Column (name=&quot;nom_de_votre_colonne&quot;)</code>.</p>
+<p>Pour les types <strong>Doctrine</strong>, voir <a href="http://docs.doctrine-project.org/projects/doctrine-orm/en/latest/reference/basic-mapping.html#doctrine-mapping-types" target="_blank">leur doc</a> mais c'est assez basique en fait.</p>
+<p>Une fois que vous avez paramétré vos entités pour <strong>Doctrine</strong>, il faut maintenant déclarer <strong>Doctrine</strong> dans notre <strong>Service Manager</strong>.</p>
+<h3>Charger Doctrine dans le Service Manager</h3>
+<p><strong>RAPPEL</strong></p>
+<p><a href="http://docs.doctrine-project.org/projects/doctrine-orm/en/latest/tutorials/getting-started.html" target="_blank">La doc de <strong>Doctrine</strong></a> dit de créer son <strong>EntityManager</strong> quand on bootstrappe <strong>Doctrine</strong> (extrait de la documentation de <strong>Doctrine</strong>)</p>
+<pre><code class="language-php">// bootstrap.php original de Doctrine, hors framework
+
+&lt;?php
+use Doctrine\ORM\EntityManager ;
+
+// ... plein d'autres choses ici
+
+// bootstrapper l'entity manager
+$entityManager = EntityManager::create($conn, $config) ;
+</code></pre>
+<p>Dans <strong>Doctrine</strong>, quand on a créé son <strong>EntityManager</strong>, on peut ensuite l'utiliser (toujours extrait de la documentation de <strong>Doctrine</strong>)</p>
+<pre><code class="language-php">//list_products.php
+
+&lt;?php
+require_once &quot;bootstrap.php&quot;;
+
+$productRepository = $entityManager-&gt;getRepository('Product') ;
+$products = $productRepository-&gt;findAll() ;
+
+foreach($products as $product) {
+    echo sprintf(&quot;-%s\n&quot;, $product-&gt;getName()) ;
+}
+</code></pre>
+<p>Pour faire la même chose dans une application Zend Framework 2, il faut créer (<em>boostrapper</em>) son <strong>EntityManager</strong>. En fait, à l'installation des modules <strong>Doctrine</strong> et <strong>Doctrine ORM</strong>, ceux ci ont chargé la librairie <strong>Doctrine</strong> (et ses dépendances), mais chacun des modules a également chargé plusieurs services dans le <strong>Service Manager</strong>, notamment l'<strong>EntityManager</strong> de <strong>Doctrine</strong>. Du coup, le module <strong>Doctrine ORM</strong> nous a déjà créé notre <strong>EntityManager</strong>, il ne reste plus qu'à l'utiliser.</p>
+<p>Pour utiliser l'<strong>EntityManager</strong> de <strong>Doctrine</strong>, il faut (comme toujours dans Zend Framework 2 finalement), savoir comment accéder à son <strong>Service Manager</strong>. A partir du moment où on peut récupérer le <strong>Service Manager</strong>, on récupère au passage l'<strong>EntityManager</strong>.</p>
+<p>Si vous voulez accéder à l'<strong>EntityManager</strong> de <strong>Doctrine</strong> directement (à partir de vos controleurs par ex, ce n'est toutefois pas conseillé) :</p>
+<pre><code class="language-php">// /module/MON_MODULE/src/MON_MODULE/Controller/IndexController.php
+
+&lt;?php
+namespace MON_MODULE\Controller ;
+
+use Zend\Mvc\Controller\AbstractActionController ;
+
+class IndexController extends AbstractActionController
+{
+    public function indexAction()
+    {
+        $em = $this-&gt;getServiceLocator()-&gt;get('Doctrine\ORM\EntityManager') ;
+    }
+}
+</code></pre>
+<p>Le nom <code>Doctrine\ORM\EntityManager</code> est créé dans la configuration du <strong>Service Manager</strong> dans le module <strong>Doctrine ORM</strong>.</p>
+<p>Mon utilisation plus courante, est de d'injecter l'<strong>EntityManager</strong> dans mes services qui l'utilisent, à partir de la classe <code>Module</code> de mon module.</p>
+<pre><code class="language-php">// /module/MON_MODULE/Module.php
+
+&lt;?php
+namespace MON_MODULE ;
+
+use MON_MODULE\Mapper\MonObjetMapper ;
+
+class Module
+{
+    public function getAutoloaderConfig() {} // vous savez ce qu'il y a ici
+
+    public function getConfig() {} // vous savez ce qu'il y a ici
+
+    public function getServiceConfig() 
+    {
+        'factories' =&gt; array(
+            'MonObjetMapper' =&gt; function($sm) {
+                $entityManager = $sm-&gt;get('Doctrine\ORM\EntityManager') ;
+                return new MonObjetMapper($entityManager) ;
+            },
+        );
+    }
+}
+</code></pre>
+<pre><code class="language-php">// /module/MON_MODULE/Mapper/MonObjetMapper.php
+
+&lt;?php
+namespace MON_MODULE\Mapper ;
+
+use Doctrine\ORM\EntityManager ;
+
+class MonObjetMapper
+{
+    protected $entityManager ;
+
+    public function __construct(EntityManager $entityManager)
+    {
+        $this-&gt;entityManager = $entityManager ;
+    }
+
+    // pour accéder à un repository dans Doctrine
+    $this-&gt;repository = $this-&gt;entityManager-&gt;getRepository('MON_MODULE\pathToEntities\MonObjet') ;
+
+    // pour récupérer toute la table 
+    $this-&gt;repository-&gt;findAll() ;
+
+    // pour récupérer un enregistrement par l'ID
+    $this-&gt;repository-&gt;find($id) ;
+
+    // pour mettre à jour un enregistrement 
+    $this-&gt;entityManager-&gt;flush() ;
+
+    // pour créer un nouvel enregistrement
+    $this-&gt;entityManager-&gt;persist(new MonObjet()) ;
+    $this-&gt;entityManager-&gt;flush() ;
+
+    // pour supprimer un enregistrement
+    $this-&gt;entityManager-&gt;remove($objet) ;
+    $this-&gt;entityManager-&gt;flush() ;
+}
+</code></pre>
+<p>Voilà.</p>
+<p>Evidemment, <strong>Doctrine</strong> ne se limite pas à ces quelques lignes...</p>
+<p>En gros, on conçoit nos objets.</p>
+<p>On installe <strong>Doctrine</strong>.</p>
+<p>On fait le mapping en expliquant pour chacun de nos objets où sont stockées les données dans la base de données. Cette partie fait la force de <strong>Doctrine</strong>, je dois le reconnaître. Pour ce que j'ai vu (survol rapide de la doc, pas d'expérimentations très poussées), <strong>Doctrine</strong> gère beaucoup de type de modèles de données différents et donc permet au concepteur de faire librement son architecture sans être trop contraint. De plus, <strong>Doctrine</strong> peut générer la base de données à partir du paramétrage que vous aurez mis dans vos objets (base de données toute neuve donc) ou bien <strong>Doctrine</strong> s'adapte à votre base de données et à vos champs (base de données existantes).</p>
+<p>Dans le code, on appelle l'<strong>Entity Manager</strong> de <strong>Doctrine</strong>, on va chercher les repository correspondant à nos objets pour faire des SELECT dedans. Sinon, on se contente de manipuler nos propres objets. Ce n'est qu'à la fin du process qu'on dit à <strong>Doctrine</strong> de sauvegarder toutes les opérations (en une fois) dans la base de données.</p>
+<p>Et c'est tout.</p>
+<p>J'ai eu des avertissements toutefois. <strong>Doctrine</strong> fait lui même ses requêtes. Du coup, il faut un peu surveiller ce qu'il fait. En plus, le requêtage dans <strong>Doctrine</strong> est tellement simplifier qu'on arrive vite à oublier ce que ça représente. Du coup, on peut s'oublier et confondre simplicité de l'API et complexité des exécutions. Evitez par exemple de faire un SELECT dans un premier repository, faire une boucle foreach sur ce premier résultat, et requêter un second repository à chaque itération de la boucle... <strong>Doctrine</strong> a beau être magique, vous mettrez la machine à genoux quand même...</p>
+<p>Si vous avez des modèles trop complexes, <strong>Doctrine</strong> parle un peu le requêtage avec un langage à lui : le DQL... genre SQL en plus fonctionnel... qu'on pourra utiliser pour finetuner nos requêtes au cas où (je pense aux jointures notamment). Encore une fois, <strong>Doctrine</strong> fait les jointures... mais certains modèles de données complexes peuvent avoir trop de jointures complexes... ça vaut peut être le coup de faire une jointure manuelle directement plutôt que de laisser <strong>Doctrine</strong> démêler les fils de vos associations...</p>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/fr/tags/doctrine">Doctrine</a></li><li><a href="/fr/tags/zend-framework-2">zend framework 2</a></li><li><a href="/fr/tags/modele">modèle</a></li><li><a href="/fr/tags/modules">Modules</a></li><li><a href="/fr/tags/architecture-trois-tiers">architecture trois tiers</a></li><li><a href="/fr/tags/acces-aux-donnees">accès aux données</a></li></ul>
+        </div>
+      
+
+      
+    
+
+      
+        <section id="oldcomment">
+          <h2>Commentaires historiques</h2><article>
+              <div class="level1">
+  <h3>Petit souci</h3>
+  <div class="meta">Jo_Labricole 2014-10-19T02:34 </div>
+  <div class="body">Il y a un petit souci avec les extraits de code en PHP, mon navigateur affiche des balises HTML.<br />
+<br />
+Je parcours votre blog petit à petit, j'apprends plein de trucs et c'est bien rédigé, merci à vous !</div>
+
+  
+  
+</div>
+
+            </article><article>
+              <div class="level1">
+  <h3>damn... qu'est ce que c'est</h3>
+  <div class="meta">haclong 2014-10-20T11:16 </div>
+  <div class="body">damn... qu'est ce que c'est que ça ??<br />
+merci pour votre commentaire, je vais voir ce qu'il se passe..</div>
+
+  
+  
+</div>
+
+            </article><article>
+              <div class="level1">
+  <h3>c'est résolu visiblement !</h3>
+  <div class="meta">Jo_Labricole 2014-10-23T22:33 </div>
+  <div class="body">C'est résolu visiblement !</div>
+
+  
+  
+</div>
+
+            </article><article>
+              <div class="level1">
+  <h3>Oui</h3>
+  <div class="meta">haclong 2014-10-24T11:10 </div>
+  <div class="body">Oui.<br />
+<br />
+Je crois que le plugin pour le rendu du code avait buggé juste sur ces deux parties. J'ai réécrit à l'identique et maintenant ça marche...</div>
+
+  
+  
+</div>
+
+            </article></section>
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>Sur moi</h3>
+      <p>J&#39;ai appris le php il y a quelques années, quand Internet était à ses débuts. Pour diverses raisons, j&#39;ai arrêté en route et j&#39;ai perdu le fil des nouveaux Internets que je redécouvre. Résultat, je me sens constamment à courir après l&#39;histoire mais je suis toujours motivée à reprendre des projets personnels. Je me propose de vous partager mes découvertes. Au delà des sujets de programmation, j&#39;aime également partager mes infos concernant notamment l&#39;Histoire, l&#39;Astronomie, la Linguistique, les Films, les Livres et les Anime. J&#39;espère que vous aimerez suivre mon blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. Tous droits réservés.</p>
+        <p>Propulsé par <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

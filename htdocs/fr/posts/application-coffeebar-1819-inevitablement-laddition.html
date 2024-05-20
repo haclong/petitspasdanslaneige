@@ -1,0 +1,541 @@
+<!doctype html>
+<html class="no-js" lang="fr" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>Application CoffeeBar 18/19 - Inévitablement, l&#39;addition&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">Français</a>
+        <a href="/en/">Anglais</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/fr/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/fr/books/0/index.html">Séries</a>
+        <a href="/fr/">Accueil</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/fr/">Accueil</a><i class="fas fa-angle-right"></i>Application CoffeeBar 18/19 - Inévitablement, l'addition
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>Application CoffeeBar 18/19 - Inévitablement, l'addition</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>26/05/2015 15:58:00
+        
+        <i class="fas fa-th-large"></i><!--a href="/fr/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/file9271237667217.jpg" class="node-banner" />
+        
+          <p><strong>Crédit</strong> : Morguefile.com </p>
+        
+      </div>
+
+      <p><p>Le service se fait. Les boissons commandées, les plats préparés sont servis les uns après les autres. Doucement, le total des éléments servis s'additionne. Maintenant, les clients souhaitent quitter la table... Et payer la note.</p>
+<p><em>NOTE : le long du tutoriel, je vais vous faire rééditer des classes et des vues sur lesquels on sera déjà passé. Il va y avoir des parties qui n'apparaitront plus systématiquement au second passage : typiquement les use, les instructions extends, implements etc... Cela ne veut pas dire qu'il faut les retirer. C'est juste pour alléger le code. S'il faut retirer du code, soit je vous remettrais le passage intégralement, pour voir ce qui a disparu, soit je vous signalerais qu'il faut effacer une ligne pour la remplacer par une autre.</em></p>
+<h2>Encaisser le client</h2>
+<p>Voyons comment on encaisse le client.</p>
+<h3>Préparation du formulaire</h3>
+<p>Le formulaire n'a qu'un seul champ de saisie : c'est le champ dans lequel on va saisir le montant payé par le client. Le montant à payer va s'afficher hors des champs de formulaire.</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Form/CloseTabForm.php
+
+&lt;?php
+namespace CoffeeBar\Form ;
+
+use Zend\Form\Element\Csrf;
+use Zend\Form\Form;
+use Zend\Stdlib\Hydrator\ArraySerializable;
+
+class CloseTabForm extends Form
+{
+  public function __construct()
+  {
+    parent::__construct('closetab') ;
+ 
+    $this-&gt;setAttribute('method', 'post')
+         -&gt;setHydrator(new ArraySerializable()) ;
+ 
+    // le champ id est un id unique (guid) caché
+    // il sera généré automatiquement dans la vue
+    $this-&gt;add(array(
+      'name' =&gt; 'id',
+      'type' =&gt; 'hidden',
+    )) ;
+ 
+    $this-&gt;add(array(
+      'name' =&gt; 'amountPaid',
+      'options' =&gt; array(
+        'label' =&gt; 'Encaissement',
+      ),
+      'attributes' =&gt; array(
+        'required' =&gt; 'required',
+        'class' =&gt; 'form-control',
+      ),
+    )) ;
+ 
+    $this-&gt;add(new Csrf('security')) ;
+ 
+    $this-&gt;add(array(
+      'name' =&gt; 'submit',
+      'type' =&gt; 'Submit',
+      'attributes' =&gt; array(
+        'value' =&gt; 'Encaisser',
+        'class' =&gt; 'btn btn-default',
+      ),
+    )) ;
+  }
+}
+</code></pre>
+<p>Encore une fois, on n'a pas assigné d'objet, puisque, vous vous en doutez maintenant, notre objet <code>CoffeeBar\Command\CloseTab</code> a une dépendance sur le gestionnaire d'événements...</p>
+<p>Dépendances ?? mais bien sûr, le <strong>gestionnaire de services</strong>.</p>
+<p>Mais avant tout, un petit coup d'oeil sur l'opération <code>CoffeeBar\Command\CloseTab</code></p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Command/CloseTab.php
+
+&lt;?php
+namespace CoffeeBar\Command ;
+
+use Zend\EventManager\EventManagerAwareInterface;
+use Zend\EventManager\EventManagerInterface;
+
+class CloseTab implements EventManagerAwareInterface
+{
+  protected $id ;
+  protected $amountPaid ;
+  // propriété liées à l’interface EventManagerAwareInterface
+  protected $events ;
+
+  // getters &amp;amp; setters
+
+  // méthodes obligatoires pour l'hydrator ArraySerializable
+  public function populate($data = array()) 
+  {
+    $this-&gt;id = (isset($data['id'])) ? $data['id'] : null;
+    $this-&gt;amountPaid = (isset($data['amountPaid'])) ? $data['amountPaid'] : null;
+ 
+    $this-&gt;events-&gt;trigger('closeTab', '', array('closeTab' =&gt; $this)) ;
+  }
+    
+  public function getArrayCopy() 
+  {
+    return array(
+      'id' =&gt; $this-&gt;id,
+      'amountPaid' =&gt; $this-&gt;amountPaid,
+    ) ;
+  }
+}
+</code></pre>
+<p>Et la classe <code>CoffeeBar\Module</code></p>
+<pre><code class="language-php">// module/CoffeeBar/Module.php
+
+&lt;?php
+namespace CoffeeBar;
+
+use CoffeeBar\Command\CloseTab;
+use CoffeeBar\Form\CloseTabForm;
+
+class Module implements FormElementProviderInterface
+{
+  public function getServiceConfig()
+  {
+    return array(
+      'factories' =&gt; array(
+        // on assigne l'objet au formulaire
+        'CloseTabForm' =&gt; function($sm) {
+          $form = new CloseTabForm() ;
+          $form-&gt;setObject($sm-&gt;get('CloseTabCommand')) ;
+          return $form ;
+        },
+        // on gère la dépendance de l'objet CloseTab sur le gestionnaire d'événements TabEventManager
+        'CloseTabCommand' =&gt; function($sm) {
+          $events = $sm-&gt;get('TabEventManager') ;
+          $closeTab = new CloseTab() ;
+          $closeTab-&gt;setEventManager($events) ;
+          return $closeTab ;
+        },
+      ),
+    ) ;
+  }
+}
+</code></pre>
+<h2>Affichage du formulaire</h2>
+<p>Il n'y a plus qu'à mettre tout ça en place pour le contrôleur.</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Controler/TabController.php
+
+&lt;?php
+namespace CoffeeBar\Controller ;
+
+class TabController
+{
+  public function closeAction()
+  {
+    $openTabs = $this-&gt;serviceLocator-&gt;get('OpenTabs') ;
+
+    $form = $this-&gt;serviceLocator-&gt;get('CloseTabForm') ;
+
+    $request = $this-&gt;getRequest() ;
+
+    $id = (int) $this-&gt;params()-&gt;fromRoute('id') ;
+
+    // vérifier si on connait le numéro de la table pour laquelle on va encaisser
+    if (isset($id)) {
+      // vérifier si le formulaire a été posté
+      if($request-&gt;isPost()) {
+        $form-&gt;setData($request-&gt;getPost()) ;
+ 
+        // traiter le formulaire
+      }
+
+      // le traitement du formulaire va faire les redirections qui s'imposent
+      // on n'arrivera ici que si le formulaire n'a pas été traité
+
+      $status = $openTabs-&gt;invoiceForTable($id) ;
+
+      // on vérifie que tous les plats et boissons ont été servis
+      try {
+        if($status-&gt;hasUnservedItems())
+        {
+          throw new TabHasUnservedItem('Il reste des éléments commandés pour cette table') ;
+        }
+      } catch (TabHasUnservedItem $e) {
+        $this-&gt;flashMessenger()-&gt;addErrorMessage($e-&gt;getMessage());
+        return $this-&gt;redirect()-&gt;toRoute('tab/status', array('id' =&gt; $id));
+      }
+
+      // plus rien ne s'oppose à l'affichage du formulaire
+      // on assigne l'id unique de la table au champ caché du formulaire
+      $form-&gt;get('id')-&gt;setValue($openTabs-&gt;tabIdForTable($id)) ;
+
+    // si on ne sait pas pour quelle table on va encaisser, retourner à la page 'Liste des commandes ouvertes'
+    } else {
+      return $this-&gt;redirect()-&gt;toRoute('tab/opened');
+    }
+
+    $result['status'] = $status ;
+    $result['form'] = $form ;
+    return array('result' =&gt; $result) ;
+  }
+}
+</code></pre>
+<p>L'exception, juste un héritage de la classe <code>Exception</code> par défaut</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Exception/TabHasUnservedItem.php
+
+&lt;?php
+namespace CoffeeBar\Exception ;
+
+use Exception;
+
+class TabHasUnservedItem extends Exception {}
+</code></pre>
+<p>La vue</p>
+<pre><code class="language-php">// module/CoffeeBar/view/coffee-bar/tab/close.phtml
+
+&lt;?php
+  $tab = $result['status'] ;
+  $form = $result['form'] ;
+  $form-&gt;prepare() ;
+?&gt;
+
+&lt;h3&gt;Encaisser pour la table #&lt;?php echo $tab-&gt;getTableNumber() ; ?&gt; &lt;/h3&gt;
+
+&lt;table&gt; 
+
+  &lt;?php
+
+    foreach($tab-&gt;getItems() as $item)
+    {
+  ?&gt;
+      &lt;tr&gt;
+        &lt;td&gt;&lt;?php echo $item-&gt;getMenuNumber() ; ?&gt;&lt;/td&gt;
+        &lt;td&gt;&lt;?php echo $item-&gt;getDescription() ; ?&gt;&lt;/td&gt;
+        &lt;td&gt;&lt;?php echo $item-&gt;getPrice() ; ?&gt;&lt;/td&gt;
+      &lt;/tr&gt;
+  &lt;?php
+    }
+  ?&gt;
+  
+  &lt;tr&gt;
+    &lt;td&gt;Total&lt;/td&gt;
+    &lt;td&gt;&lt;/td&gt;
+    &lt;td&gt;&lt;?php echo $tab-&gt;getTotal() ; ?&gt;&lt;/td&gt;
+  &lt;/tr&gt;
+
+&lt;/table&gt;
+
+&lt;?php
+  $form-&gt;setAttribute('action', $this-&gt;url('tab/close', array('id' =&gt; $tab-&gt;getTableNumber()))) ;
+  $form-&gt;setAttribute('method', 'post') ;
+?&gt;
+
+&lt;?php echo $this-&gt;form()-&gt;openTag($form) ; ?&gt;
+
+&lt;div class='form-group'&gt;
+  &lt;?php echo $this-&gt;formRow($form-&gt;get('amountPaid')) ; ?&gt;
+&lt;/div&gt;
+
+&lt;?php
+  echo $this-&gt;formRow($form-&gt;get('security')) ;
+  echo $this-&gt;formHidden($form-&gt;get('id')) ;
+  echo $this-&gt;formRow($form-&gt;get('submit')) ;
+
+  echo $this-&gt;form()-&gt;closeTag() ;
+?&gt;
+</code></pre>
+<p>Je passe rapidement. J'espère que tout est clair sur cette partie. Il nous reste la route à préparer et on passera dans le vif du sujet.</p>
+<pre><code class="language-php">// module/CoffeeBar/config/module.config.php
+
+&lt;?php
+return array(
+  'router' =&gt; array(
+    'routes' =&gt; array(
+      'tab' =&gt; array(
+        'child_routes' =&gt; array(
+ 
+          /**
+           * cette URL : http://coffeebar.home/tab/close/{$id} mène à cette route
+           */
+          'close' =&gt; array(
+            'type' =&gt; 'Segment',
+            'options' =&gt; array(
+              'route' =&gt; '/close/[:id]',
+              'constraints' =&gt; array(
+                'id' =&gt; '[a-zA-Z0-9_-]+',
+              ),
+              'defaults' =&gt; array(
+                'controller' =&gt; 'CoffeeBarController\Tab',
+                'action' =&gt; 'close',
+              ),
+            ),
+            'may_terminate' =&gt; true,
+          ),
+        ),
+      ),
+    ),
+  ),
+);
+</code></pre>
+<p>Voila</p>
+<p>Le formulaire est prêt. Ajoutons un lien 'Encaisser la table' sur la page <code>status.phtml</code> par ex.</p>
+<pre><code class="language-html">// module/CoffeeBar/view/coffee-bar/tab/status.phtml
+
+&lt;!-- n'importe où dans la page... juste sous le titre par exemple --&gt;
+
+&lt;div&gt;&lt;a href=&quot;&lt;?php echo $this-&gt;url('tab/close', array('id' =&gt; $result-&gt;getTableNumber())) ;?&gt;&quot;&gt;Invoice&lt;/a&gt;&lt;/div&gt;
+</code></pre>
+<p>Si vous ne l'avez pas fait, on peut également rajouter un lien vers la page pour placer une commande (histoire de rajouter des boissons ou des plats)</p>
+<pre><code class="language-html">// module/CoffeeBar/view/coffee-bar/tab/status.phtml
+
+&lt;!-- n'importe où dans la page... juste sous le titre par exemple --&gt;
+
+&lt;div&gt;&lt;a href=&quot;&lt;?php echo $this-&gt;url('tab/order', array('id' =&gt; $result-&gt;getTableNumber())) ;?&gt;&quot;&gt;Order Food/Drink&lt;/a&gt;&lt;/div&gt;&lt;/pre&gt;
+</code></pre>
+<p>Mais attendez, il nous manque des éléments... Dans notre contrôleur, on utilise une méthode <code>OpenTabs::invoiceForTable($numéro_de_table)</code>.</p>
+<p>En effet, dans notre liste de notes ouvertes, nous pouvons, avec le numéro de la table, récupérer la 'facture' de la note (la liste des éléments qui ont été servis)</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Service/OpenTabs.php
+
+&lt;?php
+namespace CoffeeBar\Service ;
+
+use CoffeeBar\Entity\OpenTabs\TabInvoice;
+
+class OpenTabs implements ListenerAggregateInterface
+{
+  public function invoiceForTable($table)
+  {
+    $this-&gt;loadTodoByTab() ;
+    foreach($this-&gt;todoByTab-&gt;getArrayCopy() as $k =&gt; $v)
+    {
+      if($v-&gt;getTableNumber() == $table)
+      {
+        $status = new TabInvoice() ;
+        $status-&gt;setTabId($k) ;
+        $status-&gt;setTableNumber($v-&gt;getTableNumber()) ;
+        $status-&gt;setItems($v-&gt;getItemsServed()) ;
+        $status-&gt;setHasUnservedItems(count($v-&gt;getItemsToServe()) + count($v-&gt;getItemsInPreparation())) ;
+        return $status ;
+      }
+    }
+    return NULL ;
+  }
+}
+</code></pre>
+<p>Cette méthode <code>OpenTabs::invoiceForTable($table)</code> retourne un objet <code>CoffeeBar\Entity\OpenTabs\TabInvoice</code>.</p>
+<p>Exceptionnellement, pour cet objet, je n'ai pas défini tous les <em>getters</em> et <em>setters</em>. Je vous mets donc à disposition l'intégralité de l'objet.</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Entity/OpenTabs/TabInvoice.php
+
+&lt;?php
+namespace CoffeeBar\Entity\OpenTabs ;
+
+class TabInvoice
+{
+  protected $tabId;
+  protected $tableNumber;
+  protected $items;
+  protected $total;
+  protected $hasUnservedItems;
+
+  // getter &amp;amp; setter pour $tabId
+  // getter &amp;amp; setter pour $tableNumber
+
+  // lorsqu'on set les items, on en profite pour calculer le total (setTotal)
+  public function setItems($items) 
+  {
+    $this-&gt;items = $items;
+    $this-&gt;getTotal() ;
+  }
+
+  public function getItems() 
+  {
+    return $this-&gt;items;
+  }
+
+  // il n'y a pas de setTotal puisque la valeur ne viendra jamais de l'extérieur.
+  // c'est la liste des éléments servis de la note qui calcule le total de la note
+  public function getTotal() 
+  {
+    $this-&gt;total = 0 ;
+    foreach($this-&gt;items as $item)
+    {
+      $this-&gt;total += $item-&gt;getPrice() ;
+    }
+    return $this-&gt;total;
+  }
+
+  // juste un booleen
+  // en entrée, le nombre d'éléments sur la note qui n'ont pas été servis.
+  public function setHasUnservedItems($nonServedItemsCount) 
+  {
+    if($nonServedItemsCount == 0)
+    {
+      $this-&gt;hasUnservedItems = FALSE ;
+    } else {
+      $this-&gt;hasUnservedItems = TRUE ;
+    }
+  }
+
+  // il n'y a pas de getHasUnservedItems() parce que je trouvais que ce n'était pas très joli...
+  public function hasUnservedItems() 
+  {
+    return $this-&gt;hasUnservedItems;
+  }
+}
+</code></pre>
+<p>Nous avons enfin tout. Le formulaire devrait maintenant s'afficher convenablement.</p>
+<p>Allez ! plus qu'un tout petit dernier article et nous en aurons enfin fini avec ce tutoriel. Dans le prochain article, je vous le donne dans le mille, on va traiter le formulaire et clore notre note.</p>
+<p><em>Vous trouverez l'intégralité de l'application sur mon <a href="https://github.com/haclong/coffeebar" target="_blank">github</a></em></p>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/fr/tags/zend-framework-2">zend framework 2</a></li><li><a href="/fr/tags/oop">OOP</a></li><li><a href="/fr/tags/programmation-evenementielle">programmation événementielle</a></li></ul>
+        </div>
+      
+
+      
+        <nav id="book-navigation">
+    
+       <li class="link-previous"><a href="/fr/posts/application-coffeebar-1719-le-service.html"><i class="fas fa-long-arrow-alt-left"></i> Application CoffeeBar 17/19 - Le service</li>
+    
+
+    
+        <li class="link-next"><a href="/fr/posts/application-coffeebar-1919-clore-la-note.html">Application CoffeeBar 19/19 - Clore la note <i class="fas fa-long-arrow-alt-right"></i></a></li>
+    
+
+    
+        <li class="link-up"><a href="/fr/books/gerer-un-cafe-avec-une-programmation-evenementielle.html"><i class="fas fa-book-open"></i> Gérer un café avec une programmation événementielle</li>
+    
+</nav>
+
+      
+    
+
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>Sur moi</h3>
+      <p>J&#39;ai appris le php il y a quelques années, quand Internet était à ses débuts. Pour diverses raisons, j&#39;ai arrêté en route et j&#39;ai perdu le fil des nouveaux Internets que je redécouvre. Résultat, je me sens constamment à courir après l&#39;histoire mais je suis toujours motivée à reprendre des projets personnels. Je me propose de vous partager mes découvertes. Au delà des sujets de programmation, j&#39;aime également partager mes infos concernant notamment l&#39;Histoire, l&#39;Astronomie, la Linguistique, les Films, les Livres et les Anime. J&#39;espère que vous aimerez suivre mon blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. Tous droits réservés.</p>
+        <p>Propulsé par <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

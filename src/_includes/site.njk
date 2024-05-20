@@ -1,0 +1,23 @@
+
+{% extends "main.njk" %}
+
+{% block content %}
+
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/{{ locale }}/">{{ nav.home }}</a><i class="fas fa-angle-right"></i>{{ tagged_with }}<i class="fas fa-angle-right"></i>{{ etiquette | safe }}
+      </div>
+    </div>
+
+<div class="container-xl" id="home2">
+
+
+{% set taglist = collections[ etiquette ] %}
+{% for post in taglist | reverse %}
+   post.data.title
+  {% include "blocks/postsummary.njk" %}
+{% endfor %}
+
+</div>
+
+{% endblock %}

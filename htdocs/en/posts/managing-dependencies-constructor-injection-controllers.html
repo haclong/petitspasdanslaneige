@@ -1,0 +1,264 @@
+<!doctype html>
+<html class="no-js" lang="en" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>Managing Dependencies - Constructor Injection in controllers&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">French</a>
+        <a href="/en/">English</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/en/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/en/books/0/index.html">Collections</a>
+        <a href="/en/">Home</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/en/">Home</a><i class="fas fa-angle-right"></i>Managing Dependencies - Constructor Injection in controllers
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>Managing Dependencies - Constructor Injection in controllers</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>11/29/2014, 2:41:00 PM
+        
+        <i class="fas fa-th-large"></i><!--a href="/en/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/Capture_serveur_rack.PNG" class="node-banner" />
+        
+      </div>
+
+      <p><p>A quick post on how to inject dependencies into our controller's constructor.</p>
+<p>Working on ZF2 2.1.5+</p>
+<p>We want to have mandatory dependencies within our controller. Why not ? But how to do it since the controller object is instanciated by the MVC application… We could of course twitch and hack the application basics but we don’t want this, do we ?</p>
+<h4>Manage the mandatory dependencies in our controller</h4>
+<pre><code class="language-php">&lt;pre class=&quot;brush: php; auto-links: true; collapse: false; first-line: 1; html-script: false; smart-tabs: true; tab-size: 4; toolbar: false; codetag&quot;&gt;
+// module/MyModule/src/MyModule/Controller/IndexController.php
+
+&lt;?php
+namespace MyModule\Controller ;
+
+use MyModule\Entity\DependencyAInterface ;
+use MyModule\Form\DependencyBInterface ;
+use Zend\Mvc\Controller\AbstractActionController ;
+
+class IndexController extends AbstractActionController
+{
+  protected $dependencyA ;
+  protected $dependencyB ;
+ 
+  public function __construct(
+    DependencyAInterface $depA,
+    DependencyBInterface $debB
+  )
+  {
+    $this-&gt;dependencyA = $depA ;
+    $this-&gt;dependencyB = $depB ;
+  }
+ 
+  public function indexAction()
+    {
+      // just use $this-&gt;dependencyA and $this-&gt;dependencyB as normal
+    }
+}
+</code></pre>
+<p>Now we need a factory so we can “access” the constructor of our controller</p>
+<h4>Creating the controller factory</h4>
+<pre><code class="language-php">&lt;pre class=&quot;brush: php; auto-links: true; collapse: false; first-line: 1; html-script: false; smart-tabs: true; tab-size: 4; toolbar: false; codetag&quot;&gt;
+// module/MyModule/src/MyModule/Factory/IndexControllerFactory.php
+
+&lt;?php
+namespace MyModule\Factory ;
+
+use MyModule\Controller\WriteController ;
+use Zend\ServiceManager\FactoryInterface;
+use Zend\ServiceManager\ServiceLocatorInterface ;
+
+class IndexControllerFactory implements FactoryInterface
+{
+  public function createService(ServiceLocatorInterface $serviceLocator)
+  {
+    // this is mandatory , don’t ask
+    $realServiceLocator = $serviceLocator-&gt;getServiceLocator() ;
+    $entityDepA = $realServiceLocator-&gt;get('DependencyEntity') ;
+    $formDepB = $realServiceLocator-&gt;get('FormElementManager')-&gt;get('DependencyForm') ;
+ 
+    return new IndexController( // here is our controller
+      $entityDepA,
+      $formDepB
+    ) ;
+  }
+}
+</code></pre>
+<p>Et voilaaaa</p>
+<p>We have successfully injected the dependency in the controller.</p>
+<h4>But of course, now, our Service Manager</h4>
+<pre><code class="language-php">// module/MyModule/Module.php
+
+&lt;?php
+// we all know that part now
+...
+
+  public function getServiceConfig()
+  {
+    return array(
+      'invokables' =&gt; array(
+        'DependencyForm' =&gt; 'MyModule\Form\MyForm',
+      ),
+      'factories' =&gt; array(
+        'DependencyEntity' =&gt; function($sm) {
+          // anything here including your dependencies injection, of course
+          return $entity ;
+        },
+      ),
+    ) ;
+  }
+...
+</code></pre>
+<p>And now, how to tell the application that it shouldn’t use the controller straight but the one instanciated through our factory ??</p>
+<p>Let’s go get our module config. Remember the controllers key there where we use to declare each one of our controllers ? Yep, that’s it… right there.</p>
+<h4>The controllers key</h4>
+<p>We had something like this in that key :</p>
+<pre><code class="language-php">// module/MyModule/config/module.config.php
+
+&lt;?php
+
+return array(
+  'controllers' =&gt; array(
+    'invokables' =&gt; array(
+      'ModuleController\Index' =&gt; 'MyModule\Controller\IndexController',
+    ),
+  ),
+);
+</code></pre>
+<p>Now we want to use the factory instead</p>
+<pre><code class="language-php">// module/MyModule/config/module.config.php
+
+&lt;?php
+
+return array(
+  'controllers' =&gt; array(
+    'factories' =&gt; array(
+      'ModuleController\Index' =&gt; 'MyModule\Factory\IndexControllerFactory',
+    ),
+  ),
+);
+</code></pre>
+<p>Make sure to use the same alias (<em><strong>ModuleController\Index</strong></em>) so you won’t have to change the router too.</p>
+<p>And it’s done</p>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/en/tags/zend-framework-2">zend framework 2</a></li><li><a href="/en/tags/dependances">dépendances</a></li><li><a href="/en/tags/howto">HOWTO</a></li></ul>
+        </div>
+      
+
+      
+        <nav id="book-navigation">
+    
+
+    
+        <li class="link-next"><a href="/en/posts/managing-dependencies-custom-select-element-form.html">Managing Dependencies - Custom Select Element in Form <i class="fas fa-long-arrow-alt-right"></i></a></li>
+    
+
+    
+        <li class="link-up"><a href="/en/books/managing-dependencies-examples-zend-framework-2.html"><i class="fas fa-book-open"></i> Managing Dependencies - Examples with Zend Framework 2</li>
+    
+</nav>
+
+      
+    
+
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>About me</h3>
+      <p>I learned coding with php several years ago, when Internet was still young. For multiple reasons, i had stopped then and missed most of this new Internet i&#39;m discovering once again. So, i feel like a newbie again and since i&#39;m ready to start over personal project, i&#39;ll share with you some of my discoveries. Beyond coding topics, i&#39;ll enjoy sharing with you several subjects such as History, Astronomy, Linguistics, Movies, Books, Music and Anime among others. I hope you&#39;ll enjoy reading this blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. All rights reserved.</p>
+        <p>Powered by <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

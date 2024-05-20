@@ -1,0 +1,460 @@
+<!doctype html>
+<html class="no-js" lang="fr" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>Application CoffeeBar 7/19 - Gérer les commandes ouvertes&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">Français</a>
+        <a href="/en/">Anglais</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/fr/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/fr/books/0/index.html">Séries</a>
+        <a href="/fr/">Accueil</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/fr/">Accueil</a><i class="fas fa-angle-right"></i>Application CoffeeBar 7/19 - Gérer les commandes ouvertes
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>Application CoffeeBar 7/19 - Gérer les commandes ouvertes</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>12/02/2015 10:39:00
+        
+        <i class="fas fa-th-large"></i><!--a href="/fr/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/file9271237667217.jpg" class="node-banner" />
+        
+          <p><strong>Crédit</strong> : Morguefile.com </p>
+        
+      </div>
+
+      <p><p>Nous avons créé précédemment un service qui est chargé de s'occuper de l'historique d'une note indivuellement. Maintenant, nous allons nous occuper de gérer la liste des notes ouvertes. Nous allons utiliser un nouveau service pour cela. Celui-ci va stocker la liste des notes ouvertes et pourra afficher le statut de chaque notes à l'usage du staff du café.</p>
+<p><em>NOTE : le long du tutoriel, je vais vous faire rééditer des classes et des vues sur lesquels on sera déjà passé. Il va y avoir des parties qui auront disparu au second passage : typiquement les use, les instructions extends, implements etc... Cela ne veut pas dire qu'il faut les retirer. C'est juste pour alléger le code. S'il faut retirer du code, soit je vous remettrais le passage intégralement, pour voir ce qui a disparu, soit je vous signalerais qu'il faut effacer une ligne pour la remplacer par une autre.</em></p>
+<h2>Le service OpenTabs</h2>
+<p>Le service <strong>OpenTabs</strong> va intercepter les différents événements qui se produisent sur une (les) notes. Pour ce faire, il va implémenter l'interface <code>Zend\EventManager\ListenerAggregateInterface</code> et pour chaque événement déclenché, on va définir une méthode à exécuter. Notez que le service <strong>OpenTabs</strong> ne va s'occuper que des événements correspondant à des objets Evénements (<code>CoffeeBar\Event\*</code>) et non pas aux événements déclenchés par les objets Opérations (<code>CoffeeBar\Command\*</code>).</p>
+<p>Contrairement au service <strong>TabAggregate</strong> qui chargeait dans le cache un nouvel objet <code>CoffeeBar\Entity\TabStory\TabStory</code> par nouvelle note, le service <strong>OpenTabs</strong> ne va manipuler qu'un seul et même objet <code>CoffeeBar\Entity\OpenTabs\TodoByTab</code>, stocké dans l'index '<code>openTabs</code>' du cache. L'objet <code>CoffeeBar\Entity\OpenTabs\TodoByTab</code> hérite de <code>\ArrayObject</code>. (<a href="/fr/posts/application-coffeebar-219-installer-la-base-de-d%C3%A9veloppement.html">voir l'installation du cache</a>)</p>
+<p>Déclarons tout ça dans notre <strong>gestionnaire de services</strong>. Nous savons déjà que le service <strong>OpenTabs</strong> doit être déclaré comme observer dans notre <strong>gestionnaire d'événements</strong> personnalisé (<strong>TabEventManager</strong>). On fait ce rattachement dans la méthode <code>Module::onBootstrap()</code>.</p>
+<p>Le service <strong>OpenTabs</strong> - jusqu'à nouvel ordre - ne déclenche aucun événement. Il n'a donc aucune dépendance sur le <strong>gestionnaire d'événements</strong>. En revanche, il manipule l'index '<code>openTabs</code>' du cache : il y a donc une dépendance du service <strong>OpenTabs</strong> sur notre cache personnalisé <strong>TabCacheService</strong>. Rappelons nous, ce dernier a une clé '<code>TabCache</code>' dans notre <strong>gestionnaire de services</strong>.</p>
+<pre><code class="language-php">// module/CoffeeBar/Module
+
+namespace CoffeeBar;
+
+use CoffeeBar\Service\OpenTabs;
+
+class Module
+{
+  // les autres méthodes
+
+  public function onBootstrap(MvcEvent $event)
+  {
+    // cette ligne devrait déjà être présente
+    $sm = $event-&gt;getApplication()-&gt;getServiceManager() ;
+    // cette ligne devrait déjà être présente
+    $em = $sm-&gt;get('TabEventManager');
+    // on injecte le gestionnaire d'événements 'TabEventManager'
+    // dans la méthode OpenTabs::attach()
+    $em-&gt;attachAggregate($sm-&gt;get('OpenTabs')) ;
+  }
+
+  public function getServiceConfig()
+  {
+    return array(
+      'factories' =&gt; array(
+        'OpenTabs' =&gt; function($sm) {
+          $cache = $sm-&gt;get('TabCache') ;
+          $openTabs = new OpenTabs() ;
+          $openTabs-&gt;setCache($cache) ;
+          return $openTabs ;
+        },
+      ),
+    ) ;
+  }
+}
+</code></pre>
+<p>Maintenant que les services sont mis en place, voyons à quoi ressemble <code>CoffeeBar\Service\OpenTabs</code> dans les détails.</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Service/OpenTabs.php
+
+&lt;?php
+namespace CoffeeBar\Service ;
+
+use CoffeeBar\Entity\OpenTabs\ItemsArray;
+use CoffeeBar\Entity\OpenTabs\Tab;
+use Zend\EventManager\EventManagerInterface;
+use Zend\EventManager\ListenerAggregateInterface;
+
+class OpenTabs implements ListenerAggregateInterface
+{
+  protected $todoByTab ; // TodoByTab (opened tabs list / extending ArrayObject)
+  protected $cache ;
+  protected $listeners ;
+ 
+  // méthodes obligatoire pour l'interface ListenerAggregateInterface
+  // le paramètre $events est automatiquement poussé dans la méthode lorsqu'on attache l'objet OpenTabs au gestionnaire d'événements.
+  // ce fonctionnement est automatique grâce à l'interface ListenerAggregateInterface.
+  public function attach(EventManagerInterface $events)
+  {
+    $this-&gt;listeners[] = $events-&gt;attach('tabOpened', array($this, 'onTabOpened'));
+  }
+ 
+  public function detach(EventManagerInterface $events)
+  {
+    foreach ($this-&gt;listeners as $index =&gt; $listener) {
+      if ($events-&gt;detach($listener)) {
+        unset($this-&gt;listeners[$index]);
+      }
+    }
+  }
+ 
+  // injection du cache, pour pouvoir y stocker les données et les en extraire
+  public function setCache($cache)
+  {
+    $this-&gt;cache = $cache ;
+  }
+ 
+  public function getCache()
+  {
+    return $this-&gt;cache ;
+  }
+ 
+  // extraction de l'élément 'openTabs' du cache
+  protected function loadTodoByTab()
+  {
+    $this-&gt;todoByTab = $this-&gt;cache-&gt;getOpenTabs() ;
+  }
+ 
+  // stockage des données dans l'élément 'openTabs' du cache
+  protected function saveTodoByTab()
+  {
+    // remember, no object allowed
+    $this-&gt;cache-&gt;saveOpenTabs(serialize($this-&gt;todoByTab)) ;
+  }
+
+  /**
+   * Listener to tabOpened event
+   * @param Events $events
+   */
+  public function onTabOpened($events)
+  {
+    $tabOpened = $events-&gt;getParam('tabOpened') ;
+
+    // on charge l'objet ArrayObject du cache
+    $this-&gt;loadTodoByTab() ;
+ 
+    // on instancie un nouvel objet CoffeeBar\Entity\OpenTabs\Tab
+    $tab = new Tab($tabOpened-&gt;getTableNumber(), $tabOpened-&gt;getWaiter(), new ItemsArray(), new ItemsArray(), new ItemsArray()) ;
+    // on ajoute le nouvel objet Tab dans l'objet TodoByTab stocké dans le cache
+    // notez que l'index est l'id qui vient de l'objet TabOpened (c'est l'id unique)
+    $this-&gt;todoByTab-&gt;offsetSet($tabOpened-&gt;getId(), $tab) ;
+    $this-&gt;saveTodoByTab() ;
+  }
+}
+</code></pre>
+<p>Rappelons nous : l'index '<code>openTabs</code>' du cache contient un objet <code>CoffeeBar\Entity\OpenTabs\TodoByTab</code>.</p>
+<p>Lorsque nous faisons <code>OpenTabs::loadTodoByTab()</code>, on récupère cet objet <code>CoffeeBar\Entity\OpenTabs\TodoByTab</code>. Celui ci hérite de l'objet <code>\ArrayObject</code>.</p>
+<p>Chaque itération de l'objet <code>CoffeeBar\Entity\OpenTabs\TodoByTab</code> sera en fait un objet <code>CoffeeBar\Entity\OpenTabs\Tab</code>.</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Entity/OpenTabs/Tab.php
+
+&lt;?php
+namespace CoffeeBar\Entity\OpenTabs ;
+
+class Tab
+{
+  protected $tableNumber; // int - numéro de la table
+  protected $waiter; // string - nom du serveur
+  protected $itemsToServe; // ItemsArray - liste des éléments à servir
+  protected $itemsInPreparation; // ItemsArray - liste des éléments en préparation
+  protected $itemsServed; // ItemsArray - liste des éléments servis
+ 
+  public function __construct($tableNumber, $waiter, ItemsArray $itemsToServe, ItemsArray $itemsInPreparation, ItemsArray $itemsServed)
+  {
+    $this-&gt;setTableNumber($tableNumber) ;
+    $this-&gt;setWaiter($waiter) ;
+    $this-&gt;setItemsToServe($itemsToServe) ;
+    $this-&gt;setItemsInPreparation($itemsInPreparation) ;
+    $this-&gt;setItemsServed($itemsServed) ;
+  }
+
+  // getters &amp;amp; setters
+}
+</code></pre>
+<p>Et puisqu'on y est, voyons un peu à quoi ressemble <code>CoffeeBar\Entity\OpenTabs\ItemsArray</code>.</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Entity/OpenTabs/ItemsArray.php
+
+namespace CoffeeBar\Entity\OpenTabs ;
+
+use ArrayObject;
+
+class ItemsArray extends ArrayObject
+{
+  public function addItem($item)
+  {
+    $this-&gt;offsetSet(NULL, $item) ;
+  }
+}
+</code></pre>
+<h3>Pour résumer</h3>
+<p>Dans le cache, il y a une clé '<code>openTabs</code>' qui est une liste <code>CoffeeBar\Entity\OpenTabs\TodoByTab</code> qui hérite de l'objet <code>\ArrayObject**</code> (qui se comporte donc comme un tableau (grosso modo)). Chaque élément de cette liste est un objet <code>CoffeeBar\Entity\OpenTabs\Tab**</code> qui contient le <em>numéro de la table</em>, le <em>nom du serveur</em> et trois listes : la <em>liste des éléments à servir</em>, la <em>liste des éléments en préparation</em> et la <em>liste des éléments servis</em>. Chaque liste est un objet <code>CoffeeBar\Entity\OpenTabs\ItemsArray</code> qui hérite de l'objet <code>\ArrayObject</code>.</p>
+<p>Lorsqu'on ouvre une note, on crée donc un objet <code>CoffeeBar\Entity\TabStory\TabStory</code> (créé grâce au service <strong>TabAggregate</strong>) et on ajoute un élément <code>CoffeeBar\Entity\OpenTabs\Tab</code> dans la liste <code>CoffeeBar\Entity\OpenTabs\TodoByTab</code> (créé grâce au service <strong>OpenTabs</strong>).</p>
+<p><em>Je m'excuse pour les noms qui prêtent à confusion. Je n'ai pas pris le temps de prendre du recul sur le tutoriel d'origine et le framework .Net offre des raccourcis que PHP n'a pas (notamment sur les listes d'objets). J'ai du un peu improviser.</em></p>
+<h2>Controler les tables occupées</h2>
+<p>Puisque nous avons enfin la liste des notes ouvertes (donc des tables occupées), nous pouvons contrôler qu'au moment où on ouvre une nouvelle note, la table n'est pas déjà occupée, afin qu'il n'y ait pas deux notes sur la même table.</p>
+<p>Récupérons la liste des tables correspondant à une note ouverte.</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Service/OpenTabs.php
+
+&lt;?php
+namespace CoffeeBar\Service ;
+
+class OpenTabs
+{
+  /**
+   * Retourne la liste des tables servies
+   * @return array
+   */
+  public function activeTableNumbers()
+  {
+    $this-&gt;loadTodoByTab() ;
+    $array = array() ;
+    foreach($this-&gt;todoByTab-&gt;getArrayCopy() as $k =&gt; $v)
+    {
+      $array[] = $v-&gt;getTableNumber() ;
+    }
+    return sort($array) ;
+  }
+}
+</code></pre>
+<p>Et vérifions que la table n'est pas déjà occupée.</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Service/OpenTabs.php
+
+&lt;?php
+namespace CoffeeBar\Service ;
+
+class OpenTabs
+{
+  /**
+   * Retourne un booléen si la table est déjà ouverte ou pas
+   * @param int $id - table number
+   */
+  public function isTableActive($id)
+  {
+    if(in_array($id, $this-&gt;activeTableNumbers()))
+    {
+      return TRUE ;
+    } else {
+      return FALSE ;
+    }
+  }
+}
+</code></pre>
+<p>Utilisons cette méthode dans le contrôleur, au moment où on ouvre une note.</p>
+<p>J'ai beaucoup hésité...</p>
+<p>J'ai d'abord envisagé mettre ce contrôle dans l'objet <code>CoffeeBar\Command\OpenTab</code> puisque c'est au moment de déclencher l'événement que je souhaitais vérifier si la table est déjà active ou pas. Toutefois, cela créait une dépendance de l'objet <code>CoffeeBar\Command\OpenTab</code>sur le service <strong>OpenTabs</strong>. Ce n'était pas très satisfaisant.</p>
+<p>Puis, j'ai pensé qu'il valait mieux déplacer le contrôle dans le service <strong>TabAggregate</strong>. Ainsi, le contrôle aurait pu se déclencer juste avant l'événement '<code>tabOpened</code>' mais là encore, il y avait une dépendance entre <strong>TabAggregate</strong> et <strong>OpenTabs</strong>. De plus, le statut (occupée / inoccupée) de la table n'a rien à voir avec l'historique de la note.</p>
+<p>Finalement, je m'arrête au contrôleur qui accède par défaut au <strong>gestionnaire de services</strong> et qui va nous permettre d'accéder facilement aux différents services et qui, de surcroît, va traiter les informations du formulaire.</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Controller/TabController.php
+
+&lt;?php
+namespace CoffeeBar\Controller ;
+
+use CoffeeBar\Exception\TableNumberUnavailable;
+use Zend\Mvc\Controller\AbstractActionController;
+
+class TabController extends AbstractActionController
+{
+  public function openAction()
+  {
+    $form = $this-&gt;serviceLocator-&gt;get('OpenTabForm') ;
+    $request = $this-&gt;getRequest() ;
+
+    if($request-&gt;isPost()) {
+      $form-&gt;setData($request-&gt;getPost()) ;
+ 
+      $posted = $request-&gt;getPost() ;
+
+      $openTabs = $this-&gt;serviceLocator-&gt;get('OpenTabs') ;
+
+      try {
+        if($openTabs-&gt;isTableActive($posted['tableNumber'])) {
+          throw new TableNumberUnavailable('Tab is already opened') ;
+        }
+      } catch (TableNumberUnavailable $e) {
+        $this-&gt;flashMessenger()-&gt;addErrorMessage($e-&gt;getMessage());
+        return $this-&gt;redirect()-&gt;toRoute('tab/open');
+      }
+ 
+      if($form-&gt;isValid()) {
+        $openTab = $form-&gt;getObject() ;
+        return $this-&gt;redirect()-&gt;toRoute('tab/order', array('id' =&gt; $openTab-&gt;getTableNumber()));
+      }
+    }
+
+    $result['form'] = $form ;
+    return array('result' =&gt; $result) ;
+  }
+}
+</code></pre>
+<p>Et voila.</p>
+<p>L'exception <code>CoffeeBar\Exception\TableNumberUnavailable</code> hérite de la classe <code>\Exception</code>.</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Exception/TableNumberUnavailable.php
+namespace CoffeeBar\Exception ;
+
+use Exception;
+
+class TableNumberUnavailable extends Exception {}
+</code></pre>
+<p>L'exception capturée est envoyée dans l'aide d'action '<code>flashMessenger()</code>'. Pour l'afficher dans la vue, il suffit d'utiliser l'aide de vue correspondante.</p>
+<pre><code class="language-php">// module/Application/view/layout/layout.phtml
+
+... html divers
+
+&lt;div class=&quot;container&quot;&gt;
+  &lt;?php echo $this-&gt;flashMessenger()-&gt;render('error'); ?&gt;
+  &lt;?php echo $this-&gt;content; ?&gt;
+
+  ...
+&lt;/div&gt;
+</code></pre>
+<p>L'architecture de notre application prend forme petit à petit.</p>
+<p>Nous avons désormais :</p>
+<ul>
+<li>
+<p>une <strong>architecture MVC</strong>* pour structurer notre application.</p>
+</li>
+<li>
+<p>un <strong>cache</strong> pour gérer la couche persistence de données (évidemment, sur des projets à long terme il faudra utiliser des solutions plus perennes, comme une base de données).</p>
+</li>
+<li>
+<p>un <strong>gestionnaire d'événements</strong> pour gérer les événements déclenchés et leurs observers.</p>
+</li>
+<li>
+<p>un <strong>gestionnaire de services</strong> pour gérer les dépendances entre les objets et les services.</p>
+</li>
+<li>
+<p>un service <strong>TabAggregate</strong> pour gérer la logique métier sur une seule note et pour déclencher les événements qui vont bien.</p>
+</li>
+<li>
+<p>un service <strong>OpenTabs</strong> pour gérer la logique métier sur l'ensemble des notes ouvertes et pour écouter les événements déclenchés.</p>
+</li>
+</ul>
+<p>L'architecture MVC, le cache, les gestionnaires de services et d'événements sont des composants natifs du framework Zend Framework 2 et sont appelés par défaut lorsqu'on installe une squelette d'application ZF2.</p>
+<p>Allons ajouter quelques écrans sympathiques avant d'aller plus loin.</p>
+<p><em>You'll find the full application in my <a href="https://github.com/haclong/coffeebar" target="_blank">github</a></em></p>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/fr/tags/zend-framework-2">zend framework 2</a></li><li><a href="/fr/tags/events">events</a></li><li><a href="/fr/tags/helpers">helpers</a></li></ul>
+        </div>
+      
+
+      
+        <nav id="book-navigation">
+    
+       <li class="link-previous"><a href="/fr/posts/application-coffeebar-619-gerer-la-commande.html"><i class="fas fa-long-arrow-alt-left"></i> Application CoffeeBar 6/19 - Gérer la commande</li>
+    
+
+    
+        <li class="link-next"><a href="/fr/posts/application-coffeebar-819-afficher-les-notes-en-cours.html">Application CoffeeBar 8/19 - Afficher les notes en cours <i class="fas fa-long-arrow-alt-right"></i></a></li>
+    
+
+    
+        <li class="link-up"><a href="/fr/books/gerer-un-cafe-avec-une-programmation-evenementielle.html"><i class="fas fa-book-open"></i> Gérer un café avec une programmation événementielle</li>
+    
+</nav>
+
+      
+    
+
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>Sur moi</h3>
+      <p>J&#39;ai appris le php il y a quelques années, quand Internet était à ses débuts. Pour diverses raisons, j&#39;ai arrêté en route et j&#39;ai perdu le fil des nouveaux Internets que je redécouvre. Résultat, je me sens constamment à courir après l&#39;histoire mais je suis toujours motivée à reprendre des projets personnels. Je me propose de vous partager mes découvertes. Au delà des sujets de programmation, j&#39;aime également partager mes infos concernant notamment l&#39;Histoire, l&#39;Astronomie, la Linguistique, les Films, les Livres et les Anime. J&#39;espère que vous aimerez suivre mon blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. Tous droits réservés.</p>
+        <p>Propulsé par <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

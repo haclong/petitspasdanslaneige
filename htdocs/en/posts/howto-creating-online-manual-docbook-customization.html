@@ -1,0 +1,238 @@
+<!doctype html>
+<html class="no-js" lang="en" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>HOWTO - Creating an online manual with DocBook - Customization&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">French</a>
+        <a href="/en/">English</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/en/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/en/books/0/index.html">Collections</a>
+        <a href="/en/">Home</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/en/">Home</a><i class="fas fa-angle-right"></i>HOWTO - Creating an online manual with DocBook - Customization
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>HOWTO - Creating an online manual with DocBook - Customization</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>8/15/2012, 3:57:00 PM
+        
+        <i class="fas fa-th-large"></i><!--a href="/en/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->, <!--a href="/en/sites/haclong-projects.html" class="tag-sites"-->Haclong projects<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/old-books.jpg" class="node-banner" />
+        
+      </div>
+
+      <p><p>We have successfully generated our first book (in draft status). We have build a draft of our book skeleton (but it still miss the most interesting part, of course). We use the standard DocBook XSL library to generate the HTML pages. The pages we get need some customization but links are working and everything seem to be at its right place.</p>
+<h2>Chunking the book</h2>
+<p>Ok, first thing first. We processed our book with the <strong>xsl/html/chunk.xsl</strong> stylesheet.</p>
+<p>What's this file anyway ?</p>
+<p>With the DocBook XSL library and the correct XSL processor, our book can be published either in HTML, in PDF format, in epub and many other format. All informations can be found at the <a href="http://sagehill.net/docbookxsl/index.html" target="_blank">DocBook XSL documentation</a>. We want to publish our book in HTML only.</p>
+<p>In HTML format, DocBook XSL library can either output a single HTML file or a chunked book meaning one book = several HTML files with links from one file to other files. This is the current option we choose. We do want our book to be published in HTML ? so explore <strong>xsl/html</strong> directory, although most of the files are libraries that &quot;main&quot; stylesheets include. <strong>chunk.xsl</strong> is one of those &quot;main&quot; stylesheet. This one has all the correct rules to parse and split your book into several .html files.</p>
+<p>If you wish to publish your book into one single HTML file, you ought to use the <strong>docbook.xsl</strong> stylesheet. You'll also need to update the xsltproc command.</p>
+<h3>Updating the book.xsl file to publish the book into one single HTML page.</h3>
+<ol>
+<li>First, edit your <strong>sources/book.xsl</strong> file.</li>
+<li>Replace this element</li>
+</ol>
+<pre><code class="language-xml">&lt;xsl:import href=&quot;xsl/html/chunk.xsl&quot;/&gt;
+</code></pre>
+<p>by this element</p>
+<pre><code class="language-xml">&lt;xsl:import href=&quot;xsl/html/docbook.xsl&quot;/&gt;
+</code></pre>
+<ol start="3">
+<li>Save your file.</li>
+</ol>
+<h3>Updating the book.bat file to publish the book into one single HTML page.</h3>
+<ol>
+<li>First, edit your <strong>book.bat</strong> file.</li>
+<li>Replace this command</li>
+</ol>
+<pre><code class="language-sh">$ xsltproc sources/book.xsl sources/xml/book.xml
+</code></pre>
+<p>by this command</p>
+<pre><code class="language-sh">$ xsltproc -o html/index.html sources/book.xsl sources/xml/book.xml
+</code></pre>
+<ol start="3">
+<li>Save your file.</li>
+</ol>
+<p>You can now process your book (double clicking on <strong>book.bat</strong>). Your html page is the <strong>index.htm</strong> file in the <strong>html/</strong> directory. Drag and drop your index.htm file and enjoy your single HTML page book.</p>
+<p>All the paths are relatives to the .bat location.</p>
+<p>Please, revert your changes now for the book.bat and the book.xsl files so we can process.</p>
+<h2>What about our filesystem</h2>
+<p>We have build a nice filesystem in previous posts but once we processed the XML, files were generated on the root directory, and although it is not this bad, it's quite a mess.</p>
+<p>The DocBook XSL stylesheets has some parameters we can use to set the stylesheet. The documentation about those parameters can be found at the <a href="http://docbook.sourceforge.net/release/xsl/current/doc/" target="_blank">DocBook Reference Documentation</a>.</p>
+<h3>Drive all generated files into the correct directory</h3>
+<p>From now on, we'd like to have all our html files hosted under our <strong>html/</strong> directory. You can delete all html files generated earlier so it will look cleaner.</p>
+<ol>
+<li>Edit your customization layer file : <strong>sources/book.xsl</strong></li>
+<li>In the <strong>param area</strong>, add this element</li>
+</ol>
+<pre><code class="language-xml">&lt;xsl:param name=&quot;base.dir&quot;&gt;A:/bsolute/path/to/your/book_directory/html/&lt;/xsl:param&gt;
+</code></pre>
+<ol start="3">
+<li>Save the file.</li>
+</ol>
+<p>If you try to publish the book, your HTML files will be in the <strong>html/</strong> directory now.</p>
+<p>The path have to be an absolute path. Link to the full documentation for the <a href="http://docbook.sourceforge.net/release/xsl/current/doc/html/base.dir.html" target="_blank">base.dir</a> parameter.</p>
+<h3>Get nice names for our HTML files</h3>
+<p>Now let's get a look at our generated HTML files. DocBook XSL generated the default <strong>index.html</strong> filename and then, there's html files with automated filename generated. <strong>pt01.html</strong> will stand for the first <code>&lt;part&gt;</code> element of my book. <strong>pt02.html</strong> stands for the second <code>&lt;part&gt;</code> element of the book. A <code>&lt;book&gt;</code> element will generate a bk* name while a <code>&lt;chapter&gt;</code> element will generate a ch* name. This is nice and as we can see, DocBook XSL handle this naming thing quite well. But we'd like to have more human readable filenames.</p>
+<p>We will use the <strong>xml:id</strong> attribute. For each <code>&lt;part&gt;</code>, <code>&lt;book&gt;</code>, <code>&lt;chapter&gt;</code> and so on element, we can assign an xml:id attribute and we can tell DocBook XSL to use this xml:id as a filename.</p>
+<ol>
+<li>Edit your customization layer file : <strong>sources/book.xsl</strong></li>
+<li>In the <strong>param area</strong>, add this element :</li>
+</ol>
+<pre><code class="language-xml">&lt;xsl:param name=&quot;use.id.as.filename&quot;&gt;1&lt;/xsl:param&gt;
+</code></pre>
+<ol start="3">
+<li>Save the file.</li>
+</ol>
+<p>If you try to publish the book, your HTML will have nice names matching the ids now. Link to the full documentation for the <a href="http://docbook.sourceforge.net/release/xsl/current/doc/html/use.id.as.filename.html" target="_blank">use.id.as.filename</a> parameter.</p>
+<h2>Getting some nicer look 'n feel</h2>
+<p>The HTML generated by the DocBook XSL stylesheets are nice and readable, indeed, but they look quite rough and primitive. We would like to exerce our CSS skills and style all this.</p>
+<ol>
+<li>Edit your customization layer file : <strong>sources/book.xsl</strong></li>
+<li>In the <strong>param area</strong>, add this element :</li>
+</ol>
+<pre><code class="language-xml">&lt;xsl:param name=&quot;html.stylesheet&quot;&gt;css/style.css&lt;/xsl:param&gt;
+</code></pre>
+<ol start="3">
+<li>Save the file</li>
+</ol>
+<p>The path is relative to the <strong>index.html</strong> file. You can add as many CSS stylesheets as you want. Link to the full documentation for the <a href="http://docbook.sourceforge.net/release/xsl/current/doc/html/html.stylesheet.html" target="_blank">html.stylesheet</a> parameter.</p>
+<h3>Create the stylesheet</h3>
+<p>We have linked our HTML to a style.css file. We need now to create it.</p>
+<ol>
+<li>Create a <strong>style.css</strong> file.</li>
+<li>Save it in <strong>html/css</strong> directory.</li>
+<li>Write some CSS properties.</li>
+</ol>
+<pre><code class="language-css">body {background-color : #ffffff ; color : #000000 ; font-family : arial }
+</code></pre>
+<ol start="4">
+<li>Save the file</li>
+</ol>
+<p>You can publish your book now.</p>
+<p>Well, it looks way nicer, right ? You can customize your book using the CSS as you want.</p>
+<p>We are not done with the settings and customization thing but the book look real nice now. We need now to add some informative texts and we will work on new DocBook elements in the next post. Stay tuned !</p>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/en/tags/docbook">docbook</a></li><li><a href="/en/tags/xml">xml</a></li><li><a href="/en/tags/xsl">XSL</a></li></ul>
+        </div>
+      
+
+      
+        <nav id="book-navigation">
+    
+       <li class="link-previous"><a href="/en/posts/howto-creating-online-manual-docbook-book.html"><i class="fas fa-long-arrow-alt-left"></i> HOWTO - Creating an online manual with DocBook - The Book</li>
+    
+
+    
+
+    
+        <li class="link-up"><a href="/en/books/howto-creating-online-manual-docbook.html"><i class="fas fa-book-open"></i> HOWTO - Creating an online manual with DocBook</li>
+    
+</nav>
+
+      
+    
+
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>About me</h3>
+      <p>I learned coding with php several years ago, when Internet was still young. For multiple reasons, i had stopped then and missed most of this new Internet i&#39;m discovering once again. So, i feel like a newbie again and since i&#39;m ready to start over personal project, i&#39;ll share with you some of my discoveries. Beyond coding topics, i&#39;ll enjoy sharing with you several subjects such as History, Astronomy, Linguistics, Movies, Books, Music and Anime among others. I hope you&#39;ll enjoy reading this blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. All rights reserved.</p>
+        <p>Powered by <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

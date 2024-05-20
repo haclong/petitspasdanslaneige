@@ -1,0 +1,417 @@
+<!doctype html>
+<html class="no-js" lang="fr" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>Application CoffeeBar 2/19 - Installer la base de développement&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">Français</a>
+        <a href="/en/">Anglais</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/fr/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/fr/books/0/index.html">Séries</a>
+        <a href="/fr/">Accueil</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/fr/">Accueil</a><i class="fas fa-angle-right"></i>Application CoffeeBar 2/19 - Installer la base de développement
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>Application CoffeeBar 2/19 - Installer la base de développement</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>29/12/2014 15:44:00
+        
+        <i class="fas fa-th-large"></i><!--a href="/fr/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/file9271237667217.jpg" class="node-banner" />
+        
+          <p><strong>Crédit</strong> : Morguefile.com </p>
+        
+      </div>
+
+      <p><p>Pour commencer notre petite application de gestion des commandes d’un petit café, installons d’abord la base de l’application. Nous travaillerons avec Zend Framework 2. Ce framework permet de monter des applications web en se basant sur l'architecture Modèle-Vue-Controleur, et l'application charge par défaut des gestionnaires de services, d'événements et de formulaires qui nous seront bien utiles.</p>
+<p>Je tiens à préciser que les autres grands frameworks populaires ont les mêmes fonctionnalités. J'écris ce tutorial pour ZF2 parce que je travaille sur ce framework. Je vous invite à le &quot;traduire&quot; dans votre framework favori si vous le souhaitez.</p>
+<h3>Prérequis</h3>
+<ul>
+<li>Installer <a href="http://framework.zend.com/manual/2.3/en/user-guide/skeleton- application.html" target="_blank">Zend Framework Skeletton Application</a>.</li>
+<li>Créer un nouveau module <strong>CoffeeBar</strong>. Je passe rapidement sur cette partie, vous trouverez la documentation sur<a href="http://framework.zend.com/manual/2.3/en/user-guide/modules.html" target="_blank"> la documentation de Zend Framework</a>.</li>
+<li>Ne pas oublier d'activer le module dans <code>config/application.config.php</code></li>
+<li>Créer le fichier <code>module/CoffeeBar/Module.php</code> avec ce contenu minimal :</li>
+</ul>
+<pre><code class="language-php">&lt;?php
+namespace CoffeeBar ;
+
+class Module
+{
+  public function getAutoloaderConfig()
+  {
+    return array(
+      'Zend\Loader\StandardAutoloader' =&gt; array(
+        'namespaces' =&gt; array(
+          __NAMESPACE__ =&gt; __DIR__ . '/src/' . __NAMESPACE__,
+        ),
+      ),
+    ) ;
+  }
+ 
+  public function getConfig()
+  {
+    return include __DIR__ . '/config/module.config.php' ;
+  }
+}
+</code></pre>
+<ul>
+<li>Créer le fichier <code>module/CoffeeBar/config/module.config.php</code> avec ce contenu minimal :</li>
+</ul>
+<pre><code class="language-php">&lt;?php
+return array() ;
+</code></pre>
+<p>Vérifier que le site fonctionne toujours. Il n'y a pas de raisons qu'il ne fonctionne pas normalement.</p>
+<h3>Persistence des données</h3>
+<p>Nous allons avoir besoin d'un espace pour stocker la liste des notes ouvertes. Une couche de &quot;persistence&quot; où nous allons stocker les informations et les extraire.</p>
+<p>Parce que l'exercice est sensé être court, nous allons exploiter le cache. D’abord pour nous familiariser avec, et ma foi, pour un petit exercice sans conséquence, je ne vois pas pourquoi on irait s’encombrer avec la couche base de données...</p>
+<p>Fort heureusement, même si cela m’a pris un certain temps, voire un temps certain à comprendre un <a href="http://www.masterzendframework.com/servicemanager/storage-cache-abstract-service-factory-easy-cache-configuration" target="_blank">tutoriel</a> trouvé sur le net au sujet du cache dans Zend Framework, une fois que c’est compris, c’est - comme pour le reste - simplissime.</p>
+<h4>Un cache prédéfini dans le skeleton</h4>
+<p>L’<strong>Application (Skeletton) de Zend Framework 2</strong> charge déjà un objet <code>abstract factory</code> pour utiliser le cache. Tout ce qui reste à faire, c’est de le paramétrer et de l’utiliser. Le tutoriel de <em><strong>Matthew Setter</strong></em> propose d’utiliser un service <strong>Redis</strong>, ou à défaut, d’utiliser les ressources de la machine pour le cache. Pour ma part, je découvre, j’opte pour l’utilisation exclusive des ressources de la machine... N’allons pas trop vite...</p>
+<p>Il est défini ici :</p>
+<pre><code class="language-php">// module/Application/config/module.config.php
+
+&lt;?php
+return array(
+  ...
+  'service_manager' =&gt; array(
+    'abstract_factories' =&gt; array(
+      'Zend\Cache\Service\StorageCacheAbstractServiceFactory',
+    ),
+  ),
+);
+</code></pre>
+<p>Pour le paramétrer, vous pouvez choisir le fichier de configuration de votre préférence. Pour rappel, l'<strong>Application</strong> admet les fichiers de configuration suivants :</p>
+<ul>
+<li><code>config/application.config.php</code> (qui sera commité et distribué pour tous)</li>
+<li><code>config/autoload/(*.)global.php</code> (qui seront commités et distribués pour tous)</li>
+<li><code>config/autoload/(*.)local.php</code> (qui ne seront pas commités et cachés à tous)</li>
+<li><code>module/*/config/module.config.php</code> (qui seront commités et distribués pour tous)</li>
+</ul>
+<p>Vous pouvez adoptez votre propre organisation, dans vos différents fichiers de configuration. Je vous propose mon point de vue :</p>
+<ul>
+<li>le fichier <code>config/application.config.php</code> ne concerne que le chargement des modules, le path où on peut les trouver ainsi que les fichiers de configuration que l'application doit charger automatiquement.</li>
+<li>les fichiers <code>module/*/config/module.config.php</code> comprennent les informations récurrentes des modules : les vues, les controllers, les services, les routes, la navigation... autant que possible, conserver les mêmes clés pour ne pas avoir à chercher l'information partout.</li>
+<li>restent enfin les fichiers dans <code>config/autoload/*.php</code> qui peuvent être utilisés pour configurer des éléments ou des modules. Il faut savoir qu'à cet endroit, on peut créer autant de fichiers de configuration qu'on veut : <code>db.local.php</code>, <code>cache.local.php</code>, <code>mail.global.php</code> etc...</li>
+</ul>
+<p>Ici, on va utiliser le fichier <code>global.php</code> parce que mon cache est en local dans le système de fichiers. On n'a rien à cacher...</p>
+<pre><code class="language-php">// config/autoload/global.php
+
+&lt;?php
+return array(
+  'caches' =&gt; array(
+    'Cache\Persistence' =&gt; array(
+      'adapter' =&gt; 'filesystem',
+      'ttl' =&gt; 86400,
+      'options' =&gt; array(
+        // modifier les droits d’accès si nécessaires
+        // mod : 775 - owner : user:www-data
+        'cache_dir' =&gt; __DIR__ . '/../../data/cache/',
+      ),
+    ),
+  ),
+);
+</code></pre>
+<p>On pourrait utiliser le cache directement mais comme on va avoir besoin de définir des méthodes dédiées pour accéder à nos éléments, nous allons créer un service dédié.</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Service/TabCacheService.php
+
+&lt;?php
+namespace CoffeeBar\Service ;
+
+class TabCacheService
+{
+  // notez la propriété protégée et les accesseurs qui nous permettent ainsi de gérer les dépendances.
+  protected $cache ;
+ 
+  public function getCache() 
+  {
+    return $this-&gt;cache;
+  }
+
+  // l’injection se fait dans le constructeur : cela permet de rendre l’élément obligatoire au bon fonctionnement de notre service.
+  public function __construct($cache) 
+  {
+    $this-&gt;cache = $cache;
+  }
+}
+</code></pre>
+<p>Notre cache va stocker</p>
+<ul>
+<li>la liste des notes ouvertes d'une part,</li>
+<li>la todolist du chef d'autre part</li>
+<li>et chaque note individuellement, par leur id unique.</li>
+</ul>
+<p>Pour chacune de ces listes, on va créer un index dans le cache et des méthodes pour accéder à ces index.</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Service/TabCacheService.php
+
+&lt;?php
+namespace CoffeeBar\Service ;
+
+use Zend\Cache\Exception\MissingKeyException;
+
+class TabCacheService
+{
+  // autres méthodes
+
+  // instancier la clé pour la liste des notes ouvertes
+  // index = 'openTabs'
+  public function setOpenTabs($openTabs)
+  {
+    if($this-&gt;cache-&gt;hasItem('openTabs'))
+    {
+      return $this-&gt;cache-&gt;getItem('openTabs') ;
+    } else {
+      return $this-&gt;cache-&gt;setItem('openTabs', $openTabs) ;
+    }
+  }
+
+  // récupérer la liste des notes ouverte
+  public function getOpenTabs()
+  {
+    try {
+      return unserialize($this-&gt;cache-&gt;getItem('openTabs')) ;
+    } catch (MissingKeyException $ex) {
+      echo 'openTabs cache key missing' ;
+    }
+  }
+ 
+  // mettre la liste à jour
+  public function saveOpenTabs($openTabs)
+  {
+    return $this-&gt;cache-&gt;setItem('openTabs', $openTabs) ;
+  }
+ 
+  // instancier la clé pour la todolist du chef
+  // index = 'todoList'
+  public function setTodoList($todoList)
+  {
+    if($this-&gt;cache-&gt;hasItem('todoList'))
+    {
+      return $this-&gt;cache-&gt;getItem('todoList') ;
+    } else {
+      return $this-&gt;cache-&gt;setItem('todoList', $todoList) ;
+    }
+  }
+ 
+  // récupérer la todolist du chef
+  public function getTodoList()
+  {
+    try {
+      return unserialize($this-&gt;cache-&gt;getItem('todoList')) ;
+    } catch (MissingKeyException $ex) {
+      echo 'todoList cache key missing' ;
+    }
+  }
+ 
+  // mettre la todolist à jour
+  public function saveTodoList($todoList)
+  {
+    return $this-&gt;cache-&gt;setItem('todoList', $todoList) ;
+  }
+
+  // récupérer un élément du cache par son index
+  public function getItem($id)
+  {
+    return $this-&gt;cache-&gt;getItem($id) ;
+  }
+ 
+  // créer un élément du cache avec un index et les données
+  public function setItem($id, $datas)
+  {
+    $this-&gt;cache-&gt;setItem($id, $datas) ;
+  }
+  
+  // vérifie si l'élément du cache désigné par son index existe
+  public function hasItem($id)
+  {
+    return $this-&gt;cache-&gt;hasItem($id) ;
+  }
+}
+</code></pre>
+<p><em>NOTE : le long du tutoriel, je vais vous faire rééditer des classes et des vues sur lesquels on sera déjà passé. Il va y avoir des parties qui auront disparu au second passage : typiquement les use, les instructions extends, implements etc... Cela ne veut pas dire qu'il faut les retirer. C'est juste pour alléger le code. S'il faut retirer du code, soit je vous remettrais le passage intégralement, pour voir ce qui a disparu, soit je vous signalerais qu'il faut effacer une ligne pour la remplacer par une autre.</em></p>
+<p>Chargeons notre service dans le <strong>gestionnaire de services (Service Manager)</strong>. On en profitera pour instancier les deux index au lancement de l'application (au moment du <strong>bootstrap</strong>).</p>
+<pre><code class="language-php">// module/CoffeeBar/Module.php
+
+&lt;?php
+namespace CoffeeBar;
+
+use ArrayObject;
+use CoffeeBar\Entity\OpenTabs\TodoByTab;
+use CoffeeBar\Service\TabCacheService;
+use Zend\Mvc\MvcEvent;
+
+class Module
+{
+  public function getConfig() //
+
+  public function getAutoloaderConfig() //
+
+  // la fonction onBootstrap est une fonction qui est chargée dans l'application.
+  // elle admet en argument un objet de type MvcEvent systématiquement.
+  public function onBootstrap(MvcEvent $event)
+  {
+    $sm = $event-&gt;getApplication()-&gt;getServiceManager() ;
+    $cache = $sm-&gt;get('TabCache') ;
+    // le cache ne stocke que des strings. Il faut sérializer notre objet.
+    $cache-&gt;setOpenTabs(serialize(new TodoByTab())) ;
+    $cache-&gt;setTodoList(serialize(new ArrayObject())) ;
+  }
+
+  public function getServiceConfig()
+  {
+    return array(
+      'factories' =&gt; array(
+        'TabCache' =&gt; function($sm) {
+          // la clé qui a été définie dans notre configuration
+          $cacheService = $sm-&gt;get('Cache\Persistence') ;
+          $tabCache = new TabCacheService($cacheService) ;
+ 
+          return $tabCache ;
+        },
+      ),
+    ) ;
+  }
+}
+</code></pre>
+<p>On charge dans chaque index du cache un objet <code>\ArrayObject</code>. Pour la <strong>liste des notes ouvertes</strong>, on va charger un objet personnalisé qui va hériter de <code>\ArrayObject</code> et pour la <strong>todolist du chef</strong>, on va se contenter d'utiliser un objet <code>\ArrayObject</code> directement.</p>
+<p>Voyons rapidement notre objet <code>CoffeeBar\Entity\OpenTabs\TodoByTab</code>.</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Entity/OpenTabs/TodoByTab.php
+
+&lt;?php
+namespace CoffeeBar\Entity\OpenTabs ;
+
+use ArrayObject;
+
+class TodoByTab extends ArrayObject {}
+</code></pre>
+<p>On aurait pu utiliser directement un objet <code>\ArrayObject</code>. Mais je peux expliquer :</p>
+<ul>
+<li>L'avantage réel, c'est que vous pouvez utiliser du <a href="http://fr2.php.net/manual/fr/language.oop5.typehinting.php" target="_blank"><strong>typage explicite</strong> (type hinting)</a> avec cette classe...</li>
+<li>La vraie raison dans notre cas, cependant, c'est que je ne savais pas, au moment où j'ai créé cette classe, s'il avait fallu lui ajouter des méthodes personnalisées... J'ai pris les devants en créant une classe dédiée, au cas où. Pour la todolist du chef, je l'ai créée à la fin de l'application, j'avais compris où j'allais.</li>
+</ul>
+<p>Rendez vous dans le prochain article pour faire un peu de route / contrôleur / vue...</p>
+<p><em>Vous trouverez l'intégralité de l'application sur mon <a href="https://github.com/haclong/coffeebar" target="_blank">github</a></em></p>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/fr/tags/zend-framework-2">zend framework 2</a></li><li><a href="/fr/tags/mvc">MVC</a></li><li><a href="/fr/tags/zend-cache">Zend Cache</a></li></ul>
+        </div>
+      
+
+      
+        <nav id="book-navigation">
+    
+       <li class="link-previous"><a href="/fr/posts/application-coffeebar-119-introduction-la-programmation-evenementielle.html"><i class="fas fa-long-arrow-alt-left"></i> Application CoffeeBar 1/19 - Introduction à la programmation événementielle</li>
+    
+
+    
+        <li class="link-next"><a href="/fr/posts/application-coffeebar-319-espionner-notre-cache.html">Application CoffeeBar 3/19 - Espionner notre cache <i class="fas fa-long-arrow-alt-right"></i></a></li>
+    
+
+    
+        <li class="link-up"><a href="/fr/books/gerer-un-cafe-avec-une-programmation-evenementielle.html"><i class="fas fa-book-open"></i> Gérer un café avec une programmation événementielle</li>
+    
+</nav>
+
+      
+    
+
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>Sur moi</h3>
+      <p>J&#39;ai appris le php il y a quelques années, quand Internet était à ses débuts. Pour diverses raisons, j&#39;ai arrêté en route et j&#39;ai perdu le fil des nouveaux Internets que je redécouvre. Résultat, je me sens constamment à courir après l&#39;histoire mais je suis toujours motivée à reprendre des projets personnels. Je me propose de vous partager mes découvertes. Au delà des sujets de programmation, j&#39;aime également partager mes infos concernant notamment l&#39;Histoire, l&#39;Astronomie, la Linguistique, les Films, les Livres et les Anime. J&#39;espère que vous aimerez suivre mon blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. Tous droits réservés.</p>
+        <p>Propulsé par <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

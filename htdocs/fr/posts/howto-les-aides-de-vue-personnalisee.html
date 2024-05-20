@@ -1,0 +1,390 @@
+<!doctype html>
+<html class="no-js" lang="fr" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>HOWTO Les aides de vue personnalisée&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">Français</a>
+        <a href="/en/">Anglais</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/fr/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/fr/books/0/index.html">Séries</a>
+        <a href="/fr/">Accueil</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/fr/">Accueil</a><i class="fas fa-angle-right"></i>HOWTO Les aides de vue personnalisée
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>HOWTO Les aides de vue personnalisée</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>23/06/2015 08:06:00
+        
+        <i class="fas fa-th-large"></i><!--a href="/fr/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->, <!--a href="/fr/sites/haclong-projects.html" class="tag-sites"-->Haclong projects<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/lock-clock-widget-cm.jpg" class="node-banner" />
+        
+      </div>
+
+      <p><p>Très rapidement, je vous monte un petit guide pour ajouter une aide de vue.</p>
+<p>Une aide de vue, c'est un moyen de rajouter un plugin dans vos vues (soit partout, soit dans une vue particulière) : un encart, un sous-menu, une liste des derniers commentaires etc...</p>
+<h2>Pourquoi faire une aide de vue ?</h2>
+<ul>
+<li>Parce que vous allez vous retrouver à reformater toujours la même donnée plusieurs fois dans le site.</li>
+<li>Parce que vous voulez que le contenu de votre site soit composite : la page principale et les marges sur les deux côtés avec différentes informations dedans.</li>
+<li>Parce que même si l'encart apparaît sur toutes les pages du site, le contenu de l'encart ne concerne qu'un seul module. Il vous semble donc plus judicieux de créer une aide de vue dédiée qui peut être facilement retirée si vous changez de module.</li>
+</ul>
+<p>Pour créer une aide de vue, vous allez avoir besoin <strong>d'un objet</strong> (l'aide de vue), et <strong>d'un template</strong> (la vue). Vous ne pourrez utiliser les aides des vues que dans les fichiers de vues (tels que les fichiers phtml (pour une application <strong>Zend Framework 2</strong> standard par exemple).</p>
+<p>Il y a plusieurs façons de faire une aide de vue : soit votre aide de vue est - disons le simplement - juste une fonction pour formater de la donnée, alors tout ce que vous attendez d'elle, c'est d'afficher une chaîne de caractères, soit l'aide de vue est plus complexe et affiche un peu de code HTML, soit l'aide de vue interagit fortement avec votre modèle de données et affiche dans un fragment de code HTML des informations de votre système.</p>
+<h2>Afficher une chaîne de caractères</h2>
+<p>Votre aide de vue retourne une chaîne de caractères, de préférence recalculée ou reformatée. Vous allez l'utiliser pour afficher une date par ex, ou une conversion d'un montant à un autre, ou bien afficher la température...</p>
+<p>Dans ce cas, vous saurez comment créer une aide de vue et somme toute, passer un argument à votre aide de vue se fait aussi facilement qu'avec une simple fonction, du temps de notre bon vieux PHP.</p>
+<p>Voici l'aide de vue :</p>
+<pre><code class="language-php">// module/MonModule/src/MonModule/View/Helper/Temperature.php
+
+&lt;?php
+namespace MonModule\View\Helper;
+
+use Zend\View\Helper\AbstractHelper ;
+
+class Temperature extends AbstractHelper
+{
+  public function __invoke($temperature, $locale = null)
+  {
+    // pseudo code
+    if($locale-&gt;useFahrenheit == true)
+    {
+      return $this-&gt;convertToFahrenheit($temperature) . ' °F' ;
+    }
+    return $temperature . ' °C' ;
+  }
+}
+</code></pre>
+<p>Pour inscrire notre aide de vue dans le gestionnaire d'aides de vue :</p>
+<p>Soit dans la classe Module du module</p>
+<pre><code class="language-php">// module/MonModule/Module.php
+
+&lt;?
+class Module
+{
+  public function getViewHelperConfig()
+  {
+    return array(
+      'invokables' =&gt; array(
+        'afficheTemperature' =&gt; 'MonModule\View\Helper\Temperature',
+      ),
+    ) ;
+  }
+}
+</code></pre>
+<p>Soit dans le tableau de configuration</p>
+<pre><code class="language-php">// module/MonModule/config/module.config.php
+
+&lt;?php
+return array(
+  'view_helpers' =&gt; array(
+    'invokables' =&gt; array(
+      'afficheTemperature' =&gt; 'MonModule\View\Helper\Temperature',
+    ),
+  ),
+) ;
+</code></pre>
+<p>Et pour utiliser l'aide à partir de n'importe lequel des fichiers phtml de votre application Zend Framework 2.</p>
+<pre><code class="language-php">// module/MonAutreModule/view/mon-autre-module/index/index.phtml
+
+&lt;div&gt;
+Il fait &lt;?php echo $this-&gt;afficheTemperature(18, 'fr_FR') ; ?&gt;.
+&lt;/div&gt;
+</code></pre>
+<h2>Préparer une chaîne de caractère avec une présentation dédiée.</h2>
+<p>Cela peut être le cas pour un plugin, un menu dans le site. Vous allez l'utiliser pour afficher un menu pour les utilisateurs qui sont connectés afin qu'ils accèdent à des pages dédiées de leur compte.</p>
+<p>Dans ce cas, contrairement au cas précédent, vous préparez un bloc intégral d'informations en HTML (une vue) que vous insérerez dans les autres vues de votre application Zend Framework 2. Dans la mesure où la vue que vous allez préparer EST une vue, vous pouvez utilisez d'autres aides de vue (dont les aides de vue mise à disposition par Zend Framework 2) pour générer de l'intéraction / du dynamisme.</p>
+<p>Voyons d'abord l'objet aide de vue :</p>
+<pre><code class="language-php">// module/MonModule/src/MonModule/View/Helper/UserMenu.php
+
+&lt;?php
+namespace MonModule\View\Helper;
+
+use Zend\View\Helper\AbstractHelper ;
+
+class UserMenu extends AbstractHelper
+{
+  public function __invoke()
+  {
+    return $this-&gt;getView()-&gt;render('mon-module/plugin/user') ;
+  }
+}
+</code></pre>
+<p>Comme on peut le constater, l'aide appelle juste une vue.</p>
+<p>Voyons donc cette vue :</p>
+<pre><code class="language-html">// module/MonModule/view/mon-module/plugin/user.phtml
+
+&lt;!-- $this-&gt;identity() est une aide de vue qui existe déjà dans la librairie Zend Framework 2. 
+     On ne va pas se priver de l'utiliser dans notre cas. --&gt;
+
+&lt;?php if ($this-&gt;identity()) : ?&gt;
+
+  &lt;div&gt;Bonjour &lt;?php echo $this-&gt;identity() ?&gt;&lt;/div&gt;
+  
+  &lt;ul&gt;
+    &lt;li&gt;Réinitialiser le mot de passe&lt;/li&gt;
+    &lt;li&gt;Voir mon compte&lt;/li&gt;
+    &lt;li&gt;Se déconnecter&lt;/li&gt;
+  &lt;/ul&gt;
+
+&lt;?php else: ?&gt;
+
+  Vous n'êtes pas loggé. Merci de vous logger d'abord.
+
+&lt;?php endif; ?&gt;
+</code></pre>
+<p>Comme on peut le voir, tout se passe dans le template (merci à l'aide <code>$this-&gt;identity()</code> qui existe déjà). Pour utiliser l'aide de vue <code>$this-&gt;identity()</code>, je vous invite à voir <a href="http://framework.zend.com/manual/current/en/modules/zend.view.helpers.identity.html" target="_blank">sa documentation</a>.</p>
+<p>Allons maintenant déclarer notre aide dans le gestionnaire d'aides de vue</p>
+<p>Soit dans la classe Module du module</p>
+<pre><code class="language-php">// module/MonModule/Module.php
+
+&lt;?
+class Module
+{
+  public function getViewHelperConfig()
+  {
+    return array(
+      'invokables' =&gt; array(
+        'insereMenuUser' =&gt; 'MonModule\View\Helper\UserMenu',
+      ),
+    ) ;
+  }
+}
+</code></pre>
+<p>Soit dans le tableau de configuration</p>
+<pre><code class="language-php">// module/MonModule/config/module.config.php
+&lt;?php
+return array(
+  'view_helpers' =&gt; array(
+    'invokables' =&gt; array(
+      'insereMenuUser' =&gt; 'MonModule\View\Helper\UserMenu',
+    ),
+  ),
+) ;
+</code></pre>
+<p>Et pour utiliser notre aide de vue.</p>
+<p>On pourrait par exemple l'utiliser dans le fichier layout.phtml puisque, très probablement, on va souhaiter que ce menu s'affiche sur toutes les pages, par exemple, juste en dessous du contenu.</p>
+<pre><code class="language-php">// module/Application/view/layout/layout.phtml
+
+&lt;div class=&quot;container&quot;&gt;
+  &lt;?php echo $this-&gt;content; ?&gt;
+  &lt;?php echo $this-&gt;insereMenuUser() ; ?&gt;
+&lt;/div&gt; &lt;!-- /container --&gt;
+</code></pre>
+<p>On note que cette aide de vue n'admet aucun argument mais utilise d'autres aides de vue (<code>$this-&gt;identity()</code>) pour changer son affichage.</p>
+<h2>Gérer les dépendances dans les aides de vue.</h2>
+<p>Cela peut être le cas pour un bloc qui affiche les dernières infos de votre site, ou bien les derniers commentaires. Typiquement, pour ce type de bloc, vous allez vouloir accéder à votre modèle afin d'en extraire les données.</p>
+<pre><code class="language-php">// module/MonModule/src/MonModule/View/Helper/LastNews.php
+
+&lt;?php
+namespace MonModule\View\Helper;
+
+use Zend\View\Helper\AbstractHelper ;
+
+class LastNews extends AbstractHelper
+{
+  protected $lastNews ;
+
+  public function __construct($newsCollection)
+  {
+    $this-&gt;lastNews = $newsCollection ;
+  }
+ 
+  public function __invoke()
+  {
+    $news = $this-&gt;lastNews-&gt;fetchRecent(10) ;
+    return $this-&gt;getView()-&gt;partial('mon-module/plugin/news', array('lastNews' =&gt; $news)) ;
+  }
+}
+</code></pre>
+<p>Allons maintenant déclarer notre aide dans le gestionnaire d'aides de vue. Puisqu'il y a des dépendances, il faut obligatoirement passer par une fabrique (<em>factory</em>).</p>
+<p>Soit dans la classe <code>Module</code> du module</p>
+<pre><code class="language-php">// module/MonModule/Module.php
+
+&lt;?
+class Module
+{
+  public function getViewHelperConfig()
+  {
+    return array(
+      'factories' =&gt; array(
+        'listeDernieresInfos' =&gt; function($sm) {
+          $news = $sm-&gt;getServiceLocator()-&gt;get('Path\To\Model\News') ;
+          return new MonModule\View\Helper\LastNews($news) ;
+        }
+      ),
+    ) ;
+  }
+}
+</code></pre>
+<p>Soit dans le tableau de configuration. <em>A vérifier. J'ai lu quelque part que la fabrique passait mal si on l'écrivait directement dans le fichier de configuration.</em></p>
+<pre><code class="language-php">// module/MonModule/config/module.config.php
+&lt;?php
+return array(
+  'view_helpers' =&gt; array(
+    'factories' =&gt; array(
+      'listeDernieresInfos' =&gt; function($sm) {
+        $news = $sm-&gt;getServiceLocator()-&gt;get('Path\To\Model\News') ;
+        return new MonModule\View\Helper\LastNews($news) ;
+      }
+    ),
+  ),
+) ;
+</code></pre>
+<p>L'autre alternative est de créer une classe de fabrique.</p>
+<pre><code class="language-php">// module/MonModule/config/module.config.php
+&lt;?php
+return array(
+  'view_helpers' =&gt; array(
+    'factories' =&gt; array(
+      'listeDernieresInfos' =&gt; new MonModule\Factory\LastNewsViewHelperFactory ;
+    ),
+  ),
+) ;
+</code></pre>
+<p>et de mettre le code de la fabrique dans la classe <code>LastNewsViewHelperFactory</code> dedans.</p>
+<pre><code class="language-php">// module/MonModule/src/MonModule/Factory/LastNewsViewHelperFactory
+
+&lt;?php
+namespace MonModule\Factory ;
+
+use Zend\ServiceManager\FactoryInterface ;
+use Zend\ServiceManager\ServiceLocatorInterface ;
+
+class LastNewsViewHelperFactory implements FactoryInterface
+{
+  public function createService(ServiceLocatorInterface $serviceLocator)
+  {
+    $news = $serviceLocator-&gt;getServiceLocator()-&gt;get('Path\To\Model\News') ;
+    return new LastNewsViewHelper($news) ;
+  }
+}
+</code></pre>
+<p>Préparer le template :</p>
+<pre><code class="language-html">// module/MonModule/view/mon-module/plugin/news.phtml
+
+&lt;ul&gt;
+  &lt;?php foreach ($this-&gt;lastNews as $key =&gt; $val): ?&gt;
+    &lt;li&gt;&lt;?php echo ($val['news']) ?&gt;&lt;/li&gt;
+  &lt;?php endforeach ; ?&gt;
+&lt;/ul&gt;
+</code></pre>
+<p>Et utiliser notre aide de vue à partir de n'importe quel template au choix, dans une colonne, par ex.</p>
+<pre><code class="language-html">// module/MonModule/view/mon-module/index/index.phtml
+
+&lt;?php echo $this-&gt;listeDernieresInfos() ?&gt;
+</code></pre>
+<p>Voilà. Avec ce dernier exemple, vous savez faire venir une ou plusieurs dépendances dans votre objet aide de vue. Renseignez vous sur les différentes méthodes pour injecter les dépendances éventuellement.</p>
+<p>Il me semble que j'ai tous les cas de figure basiques. A partir de là, je vous laisse composer et imaginer des aides de vues de plus en plus complexes et intéressantes, bien sûr.</p>
+<p>Vous trouverez le code des exemples sur <a href="https://github.com/haclong/viewHelper">mon <strong>github</strong></a>.</p>
+<p>Concernant l'aide de vue des dernières infos, je suis allée un peu plus loin. Dans cet article, la dépendance est l'objet qui se connecte sur la base de données, d'où la ligne <code>$news = $this-&gt;lastNews-&gt;fetchRecent(10) ;</code> dans l'objet <code>MonModule\View\Helper\LastNews</code>. Sur mon github, c'est un objet <strong>NewsService</strong> qui retourne le résultat de la requête à la base de données. Les deux versions sont justes, bien entendu. A vous de choisir sur les niveaux d'objets à mettre en place.</p>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/fr/tags/zend-framework-2">zend framework 2</a></li><li><a href="/fr/tags/poo">POO</a></li><li><a href="/fr/tags/aide-de-vue">aide de vue</a></li><li><a href="/fr/tags/howto">HOWTO</a></li></ul>
+        </div>
+      
+
+      
+    
+
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>Sur moi</h3>
+      <p>J&#39;ai appris le php il y a quelques années, quand Internet était à ses débuts. Pour diverses raisons, j&#39;ai arrêté en route et j&#39;ai perdu le fil des nouveaux Internets que je redécouvre. Résultat, je me sens constamment à courir après l&#39;histoire mais je suis toujours motivée à reprendre des projets personnels. Je me propose de vous partager mes découvertes. Au delà des sujets de programmation, j&#39;aime également partager mes infos concernant notamment l&#39;Histoire, l&#39;Astronomie, la Linguistique, les Films, les Livres et les Anime. J&#39;espère que vous aimerez suivre mon blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. Tous droits réservés.</p>
+        <p>Propulsé par <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

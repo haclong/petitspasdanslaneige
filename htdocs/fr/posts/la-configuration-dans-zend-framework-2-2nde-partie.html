@@ -1,0 +1,438 @@
+<!doctype html>
+<html class="no-js" lang="fr" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>La configuration dans Zend Framework 2 - 2nde partie&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">Français</a>
+        <a href="/en/">Anglais</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/fr/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/fr/books/0/index.html">Séries</a>
+        <a href="/fr/">Accueil</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/fr/">Accueil</a><i class="fas fa-angle-right"></i>La configuration dans Zend Framework 2 - 2nde partie
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>La configuration dans Zend Framework 2 - 2nde partie</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>07/06/2013 18:03:00
+        
+        <i class="fas fa-th-large"></i><!--a href="/fr/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/musictechnique.jpg" class="node-banner" />
+        
+      </div>
+
+      <p><p>Dans la première partie de ce dyptique, nous avons vu que la configuration d'une application montée avec Zend Framework 2 était répartie sur plusieurs fichiers chargés successivement. Nous avons également vu l'ordre de chargement de ces fichiers : la configuration de l'application en premier lieu, la configuration de chacun des modules, avec, rappelons le, la priorité au premier module trouvé, et enfin le chargement en toute fin des modules supplémentaires. Chaque module contient des informations propres et un élément de Zend se charge de fusionner tous ces différents fichiers de configuration. Voyons maintenant ce que contiennent ces fichiers de configuration.</p>
+<h3>Prérequis</h3>
+<p>A l'écriture de ce tutorial, Zend Framework 2.2 vient de sortir. Ce qui est dit ici fonctionne donc en principe pour les versions 2.0, 2.1 et 2.2.</p>
+<p>Vous avez installé le <strong>ZendSkeletonFramework</strong> pour construire votre propre application MVC.</p>
+<p>La configuration dans une application Zend Framework 2 va se répartir entre deux types d'informations</p>
+<ul>
+<li>les clés réservées d'une part, qui font parties du framework Zend</li>
+<li>les clés de votre module, que vous créerez vous même.</li>
+</ul>
+<p>Puisque tous les différents tableaux de configuration vont tous être fusionnés en un seul, on peut faire plusieurs constats :</p>
+<ul>
+<li>on peut mettre en principe toute la configuration dans un seul fichier de configuration. Cela serait complètement contraire à ce que l'équipe de développement de Zend Framework 2 essaie de mettre en place, mais, il n'y a aucune contrainte technique contre ce choix. Il faudra juste penser à créer des fichiers <code>module.config.php</code> qui retournent un tableau vide et ce sera fait.</li>
+<li>on peut créer autant de fichiers de configuration que l'on veut en créant plusieurs fichiers qui finissent par <code>.local.php</code> (ou <code>.global.php</code>) qu'on empilerait dans le répertoire <code>config/autoload/</code>.</li>
+<li>si plusieurs clés portent le même nom, il est évident que l'une va être supplantée par l'autre, la gestion de la priorité reste à déterminer. D'après les éléments que nous avons :</li>
+<li>si deux modules portent le même nom, seul le premier est chargé par l'application. Il est évident que les fichiers de config du second module ne devraient donc pas être pris en compte.</li>
+<li>si deux clés portent le même nom dans deux modules différents, je pense que la clé du module chargé en second écrase les informations de la clé de configuration du module chargé en premier.</li>
+</ul>
+<p>Pour répartir les clés dans vos fichiers de configuration, il faut faire appel au bon sens, tout simplement, et garder à l'esprit les préceptes qui gouvernent le développement des modules dans une application Zend Framework 2.</p>
+<ul>
+<li>Les modules doivent être indépendants les uns des autres. Evitez donc de créer dans un module des clés de configuration d'un autre module.</li>
+<li>Conformément à un principe d'indépendance des modules, il doit être possible de supprimer un module (et les clés qui lui sont attachées) sans pénaliser les modules restants.</li>
+<li>L'ordre de chargement des clés est important et se fait dans cet ordre : configuration de l'application, configuration des modules, fichiers de configuration supplémentaires.</li>
+</ul>
+<h3>La configuration de l'environnement</h3>
+<p>En fonction de l'environnement de votre application, il est clair que certaines données de configuration vont devoir être modifiées. A priori, vous allez avoir au moins deux environnements de travail. Personnellement, pour que ce soit bien, je pense qu'il en faudrait au moins quatre mais deux c'est un minimum : votre environnement de <em>développement</em> et votre environnement de <em>production</em>. Potentiellement, et cela est même plus que recommandable, vous allez avoir une base de données pour chacun de ces environnements, et vous allez avoir plus que probablement des chemins différents pour les fichiers de log, de cache etc... et une configuration différente pour le paramétrage du debug.</p>
+<p>Comme on sait que le fichier <code>config/autoload/local.php</code> n'est pas commité par <strong>git</strong>, il présente deux avantages :</p>
+<ul>
+<li>il reste un fichier avec des informations relativements protégées.</li>
+<li>la version d'un environnement ne va pas écraser la version d'un autre environnement. Du coup, pas besoin de reparamétrer la configuration de l'environnement à chaque livraison des fichiers.</li>
+</ul>
+<p>C'est dans ce fichier que nous préférerons mettre les informations sensibles :</p>
+<ul>
+<li>informations de connexion de votre base de données (<em>host</em>, <em>databasename</em>, <em>password</em>, <em>user</em>, <em>type</em>)</li>
+<li>informations de connexion à d'autres comptes (un FTP par exemple)</li>
+<li>chemin pour les fichiers de log</li>
+<li>chemin pour le cache</li>
+<li>adresse mail du site (si vous développez un mailer et que l'adresse mail n'a pas nécessairement besoin d'être gérée par la base de données)</li>
+<li>...</li>
+</ul>
+<p>C'est aussi dans ce fichier qu'on pourra mettre des flag pour le debug par exemple :</p>
+<ul>
+<li>activation du mode debug</li>
+<li>cacher la barre d'outil</li>
+<li>afficher les erreurs sur l'écran</li>
+</ul>
+<p><strong>NOTE</strong></p>
+<p>Il ne faudrait pas faire la gaffe alors de le mettre à jour par FTP. Le FTP n'obéissant pas aux règles de git, il écraserait le fichier local.php existant avec le nouveau fichier local.php. Si vous faite un transfert FTP d'un environnement à l'autre, vos paramétrages vont être modifiés par le nouveau fichier.</p>
+<p>Pour la répartition, vous avez au choix la répartition dans des fichiers <code>monmodule.local.php</code> pour ne pas perdre le fil de votre module ou bien tout mettre dans le fichier <code>local.php</code>.</p>
+<p><strong>ASTUCE</strong></p>
+<p>Arrangez vous pour que la clé que vous allez créer pour stocker vos informations de connexion à votre base de données soit conforme au format attendu par <code>Zend\Db\Adapter\Adapter()</code>. Vous en saurez plus sur la <a href="http://framework.zend.com/manual/2.2/en/modules/zend.db.adapter.html" target="_blank">documentation</a> de la classe.</p>
+<p>Configuration d'un Adapter en deux temps</p>
+<pre><code class="language-php">// config/autoload/local.php
+
+return array(
+  'dbhost' =&gt; 'localhost',
+  'dbuser' =&gt; 'userName',
+  'dbname' =&gt; 'myDatabase',
+  'dbpwd' =&gt; 'password',
+);
+</code></pre>
+<p>Créer un adapter pour la base de donnée</p>
+<ol>
+<li>en déclarant un nouveau Service en utilisant les factories</li>
+</ol>
+<pre><code class="language-php">// module/MonModule/Module.php
+
+class Module
+{
+  public function getServiceConfig()
+  {
+    return array(
+      'factories' =&gt; array(
+        'dbAdapter' =&gt; function($sm) {
+          $dbConfig = $sm-&gt;get('config') ;
+          $adapter = new Zend\Db\Adapter\Adapter(array(
+            'driver' =&gt; 'Mysqli',
+            'database' =&gt; $dbConfig['dbname'],
+            'username' =&gt; $dbConfig['dbuser'],
+            'password' =&gt; $dbConfig['dbpwd']
+          )) ;
+          return $adapter ;
+        }
+      ),
+    );
+  }
+}
+</code></pre>
+<ol start="2">
+<li>ou en déclarant un nouveau Service avec des clés de paramétrages</li>
+</ol>
+<pre><code class="language-php">// config/autoload/global.php
+
+return array(
+  'service_manager' =&gt; array(
+    'factories' =&gt; array(
+      'dbAdapter' =&gt; function($sm) {
+        $dbConfig = $sm-&gt;get('config') ;
+        $adapter = new Zend\Db\Adapter\Adapter(array(
+          'driver' =&gt; 'Mysqli',
+          'database' =&gt; $dbConfig['dbname'],
+          'username' =&gt; $dbConfig['dbuser'],
+          'password' =&gt; $dbConfig['dbpwd']
+        )) ;
+        return $adapter ;
+      },
+    ),
+  ),
+) ;
+</code></pre>
+<ol start="3">
+<li>ou directement à partir d'un controller</li>
+</ol>
+<pre><code class="language-php">// module/MonModule/src/Controller/MonController.php 
+
+class MonController extends AbstractActionController
+{
+  protected function createDbAdapter()
+  {
+    $config = $this-&gt;getServiceLocator()-&gt;get('config') ;
+    $dbAdapter = new Zend\Db\Adapter\Adapter(array(
+      'driver' =&gt; 'Mysqli',
+      'database' =&gt; $config['dbname'],
+      'username' =&gt; $config['dbuser'],
+      'password' =&gt; $config['dbpwd']
+    ));
+    $this-&gt;db = $dbAdapter ;
+  }
+}
+</code></pre>
+<p>En optimisant, vous pouvez le faire en économisant des lignes de codes :</p>
+<pre><code class="language-php">// config/autoload/local.php
+
+return array(
+  'db' =&gt; array(
+    'driver =&gt; 'Mysqli',
+    'hostname' =&gt; 'localhost',
+    'username' =&gt; 'userName',
+    'database' =&gt; 'myDatabase',
+    'password' =&gt; 'password'
+  )
+);
+</code></pre>
+<p>Créer un adapter pour la base de donnée</p>
+<ol>
+<li>en déclarant un nouveau Service en utilisant les factories</li>
+</ol>
+<pre><code class="language-php">
+// module/MonModule/Module.php 
+class Module
+{
+  public function getServiceConfig()
+  {
+    return array(
+      'factories' =&gt; array(
+        'dbAdapter' =&gt; function($sm) {
+          $dbConfig = $sm-&gt;get('config') ;
+          $adapter = new Zend\Db\Adapter\Adapter($dbConfig['db']) ;
+          return $adapter ;
+        }
+      ),
+    );
+  }
+}
+</code></pre>
+<ol start="2">
+<li>ou en déclarant un nouveau Service avec des clés de paramétrages</li>
+</ol>
+<pre><code class="language-php">// config/autoload/global.php
+
+return array(
+  'service_manager' =&gt; array(
+    'factories' =&gt; array(
+      'dbAdapter' =&gt; function($sm) {
+        $dbConfig = $sm-&gt;get('config') ;
+        $adapter = new Zend\Db\Adapter\Adapter($dbConfig['db']) ;
+        return $adapter ;
+      },
+    ),
+  ),
+) ;
+</code></pre>
+<ol start="3">
+<li>ou directement à partir d'un controller</li>
+</ol>
+<pre><code class="language-php">// module/MonModule/src/Controller/MonController.php
+
+class MonController extends AbstractActionController
+{
+  protected function createDbAdapter()
+  {
+    $config = $this-&gt;getServiceLocator()-&gt;get('config') ;
+    $dbAdapter = new Zend\Db\Adapter\Adapter($config['db']);
+    $this-&gt;db = $dbAdapter ;
+  }
+}
+</code></pre>
+<p><em>Je rappelle que si pour accéder à la configuration à partir des classes de votre modèle, vous reférer à <a href="http://haclong.long2.net/fr/content/la-configuration-dans-zend-framework-2-1ere-partie.html">la première partie du sujet</a>.</em></p>
+<p>Vos fichiers de configuration vont se construire petit à petit. Il y aura vos propres clés que vous créerez au fur et à mesure que vous construirez votre application, et il y aura les clés réservées par les outils que vous utiliserez : à n'en pas douter, les composants de Zend Framework pour commencer, et éventuellement, les composants d'autres modules que vous aurez installé.</p>
+<h3>Configuration du module</h3>
+<p>Dans la configuration de chacun de vos modules, vous devrez obligatoirement faire les paramétrages suivants, dès lors que votre module comprend une logique <strong>Vue</strong> et <strong>Contrôleur</strong> (parce qu'il est également possible de faire des modules qui ne contiennent que des <strong>Modèles</strong>, sans <strong>Vue</strong> ni <strong>Contrôleur</strong>. Ces modules exposeront dans ce cas là des <strong>Services</strong> que les autres modules utiliseront)</p>
+<ul>
+<li><strong>Lister les contrôleurs</strong> disponibles en associant le nom d'un contrôleur et l'objet <strong>Contrôleur</strong> : cela peut s'avérer pratique dès qu'il va s'agir de faire des modifications de type le nom <code>ControllerA</code> ne pointe plus vers le <strong>contrôleur A</strong> mais vers le <strong>contrôleur A'</strong>.</li>
+<li>Indiquer à l'application <strong>où se trouvent les fichiers Vue</strong> que l'application doit utiliser.</li>
+<li><strong>Définir le chemin pour arriver à votre page</strong> : comment doit se construire l'URL qui va être saisie par l'utilisateur, comment faire référence à cette page à l'intérieur du code et lorsque l'URL est envoyée vers l'application, déterminer quel contrôleur va prendre en charge la requête en entrée.</li>
+</ul>
+<h4>Lister les contrôleurs</h4>
+<pre><code class="language-php">//module.config.php
+
+return array(
+  'controllers' =&gt; array(
+    'invokables' =&gt; array(
+     'MonControllerA' =&gt; 'Module_Namespace\Controller\Controller_Name',
+    ),
+  ),
+);
+</code></pre>
+<p>Ce qu'il faut savoir :</p>
+<ul>
+<li>Logiquement, vous aurez autant d'entrées dans le tableau '<code>invokables</code>' que de contrôleurs que vous développerez.</li>
+<li>N'oubliez pas à inclure le namespace du module dans le nom du contrôleur... Si vous avez plusieurs noms identiques (cela arrivera parce que vous aurez plusieurs modules donc plusieurs fichiers de configuration chacun avec sa liste de contrôleurs disponibles), un seul objet Contrôleur sera identifié parmi plusieurs objets contrôleurs qui porteront tous le même nom.</li>
+</ul>
+<h4>Indiquer à l'application le chemin des vues</h4>
+<pre><code class="language-php">//module.config.php
+
+return array(
+  'view_manager' =&gt; array(
+    'template_path_stack' =&gt; array(
+      'mon-module' =&gt; __DIR__ . '/../view',
+    ),
+  ),
+);
+</code></pre>
+<p>Ce qu'il faut savoir :</p>
+<ul>
+<li>Je n'ai eu à le faire qu'une fois par module parce que toutes mes vues étaient regroupées dans le même répertoire.</li>
+<li>Le répertoire <code>view/</code> se situe dans votre module et doit contenir obligatoire un répertoire reprenant en minuscule le namespace du module. Une chose que je ne m'explique pas : il y a une logique (ou pas) entre le nom du module écrit en camelCase <strong>MonModule</strong> et le nom du répertoire vue écrit avec un tiret <code>mon-module</code>. En testant un peu, on finit par retrouver l'orthographe attendue par l'application. Je me demande s'il n'y a pas un lien avec la façon d'écrire le nom du path dans le fichier <code>module.config.php</code>... Cela mériterait des tests étendus.</li>
+</ul>
+<h4>Déterminer la route entre la requête (HTTP probablement) et le rendu de la page en mettant à profit le bon contrôleur et la bonne action.</h4>
+<p>Cette partie concerne un mécanisme très logique, nécessaire dont on est très peu conscient finalement : il faut faire comprendre à l'application qu'à une chaîne de caractère donnée (l'URL) correspond nécessairement une page donnée et cette correspondance, l'application pourra la faire en analysant les &quot;composants&quot; de cette chaîne de caractère.</p>
+<p>Le système de fichier des systèmes d'exploitation utilisent une logique simplissime : un séparateur. Ce qui est à droite du signe '/' est nécessairement contenu dans ce qui est à gauche de ce même signe. Le serveur Apache utilise cette logique en natif. C'est pour cela que lorsqu'on crée un site HTML statique, le chemin d'une page HTML dans le navigateur correspond exactement au chemin qui mène au fichier .html que le navigateur doit ouvrir.</p>
+<p>Or, dans le cadre d'une application dynamique, cette logique peut être cassée. On le voit bien tous les jours maintenant parce que les sites ont tout d'abord été simplement dynamiques et désormais, certains sont des applications complètes qui ont des règles pour faire correspondre un chemin (la requête) et la vue HTML issue d'un contrôleur et d'une action.</p>
+<p>Cette logique, est ce qu'on appelle le <strong>routing</strong>. Une <strong>route</strong>, c'est la correspondance entre d'un côté <strong>un format attendu dans la barre d'adresse du navigateur (l'URL)</strong> et de l'autre <strong>le ou les contrôleurs que l'application doit instancier ainsi que l'action qui doit être exécutée</strong>.</p>
+<p>Si vous êtes familier de Zend Framework 1, l'application MVC de Zend Framework 1 avait une route définie par défaut dont le format était le suivant : <code>mon.domaine.tld(/[module])/[controller]/[action](/[params-eventuellement])</code>.</p>
+<p><em>module</em> et <em>params</em> était des composants facultatifs dans le format de l'URL.</p>
+<p>L'application analysait la requête entrante. Elle déterminait :</p>
+<ul>
+<li>si le 1er argument après le nom de domaine correspondait à un nom de module ou bien à un contrôleur existant dans le module <strong>default</strong>.</li>
+<li>si le 2nd argument après le nom de domaine correspondait au nom d'un contrôleur du module identifié au 1er argument ou au nom d'une action.</li>
+<li>si le 3me argument après le nom de domaien correspondait au nom d'une action du contrôleur identifié au 2nd argument ou à des paramètres nécessaires pour l'action identifiée au 2nd argument.</li>
+</ul>
+<p>Ainsi de suite, elle identifiait l'objet contrôleur qui devait être utilisé, puis la méthode action de l'objet contrôleur identifié. La vue étant définie au niveau de l'action, il n'y avait plus qu'à afficher la page demandée.</p>
+<p>Depuis Zend Framework 2, l'application MVC n'a pas de route définie par défaut. En revanche, dans le <strong>ZendSkelettonApplication</strong>, une route a été définie dans <code>module/Application/config/module.config.php</code>. Elle reproduit la route qu'on connaissait dans Zend Framework 1. Personnellement, je ne l'ai jamais utilisée parce que j'ai développé mes propres modules assez rapidement. Je vous laisse explorer cette partie.</p>
+<p>Les routes portent des noms. C'est pratique parce que vous pourrez vous y referrer rapidement. Le jour où vous décidez de changer un contrôleur ou une action, vous n'aurez pas à changer toutes vos URLs : la route <strong>login</strong> a ce format : '<code>mon.domaine.tld/login</code>' et utilise par défaut un contrôleur <code>UserController</code> et son action <code>LoginAction</code>. Mais demain, après un refactoring, la route <strong>login</strong> peut utiliser un contrôler <code>AuthController</code> et son action <code>LogAction</code>. Le format reste inchangé. Il suffit de changer la définition de la route.</p>
+<p>Il reste encore beaucoup à dire sur les routes mais en attendant un prochain article, j'ai trouvé la documentation relativement claire. En tâtonnant un peu s'il le faut, on finit par y arriver.</p>
+<p>Avec Zend Framework 2, vous remarquerez qu'il y a à tout les niveaux des alias et des noms qui définissent des objets qui portent finalement les mêmes noms (comme la liste des controleurs). C'est une technique pour établir un cloisonnement intelligent entre le code qui est écrit et les composants qui sont utilisés véritablement. Ainsi, vous pouvez changer vos classes ou même remplacer une librairie par une autre sans avoir à réécrire tout votre code. Pensez y de temps en temps. Si ce concept vous paraît inutile et redondant à l'écriture de votre code, vous vous apercevrez que cela peut s'avérer redoutable sur la longueur.</p>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/fr/tags/zend-framework-2">zend framework 2</a></li><li><a href="/fr/tags/configuration">configuration</a></li><li><a href="/fr/tags/tutorial">tutorial</a></li></ul>
+        </div>
+      
+
+      
+        <nav id="book-navigation">
+    
+       <li class="link-previous"><a href="/fr/posts/la-configuration-dans-zend-framework-2-1ere-partie.html"><i class="fas fa-long-arrow-alt-left"></i> La configuration dans Zend Framework 2 - 1ere partie</li>
+    
+
+    
+        <li class="link-next"><a href="/fr/posts/rajouter-zend-inputfilter.html">Rajouter Zend InputFilter <i class="fas fa-long-arrow-alt-right"></i></a></li>
+    
+
+    
+        <li class="link-up"><a href="/fr/books/configuration-dans-zend-framework-2.html"><i class="fas fa-book-open"></i> Configuration dans Zend Framework 2</li>
+    
+</nav>
+
+      
+    
+
+      
+        <section id="oldcomment">
+          <h2>Commentaires historiques</h2><article>
+              <div class="level1">
+  <h3>Tutoriel - Gestion des routes</h3>
+  <div class="meta">Nicolas 2014-12-17T13:55 </div>
+  <div class="body">Bonjour,<br />
+<br />
+C'est très bien écrit, merci beaucoup pour cette explication détaillée.<br />
+<br />
+J'avoue avoir beaucoup de mal à comprendre le principe des routes dans un contexte Module/Controller/Action.<br />
+<br />
+Il y'a la notion de route au sein de l'application avec notre fameux module.config.php et on retrouve ce même schéma au sein de nos modules. Quelle est la démarche derrière pour l'application? (Héritage / Priorité etc..).<br />
+On peut définir un rewriting de l'url car par défaut il prend en considération cette notion - Module/Controller/Action. Mais pour faire propre on a pas forcement envie d'avoir une url qui est monsite.com/monmodule/moncontroller/monaction<br />
+J'avoue que c'est un peu le flou.<br />
+Sans compter que dans un même module on peut avoir plusieurs controllers. Il est d'ailleurs nécessaire d'affecter à notre fichier de conf que l'on peut appeler tel controller via les invokables. Idem avec les actions.<br />
+<br />
+C'est loin d'être évident. Un super tuto avec les différents cas, ce serait super, génial etc...</div>
+
+  
+  
+</div>
+
+            </article><article>
+              <div class="level1">
+  <h3>Tutoriels à venir</h3>
+  <div class="meta">haclong 2014-12-22T12:17 </div>
+  <div class="body">Merci pour le commentaire<br />
+Restez dans le coin, pour 2015, j'ai une grosse série de tuto qui arrive. Je parle rapidement des routes dedans... Suite à votre remarque, je penserais également à préparer un tutoriel plus axé sur la route.</div>
+
+  
+  
+</div>
+
+            </article></section>
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>Sur moi</h3>
+      <p>J&#39;ai appris le php il y a quelques années, quand Internet était à ses débuts. Pour diverses raisons, j&#39;ai arrêté en route et j&#39;ai perdu le fil des nouveaux Internets que je redécouvre. Résultat, je me sens constamment à courir après l&#39;histoire mais je suis toujours motivée à reprendre des projets personnels. Je me propose de vous partager mes découvertes. Au delà des sujets de programmation, j&#39;aime également partager mes infos concernant notamment l&#39;Histoire, l&#39;Astronomie, la Linguistique, les Films, les Livres et les Anime. J&#39;espère que vous aimerez suivre mon blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. Tous droits réservés.</p>
+        <p>Propulsé par <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

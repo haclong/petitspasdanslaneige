@@ -1,0 +1,397 @@
+<!doctype html>
+<html class="no-js" lang="fr" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>Application CoffeeBar 3/19 - Espionner notre cache&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">Français</a>
+        <a href="/en/">Anglais</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/fr/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/fr/books/0/index.html">Séries</a>
+        <a href="/fr/">Accueil</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/fr/">Accueil</a><i class="fas fa-angle-right"></i>Application CoffeeBar 3/19 - Espionner notre cache
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>Application CoffeeBar 3/19 - Espionner notre cache</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>14/01/2015 16:10:00
+        
+        <i class="fas fa-th-large"></i><!--a href="/fr/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/file9271237667217.jpg" class="node-banner" />
+        
+          <p><strong>Crédit</strong> : Morguefile.com </p>
+        
+      </div>
+
+      <p><p>Il y a des tutoriaux qui commence par tout expliquer avant de présenter une première vue après plusieurs chapitres. C'est ce que j'ai commencé à faire avec notre application. Mais je trouve que c'est trop frustrant d'attendre avant de découvrir ce que l'application donne. Et puis, pour ma part, j'ai besoin de voir ce que je développe. Il me faut un retour écran, de toutes façons.</p>
+<p><em>NOTE : le long du tutoriel, je vais vous faire rééditer des classes et des vues sur lesquels on sera déjà passé. Il va y avoir des parties qui auront disparu au second passage : typiquement les use, les instructions extends, implements etc... Cela ne veut pas dire qu'il faut les retirer. C'est juste pour alléger le code. S'il faut retirer du code, soit je vous remettrais le passage intégralement, pour voir ce qui a disparu, soit je vous signalerais qu'il faut effacer une ligne pour la remplacer par une autre.</em></p>
+<h2>Espionner notre cache</h2>
+<p>Cela ne fait pas partie de notre application, mais ça peut être utile en cours de développement. Nous allons avoir une page pour vider le cache, et une autre pour voir ce qui est contenu dans les deux index '<em>openTabs</em>' et '<em>todoList</em>'.</p>
+<h3>Le controleur</h3>
+<p>J'ai choisi le contrôleur <code>IndexController</code>... C'était pas très réfléchi, c'est vrai... l'application est temporaire, j'ai pas beaucoup cherché.</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Controller/IndexController.php
+
+&lt;?php
+namespace CoffeeBar\Controller ;
+
+use Zend\Mvc\Controller\AbstractActionController;
+
+class IndexController extends AbstractActionController
+{
+  public function indexAction()
+  {
+    // récupérer le cache
+    $cache = $this-&gt;serviceLocator-&gt;get('TabCache');
+    // envoyer l'intégralité du cache à la vue
+    return array('result' =&gt; $cache) ;
+  }
+ 
+  public function flushAction()
+  {
+    // récupérer le cache
+    $cache = $this-&gt;serviceLocator-&gt;get('Cache\Persistence') ;
+    // le vider
+    $cache-&gt;flush() ;
+    // rediriger vers la page d'accueil 'home'
+    return $this-&gt;redirect()-&gt;toRoute('home') ;
+ }
+}
+</code></pre>
+<h3>La vue</h3>
+<p>L'action <code>IndexController::flushAction()</code> n'a pas de vue. C'est une redirection. Il ne reste qu'une vue à préparer, pour l'action <code>IndexController::indexAction()</code>.</p>
+<p><strong>Notez que le path est tout en minuscule et que le nom du module, en camelCase est transformé en mots séparés par des tirets (-). C'est une particularité de l'application Zend Framework 2... ne demandez pas...</strong></p>
+<pre><code class="language-php">// module/CoffeeBar/view/coffee-bar/index/index.phtml
+
+&lt;pre&gt;
+
+&lt;?php
+  var_dump($result-&gt;getTodoList()) ;
+
+  var_dump($result-&gt;getOpenTabs()) ;
+?&gt;
+&lt;/pre&gt;
+</code></pre>
+<h3>La route et la navigation</h3>
+<p>Avant de définir les routes, il faut déclarer notre contrôleur dans la <strong>configuration</strong>.</p>
+<pre><code class="language-php">// module/CoffeeBar/config/module.config.php
+
+&lt;?php
+return array(
+  'controllers' =&gt; array(
+    'invokables' =&gt; array(
+      // the name =&gt; the component
+      'CoffeeBarController\Index' =&gt; 'CoffeeBar\Controller\IndexController',
+    ),
+  ),
+ 
+  // ... // autres clés...
+);
+</code></pre>
+<p>Mise en place des <strong>routes</strong></p>
+<pre><code class="language-php">// module/CoffeeBar/config/module.config.php
+
+&lt;?php
+return array(
+  'router' =&gt; array(
+    'routes' =&gt; array(
+      /**
+       * on écrase la route 'home' qui est définie par défaut dans Application
+       * voir le fichier /module/Application/config/module.config.php
+       * cette adresse URL mène à la route http://coffeebar.home/
+       */
+      'home' =&gt; array(
+        'type' =&gt; 'Literal',
+        'options' =&gt; array(
+          'route' =&gt; '/',
+          'defaults' =&gt; array(
+            'controller' =&gt; 'CoffeeBarController\Index',
+            'action' =&gt; 'index',
+          ),
+        ),
+        'may_terminate' =&gt; true,
+      ),
+
+      /**
+       * cette URL : http://coffeebar.home/flush mène à cette route
+       */
+      'flush' =&gt; array(
+        'type' =&gt; 'Literal',
+        'options' =&gt; array(
+          'route' =&gt; '/flush',
+          'defaults' =&gt; array(
+            'controller' =&gt; 'CoffeeBarController\Index',
+            'action' =&gt; 'flush',
+          ),
+        ),
+      ),
+    ),
+  ),
+) ;
+</code></pre>
+<h4>Une navigation</h4>
+<p>Et pour faire joli, nous allons ajouter une navigation. Cela va nous permettre de construire facilement la hiérarchie dans les différentes pages de notre site.</p>
+<pre><code class="language-php">// module/CoffeeBar/config/module.config.php
+
+&lt;?php
+return array(
+  'navigation' =&gt; array(
+    'default' =&gt; array(
+      array(
+        'label' =&gt; 'Home',
+        'route' =&gt; 'home',
+      ),
+      array(
+        'label' =&gt; 'Flush cache',
+        'route' =&gt; 'flush',
+      ),
+    ),
+  ),
+
+  // ... // others keys and arrays...
+);
+</code></pre>
+<p>La navigation n’est pas dans le <em>Skeleton de base de Zend Framework</em>. Si vous voulez intégrer une navigation dans votre application, voir <a href="/fr/posts/zend-navigation-avec-configuration.html">mon post à ce sujet</a>. Par acquis de conscience, voici ce qu’il faut rajouter dans les différents fichiers (à vérifier…) :</p>
+<pre><code class="language-php">// module/Application/view/layout/layout.phtml
+// remplacer le menu du layout d’origine par ce code
+
+&lt;div class=&quot;collapse nav-collapse&quot;&gt;
+  &lt;?php echo $this-&gt;navigation('navigation')-&gt;menu()-&gt;setUlClass('nav navbar-nav')-&gt;setMaxDepth(0) ;?&gt;
+&lt;/div&gt;
+</code></pre>
+<pre><code class="language-php">// module/Application/config/module.config.php
+// ajouter les clés suivantes :
+
+'service_manager' =&gt; array(
+  'factories' =&gt; array(
+    'navigation' =&gt; 'Zend\Navigation\Service\DefaultNavigationFactory',
+  ),
+),
+</code></pre>
+<p>Une fois que nos petits espions sont mis en place, on va pouvoir s'occuper de notre première page.</p>
+<h2>La première page : ouvrir une note</h2>
+<h3>Le contrôleur</h3>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Controller/TabController.php
+
+&lt;?php
+namespace CoffeeBar\Controller ;
+
+use Zend\Mvc\Controller\AbstractActionController;
+
+class TabController extends AbstractActionController
+{
+  public function openAction()
+  {
+    $result = '' ;
+    return array('result' =&gt; $result) ;
+  }
+}
+</code></pre>
+<h4>Déclarer le contrôleur dans la configuration</h4>
+<pre><code class="language-php">// module/CoffeeBar/config/module.config.php
+
+&lt;?php
+return array(
+  'controllers' =&gt; array(
+    'invokables' =&gt; array(
+      // autres clés...
+      'CoffeeBarController\Tab' =&gt; 'CoffeeBar\Controller\TabController',
+    ),
+  ),
+ 
+  // ... // autres clés...
+);
+</code></pre>
+<h3>La route</h3>
+<pre><code class="language-php">// module/CoffeeBar/config/module.config.php
+
+&lt;?php
+return array(
+  'router' =&gt; array(
+    'routes' =&gt; array(
+      // ajouter aux autres routes
+      'tab' =&gt; array(
+ 
+        /**
+         * cette route ne correspond à aucune page
+         * notez l'absence d'options 'defaults' parce qu'il n'y a
+         * pas de pages valides à cette adresse http://coffeebar.home/tab
+         * cette adresse retourne une erreur 404
+         * vous pouvez également décider de définir un contrôleur
+         * et une action par défaut pour éviter l'erreur 404
+         */
+        'type' =&gt; 'Literal',
+        'options' =&gt; array(
+          'route' =&gt; '/tab',
+        ),
+        'child_routes' =&gt; array(
+ 
+          /**
+           * cette URL (http://coffeebar.com/tab/open) mène à cette route
+           */
+          'open' =&gt; array(
+            'type' =&gt; 'Literal',
+            'options' =&gt; array(
+              'route' =&gt; '/open',
+              'defaults' =&gt; array(
+                'controller' =&gt; 'CoffeeBarController\Tab',
+                'action' =&gt; 'open',
+              ),
+            ),
+            'may_terminate' =&gt; true,
+          ),
+        ),
+      ),
+    ),
+  ),
+) ;
+</code></pre>
+<h3>La navigation</h3>
+<pre><code class="language-php">// module/CoffeeBar/config/module.config.php
+
+&lt;?php
+return array(
+  'navigation' =&gt; array(
+    'default' =&gt; array(
+      // ajouter aux autres items de navigation
+      array(
+        'label' =&gt; 'Open new tab',
+        'route' =&gt; 'tab/open', // utiliser les clés du tableau $router
+      ),
+    ),
+  ),
+) ;
+</code></pre>
+<h3>La vue</h3>
+<pre><code class="language-php">// module/CoffeeBar/view/coffee-bar/tab/open.phtml
+
+&lt;?php echo __FILE__ ; ?&gt;
+</code></pre>
+<p>Et voila.</p>
+<p>En principe, si je n'ai rien oublié, lorsque vous irez sur ce lien : <code>http://coffeebar.com/tab/open</code>, vous accèderez à une page avec le chemin du fichier affiché à l'écran : <code>path/to/module/CoffeeBar/view/coffee-bar/tab/open.phtml</code>.</p>
+<p>Dans le prochain article, on va monter notre page '<strong>Ouvrir une note</strong>'.</p>
+<p><em>Vous trouverez l'intégralité de l'application sur mon <a href="https://github.com/haclong/coffeebar" target="_blank">github</a></em></p>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/fr/tags/zend-framework-2">zend framework 2</a></li><li><a href="/fr/tags/mvc">MVC</a></li><li><a href="/fr/tags/zend-navigation">Zend Navigation</a></li><li><a href="/fr/tags/zend-router">Zend Router</a></li></ul>
+        </div>
+      
+
+      
+        <nav id="book-navigation">
+    
+       <li class="link-previous"><a href="/fr/posts/application-coffeebar-219-installer-la-base-de-developpement.html"><i class="fas fa-long-arrow-alt-left"></i> Application CoffeeBar 2/19 - Installer la base de développement</li>
+    
+
+    
+        <li class="link-next"><a href="/fr/posts/application-coffeebar-419-le-formulaire-de-commande.html">Application CoffeeBar 4/19 - Le formulaire de commande <i class="fas fa-long-arrow-alt-right"></i></a></li>
+    
+
+    
+        <li class="link-up"><a href="/fr/books/gerer-un-cafe-avec-une-programmation-evenementielle.html"><i class="fas fa-book-open"></i> Gérer un café avec une programmation événementielle</li>
+    
+</nav>
+
+      
+    
+
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>Sur moi</h3>
+      <p>J&#39;ai appris le php il y a quelques années, quand Internet était à ses débuts. Pour diverses raisons, j&#39;ai arrêté en route et j&#39;ai perdu le fil des nouveaux Internets que je redécouvre. Résultat, je me sens constamment à courir après l&#39;histoire mais je suis toujours motivée à reprendre des projets personnels. Je me propose de vous partager mes découvertes. Au delà des sujets de programmation, j&#39;aime également partager mes infos concernant notamment l&#39;Histoire, l&#39;Astronomie, la Linguistique, les Films, les Livres et les Anime. J&#39;espère que vous aimerez suivre mon blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. Tous droits réservés.</p>
+        <p>Propulsé par <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

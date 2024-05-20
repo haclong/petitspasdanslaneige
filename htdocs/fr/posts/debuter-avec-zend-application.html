@@ -1,0 +1,328 @@
+<!doctype html>
+<html class="no-js" lang="fr" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>Débuter avec Zend Application&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">Français</a>
+        <a href="/en/">Anglais</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/fr/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/fr/books/0/index.html">Séries</a>
+        <a href="/fr/">Accueil</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/fr/">Accueil</a><i class="fas fa-angle-right"></i>Débuter avec Zend Application
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>Débuter avec Zend Application</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>09/06/2012 07:10:00
+        
+        <i class="fas fa-th-large"></i><!--a href="/fr/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/e5278cccdd3b6a084bc93def29692b40.jpg" class="node-banner" />
+        
+          <p><strong>Crédit</strong> : Garth Britzman </p>
+        
+      </div>
+
+      <p><p>Ce tutoriel, parmi d'autres à venir, pourrait sembler similaire à d'autres tutoriaux sur <strong>Zend Application</strong>. Il y a sur la toile beaucoup de tutoriaux enseignant comment construire une application avec <strong>Zend Application</strong> en utilisant <strong>Zend Tool</strong> (les tutoriaux incluant les instructions en ligne de commande). <strong>Zend Tool</strong> a son utilité mais si vous souhaitez personnaliser vos répertoires, vous ne pourrez pas utiliser <strong>Zend Tool</strong> aussi facilement.</p>
+<p>J'utilise Zend Framework 1.11.</p>
+<p><strong>Zend_Application</strong> va nous permettre de construire une application web basée sur le modèle MVC. Cela signifie notamment que nous aurons à manipuler des Modèles, des Controleurs et des Vues. Mais commençons par le commencement : Comment débuter ?</p>
+<p>Pour construire une application avec <strong>Zend Application</strong>, nous aurons besoin d'au moins 6 fichiers.</p>
+<h3>Le fichier index</h3>
+<p>Comme pour beaucoup de sites web, tous commencent avec le fichier <code>index.php</code>. Pour notre application, ce sera la même chose.</p>
+<p>Notre fichier <code>index.php</code> aura toujours les mêmes instructions :</p>
+<ul>
+<li>Définir les constantes</li>
+<li>Configurer l'include path</li>
+<li>Lancer <strong>Zend Application</strong></li>
+</ul>
+<h4>Définir les constantes</h4>
+<p>Pour les instructions concernant la <strong>définition des constantes</strong>, nous aurons à définir <em>AU MOINS</em> deux constantes : une pour le répertoire &quot;application&quot; et l'autre pour le niveau d'environnement.</p>
+<p>On peut donner les noms qui nous plaise pour ces deux constantes. Les recommandations sont, bien sûr, que ces noms doivent être clairs et compréhensibles. Par exemple, dans ce tutorial, je ne peux pas non plus choisir un nom de type LE_NOM_QUE_VOUS_AUREZ_CHOISI_POUR_VOTRE_REPERTOIRE_APPLICATION alors on va dire que la première constante va s'appeler <code>APPLICATION_PATH</code> et que l'autre s'appellera <code>APPLICATION_ENV</code>. Cela ne brille pas par leur originalité, certes, mais cela a le mérite d'être clair.</p>
+<pre><code class="language-php">// Définir le chemin pour le répertoire application
+defined('APPLICATION_PATH') || define('APPLICATION_PATH', realpath(dirname(__FILE__) . '/application')) ;
+
+// Définir le niveau d'environnement
+defined('APPLICATION_ENV') || define('APPLICATION_ENV', (getenv('APPLICATION_ENV') ? getenv('APPLICATION_ENV') : 'development')) ;
+</code></pre>
+<h5>APPLICATION_PATH - ce qu'il faut savoir</h5>
+<p>L'instruction est claire si vous êtes familier avec le PHP : vérifier que la constante <code>APPLICATION_PATH</code> est définie. Si non, la définir. Merci de vous reporter à la documentation PHP pour les fonctions suivantes : <code>&lt;a href=&quot;http://php.net/manual/fr/function.define.php&quot; target=&quot;_blank&quot;&gt;define()&lt;/a&gt;, &lt;a href=&quot;http://fr2.php.net/manual/fr/function.realpath.php&quot; target=&quot;_blank&quot;&gt;realpath()&lt;/a&gt;</code> and <code>&lt;a href=&quot;http://fr2.php.net/manual/fr/function.dirname.php&quot; target=&quot;_blank&quot;&gt;dirname()&lt;/a&gt;</code>.</p>
+<p>Vous l'aurez sûrement compris, tous vos fichiers concernant votre application seront classés dans le répertoire <code>application/</code>. Les fichiers autres que PHP qui seront utilisés par le code HTML seront classés dans d'autres répertoires de votre choix. Le répertoire <code>application/</code> peut porter le nom que vous jugerez le plus pertinent. Il suffit juste de vous assurer que ce qui est défini dans la constante <code>APPLICATION_PATH</code> est le nom correct. De même, le répertoire peut être situé où vous le souhaitez dans votre système de fichiers. Là encore, il faudra juste vous assurer que dans la définition de l'<code>APPLICATION_PATH</code>, le chemin est correct. Comme vous pouvez le constater, ZF est un framework très flexible.</p>
+<p>Le répertoire <code>application/</code>, et sa constante, va être un point de référence pour les autres parties du site.</p>
+<h5>APPLICATION_ENV - ce qu'il faut savoir</h5>
+<p>Là encore, les instructions sont vraiment faciles. Vérifier que la constante <code>APPLICATION_ENV</code> est définie. Si non, vérifier si l'information existe dans les tableaux <code>$_ENV</code> ou <code>$_SERVER</code> de PHP, sinon, assigner une chaîne par défaut (dans le cas présent : &quot;dévelopment&quot;).</p>
+<p>Cette information, ce niveau d'environnement, va nous permettre de basculer facilement d'un paramétrage à un autre (par exemple, des paramétrages de développement à des paramétrages de production). Comme depuis le début, le niveau d'environnement peut être nommé comme vous le souhaitez.</p>
+<p>Pour compléter cette partie, vous pouvez en plus de ces deux constantes, créer d'autres constantes si vous le souhaitez. Pour ma part, par exemple, je crée une constante <code>TODAY</code> qui est une version formatée de la date courante. Ainsi, je peux insérer facilement cette valeur dans des noms de fichiers tels que les fichiers de logs par exemple.</p>
+<h4>Configurer l'include path</h4>
+<p>Pour définir l'include path, il faut a minima déclarer le chemin pour la librairie de Zend Framework.</p>
+<pre><code class="language-php">// s'assurer que le répertoire parent de la librairie Zend Framework est dans l'include path
+set_include_path(implode(PATH_SEPARATOR, array(
+  get_include_path(), 
+  realpath(APPLICATION_PATH . '/../../libraries')
+)));
+</code></pre>
+<p>Comme on peut le constater, vous pouvez créer votre répertoire <code>libraries/</code> où vous voulez. Vous pouvez le nommer comme vous le souhaitez. Il suffit d'ajouter son chemin dans la valeur de l'include_path. Utiliser la constante <code>APPLICATION_PATH</code> définie plus tôt pour vous assurer que tous les chemins seront toujours relatifs au même point d'origine. Bien entendu, ne pas oublier d'utiliser la constante que vous avez déclaré et le chemin qui est le votre.</p>
+<p>IMPORTANT : Ne pas inclure le répertoire <code>Zend/</code>. L'include path doit contenir le répertoire parent du répertoire <code>Zend/</code>.</p>
+<h4>Lancer Zend Application</h4>
+<p>Et nous y voila.</p>
+<p>Pour lancer le composant <strong>Zend_Application</strong>, vous aurez besoin de :</p>
+<ul>
+<li>inclure le fichier <code>Zend/Application.php</code></li>
+<li>instancier l'objet</li>
+<li>le lancer</li>
+</ul>
+<pre><code class="language-php">// inclure le fichier Zend/Application.php
+require_once 'Zend/Application.php' ;
+
+// instancier l'objet
+$application = new Zend_Application(APPLICATION_ENV, APPLICATION_PATH . '/path/to/application.ini');
+
+// le lancer
+$application-&gt;bootstrap()
+            -&gt;run() ;
+</code></pre>
+<h5>Inclure le fichier Zend/Application.php</h5>
+<p>Si on a correctement insérer le répertoire parent de <code>Zend/</code> dans l'include path, l'instruction <code>require_once()</code> devrait fonctionner correctement.</p>
+<h5>Instancier l'objet</h5>
+<p>Nous allons instancier un objet <strong>Zend_Application</strong>. Le constructeur de <strong>Zend_Application</strong> a besoin en premier argument la valeur de niveau d'environnement et en second argument, le chemin pour le fichier de configuration de l'application.</p>
+<p>Dans plusieurs tutoriaux sur lesquels je suis tombée, le fichier de configuration de l'application est un fichier en .ini. Il semblerait qu'il soit également possible d'utiliser d'autres formats tels qu'un fichier XML par exemple. Comme <strong>Zend_Application</strong> utilise un objet <strong>Zend_Config</strong> pour parcourir le fichier de configuration et charger tous les paramètres, tous les formats acceptés par <strong>Zend_Config</strong> devrait donc fonctionner. Ainsi, si le format .ini ne vous convient pas, il suffit d'utiliser un autre format, du moment que <strong>Zend_Config</strong> l'accepte.</p>
+<p>Encore une fois, ZF est vraiment flexible. Vous pouvez mettre votre fichier de configuration là où vous le jugerez le plus pertinent. Lorsque vous instancierez l'objet <strong>Zend_Application</strong>, il faudra juste vous assurer que vous utiliserez le bon chemin. De même, vous pouvez nommer le fichier de configuration comme vous le souhaitez. Veillez seulement à utiliser le nom de fichier correct.</p>
+<h5>Le lancer</h5>
+<p>Une fois que nous avons l'instance de l'objet <strong>Zend_Application</strong>, nous pouvons &quot;bootstraper&quot; l'instance (il suffit de faire <code>bootstrap</code>) et de le lancer (faire <code>run</code>). Chaque fois que je dis &quot;bootstrap&quot;, je traduis par &quot;initialiser&quot;... Je ne sais pas si c'est exactement ce que fais un bootstrap mais comme ça, j'ai moins l'impression de parler schtroumpf.</p>
+<p>Maintenant que nous avons fini avec le fichier <code>index.php</code>, nous allons nous occuper de nos autres fichiers.</p>
+<h3>Le fichier .htaccess</h3>
+<p>Il faut définir quelques règles de réécriture (rewriting rules).</p>
+<pre><code class="language-php">RewriteEngine On
+
+RewriteCond %{REQUEST_FILENAME} -s [OR]
+RewriteCond %{REQUEST_FILENAME} -l [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^.*$ - [NC,L]
+RewriteRule ^.*$ index.php [NC,L]
+</code></pre>
+<p>C'est tout. Ne vous posez pas de question. Ca marche.</p>
+<p>Qu'est ce que ça fait : comme pour tous les autres sites web, vous avez votre URL pour accéder à vos pages. Avec ces règles de réécriture, vous vous assurez que tous les liens de votre site passeront par le fichier <code>index.php</code> que nous venons tout juste de créer.</p>
+<p>Que se passe-t-il alors ? La requête HTTP (le lien) va entrer dans le fichier <code>index.php</code>. Dans <code>index.php</code>, rappelez vous, nous avons instancié, bootstrappé et lancé <strong>Zend Application</strong>. <strong>Zend Application</strong> va donc parser la requête HTTP qui arrive et rerouter vers la page de l'application correspondante. Dit différemment : vous voici avec un lien sur une page, disons : <a href="http://mondomaine.com/blog/user/create">http://mondomaine.com/blog/user/create</a>. Bien entendu, il n'y a pas de fichiers à <code>~www/blog/user/create</code>. En fait, quand vous essayez d'accéder à cette page, vous passez par la page <code>index.php</code> de l'application. L'application est alors instanciée, bootstrappée, lancée, elle va parser la requête HTTP et va retourner une page qui est située dans un <strong>module</strong> <em>blog</em>, un <strong>controller</strong> <em>user</em> and une <strong>action</strong> <em>create</em> (c'est une route standard pour une application Zend). Nous verrons ces détails plus tard. Il faut juste se rappeler que nous avons besoin de ces règles de réécriture parce que toutes les requêtes DOIVENT passer par <code>index.php</code>.</p>
+<h3>Le fichier bootstrap.php</h3>
+<p>Comme nous l'avons vu précédemment, l'application est instanciée et bootstrappée avant d'être lancée. Pour assurer son bootstrap(page), nous avons besoin d'un fichier <code>bootstrap.php</code>. Ce fichier <code>bootstrap.php</code> est dans le répertoire <code>application/</code> impérativement. Pour le coup, ici, nous ne pouvons prendre de liberté. Voici le contenu du fichier <code>bootstrap.php</code>.</p>
+<pre><code class="language-php">&lt;?php
+class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
+{
+}
+</code></pre>
+<p>Encore une fois, fastoche.</p>
+<p>En fait, dans plusieurs tutoriaux concernant ZF 1.8, le fichier <code>bootstrap</code> contient un grand volume d'instructions pour initialiser (bootstrap) plusieurs ressources nécessaire pour une application web. Dans la version ZF 1.11, la plupart de ces instructions ne sont plus nécessaires. En fonction du paramétrage dans le fichier de configuration, les ressources sont initialisées en arrière plan. Plus besoin de tout réécrire dans le fichier <code>bootstrap</code>.</p>
+<p>Le seul problème que j'ai rencontré (suite à un manque d'expérience), c'est de savoir ce qui est - et ce qui n'est pas - bootstrappé. Puisque tout se fait en arrière plan, comment savoir si c'est fait ? Mais pas d'inquiétudes, les ressources principales fonctionnent donc c'est plus que bien pour un début.</p>
+<p>Puisque le fichier <code>bootstrap.php</code> est vide, peut-on s'en passer ? Bien sûr que non. Tout d'abord, <strong>Zend_Application</strong> va avoir besoin de la présence de ce fichier. Même vide. Je parie que toutes les instructions d'initialisation faites en arrière plan sont dans l'objet <strong>Zend_Application_Bootstrap_Bootstrap</strong> en fait. Donc, finalement, le fichier qui paraît vide n'est peut-être pas si vide finalement. Dans un second temps, si vous avez besoin de personnaliser votre séquence de bootstrap et d'ajouter plus de ressources, vous aurez de toutes façons besoin de ce fichier.</p>
+<h3>Le fichier de configuration</h3>
+<p>Je vais passer rapidement sur le format attendu par <strong>Zend_Config</strong> dans le fichier de configuration .ini.</p>
+<p>Le fichier de configuration va être partitionné par séquence ou bloc. Chaque séquence est introduite par un nom qui s'affiche entre crochets. Une séquence va hériter des paramétrages d'une autre séquence en utilisant les deux points (:). Concernant le nom des séquences, encore une fois, c'est à votre libre arbitre.</p>
+<pre><code class="language-sh">[bootstrap]
+; les paramétrages vont ici
+
+[production : bootstrap]
+; la séquence &quot;production&quot; hérite de la séquence &quot;bootstrap&quot;
+; les paramétrages qui ne figurent pas dans la séquence &quot;bootstrap&quot; s'insèrent ici
+; les paramétrages qui figurent dans la séquence &quot;bootstrap&quot; mais qui doivent être adaptés pour un environnement de production doivent aller ici. Ils surchargeront les paramétrages de la séquence &quot;bootstrap&quot;.
+; les paramétrages identiques à la séquence &quot;bootstrap&quot; n'ont pas à être réécrits ici.
+
+[development : production]
+; la séquence &quot;development&quot; hérite de la séquence &quot;production&quot; (qui elle même, hérite de la séquence &quot;bootstrap&quot;)
+</code></pre>
+<p>Dans le cas présent, on a créé trois niveaux d'environnement (<em>development</em>, <em>production</em>, <em>bootstrap</em>).</p>
+<p>Vous vous rappelez très certainement de la constante <code>APPLICATION_ENV</code> que nous avons défini plus tôt (dans le fichier <code>index.php</code>) ?. La valeur attendue pour <code>APPLICATION_ENV</code> est un des niveaux d'environnement défini dans le fichier de configuration.</p>
+<p>Vous vous rappelez comment nous avons instancié un objet <strong>Zend_Application</strong> ? Nous avons passé la valeur du niveau d'environnement en premier argument et le chemin du fichier de configuration en second argument. Ainsi, <strong>Zend Application</strong> va ouvrir le fichier de configuration, il va le parser et charger les paramétrages attendus pour la séquence déclarée.</p>
+<h5>Initialiser la ressource FrontController</h5>
+<p>Maintenant que notre application accède à son fichier de configuration et sait ce quelle doit lire, nous devons initialiser le <strong>FrontController</strong>. Dans notre application, nous aurons accès à plusieurs controllers mais il n'y aura toujours qu'un seul <strong>FrontController</strong> qui fera tout le boulot. Bon, c'est un affreux raccourci mais l'essentiel est là.</p>
+<pre><code class="language-sh">resources.frontController.controllerDirectory = APPLICATION_PATH &quot;/controllers&quot;
+</code></pre>
+<p>Pour initialiser le <strong>FrontController</strong>, tout ce qu'il y a à faire est de dire à l'application où vont se trouver les fichiers controllers. La plupart du temps, on les mettra dans le fichier <code>controllers/</code>.</p>
+<h3>Le fichier Controller</h3>
+<p>Maintenant que nous avons en place le <strong>FrontController</strong>, il faut pouvoir le tester. Nous allons donc créer notre premier controleur. Il existe deux noms réservés pour les controleurs : <em>&quot;Index&quot;</em> et <em>&quot;Error&quot;</em>. Au delà de ceux là, il est possible de donner le nom que l'on veut à ses propres controleurs. ATTENTION : <em>Index</em> et <em>Error</em> sont des noms réservés mais ils n'existent pas au lancement de l'application. Il est impératif de les créer.</p>
+<p>Rappelons nous des règles de réécriture et de cette histoire de requête HTTP. La requête HTTP utilisée pour l'exemple comportait le nom d'un module, le nom d'un controller et le nom d'une action. Mais comment faire pour une requête HTTP qui ne comprend aucun de ces éléments ? Il faut savoir qu'alors, le <strong>FrontController</strong> va utiliser des noms par défaut : le nom par défaut du module est &quot;<em>default</em>&quot;, le nom par défaut du controleur est &quot;<em>index</em>&quot; et le nom par défaut de l'action est &quot;<em>index</em>&quot; également.</p>
+<p>Concernant le controleur <strong>Error</strong>, celui ci est réservé pour gérer les erreurs mais nous verrons cela plus tard.</p>
+<p>Nous allons pour le moment créer le controleur <strong>Index</strong>. Une fois qu'on a choisi le nom de notre controleur, le nom de fichier sera (et cela est obligatoire) le nom du controleur (première lettre en majuscule) juste accolé au mot clé Controller (première lettre majuscule également). Ainsi, le nom de fichier du controleur <strong>index</strong> sera <code>IndexController.php</code>.</p>
+<pre><code class="language-php">&lt;?php
+class IndexController extends Zend_Controller_Action
+{
+  public function indexAction()
+  {
+    $this-&gt;view-&gt;title = &quot;Hello World&quot; ;
+  }
+}
+</code></pre>
+<p>Je ne vais pas expliquer comment ça marche ici parce que le présent post est déjà long. Je ferais cela dans un prochain billet. Restez dans le coin :p</p>
+<p>Tout ce qu'il faut savoir pour le moment :</p>
+<p>Les objets <strong>Controller</strong> (controleur) héritent de <strong>Zend_Controller_Action</strong></p>
+<p>Les objets <strong>Controller</strong> (controleur) ont une ou plusieurs méthodes <code>quelquechoseAction()</code></p>
+<p>Les résultats des méthodes <code>quelquechoseAction()</code>, ce qu'elles retournent etc, toutes ces informations qui doivent être affichées à l'écran vont être envoyée à un élément <strong>View</strong>. Pour cela, le controleur a une propriété <code>$view</code> qui est lui même un objet avec une liste non exhaustive de propriétés. Ainsi, vous pouvez ajoutez autant de propriétés que vous souhaitez à l'objet <code>$view</code> tel que <code>$variable1</code>, <code>$variable2</code>, <code>$tableau[]</code> etc... Dans votre controleur, tous ce que vous aurez à faire, c'est d'assigner les valeurs à ces nouvelles propriétés :</p>
+<pre><code class="language-php">$this-&gt;view-&gt;variable1 = &quot;la première variable que je vais envoyer à l'élément view&quot; ;
+$this-&gt;view-&gt;variable2 = &quot;la seconde variable que je vais envoyer à l'élément view&quot; ;
+$this-&gt;view-&gt;tableau[] = &quot;premier élément de tableau que je vais envoyer à l'élément view&quot; ;
+$this-&gt;view-&gt;tableau[] = &quot;second élément de tableau que je vais envoyer à l'élément view&quot; ;
+</code></pre>
+<h3>Le fichier View</h3>
+<p>Finalement, créons notre fichier vue. Je vais le faire vite et succint et nous nous repencherons sur les principes Controleurs / Vues plus tard.</p>
+<p>Par défaut, chaque <code>quelquechoseAction()</code> va avoir besoin d'un fichier vue <code>quelquechose.phtml</code>.</p>
+<p>Voici comment ça fonctionne :</p>
+<p>Toutes les vues vont être dans un répertoire <code>views/scripts/</code>. Voici une autre des rares contraintes de ZF :</p>
+<ul>
+<li>le répertoire <code>views/</code> <strong>doit être</strong> au même niveau que le répertoire <code>controllers/</code>. Je pense qu'il est possible de modifier cette contrainte en modifiant les initialisations au moment du bootstrap mais est-ce qu'on souhaite <em>VRAIMENT</em> faire ça ?</li>
+<li>le sous-répertoire <code>scripts/</code> sous <code>views/</code> est <strong>obligatoire</strong></li>
+<li>dans le répertoire <code>views/scripts/</code>, il faut créer autant de répertoires que vous avez de controleurs. <code>controllers/IndexController</code> pointera sur un chemin de type <code>views/scripts/index</code> alors que <code>controllers/ErrorController</code> pointera sur <code>views/scripts/error</code>.</li>
+<li>dans chacun des répertoires <code>views/scripts/{nom_de_controleur}</code>, il faut créer autant de fichier .phtml que vous avez d'actions. <code>IndexController-&gt;indexAction</code> pointera sur ce fichier : <code>views/scripts/index/index.phtml</code> quand une action de type <code>IndexController-&gt;loginAction</code> pointera sur le fichier <code>views/scripts/index/login.phtml</code>.</li>
+</ul>
+<p>Contentez vous de créer vos controleurs d'un côté, avec les actions et vos fichiers phtml de l'autre côté. <strong>Zend_Application</strong> fera le reste du boulot du moment que votre système de fichier est convenablement monté.</p>
+<p>Dans votre fichier controleur, vous avez créé stockés différentes informations dans les propriétés de <code>$view</code> : <code>$this-&gt;view-&gt;{propriétés}</code>.</p>
+<p>Vous pouvez maintenant récupérer toutes ces informations dans le fichier .phtml. Ainsi, <code>$this-&gt;view-&gt;{propriété}</code> devient <code>$this-&gt;{propriété}</code> dans votre fichier .phtml.</p>
+<pre><code class="language-php">// echo la propriété variable1
+echo $this-&gt;variable1 ;
+
+//résultats à l'écran : la première variable que je vais envoyer à l'élément view
+
+// echo la propriété variable2
+echo $this-&gt;variable2 ;
+
+//résultats à l'écran : la seconde variable que je vais envoyer à l'élément view
+
+// echo la propriété tableau
+foreach($this-&gt;tableau as $rows)
+{
+  echo $rows . '&lt;br&gt;' ;
+}
+
+//résultats à l'écran : 
+//premier élément de tableau que je vais envoyer à l'élément view
+//second élément de tableau que je vais envoyer à l'élément view
+</code></pre>
+<p>C'est tout.</p>
+<h3>Le système de fichiers</h3>
+<p>Finalement, voici l'arborescence du système de fichier comme il a été exposé dans ce tutoriel. J'espère que ça va vous aider.</p>
+<pre><code>libraries/
+  Zend/
+    Application.php
+www/
+  index.php
+  .htaccess
+  application/
+    bootstrap.php
+    conf/
+      application.ini
+      controllers/
+        IndexController.php
+      views/
+        scripts/
+          index/
+            index.phtml
+</code></pre>
+<p>J'ai fait de mon mieux pour vous expliquer les choses telles que je les comprends. Toutefois, je suis également en apprentissage sur l'outil, alors excusez moi si ce que je dis n'est pas bon et je vous en prie, merci de m'éclairer avec vos explications. Je souhaite en apprendre plus sur ce framework. Surtout, évitez d'être TROP technique. Je ne parle, hélas, que l'humain.</p>
+<p>Restez branché pour d'autres tutoriaux. Celui ci ne fait qu'introduire les choses et je sais bien qu'on n'ira pas bien loin qu'avec ces infos.</p>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/fr/tags/zend-framework">Zend Framework</a></li><li><a href="/fr/tags/web-application">web application</a></li></ul>
+        </div>
+      
+
+      
+    
+
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>Sur moi</h3>
+      <p>J&#39;ai appris le php il y a quelques années, quand Internet était à ses débuts. Pour diverses raisons, j&#39;ai arrêté en route et j&#39;ai perdu le fil des nouveaux Internets que je redécouvre. Résultat, je me sens constamment à courir après l&#39;histoire mais je suis toujours motivée à reprendre des projets personnels. Je me propose de vous partager mes découvertes. Au delà des sujets de programmation, j&#39;aime également partager mes infos concernant notamment l&#39;Histoire, l&#39;Astronomie, la Linguistique, les Films, les Livres et les Anime. J&#39;espère que vous aimerez suivre mon blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. Tous droits réservés.</p>
+        <p>Propulsé par <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

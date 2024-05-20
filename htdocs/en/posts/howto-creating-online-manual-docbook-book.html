@@ -1,0 +1,359 @@
+<!doctype html>
+<html class="no-js" lang="en" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>HOWTO - Creating an online manual with DocBook - The Book&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">French</a>
+        <a href="/en/">English</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/en/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/en/books/0/index.html">Collections</a>
+        <a href="/en/">Home</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/en/">Home</a><i class="fas fa-angle-right"></i>HOWTO - Creating an online manual with DocBook - The Book
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>HOWTO - Creating an online manual with DocBook - The Book</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>8/7/2012, 10:10:00 AM
+        
+        <i class="fas fa-th-large"></i><!--a href="/en/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->, <!--a href="/en/sites/haclong-projects.html" class="tag-sites"-->Haclong projects<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/old-books.jpg" class="node-banner" />
+        
+      </div>
+
+      <p><p>All the directories structure is ready now. We also have prepared successfully all the tools we'll need to do our book (see <a href="/en/posts/howto-creating-online-manual-using-docbook-getting-ready.html">previous post</a>). We are eager to start, and see this wonder (DocBook) in action. Hopefully, we have a little idea of the kind of book we would like to achieve. So let's start !</p>
+<h2>Our book</h2>
+<p>Our book will be a technical documentation.</p>
+<ul>
+<li>
+<p>It will be composed of</p>
+</li>
+<li>
+<p>an introductory section</p>
+</li>
+<li>
+<p>few explicatives paragraphs</p>
+</li>
+<li>
+<p>class synopsises with properties and methods ordered by chapters, each chapter being a topic.</p>
+</li>
+<li>
+<p>Light tables of contents will be available for each chapter and for each class pages</p>
+</li>
+<li>
+<p>Full set of cross-references links will link pages altogether</p>
+</li>
+<li>
+<p>Our book is one language only</p>
+</li>
+<li>
+<p>Our book will be published in HTML only</p>
+</li>
+<li>
+<p>Our book targets two different audiences : standard user and developers</p>
+</li>
+<li>
+<p>Hopefully, we'll get help from friends so we will try to split our source into small physical parts</p>
+</li>
+<li>
+<p>Our book will display links to &quot;previous&quot; page and &quot;next&quot; page, to &quot;home&quot; page and we will be able to go up one level</p>
+</li>
+<li>
+<p>And many more features to come...</p>
+</li>
+</ul>
+<h2>Building our book</h2>
+<p>Our book will be composed of one <code>&lt;book&gt;</code> element containing several <code>&lt;part&gt;</code> elements. Our classes will be displayed in a <code>&lt;reference&gt;</code> element containing several <code>&lt;refentry&gt;</code> elements.</p>
+<p>In our <code>&lt;book&gt;</code> element, we will have the book title, and a few words.</p>
+<p>In our <code>&lt;reference&gt;</code> element, we will have the class name, its synopsis and each methods listed in the synopsis will link to a page dedicated to the method.</p>
+<ol>
+<li>Create a <strong>book.xml</strong> file.</li>
+<li>Save it in <strong>sources/xml/</strong>.</li>
+<li>Write the prologue</li>
+</ol>
+<pre><code class="language-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
+</code></pre>
+<p>On a daily basis, I may need to write either in french, in english or in vietnamese. Therefore I used the <strong>utf-8</strong> encoding a lot to ease any character conversion issue. Beside, since the advent of the unicode, writing in vietnamese is so much easier ^____^.</p>
+<ol start="4">
+<li>Write the document type declaration</li>
+</ol>
+<pre><code class="language-xml">&lt;!DOCTYPE book [
+   &lt;!ENTITY % snippets SYSTEM &quot;snippets.xml&quot;&gt;
+   %snippets;
+]&gt;
+</code></pre>
+<p>Several reasons for this code</p>
+<ul>
+<li>
+<p>Since DocBook v5.0 is using RELAX NG language scheme, it does not need to have a document type declaration anymore. Please refer to the <a href="http://www.docbook.org/tdg5/en/html/ch01.html#introduction-ns" target="_blank">DocBook documentation about this move</a>.</p>
+</li>
+<li>
+<p>Although we still need to have a <code>&lt;!DOCTYPE&gt;</code> element because we will use entities to store some snippets (repetitive texts for example).</p>
+</li>
+<li>
+<p>The <strong>root node</strong> will be a <code>&lt;book&gt;</code> element</p>
+</li>
+<li>
+<p>We then add the <code>&lt;!ENTITY&gt;</code> element which references - as you can see - a <strong>snippets.xml</strong> file which will be saved in <strong>sources/xml/</strong>.</p>
+</li>
+<li>
+<p>And we define the entity <strong>%snippets;</strong></p>
+</li>
+</ul>
+<ol start="5">
+<li>Write the root node</li>
+</ol>
+<pre><code class="language-xml">&lt;book
+    xmlns=&quot;http://docbook.org/ns/docbook&quot;
+    version=&quot;5.0&quot;
+    xml:id=&quot;home&quot;
+    xml:lang=&quot;en&quot;
+    xml:xi=&quot;http://www.w3.org/2001/XInclude&quot;
+    xml:xlink=&quot;http://www.w3.org/1999/xlink&quot;
+&gt;
+</code></pre>
+<ul>
+<li>we set the <strong>namespace</strong> for the DocBook elements. (RELAX NG language schema)</li>
+<li>we set the docbook <strong>version</strong> number</li>
+<li>we set the <strong>id</strong> attribute of this node. This is not mandatory. We will see that DocBook XSL will deal with generated Id if you set none</li>
+<li>we set the <strong>lang</strong> attribute of this node - which is, of course, not mandatory. Here is a link to the <a href="http://www.w3.org/International/articles/language-tags/" target="_blank">languages codes specifications</a>. From there, you'll be able to access to more complete specifications (link to BCP 47/RCF 5646 in plain text version or in html)</li>
+<li>we set the <strong>namespace</strong> for the XInclude elements. We will use this later.</li>
+<li>we set the <strong>namespace</strong> for the xlink elements.</li>
+<li>Of course, do not forget to close the <code>&lt;book&gt;</code> element at the end of your file</li>
+</ul>
+<ol start="6">
+<li>Write the info node</li>
+</ol>
+<pre><code class="language-xml">&lt;info&gt;
+    &lt;title&gt;Title of your book&lt;/title&gt;
+    &lt;author&gt;
+        &lt;personname&gt;Author's name&lt;/personname&gt;
+        &lt;copyright&gt;&lt;year&gt;2012&lt;/year&gt;&lt;holder&gt;Owner's name&lt;/holder&gt;&lt;/copyright&gt;
+    &lt;/author&gt;
+&lt;/info&gt;
+</code></pre>
+<p>This node is totally optional. You can include several meta informations about your book here. Please refer to the <a href="http://www.docbook.org/tdg5/en/html/chunk-part-d64e8789.html" target="_blank">Docbook documentation for all the available elements</a>. The <code>&lt;title&gt;</code> data is interesting though.</p>
+<ol start="7">
+<li>Write the foreword part</li>
+</ol>
+<pre><code class="language-xml">&lt;simplesect&gt;
+    &lt;info&gt;
+        &lt;title&gt;Foreword&lt;/title&gt;
+        &lt;abstract&gt;&lt;simpara&gt;This is the foreword of this book. Please enjoy it&lt;/simpara&gt;&lt;/abstract&gt;
+    &lt;/info&gt;
+    &lt;para&gt;Welcome to my first book. This is the some words to begin with&lt;/para&gt;
+    &lt;para&gt;Another paragraph&lt;/para&gt;
+&lt;/simplesect&gt;
+</code></pre>
+<p>The <code>&lt;preface&gt;</code> element exists but in my case, it generates automatically a page break and a new entry in the table of contents. Since i'd like to have a few words to start the book but not a brand new page, i choose to use another element. In the case of more consequent foreword, or printed book with the preface on a new page after the title page, of course, it is far better to use the <code>&lt;preface&gt;</code> element.</p>
+<ol start="8">
+<li>The book parts</li>
+</ol>
+<pre><code class="language-xml">&lt;!-- Introductive part with chapters like : &quot;getting started&quot;, &quot;installation&quot;, &quot;requirements&quot;... --&gt;
+&lt;part xml:id=&quot;introduction&quot;&gt;
+    &lt;info&gt;
+        &lt;title&gt;Introduction&lt;/title&gt;
+    &lt;/info&gt;
+&lt;/part&gt;
+&lt;!-- Technical part with the API references --&gt;
+&lt;part xml:id=&quot;components&quot;&gt;
+    &lt;info&gt;
+        &lt;title&gt;The librarie components&lt;/title&gt;
+    &lt;/info&gt;
+&lt;/part&gt;
+</code></pre>
+<p>OK. The rough skeleton is done now. There's still the part with references and methods but let's test this first skeleton first.</p>
+<h2>Automated the processing of our book</h2>
+<p>Since we will be processing the book a lot of time (customizing and debugging purpose...), we will build a script file so we will be able to process the book whenever we need it.</p>
+<ol>
+<li>Create a <strong>book.bat</strong> file.</li>
+<li>Save it in <strong>the root directory</strong> (same level of the sources and html directories)</li>
+<li>Write the <strong>xsltproc command</strong>.</li>
+</ol>
+<pre><code class="language-sh">$ xsltproc sources/book.xsl sources/xml/book.xml
+</code></pre>
+<ul>
+<li>The book.xml is the XML file we are written. Of course, if you choose to use another path, change the path accordingly.</li>
+<li>Since we will customize (and override some DocBook XSL rules), we will need a customizing layer. So we prepare this layer with the book.xsl file.</li>
+</ul>
+<h2>Creating the customizing layer</h2>
+<ol>
+<li>Create a <strong>book.xsl</strong> file.</li>
+<li>Save it in <strong>sources</strong>.</li>
+<li>Write the <strong>customization layer</strong>.</li>
+</ol>
+<pre><code class="language-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;xsl:stylesheet version=&quot;1.0&quot; xmlns:xsl=&quot;http://www.w3.org/1999/XSL/Transform&quot;&gt;
+    &lt;!-- import area --&gt;
+    &lt;xsl:import href=&quot;xsl/html/chunk.xsl&quot;/&gt;
+    &lt;!-- param area --&gt;
+    &lt;!-- include area --&gt;
+&lt;/xsl:stylesheet&gt;
+</code></pre>
+<p>The <code>html/chunk.xsl</code> file is an XSL stylesheet from the DocBook XSL library. Let's say this is the stylesheet we want to use for now. I'll talk about this library in my next post so stay tuned !</p>
+<p>Pay attention to the comment lines. We will use them later. The area order (import, then param, then include) is important. It has to be this order.</p>
+<h2>Preparing the snippets file</h2>
+<p>We will create several entities for our book. Those entities might be different elements :</p>
+<ul>
+<li>external URL we would like to reference inside our book. We want to have the URL write down once so if it changes, we won't have to find and replace it in all our files.</li>
+<li>repetitive texts such as section titles, special characters etc...</li>
+<li>included pages.</li>
+</ul>
+<ol>
+<li>Create a <strong>snippets.xml</strong> file.</li>
+<li>Save it in <strong>sources/xml</strong>.</li>
+<li>Write the prolog</li>
+</ol>
+<pre><code class="language-xml"> &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
+</code></pre>
+<h2>What we do have now</h2>
+<p>Here is our filesystem now :</p>
+<pre><code>book_directory/
+---html/
+------css/
+---sources/
+------myxsl/
+------xsl/
+------xml/
+---------book.xml
+---------snippets.xml
+------book.xsl
+---book.bat
+</code></pre>
+<ul>
+<li><strong>sources/xsl/</strong>* : contains the whole DocBook XSL library</li>
+<li><strong>sources/xml/book.xml</strong> : is the content of your book</li>
+<li><strong>sources/xml/snippets.xml</strong> : will host entities useful for your book</li>
+<li><strong>sources/book.xsl</strong> : is the stylesheet customization layer</li>
+<li><strong>book.bat</strong> : is the script to process the book with the xsltproc command</li>
+</ul>
+<p>Now you can test and process your first book by double clicking on the <strong>book.bat</strong> file.
+Once you run your <strong>book.bat</strong> script, let's go check its gorgeous result : there's an <strong>index.html</strong> file on your root directory. Drag and drop this file into your favorite navigator. You'll get your book.</p>
+<p>Ok.</p>
+<p>It's not <em>THAT</em> gorgeous but you have your title, your foreword, links to the introductive part and to the API component part. There's also the navigation links to previous/next page on each page. (Ok, there's only three of them). And as you have seen it, our neat filesystem is a complete mess !! We'll fix that in our next post.</p>
+<p>Let's do some settings and some customization on the next post ! Stay tuned !!</p>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/en/tags/docbook">docbook</a></li><li><a href="/en/tags/xml">xml</a></li></ul>
+        </div>
+      
+
+      
+        <nav id="book-navigation">
+    
+       <li class="link-previous"><a href="/en/posts/howto-creating-online-manual-using-docbook-getting-ready.html"><i class="fas fa-long-arrow-alt-left"></i> HOWTO - Creating an online manual using DocBook - Getting ready</li>
+    
+
+    
+        <li class="link-next"><a href="/en/posts/howto-creating-online-manual-docbook-customization.html">HOWTO - Creating an online manual with DocBook - Customization <i class="fas fa-long-arrow-alt-right"></i></a></li>
+    
+
+    
+        <li class="link-up"><a href="/en/books/howto-creating-online-manual-docbook.html"><i class="fas fa-book-open"></i> HOWTO - Creating an online manual with DocBook</li>
+    
+</nav>
+
+      
+    
+
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>About me</h3>
+      <p>I learned coding with php several years ago, when Internet was still young. For multiple reasons, i had stopped then and missed most of this new Internet i&#39;m discovering once again. So, i feel like a newbie again and since i&#39;m ready to start over personal project, i&#39;ll share with you some of my discoveries. Beyond coding topics, i&#39;ll enjoy sharing with you several subjects such as History, Astronomy, Linguistics, Movies, Books, Music and Anime among others. I hope you&#39;ll enjoy reading this blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. All rights reserved.</p>
+        <p>Powered by <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

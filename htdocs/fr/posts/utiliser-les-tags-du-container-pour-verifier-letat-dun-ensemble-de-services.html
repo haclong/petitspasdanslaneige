@@ -1,0 +1,437 @@
+<!doctype html>
+<html class="no-js" lang="fr" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>Utiliser les tags du container pour vérifier l&#39;état d&#39;un ensemble de services.&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">Français</a>
+        <a href="/en/">Anglais</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/fr/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/fr/books/0/index.html">Séries</a>
+        <a href="/fr/">Accueil</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/fr/">Accueil</a><i class="fas fa-angle-right"></i>Utiliser les tags du container pour vérifier l'état d'un ensemble de services.
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>Utiliser les tags du container pour vérifier l'état d'un ensemble de services.</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>19/10/2016 14:06:00
+        
+        <i class="fas fa-th-large"></i><!--a href="/fr/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->, <!--a href="/fr/sites/haclong-projects.html" class="tag-sites"-->Haclong projects<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/apprets-3-perles-poupee-russe-matriochka-e-332162-p1160248-d3e57_big.jpg" class="node-banner" />
+        
+      </div>
+
+      <p><p>Dans mon application, je souhaite vérifier que tous les objets que je stocke en session sont tous correctement initialisés. Si au moins l'un d'entre eux n'est pas initialisé correctement, je dois faire une redirection dans mon controller. Voyons comment je peux m'en sortir avec les tags du container de Symfony.</p>
+<p>Pour une petite application sans ambition, qui tient plus de l'exercice d'école, je stocke des objets en session.</p>
+<p>Dans mon controleur, je souhaite vérifier que tous mes objets en session sont correctement initialisés.</p>
+<h2>Un objet pour gérer la session</h2>
+<p>J'ai commencé par monter un objet <code>MySession</code> qui me servirait à gérer ma session et tous les objets qui étaient stockés dedans. Il se trouve alors que, durant le développement de l'application, à chaque fois que je déployais un nouvel objet, je devais retoucher à mon objet <code>MySession</code>. Ainsi qu'aux tests de associés à <code>MySession</code>.</p>
+<p><em>Cela me pose un problème parce que, pour ce que j'ai compris de l'objet, une évolution dans l'application ne doit pas (ou vraiment de manière minimale) impacter les autres objets. Il n'est pas du tout prévu, dans les principes du développement orienté objet, de revenir modifier de manière constante un objet sous prétexte qu'on lui ajoute des dépendances régulièrement.</em></p>
+<p>En effet, voici à quoi ressemble <code>MySession</code> :</p>
+<pre><code class="language-php">// mySession
+class MySession {
+  public function __construct(Session $session, ObjetA $dependanceA, ObjetB $dependanceB)
+  {
+    $this-&gt;setObjetA($dependanceA) ;
+    $this-&gt;setObjetB($dependanceB) ;
+    $this-&gt;session = $session ;
+  }
+
+  public function isReady()
+  {
+    if(!isnull($this-&gt;getObjetA()) &amp;amp;&amp;amp; !isnull($this-&gt;getObjetB()))
+    {
+      return true ;
+    }
+    return false ;
+  }
+
+  public function setObjetA(ObjetA $a)
+  {
+    $this-&gt;session-&gt;set('myObjetA', $a) ;
+  }
+ 
+  public function getObjetA()
+  {
+    return $this-&gt;session-&gt;get('myObjetA') ;
+  }
+
+  public function setObjetB(ObjetB $b)
+  {
+    $this-&gt;session-&gt;set('myObjetB', $b) ;
+  }
+ 
+  public function getObjetB()
+  {
+    return $this-&gt;session-&gt;get('myObjetB') ;
+  }
+}
+</code></pre>
+<p>La méthode qui nous intéresse ici est <code>MySession::isReady()</code>.</p>
+<p><code>MySession::isReady</code> vérifie que les deux dépendances (<strong>objetA</strong> et <strong>objetB</strong>) ne sont pas nulles. Si elles ne sont pas nulles, alors <code>MySession-&gt;isReady</code> retourne vrai.</p>
+<p>Mais si je dois rajouter un 3me objet que je vais stocker dans la session et pour lequel je dois contrôler l'initialisation avant de continuer dans l'exécution de mon application, je serais obligé de</p>
+<ul>
+<li>modifier le constructeur de <code>MySession</code> (ajouter une dépendance)</li>
+<li>ajouter le <em>getter</em> et <em>setter</em> pour la nouvelle dépendance</li>
+<li>modifier <code>isReady()</code> en lui ajoutant la nouvelle dépendance dans le test.</li>
+</ul>
+<p>Et évidemment, ne pas oublier d'aller modifier le fichier de configuration du gestionnaire de services.</p>
+<p>Et modifier les tests de <code>MySession</code>.</p>
+<p>Ce n'est pas très efficace et définitivement pas propre du tout.</p>
+<p>J'ai alors pensé à une autre méthode qui se base sur les principes de <em>Single Responsability</em> du développement orienté objet.</p>
+<h2>Un objet responsable par objet en session.</h2>
+<p>Afin de gérer chaque objet en session, je crée un objet qui va faire la gestion de cet objet en session.</p>
+<pre><code class="language-php">class ObjetASession {
+  public function __construct(Session $session, ObjetA $dependanceA)
+  {
+    $this-&gt;session = $session ;
+    $this-&gt;setObjetA($dependanceA) ;
+  }
+
+  public function isReady()
+  {
+    if(!isnull($this-&gt;getObjetA()))
+    {
+      return true ;
+    }
+    return false ;
+  }
+ 
+  public function setObjetA(ObjetA $a)
+  {
+    $this-&gt;session-&gt;set('myObjetA', $a) ;
+  }
+ 
+  public function getObjetA()
+  {
+    return $this-&gt;session-&gt;get('myObjetA') ;
+  }
+}
+</code></pre>
+<p>Ainsi, chaque classe <code>ObjetXSession</code> gère ses propres <em>setter</em> et <em>getter</em> et vérifie si l'objet X est bien stocké en session ou pas.</p>
+<p>A chaque nouvelle classe à stocker en session, on ne touche plus aux objets <code>ObjetXSession</code> existant mais on crée un nouvel objet <code>ObjetXSession</code> dédié à notre nouvelle classe.</p>
+<p>Dans mon contrôleur, il faudrait appeler chaque objet <code>ObjetXSession</code> et vérifier pour chacun que l'objet est initialisé.</p>
+<pre><code class="language-php">class Controller {
+  public function action() {
+    if($objetASession-&gt;isReady() &amp;amp;&amp;amp; $objetBSession-&gt;isReady() &amp;amp;&amp;amp; $objetCSession-&gt;isReady()...)
+    {
+      // exécuter ce qu'il faut puisque tout les objets sont bien initialisés
+    } else
+    {
+      // rediriger vers une page pour initialiser les objets
+    }
+  }
+}
+</code></pre>
+<p>Allons bon, voila que je n'ai fait que déplacer le problème :</p>
+<ul>
+<li>On s'est (presque) débarrassé des problèmes de dépendance : Les contrôleurs de Symfony accèdent toujours au container, le service manager. ATTENTION : chez Zend Framework, le service manager n'est plus disponible dans les contrôleurs. Il faut des fabriques pour injecter les dépendances dans les contrôleurs de Zend Franemwork (à partir du 3), qu'on se le tienne pour dit.</li>
+<li>Mais chaque fois qu'on rajoute un nouvel objet à vérifier, il faut penser à l'ajouter dans le test de chaque contrôleur...</li>
+</ul>
+<p>On peut tout redéplacer dans un objet fédérateur, genre façade : revoila notre objet <code>MySession</code> mais drôlement plus allégé :</p>
+<pre><code class="language-php">class MySession
+{
+  public function __construct(Session $session, ObjetASession $aSession, ObjetBSession $bSession)
+  {
+    $this-&gt;session = $session ;
+    $this-&gt;ASession = $aSession ;
+    $this-&gt;BSession = $bSession ;
+  }
+
+  public function isReady()
+  {
+    if($objetASession-&gt;isReady() &amp;amp;&amp;amp; $objetBSession-&gt;isReady())
+    {
+      return true ;
+    }
+    return false ;
+  }
+}
+</code></pre>
+<p>Dans le contrôleur, il ne restera plus qu'à tester <code>$mySession-&gt;isReady() ;</code></p>
+<p>Si on a réussit à se débarrasser des <em>getter</em> et <em>setter</em> (qui ont tous été déplacés dans les objets <code>ObjetXSession</code> qui vont bien), on a toujours un problème pour déclarer toutes nos dépendances dans le constructeur de <code>MySession</code></p>
+<h2>Utiliser une collection d'objets</h2>
+<p><em>Actuellement, en PHP, il n'y a pas véritablement de type 'collection'. Au mieux, c'est juste un tableau d'objets. J'utilise le terme 'collection' ici juste pour clarifier mon propos, mais ne cherchez pas un type 'collection' comme on peut en trouver dans les autres langages.</em></p>
+<p>Afin de limiter les modifications et manipulations sur notre objet <code>MySession</code> (avoir à modifier son constructeur (et le test de la méthode <code>isReady()</code>) à chaque fois qu'il y a un nouvel objet à vérifier, on peut faire un réarrangement en créant une collection <code>SessionContentCollection</code> qui contiendra l'ensemble des objets à vérifier.</p>
+<p><strong>Deux avantages :</strong></p>
+<ul>
+<li>on va arrêter de modifier SYSTEMATIQUEMENT le constructeur de l'objet <code>MySession</code>.</li>
+<li>pour le test, on va pouvoir faire une boucle et tester automatiquement le statut de tous les objets à vérifier.</li>
+</ul>
+<p>Là, je sens qu'on a atteint un véritable progrès.</p>
+<p>Voici notre objet <code>SessionContentCollection</code>.</p>
+<pre><code class="language-php">class SessionContentCollection
+{
+  public $contents = [] ;
+  public function __construct(ObjetASession $aSession, ObjetBSession $bSession)
+  {
+    $this-&gt;addContent($aSession) ;
+    $this-&gt;addContent($bSession) ;
+  }
+
+  protected function addContent($content)
+  {
+    $this-&gt;contents[] = $content ;
+  }
+}
+</code></pre>
+<p>Et voici ce que devient notre objet <code>MySession</code></p>
+<pre><code class="language-php">class MySession
+{
+  public function __construct(Session $session, SessionContentCollection $collection)
+  {
+    $this-&gt;session = $session ;
+    $this-&gt;contents = $collection ;
+  }
+
+  public function isReady()
+  {
+    foreach($this-&gt;contents as $content)
+    {
+      if(!$content-&gt;isReady())
+      {
+        return false ;
+      }
+    }
+    return true ;
+  }
+}
+</code></pre>
+<p>Et voila</p>
+<p>Notre objet <code>MySession&lt;/code&gt;</code> est propre et ne sera plus dérangé chaque fois qu'on veut tester l'état d'un objet dans la session. C'est l'objet <code>SessionContentCollection</code> qui sera dérangé à chaque fois.</p>
+<p>Même si on n'a fait - encore une fois - que déplacer le problème un peu ailleurs à chaque fois, on pourrait s'arrêter là. Après tout, sur un principe de* Single Responsability*, notre classe <code>SessionContentCollection</code> n'a qu'une et une seule responsabilité : maintenir la liste des objets concerné par la validation en session. La session (<code>MySession</code> et les <code>ObjetXSession</code> gèrent quant à eux la session en elle-même)</p>
+<p>Mais notre secrète ambition, c'est que l'objet <code>SessionContentCollection</code> puisse être alimenté automatiquement. C'est ça qui serait super classe...</p>
+<p>Et pour faire cela, Symfony a exactement le mécanisme qui va bien. Le gestionnaire de services de Symfony peut travailler avec des <a href="http://symfony.com/doc/current/service_container/tags.html" target="_blank">tags</a>. On peut identifier facilement et rapidement tous les services déclarés dans le gestionnaire de services qui partagent le même tag. Une fois que les objets sont tous identifiés, on peut leur faire faire ce qu'on veut... comme par exemple s'ajouter d'eux même sur une collection d'objet comme <code>SessionContentCollection</code>.</p>
+<p>Voyons le gestionnaire de service :</p>
+<pre><code class="language-yml">// service.yml
+
+services:
+  sessionCollection:
+    class: AppBundle\SessionContentCollection
+
+  objetASession:
+    class: AppBundle\ObjetASession
+    tags:
+      - {name: session.to.verify}
+  
+  objetBSession:
+    class: AppBundle\ObjetBSession
+    tags:
+      - {name: session.to.verify}
+</code></pre>
+<p>Ainsi, tous nos services <code>objetXSession</code> portent le même tag '<em>session.to.verify</em>'. Le nom est complètement aléatoire et vous pouvez choisir le vôtre.</p>
+<p>Maintenant, on va vouloir que tous les services qui portent le tag '<em>session.to.verify</em>' viennent se mettre dans le tableau <code>$contents</code> de notre objet <code>SessionContentCollection</code>.</p>
+<p>Il faut pour cela créer ce que Symfony appelle un <em>CompilerPass</em></p>
+<pre><code class="language-php">namespace AppBundle;
+
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
+use Symfony\Component\DependencyInjection\Reference;
+
+class SessionCollectionPass implements CompilerPassInterface
+{
+  public function process(ContainerBuilder $container)
+  {
+    // comme on veut que tous les services qui portent le même tag
+    // alimentent un même objet collection sessionCollection
+    // il faut s'assurer que l'objet collection est bien déclaré dans le gestionnaire de service
+    if (!$container-&gt;has('sessionCollection')) {
+      return;
+    }
+
+    // on récupère le service collection
+    $definition = $container-&gt;findDefinition('sessionCollection');
+
+    // on identifie tous les services qui portent le tag qui nous intéresse dans notre cas
+    $taggedServices = $container-&gt;findTaggedServiceIds('session.to.verify');
+
+    // c'est là que la magie opère :
+    // on boucle sur tous les services qui portent le même tag
+    // on dit quoi faire : ici, on veut que le service qui porte le tag s'ajoute dans la collection sessionContent
+    foreach ($taggedServices as $id =&gt; $tags) {
+      $definition-&gt;addMethodCall('addContent', array(new Reference($id)));
+    }
+  }
+}
+</code></pre>
+<p>Enfin, il faut que notre <code>SessionCollectionPass</code> soit enregistré dans le gestionnaire de service afin qu'il soit exécuté.</p>
+<pre><code class="language-php">// src/AppBundle/AppBundle.php
+
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+//...
+
+class AppBundle extends Bundle
+{
+  public function build(ContainerBuilder $container)
+  {
+    $container-&gt;addCompilerPass(new SessionCollectionPass());
+  }
+}
+</code></pre>
+<p>Et voila !!</p>
+<p>Maintenant que <code>SessionContentCollection</code> va être alimenté dynamiquement, on n'a plus besoin de son constructeur</p>
+<pre><code class="language-php">class SessionContentCollection
+{
+  public $contents = [] ;
+  
+  protected function addContent($content)
+  {
+    $this-&gt;contents[] = $content ;
+  }
+}
+</code></pre>
+<p>Tout ce qu'il vous reste à faire si vous souhaitez ajouter un nouvel objet qui doit être initialisé avant l'exécution de votre application, il faut penser à tagger le service dans le gestionnaire de service.</p>
+<h2>Le ++</h2>
+<p>Rappelons nous de notre classe <code>MySession</code> :</p>
+<pre><code class="language-php">class MySession
+{
+  public function __construct(Session $session, SessionContentCollection $collection)
+  {
+    $this-&gt;session = $session ;
+    $this-&gt;contents = $collection ;
+  }
+
+  public function isReady()
+  {
+    foreach($this-&gt;contents as $content)
+    {
+      if(!$content-&gt;isReady())
+      {
+        return false ;
+      }
+    }
+    return true ;
+  }
+}
+</code></pre>
+<p>Pour que ce code fonctionne correctement, il est évident que tous les objets qui sont dans la collection <code>SessionContentCollection</code> doivent obligatoirement implémenter la méthode <code>isReady</code>.</p>
+<p>Du coup, un petit coup d'interface pour sécuriser tout ça...</p>
+<p>Créer une interface <code>IsReadyInterface</code></p>
+<pre><code class="language-php">interface IsReadyInterface {
+  public function isReady() ;
+}
+</code></pre>
+<p>Toutes nos classes <code>ObjetASession</code>, <code>ObjetBSession</code> etc... implémentent notre interface <code>IsReadyInterface</code></p>
+<p>Et notre classe <code>SessionContentCollection</code> va vérifier que l'objet que le <code>SessionCollectionPass</code> veut lui assigner implémente bien une interface <code>IsReadyInterface</code></p>
+<pre><code class="language-php">class SessionContent
+{
+  public $contents = [] ;
+  
+  protected function addContent(IsReadyInterface $content)
+  {
+    $this-&gt;contents[] = $content ;
+  }
+}
+</code></pre>
+<p>Et voila. Finalement.</p>
+<p>Net, propre et sans bavure :) Enjoy !</p>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/fr/tags/symfony">symfony</a></li><li><a href="/fr/tags/gestionnaire-de-service">gestionnaire de service</a></li><li><a href="/fr/tags/interface">interface</a></li><li><a href="/fr/tags/oop">OOP</a></li></ul>
+        </div>
+      
+
+      
+    
+
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>Sur moi</h3>
+      <p>J&#39;ai appris le php il y a quelques années, quand Internet était à ses débuts. Pour diverses raisons, j&#39;ai arrêté en route et j&#39;ai perdu le fil des nouveaux Internets que je redécouvre. Résultat, je me sens constamment à courir après l&#39;histoire mais je suis toujours motivée à reprendre des projets personnels. Je me propose de vous partager mes découvertes. Au delà des sujets de programmation, j&#39;aime également partager mes infos concernant notamment l&#39;Histoire, l&#39;Astronomie, la Linguistique, les Films, les Livres et les Anime. J&#39;espère que vous aimerez suivre mon blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. Tous droits réservés.</p>
+        <p>Propulsé par <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

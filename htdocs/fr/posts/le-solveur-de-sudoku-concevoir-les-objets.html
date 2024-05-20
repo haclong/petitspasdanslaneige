@@ -1,0 +1,258 @@
+<!doctype html>
+<html class="no-js" lang="fr" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>Le solveur de sudoku - Concevoir les objets&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">Français</a>
+        <a href="/en/">Anglais</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/fr/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/fr/books/0/index.html">Séries</a>
+        <a href="/fr/">Accueil</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/fr/">Accueil</a><i class="fas fa-angle-right"></i>Le solveur de sudoku - Concevoir les objets
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>Le solveur de sudoku - Concevoir les objets</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>16/03/2014 18:23:00
+        
+        <i class="fas fa-th-large"></i><!--a href="/fr/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/Sudoku_Board_Game.jpg" class="node-banner" />
+        
+      </div>
+
+      <p><h3>Programmation orientée objet</h3>
+<p>Le projet est créé dans Netbeans. L'environnement de tests unitaires est installé également. Prenons le temps de réfléchir sur ce que va faire notre application - Travaillons sur la conception de nos objets.</p>
+<p>De mon point de vue, lorsqu'on en vient à concevoir nos objets, on peut - dans les grandes lignes - distinguer deux types d'objets : les objets &quot;<strong>statiques</strong>&quot; et les objets &quot;<strong>utilitaires</strong>&quot;... Le plus simple est de commencer à créer notre modèle en commençant par modéliser les objets statiques.</p>
+<p>Les objets <em>statiques</em> sont principalement définis par leurs propriétés. Les objets statiques sont plus faciles à &quot;imaginer&quot; parce qu'on peut plus facilement dire d'eux : ils ont telle propriété, telle autre... Et la plupart du temps, ils correspondent <em>VRAIMENT</em> à des objets &quot;réels&quot;. Ces objets ont des méthodes qui vont servir soit à initialiser les propriétés de l'objet, soit à retourner la valeur de ces propriétés.</p>
+<p>Les objets <em>utilitaires</em> quant à eux, utilisent les objets statiques et, à terme, les combinent pour obtenir les résultats qu'on cherche à obtenir.</p>
+<h3>La grille de sudoku</h3>
+<p>Une grille de sudoku classique est composée d'un nombre de cases fini (9x9), chaque case est strictement définie par sa position et chaque case a un chiffre définitif.</p>
+<p>Si on pousse le raisonnement un peu plus loin, et si vous avez déjà essayé de résoudre des grilles de sudoku un peu hardues, vous avez sûrement fini par inscrire dans chacune des cases toutest les options possibles et éliminer chaque option les unes après les autres jusqu'à ce que vous arriviez à identifier le bon chiffre. En extrapolant, on peut même dire que pour les grilles très simples, on effectue le même raisonnement mais en observant les autres chiffres déjà placés dans la grille, l'élimination des options se fait quasiment instantanément. On peut donc considérer que pour chaque chiffre, il y a 9 options possibles.</p>
+<p>Si on essaie d'adapter ces caractéristiques à la programmation, on devra ajouter les informations suivantes :</p>
+<p>Les règles du sudoku précisent qu'un chiffre ne peut pas apparaître deux fois sur une même ligne, sur une même colonne ou dans une même région. Afin d'identifier si un chiffre n'apparaît pas deux fois sur une même ligne, sur une même colonne ou dans une même région, il est donc nécessaire de savoir dans quelle ligne, dans quelle région et dans quelle colonne se situe la case.</p>
+<p>Pour chacune des options pour un chiffre, il faut pouvoir représenter le raisonnement que l'on applique en définissant si l'option est une possibilité, ou si l'option est éliminée ou si enfin l'option est devenue un chiffre validé.</p>
+<p>En terme de programmation, on peut d'ores et déjà considérer qu'on va manipuler au moins 3 objets &quot;statiques&quot; :</p>
+<p><strong>le chiffre</strong></p>
+<p>Propriétés du chiffre :</p>
+<ul>
+<li>le chiffre a une collection de possibilités (de numéros possibles)</li>
+<li>chaque possibilité a un statut</li>
+</ul>
+<p><strong>la case</strong></p>
+<p>Propriétés de la case :</p>
+<ul>
+<li>la case a un numéro de ligne</li>
+<li>la case a un numéro de colonne</li>
+<li>la case a un numéro de région</li>
+<li>la case a un chiffre</li>
+</ul>
+<p><strong>la grille</strong></p>
+<p>Propriétés de la grille :</p>
+<ul>
+<li>la grille a une collection de cases</li>
+</ul>
+<p>Une fois que vous entrevoyez votre modèle, essayez d'anticiper sur ce que vous pourrez faire avec :</p>
+<ul>
+<li>le chiffre peut parcourir toutes ses possibilités et pour chaque possibilité, on peut connaître son statut</li>
+<li>en fonction des statuts de chacune des possibilités, on pourra également savoir si un chiffre a été confirmé ou pas</li>
+<li>on peut identifier une case grâce à ses coordonnées ligne / colonne</li>
+<li>la grille peut parcourir son tableau de cases</li>
+<li>la grille peut vérifier si les règles du sudoku ont été respectées</li>
+<li>toutes les cases d'une même ligne portent le même numéro de ligne : il sera alors possible de comparer tous les chiffres d'une même ligne pour contrôler les règles de sudoku. Le même raisonnement s'applique pour la colonne et la région.</li>
+<li>en fonction des chiffres trouvés ou pas, on pourra savoir si la grille a été ou résolue ou non</li>
+</ul>
+<p>J'ai hésité entre le modèle présenté plus haut, et d'autres modèles assez semblables :</p>
+<ul>
+<li>
+<p>un chiffre</p>
+</li>
+<li>
+<p>le chiffre est un des numéros possibles</p>
+</li>
+<li>
+<p>le chiffre a un statut</p>
+</li>
+<li>
+<p>une case</p>
+</li>
+<li>
+<p>la case a un numéro de ligne</p>
+</li>
+<li>
+<p>la case a un numéro de colonne</p>
+</li>
+<li>
+<p>la case a un numéro de région</p>
+</li>
+<li>
+<p>la case a un tableau de chiffres</p>
+</li>
+<li>
+<p>une grille</p>
+</li>
+<li>
+<p>un tableau de cases</p>
+</li>
+</ul>
+<p>Ou encore</p>
+<ul>
+<li>
+<p>un chiffre</p>
+</li>
+<li>
+<p>le chiffre a un numéro de ligne</p>
+</li>
+<li>
+<p>le chiffre a un numéro de colonne</p>
+</li>
+<li>
+<p>le chiffre a un numéro de région</p>
+</li>
+<li>
+<p>le chiffre a un tableau de numéros possibles avec un statut par numéro</p>
+</li>
+<li>
+<p>une grille</p>
+</li>
+<li>
+<p>un tableau de chiffres</p>
+</li>
+</ul>
+<p>Globalement, ce sont les mêmes propriétés, répartis différemment dans des objets différents.</p>
+<h3>Stratégies pour résoudre une grille de sudoku</h3>
+<p>Si vous êtes joueur de sudoku, vous avez vos propres méthodes pour résoudre une grille. Pour ma part, je distingue les stratégies suivantes :</p>
+<p><strong>Stratégie 1 :</strong></p>
+<p>En fonction des numéros qui sont déjà placés sur la grille, les possibilités s'éliminent et s'il ne reste qu'une seule option possible par chiffre, alors l'option est validée</p>
+<p><strong>Stratégie 2 :</strong></p>
+<p>En fonction des numéros qui sont déjà placés sur la grille, s'il ne reste qu'une seule option possible sur une même ligne, une même colonne ou une même région, alors l'option est validée</p>
+<p><strong>Stratégie 3 :</strong></p>
+<p>On peut exprimer une hypothèse pour une case. Une hypothèse consiste à valider une option pour une case. Si l'hypothèse génère une grille qui ne respecte pas les règles du sudoku, alors l'option à l'origine de l'hypothèse est éliminée. A contrario, une hypothèse qui ne génère aucune violation des règles du sudoku ne veut pas nécessairement dire que l'option à l'origine de l'hypothèse est validée. Dans ce cas là, il n'est pas possible de déduire si l'hypothèse est bonne ou pas. La meilleure option restera d'ignorer cette hypothèse et d'en formuler une autre.</p>
+<p>Les stratégies de résolution peuvent être développées comme méthodes dans l'objet Grille, ou bien on peut créer un objet de type utilitaire, l'objet Solver, qui ne comporterait que les méthodes utiles à la résolution d'une grille de sudoku.</p>
+<p>Il ne restera plus qu'à appliquer ces méthodes au programme.</p>
+<p>Allez ! Trève de bavardages, passons aux choses sérieuses.</p>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/fr/tags/poo">POO</a></li></ul>
+        </div>
+      
+
+      
+        <nav id="book-navigation">
+    
+       <li class="link-previous"><a href="/fr/posts/le-solveur-de-sudoku-preparer-le-projet.html"><i class="fas fa-long-arrow-alt-left"></i> Le solveur de sudoku - Préparer le projet</li>
+    
+
+    
+        <li class="link-next"><a href="/fr/posts/un-solveur-de-sudoku-preparer-la-vue.html">Un solveur de Sudoku - Préparer la vue <i class="fas fa-long-arrow-alt-right"></i></a></li>
+    
+
+    
+        <li class="link-up"><a href="/fr/books/aborder-la-programmation-orientee-objet-par-lexemple-concevoir-un-solveur-de-sudoku.html"><i class="fas fa-book-open"></i> Aborder la programmation orientée objet par l&#39;exemple. Concevoir un solveur de sudoku</li>
+    
+</nav>
+
+      
+    
+
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>Sur moi</h3>
+      <p>J&#39;ai appris le php il y a quelques années, quand Internet était à ses débuts. Pour diverses raisons, j&#39;ai arrêté en route et j&#39;ai perdu le fil des nouveaux Internets que je redécouvre. Résultat, je me sens constamment à courir après l&#39;histoire mais je suis toujours motivée à reprendre des projets personnels. Je me propose de vous partager mes découvertes. Au delà des sujets de programmation, j&#39;aime également partager mes infos concernant notamment l&#39;Histoire, l&#39;Astronomie, la Linguistique, les Films, les Livres et les Anime. J&#39;espère que vous aimerez suivre mon blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. Tous droits réservés.</p>
+        <p>Propulsé par <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

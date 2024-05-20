@@ -1,0 +1,46 @@
+<!doctype html>
+<html class="no-js" lang="{{ locale }}" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>{{ title }}&nbsp;|&nbsp;{{ site.title }}</title>
+
+  <meta name="description" content="{{ site.description }}">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="{{ eleventy.generator }}" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="{{ baseUrl }}" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+  {% include "blocks/header.njk" %}
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    {% block content %}{% endblock %}
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+  {% include "blocks/footer.njk" %}
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

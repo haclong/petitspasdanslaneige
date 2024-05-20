@@ -1,0 +1,325 @@
+<!doctype html>
+<html class="no-js" lang="fr" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>Rajouter Zend InputFilter&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">Français</a>
+        <a href="/en/">Anglais</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/fr/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/fr/books/0/index.html">Séries</a>
+        <a href="/fr/">Accueil</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/fr/">Accueil</a><i class="fas fa-angle-right"></i>Rajouter Zend InputFilter
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>Rajouter Zend InputFilter</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>30/01/2015 14:14:00
+        
+        <i class="fas fa-th-large"></i><!--a href="/fr/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->, <!--a href="/fr/sites/haclong-projects.html" class="tag-sites"-->Haclong projects<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/__table_de_mixage_2.jpg" class="node-banner" />
+        
+      </div>
+
+      <p><p>Les fonctionnalités de formulaire de ZF2 permet de monter à la volée (ou programmatiquement) des éléments pour filtrer et valider vos éléments de formulaire. Pour un élément de formulaire (<code>Zend\Form\Element</code>), il y a un élément <code>Input</code> (<code>Zend\InputFilter\Input</code>), à l'élément global <code>Zend\Form\Form</code>, il y a la correspondance <code>Zend\InputFilter\InputFilter</code>.</p>
+<h2>Comment paramétrer l'élément Zend\InputFilter\Input utile pour valider un élément de formulaire</h2>
+<p>Programmatiquement</p>
+<pre><code class="language-php">use Zend\Form\Element ;
+use Zend\Form\Form ;
+use Zend\InputFilter\Input ;
+use Zend\InputFilter\InputFilter ;
+
+$element = new Element('nomdefamille') ;
+$element-&gt;setLabel('Votre nom de famille') ;
+$element-&gt;setAttributes(array(
+  'type' =&gt; 'text',
+));
+$form = new Form('fiche') ;
+$form-&gt;add($element) ;
+
+$input = new Input('nomdefamille') ;
+// paramétrer l'élément Input ici
+$input-&gt;setRequired(true) ;
+$input-&gt;getFilterChain()-&gt;attachByName('stringtrim', array $options) ; // soit par le petit nom
+$input-&gt;getValidatorChain()-&gt;attach(new Validator\StringLength(array('min' =&gt; 3, 'max' =&gt; 16))) ; // soit par le nom de la classe
+
+$inputFilter = new InputFilter() ;
+// rattacher l'élément Input à l'InputFilter
+$inputFilter-&gt;add($inputNomdefamille) ;
+
+// rattacher l'InputFilter au formulaire
+$form-&gt;setInputFilter($inputFilter) ;
+</code></pre>
+<p>Vous pouvez tout aussi bien le faire avec un factory (du formulaire)</p>
+<pre><code class="language-php">use Zend\Form\Factory ;
+
+$factory = new Factory() ;
+
+$form = $factory-&gt;createForm(array(
+  'elements' =&gt; array(
+    array(
+      'spec' =&gt; array(
+        'name' =&gt; 'nomdefamille',
+        'options' =&gt; array(
+          'label' =&gt; 'Votre nom de famille',
+        ),
+        'type' =&gt; 'text',
+      ),
+    ),
+  ),
+  'input_filter' =&gt; array(
+    array(
+      'name' =&gt; 'nomdefamille',
+      'required' =&gt; true,
+      'filters' =&gt; array(
+        array('name' =&gt; 'stringtrim'),
+      ),
+      'validators' =&gt; array(
+        array(
+          'name' =&gt; 'string_length',
+          'options' =&gt; array(
+            'min' =&gt; 3,
+            'max' =&gt; 16
+          ),
+        ),
+      ),
+    ),
+  )
+);
+</code></pre>
+<p>Vous pouvez aussi faire un mix entre le factory et la version programmatique</p>
+<pre><code class="language-php">use Zend\Form\Form;
+use Zend\InputFilter\Factory as InputFactory ;
+use Zend\InputFilter\InputFilter ;
+
+class MyForm extends Form
+{
+  public function __construct($name)
+  {
+    parent::__construct($name) ;
+
+    $inputFilter = new InputFilter() ;
+    $factory = new InputFactory() ;
+
+    $this-&gt;add(array(
+      'name' =&gt; 'nomdefamille',
+      'options' =&gt; array(
+        'label' =&gt; 'Votre nom de famille',
+      ),
+      'type' =&gt; 'Text',
+    )) ;
+
+    $inputFilter-&gt;add($factory-&gt;createInput(
+      array(
+        'name' =&gt; 'nomdefamille',
+        'required' =&gt; true,
+        'filters' =&gt; array(
+          array('name' =&gt; 'stringtrim'),
+        ),
+        'validators' =&gt; array(
+          array(
+            'name' =&gt; 'string_length',
+            'options' =&gt; array(
+              'min' =&gt; 3,
+              'max' =&gt; 16
+            ),
+          ),
+        ),
+      ),
+    )) ;
+
+    $this-&gt;setInputFilter($inputFilter) ;
+  }
+}
+</code></pre>
+<p>Et vous pouvez également mettre la validation directement dans un champ de formulaire personnalisé</p>
+<pre><code class="language-php">use Zend\Form\Element;
+use Zend\InputFilter\InputProviderInterface;
+
+class NomDeFamilleElement extends Element implements InputProviderInterface
+{
+  public function getInputSpecification()
+  {
+    return array(
+      'name' =&gt; $this-&gt;getName(),
+      'required' =&gt; true,
+      'filters' =&gt; array(
+        array('name' =&gt; 'stringtrim'),
+      ),
+      'validators' =&gt; array(
+        array(
+          'name' =&gt; 'string_length',
+          'options' =&gt; array(
+            'min' =&gt; 3,
+            'max' =&gt; 16
+          ),
+        ),
+      ),
+    ) ;
+  }
+}
+</code></pre>
+<p>Ou bien intégrer la validation directement dans un fieldset (ou un formulaire)</p>
+<pre><code class="language-php">use Zend\Form\Form ;
+use Zend\InputFilter\InputFilterProviderInterface ;
+
+class MyForm extends Form implements InputFilterProviderInterface
+{
+  public function getInputFilterSpecification()
+  {
+    return array(
+      'nomdefamille' =&gt; array(
+        'required' =&gt; true,
+        'filters' =&gt; array(
+          array('name' =&gt; 'stringtrim'),
+        ),
+        'validators' =&gt; array(
+          array(
+            'name' =&gt; 'string_length',
+            'options' =&gt; array(
+              'min' =&gt; 3,
+              'max' =&gt; 16
+            ),
+          ),
+        ),
+      ),
+    ) ;
+  }
+}
+</code></pre>
+<p>La documentation de ZF2 parle également de &quot;lazy-create in the <code>getInputFilter()</code> method&quot;... je n'ai aucune idée du comment mais c'est encore une autre façon d'y arriver...</p>
+<p>Voilà, nous avons vu différentes façons d'attacher un inputFilter sur un formulaire. Il y en a d'autres, indubitablement. Mais j'espère que vous avez saisi le principe.</p>
+<p>Voici le tableau pour paramétrer un objet <strong>Input</strong></p>
+<pre><code class="language-php">'input' =&gt; array(
+  'name' =&gt; string $name, // nom de l'élément de formulaire à filtrer
+  'require' =&gt; bool // default true
+  'filters' =&gt; array() // la liste des filtres à appliquer
+  'validators' =&gt; array() // la liste des validateurs à appliquer
+);
+</code></pre>
+<p>Comme on peut le constater, on peut paramétrer les filtres et les validateurs à partir d'un tableau de configuration. La liste des options disponibles très prochainement.</p>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/fr/tags/configuration">configuration</a></li><li><a href="/fr/tags/zend-framework-2">zend framework 2</a></li><li><a href="/fr/tags/factory">factory</a></li><li><a href="/fr/tags/zf2">ZF2</a></li></ul>
+        </div>
+      
+
+      
+        <nav id="book-navigation">
+    
+       <li class="link-previous"><a href="/fr/posts/la-configuration-dans-zend-framework-2-2nde-partie.html"><i class="fas fa-long-arrow-alt-left"></i> La configuration dans Zend Framework 2 - 2nde partie</li>
+    
+
+    
+        <li class="link-next"><a href="/fr/posts/zend-log-logger-avec-configuration.html">Zend Log Logger avec configuration <i class="fas fa-long-arrow-alt-right"></i></a></li>
+    
+
+    
+        <li class="link-up"><a href="/fr/books/configuration-dans-zend-framework-2.html"><i class="fas fa-book-open"></i> Configuration dans Zend Framework 2</li>
+    
+</nav>
+
+      
+    
+
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>Sur moi</h3>
+      <p>J&#39;ai appris le php il y a quelques années, quand Internet était à ses débuts. Pour diverses raisons, j&#39;ai arrêté en route et j&#39;ai perdu le fil des nouveaux Internets que je redécouvre. Résultat, je me sens constamment à courir après l&#39;histoire mais je suis toujours motivée à reprendre des projets personnels. Je me propose de vous partager mes découvertes. Au delà des sujets de programmation, j&#39;aime également partager mes infos concernant notamment l&#39;Histoire, l&#39;Astronomie, la Linguistique, les Films, les Livres et les Anime. J&#39;espère que vous aimerez suivre mon blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. Tous droits réservés.</p>
+        <p>Propulsé par <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

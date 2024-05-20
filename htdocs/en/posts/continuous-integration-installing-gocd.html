@@ -1,0 +1,228 @@
+<!doctype html>
+<html class="no-js" lang="en" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>Continuous Integration - Installing GoCD&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">French</a>
+        <a href="/en/">English</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/en/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/en/books/0/index.html">Collections</a>
+        <a href="/en/">Home</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/en/">Home</a><i class="fas fa-angle-right"></i>Continuous Integration - Installing GoCD
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>Continuous Integration - Installing GoCD</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>12/27/2016, 6:40:00 PM
+        
+        <i class="fas fa-th-large"></i><!--a href="/en/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->, <!--a href="/en/sites/haclong-projects.html" class="tag-sites"-->Haclong projects<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/capture_2.png" class="node-banner" />
+        
+          <p><strong>Credit</strong> : Sebastian Mantel - Unsplash </p>
+        
+      </div>
+
+      <p><p><a href="https://www.go.cd/" target="_blank">GoCD</a> is a continuous integration/deployment server produced by <a href="https://www.thoughtworks.com/" target="_blank">Thoughtworks</a>. You can install it on your localhost and it works with PHP projects.</p>
+<p>My own GoCD installation is a little bit too old... Actually a lot older and though i have taken some notes then, I honestly don't know if they are still reliable. I do hope though they will be helpful nonetheless.</p>
+<p>I don't remember any particular difficulties when i've done the installation.</p>
+<h2>GoCD Installation</h2>
+<p>GoCD requires installing the <strong>server</strong> AND the <strong>agent</strong>.</p>
+<p>Both are easy to install using <strong>APT</strong> on <strong>Ubuntu</strong>.</p>
+<p><em>But you need first to install the authorization key first as said in the official <a href="https://docs.go.cd/current/installation/install/server/linux.html#debian-based-distributions-ie-ubuntu" target="_blank">documentation</a></em></p>
+<pre><code class="language-sh"> curl https://download.go.cd/GOCD-GPG-KEY.asc | sudo apt-key add -
+</code></pre>
+<p>Add the repository now.</p>
+<p><em>I prefer to do it in that order : install the key first with CURL so when you'd add the repository, Synaptic will be able to validate the access to the repository. On the other way around, you may be stuck in an infinite loop : installing the repository first using Synaptic but when you'll try to close the window (and validate the added repository) Synaptic won't be able to access the repository since it does not have the right key but you can't add the key using Synaptic...</em></p>
+<p>Anyway, once you're done, you need to add the repository :</p>
+<pre><code class="language-sh"> deb https://download.go.cd /
+</code></pre>
+<p>Once this is done right, just use a good old <code>**apt-get**</code> et hop, showtime !</p>
+<pre><code class="language-sh"> sudo apt-get install go-server
+</code></pre>
+<p>You'll find <strong>Go Server</strong> files in the following paths :</p>
+<ul>
+<li>/var/lib/go-server #contains the binaries and database</li>
+<li>/etc/go #contains the pipeline configuration files</li>
+<li>/var/log/go-server #contains the server logs</li>
+<li>/usr/share/go-server #contains the start script</li>
+<li>/etc/default/go-server #contains all the environment variables with default values. These variable values can be changed as per requirement.</li>
+</ul>
+<p>But don't worry, i'll tell you where to look.</p>
+<p>Now install the agent. Same player, shoot again !</p>
+<pre><code class="language-sh"> sudo apt-get install go-agent
+</code></pre>
+<p><strong>Go Agent</strong> files can be find here :</p>
+<ul>
+<li>/var/lib/go-agent #contains the binaries</li>
+<li>/usr/share/go-agent #contains the start script</li>
+<li>/var/log/go-agent #contains the agent logs</li>
+<li>/etc/default/go-agent #contains all the environment variables with default values. These variable values can be changed as per requirement</li>
+</ul>
+<h2>Starting the server</h2>
+<p>Just do</p>
+<pre><code class="language-sh"> sudo /etc/init.d/go-server start
+</code></pre>
+<p>when the service is not running.</p>
+<p>This service will start a server you can access thanks to you favorite browser : <a href="#">http://localhost:8153/go</a></p>
+<p><strong>Attention :</strong> It is possible that <strong>Go Server</strong> does not work very well using <strong>localhost</strong>. You may need to set a valid hostname to your localhost and use the hostname to access <strong>Go Server</strong> : <a href="#">http://{your_hostname}:8153/go</a></p>
+<p>How to add a hostname on <strong>Ubuntu</strong> : edit <code>**/etc/hosts**</code> and add the following line <em>({your_hostname} being a valid hostname, any name will do, as you like it to be)</em></p>
+<pre><code class="language-sh">// /etc/hosts
+127.0.0.1 {your_hostname}
+</code></pre>
+<h2>Starting the agent</h2>
+<pre><code class="language-sh"> sudo /etc/init.d/go-agent start
+</code></pre>
+<p>If necessary, you can edit the** Go Agent** configuration file : <code>**/etc/default/go-agent**</code></p>
+<p>For your information, here is the content of my <strong>Go Agent</strong> file :</p>
+<pre><code class="language-sh">// /etc/default/go-agent
+GO_SERVER=127.0.0.1
+export GO_SERVER
+GO_SERVER_PORT=8153
+export GO_SERVER_PORT
+AGENT_WORK_DIR=/var/lib/${SERVICE_NAME:-go-agent}
+export AGENT_WORK_DIR
+DAEMON=Y
+VNC=N
+export JAVA_HOME=&quot;/usr/lib/jvm/java-7-openjdk-amd64/jre&quot; # SET_BY_GO_INSTALLER__DONT_REMOVE&lt;/pre&gt;
+</code></pre>
+<h2>Registering the agent with the server</h2>
+<p>Both agent and server are running, you need to register the agent with the server before works are assigned to them.</p>
+<p>On your browser, go to <a href="#">http://localhost:8153/go/agents</a>. If it is your very first installation, you should see one and only one agent listed on the page. Check the box on the agent line and click on [Enable] button. The agent name (should be the same of your hostname) turns blue and with your mouse hovering above, you can see it turns into an HTML link.</p>
+<p>I need to tell you that i haven't much experienced with the agent features. Therefore, we will work with only one agent for now, the one we installed on our localhost.</p>
+<h2>The other installations</h2>
+<p>At this point, you should have a running GoCD server (<a href="#">http://localhost:8153/go</a>).</p>
+<p>But you will need to add <a href="https://git-scm.com/downloads" target="_blank">Git</a> installation, <a href="https://getcomposer.org/doc/00-intro.md#installation-linux-unix-osx" target="_blank">Composer</a> installation and <a href="https://phpunit.de/getting-started.html" target="_blank">PHPUnit</a> too within your <a href="https://en.wikipedia.org/wiki/PATH_(variable)" target="_blank">PATH</a>. On my <strong>Ubuntu</strong>, all binaries are in <code>**/usr/bin**</code>.</p>
+<p><strong>Access rights</strong></p>
+<p>Please make sure that all users can run the binaries. Check the rights :</p>
+<pre><code class="language-sh">-rwxr-xr-x 1 root root 1706501 sept. 5 00:54 composer.phar*
+-rwxr-xr-x 1 root root 3087044 juil. 15 00:22 phpunit*
+-rwxr-xr-x 1 root root 1577288 mars 21 2016 git*
+</code></pre>
+<p>Now, all you need to do is to install your PHP project using of course Composer, Git and some tests using PHPUnit. In the meantime, before talking about the main topic, i'll talk a little bit about GoCD and its concepts.</p>
+<p>GoCD installation documentation can be found <a href="https://docs.go.cd/current/installation/installing_go_server.html" target="_blank">here for Go Server </a>and <a href="https://docs.go.cd/current/installation/installing_go_agent.html">here for Go Agent</a>.</p>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/en/tags/integration-continue">intégration continue</a></li><li><a href="/en/tags/gocd">gocd</a></li></ul>
+        </div>
+      
+
+      
+        <nav id="book-navigation">
+    
+       <li class="link-previous"><a href="/en/posts/continuous-integration-gocd-concepts.html"><i class="fas fa-long-arrow-alt-left"></i> Continuous Integration - GoCD concepts</li>
+    
+
+    
+        <li class="link-next"><a href="/en/posts/continuous-integration-installing-project.html">Continuous Integration - Installing the project <i class="fas fa-long-arrow-alt-right"></i></a></li>
+    
+
+    
+        <li class="link-up"><a href="/en/books/continuous-integration-using-go-cd.html"><i class="fas fa-book-open"></i> Continuous Integration - Using Go CD</li>
+    
+</nav>
+
+      
+    
+
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>About me</h3>
+      <p>I learned coding with php several years ago, when Internet was still young. For multiple reasons, i had stopped then and missed most of this new Internet i&#39;m discovering once again. So, i feel like a newbie again and since i&#39;m ready to start over personal project, i&#39;ll share with you some of my discoveries. Beyond coding topics, i&#39;ll enjoy sharing with you several subjects such as History, Astronomy, Linguistics, Movies, Books, Music and Anime among others. I hope you&#39;ll enjoy reading this blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. All rights reserved.</p>
+        <p>Powered by <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

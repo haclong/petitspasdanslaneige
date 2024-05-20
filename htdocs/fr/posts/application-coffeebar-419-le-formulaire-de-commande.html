@@ -1,0 +1,464 @@
+<!doctype html>
+<html class="no-js" lang="fr" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>Application CoffeeBar 4/19 - Le formulaire de commande&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">Français</a>
+        <a href="/en/">Anglais</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/fr/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/fr/books/0/index.html">Séries</a>
+        <a href="/fr/">Accueil</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/fr/">Accueil</a><i class="fas fa-angle-right"></i>Application CoffeeBar 4/19 - Le formulaire de commande
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>Application CoffeeBar 4/19 - Le formulaire de commande</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>21/01/2015 16:35:00
+        
+        <i class="fas fa-th-large"></i><!--a href="/fr/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/file9271237667217.jpg" class="node-banner" />
+        
+          <p><strong>Crédit</strong> : Morguefile.com </p>
+        
+      </div>
+
+      <p><p>Dans cet article, nous allons construire un formulaire dont la particularité est de comporter une liste de sélection avec des données personnalisées. Profitons de cette application pour voir comment créer un élément Select de formulaire avec une dépendance.</p>
+<p><em>NOTE : le long du tutoriel, je vais vous faire rééditer des classes et des vues sur lesquels on sera déjà passé. Il va y avoir des parties qui auront disparu au second passage : typiquement les use, les instructions extends, implements etc... Cela ne veut pas dire qu'il faut les retirer. C'est juste pour alléger le code. S'il faut retirer du code, soit je vous remettrais le passage intégralement, pour voir ce qui a disparu, soit je vous signalerais qu'il faut effacer une ligne pour la remplacer par une autre.</em></p>
+<p>Une <em>note</em> est constituée du <em>numéro de la table</em> (un texte libre), du <em>nom du serveur</em> (une valeur parmi la liste des serveurs du café) et, ça, c'est la valeur technique, l'<em>id unique</em> (guid) de la note.</p>
+<h2>L'élément Select</h2>
+<h3>La liste des serveurs</h3>
+<p>La liste des serveurs du café est un objet <code>CoffeeBar\Entity\Waiters</code> qui contient un tableau (<code>array</code>) avec les noms et les identifiants de chaque serveur du café. On peut imaginer que cette objet <code>CoffeeBar\Entity\Waiters</code> est relié à une base de données et extrait les informations de la base de données. Dans notre cas, la liste va être créée en statique.</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Entity/Waiters.php
+
+&lt;?php
+namespace CoffeeBar\Entity ;
+
+use ArrayObject ;
+
+// l'objet Waiters hérite de l'objet ArrayObject
+class Waiters extends ArrayObject
+{
+  public function __construct(Array $array=null)
+  {
+    $array = array( ‘paul’ =&gt; 'Paul',
+      ‘john’ =&gt; 'John',
+      ‘melissa’ =&gt; 'Melissa',
+      ‘julie’ =&gt; 'Julie',
+      ‘michael’ =&gt; 'Michael'
+    ) ;
+    parent::__construct($array) ;
+  }
+}
+</code></pre>
+<p>Maintenant, on souhaite envoyer cette liste de serveur dans un élément <code>Select</code> sans avoir à ressaisir la liste de nos serveurs.</p>
+<p>Dans la <a href="http://framework.zend.com/manual/current/en/modules/zend.form.elements.html#select" target="_blank">documentation de l'élément Select</a>, on remplit la liste des valeurs avec la méthode <code>Select::setValueOptions($array)</code>.</p>
+<pre><code class="language-php">$select = new Element\Select('mon_element_select') ;
+
+$select-&gt;setValueOptions(array(
+  '0' =&gt; 'element1',
+  '1' =&gt; 'element2',
+  '2' =&gt; 'element3',
+  'clé' =&gt; 'valeur',
+));
+</code></pre>
+<p>Ou en utilisant une notation en tableau :</p>
+<pre><code class="language-php">$form-&gt;add(array(
+  'type' =&gt; 'Select',
+  'options' =&gt; array(
+    'value_options' =&gt; array(
+      '0' =&gt; 'element1',
+      '1' =&gt; 'element2',
+      '2' =&gt; 'element3',
+      'clé' =&gt; 'valeur',
+    ),
+  ),
+)) ;&lt;/pre&gt;
+</code></pre>
+<p>Notre besoin crucial est de remplacer notre tableau attendu pour <code>value_options</code> par la liste de nos serveurs. Le premier point est de vérifier que notre tableau de serveurs est au bon format <code>'clé' =&gt; 'valeur'</code>... Pas de tableau à plusieurs entrées, et <code>'valeur&lt;/code&gt;'</code> doit être une chaîne de caractère et non pas un objet.</p>
+<h3>L'élément Select personnalisé</h3>
+<p>Avec Zend Framework 2, on crée un élément <code>Select</code> <em>personnalisé</em>, <code>CoffeeBar\Form\WaiterSelect</code>, qui hérite de l'objet <code>Zend\Form\Element\Select</code> du framework. On va lui injecter notre objet <code>CoffeeBar\Entity\Waiters</code> et on va assigner les valeurs de l'objet <code>CoffeeBar\Entity\Waiters</code> aux valeurs de l'élément <code>CoffeeBar\Form\WaiterSelect</code>.</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Form/WaiterSelect
+
+&lt;?php
+namespace CoffeeBar\Form ;
+
+use CoffeeBar\Entity\Waiters;
+use Zend\Form\Element\Select;
+
+class WaiterSelect extends Select
+{
+  protected $waiters ;
+  
+  // dans le constructeur, on injecte la liste des serveurs (objet Waiters)
+  // ainsi, dans l'objet WaiterSelect, on peut l'utiliser comme on le souhaite
+  public function __construct(Waiters $waiters)
+  {
+    $this-&gt;waiters = $waiters ;
+  }
+ 
+  // dans la méthode init(), on récupère la liste des serveurs (de l'objet Waiters)
+  // on définit la liste des serveurs comme la liste des options de l'élément Select
+  // $this-&gt;setValueOptions() est une méthode qui fait partie de l'objet Select
+  // la méthode ArrayObject::getArrayCopy() prend l'objet ArrayObject tel quel et le retourne sous forme de tableau
+  public function init()
+  {
+    $this-&gt;setValueOptions($this-&gt;waiters-&gt;getArrayCopy()) ;
+  }
+}
+</code></pre>
+<p>On charge les éléments dans le <strong>gestionnaire de services</strong> (Service Manager)</p>
+<pre><code class="language-php">// module/CoffeeBar/Module.php
+
+&lt;?php
+namespace CoffeeBar;
+
+use CoffeeBar\Form\WaiterSelect;
+use Zend\ModuleManager\Feature\FormElementProviderInterface;
+
+// dès qu'il s'agit d'éléments de formulaire personnalisés
+// il faut implémenter FormElementProviderInterface
+class Module implements FormElementProviderInterface
+{
+  public function getConfig() {...}
+
+  public function getAutoloaderConfig() {...}
+ 
+  // l'interface FormElementProviderInterface
+  // a la méthode getFormElementConfig
+  public function getFormElementConfig() {
+    return array(
+      'factories' =&gt; array(
+        // déclarer l'élément de formulaire dans le manager de formulaire
+        // dans mon exemple, la clé est 'WaiterSelect'
+        // mais n'importe quelle clé est possible
+        'WaiterSelect' =&gt; function($sm) {
+          $serviceLocator = $sm-&gt;getServiceLocator() ;
+          $waiters = $serviceLocator-&gt;get('CoffeeBarEntities\Waiters') ;
+          // ici par contre, c'est l'objet CoffeeBar\Form\WaiterSelect
+          // notez l’injection de l'objet Waiters dans le constructeur
+          $select = new WaiterSelect($waiters) ; //CoffeeBar\Form\WaiterSelect
+          return $select ;
+        },
+      ),
+    );
+  }
+
+  // on charge le Service Manager
+  public function getServiceConfig()
+  {
+    return array(
+      'invokables' =&gt; array(
+        // clé dans le Service Manager =&gt; objet
+        'CoffeeBarEntities\Waiters' =&gt; 'CoffeeBar\Entity\Waiters',
+      ),
+    ) ;
+  }
+}
+</code></pre>
+<p>On va maintenant créer notre formulaire, qui va contenir un élément caché, pour l'id unique, un élément texte pour le numéro de la table et notre élément select personnalisé, pour la liste des serveurs.</p>
+<h2>Le formulaire</h2>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Form/OpenTabForm.php
+
+&lt;?php
+namespace CoffeeBar\Form ;
+
+use Zend\Form\Element\Csrf;
+use Zend\Form\Form;
+
+class OpenTabForm extends Form
+{
+  // la fonction init va charger l'élément de formulaire customisé
+  // les autres éléments de formulaire &quot;standards&quot; peuvent être créé dans le constructeur
+  public function init()
+  {
+    $this-&gt;add(array(
+      'name' =&gt; 'waiter',
+      // utiliser la clé définie dans getFormElementConfig dans la classe Module
+      'type' =&gt; 'WaiterSelect',
+      'options' =&gt; array(
+        'label' =&gt; 'Serveur',
+      ),
+      'attributes' =&gt; array(
+        // c'est l'une des classes CSS de Bootstrap Twitter
+        'class' =&gt; 'form-control',
+      ),
+    )) ;
+  }
+
+  public function __construct()
+  {
+    parent::__construct('opentab') ;
+ 
+    $this-&gt;setAttribute('method', 'post') ;
+ 
+    // le champ id est un id unique (guid) caché
+    // il sera généré automatiquement dans la vue
+    $this-&gt;add(array(
+      'name' =&gt; 'id',
+      'type' =&gt; 'hidden',
+    )) ;
+    $this-&gt;add(array(
+      'name' =&gt; 'tableNumber',
+      'options' =&gt; array(
+        'label' =&gt; 'Numéro de la table',
+      ),
+      'attributes' =&gt; array(
+        'required' =&gt; 'required',
+        'class' =&gt; 'form-control',
+      ),
+    )) ;
+ 
+    $this-&gt;add(new Csrf('security')) ;
+ 
+    $this-&gt;add(array(
+      'name' =&gt; 'submit',
+      'type' =&gt; 'Submit',
+      'attributes' =&gt; array(
+        'value' =&gt; 'Open',
+        'class' =&gt; 'btn btn-default',
+      ),
+    )) ;
+  }
+}
+</code></pre>
+<p>Retournons dans le <strong>gestionnaire de services</strong> pour ajouter le formulaire</p>
+<pre><code class="language-php">// module/CoffeeBar/Module.php
+
+&lt;?php
+namespace CoffeeBar;
+
+class Module implements FormElementProviderInterface
+{
+  public function getConfig() {...}
+
+  public function getAutoloaderConfig() {...}
+ 
+  public function getFormElementConfig() {...}
+
+  // on charge le service manager
+  public function getServiceConfig()
+  {
+    return array(
+      'factories' =&gt; array(
+        'OpenTabForm' =&gt; function($sm) {
+          // parce que le formulaire OpenTabForm utilise un élément de formulaire personnalisé
+          // il faut utiliser $this-&gt;serviceLocator-&gt;get('FormElementManager') ;
+          // et utiliser le formulaire à partir du Form Element Manager
+          $formManager = $sm-&gt;get('FormElementManager') ;
+          $form = $formManager-&gt;get('CoffeeBar\Form\OpenTabForm') ;
+          return $form ;
+        },
+      ),
+    ) ;
+  }
+}
+</code></pre>
+<h2>Le rendu dans le navigateur</h2>
+<h3>Le contrôleur</h3>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Controller/TabController.php
+
+&lt;?php
+namespace CoffeeBar\Controller ;
+ 
+use Zend\Mvc\Controller\AbstractActionController;
+
+class TabController extends AbstractActionController
+{
+  public function openAction()
+  {
+    // récupérer le formulaire dans le ServiceManager
+    $form = $this-&gt;serviceLocator-&gt;get('OpenTabForm') ;
+
+    $request = $this-&gt;getRequest() ;
+
+    // si le formulaire a été posté
+    if($request-&gt;isPost()) {
+      // assigné les données du tableau $_POST aux éléments du formulaire
+      $form-&gt;setData($request-&gt;getPost()) ;
+ 
+      if($form-&gt;isValid()) {
+        // traiter les données du formulaire
+      }
+    }
+
+    $result['form'] = $form ;
+    return array('result' =&gt; $result) ;
+  }
+}
+</code></pre>
+<h3>La vue</h3>
+<p>Utilisons, pour le rendu du formulaire, les <strong>aides de vues</strong> mise à disposition par Zend Framework 2.</p>
+<pre><code class="language-php">// module/CoffeeBar/view/coffee-bar/tab/open.phtml
+
+&lt;h1&gt;Ouvrir une nouvelle note&lt;/h1&gt;
+
+&lt;?php
+  $form = $this-&gt;result['form'] ;
+  $form-&gt;prepare() ;
+
+  // l’action va nous renvoyer sur la route ‘tab/open’
+  // soit TabController / OpenAction tel que défini dans la route dans module.config.php
+  $form-&gt;setAttribute('action', $this-&gt;url('tab/open')) ;
+  $form-&gt;setAttribute('method', 'post') ;
+
+  // on génère l'id unique dans la vue
+  $id = $form-&gt;get('id') ;
+  $id-&gt;setValue(uniqid()) ;
+?&gt;
+
+&lt;?php echo $this-&gt;form()-&gt;openTag($form) ; ?&gt;
+
+&lt;div class='form-group'&gt;
+  &lt;?php echo $this-&gt;formRow($form-&gt;get('tableNumber')) ; ?&gt;
+&lt;/div&gt;
+
+&lt;div class='form-group'&gt;
+  &lt;?php echo $this-&gt;formRow($form-&gt;get('waiter')) ; ?&gt;
+&lt;/div&gt;
+
+&lt;?php
+  echo $this-&gt;formRow($form-&gt;get('security')) ;
+  echo $this-&gt;formHidden($id) ;
+  echo $this-&gt;formRow($form-&gt;get('submit')) ;
+
+  echo $this-&gt;form()-&gt;closeTag() ;
+?&gt;
+</code></pre>
+<p>Notre formulaire est fini.</p>
+<p>Ainsi, pour personnaliser un élément select, il faut</p>
+<ul>
+<li>un <strong>objet métier</strong> avec la liste des valeurs</li>
+<li>s'assurer que cet objet retourne un <strong>tableau à une dimension</strong> : <code>'clé' =&gt; 'valeur'</code> (soit par défaut, soit avec une méthode dédiée)</li>
+<li>créer un élément <code>select</code> personnalisé, qui <strong>hérite de <code>Zend\Form\Element\Select</code></strong></li>
+<li>implémenter l'<strong>interface <code>FormElementProviderInterface</code></strong> dans la classe <code>Module</code></li>
+<li><strong>injecter les dépendances</strong> dans la configuration des éléments de formulaire <code>Module::getFormElementConfig()</code></li>
+<li>utiliser le <strong>gestionnaire de formulaire 'FormElementManager'</strong> qui va se trouver dans le gestionnaire de service.</li>
+</ul>
+<p>Dans le chapitre suivant, on va voir comment on récupère les données du formulaire (hydratées dans un objet) et comment on les exploite dans notre application.</p>
+<p><em>Vous trouverez l'intégralité de l'application sur mon <a href="https://github.com/haclong/coffeebar" target="_blank">github</a></em></p>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/fr/tags/zend-framework-2">zend framework 2</a></li><li><a href="/fr/tags/mvc">MVC</a></li><li><a href="/fr/tags/zend-form">Zend Form</a></li><li><a href="/fr/tags/dependances">dépendances</a></li><li><a href="/fr/tags/service-manager">Service Manager</a></li></ul>
+        </div>
+      
+
+      
+        <nav id="book-navigation">
+    
+       <li class="link-previous"><a href="/fr/posts/application-coffeebar-319-espionner-notre-cache.html"><i class="fas fa-long-arrow-alt-left"></i> Application CoffeeBar 3/19 - Espionner notre cache</li>
+    
+
+    
+        <li class="link-next"><a href="/fr/posts/application-coffeebar-519-provoquer-louverture-de-commande.html">Application CoffeeBar 5/19 - Provoquer l&#39;ouverture de commande <i class="fas fa-long-arrow-alt-right"></i></a></li>
+    
+
+    
+        <li class="link-up"><a href="/fr/books/gerer-un-cafe-avec-une-programmation-evenementielle.html"><i class="fas fa-book-open"></i> Gérer un café avec une programmation événementielle</li>
+    
+</nav>
+
+      
+    
+
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>Sur moi</h3>
+      <p>J&#39;ai appris le php il y a quelques années, quand Internet était à ses débuts. Pour diverses raisons, j&#39;ai arrêté en route et j&#39;ai perdu le fil des nouveaux Internets que je redécouvre. Résultat, je me sens constamment à courir après l&#39;histoire mais je suis toujours motivée à reprendre des projets personnels. Je me propose de vous partager mes découvertes. Au delà des sujets de programmation, j&#39;aime également partager mes infos concernant notamment l&#39;Histoire, l&#39;Astronomie, la Linguistique, les Films, les Livres et les Anime. J&#39;espère que vous aimerez suivre mon blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. Tous droits réservés.</p>
+        <p>Propulsé par <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

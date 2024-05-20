@@ -1,0 +1,584 @@
+<!doctype html>
+<html class="no-js" lang="fr" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>Le routing avec Zend Framework 2&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">Français</a>
+        <a href="/en/">Anglais</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/fr/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/fr/books/0/index.html">Séries</a>
+        <a href="/fr/">Accueil</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/fr/">Accueil</a><i class="fas fa-angle-right"></i>Le routing avec Zend Framework 2
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>Le routing avec Zend Framework 2</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>15/02/2015 12:49:00
+        
+        <i class="fas fa-th-large"></i><!--a href="/fr/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->, <!--a href="/fr/sites/haclong-projects.html" class="tag-sites"-->Haclong projects<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/m_Ruta-40-Argentina.jpg" class="node-banner" />
+        
+      </div>
+
+      <p><p>Le routing, c'est le fait d'associer une requête (URL) à des fichiers qui se trouvent sur le serveur... C'est la correspondance qui se fait entre l'URL qu'on saisit dans la barre d'adresse du navigateur (<code>http://www.monsite.com/accueil/hello/world</code>) et le (ou les) fichiers qui vont contenir le code nécessaire à la construction des informations qui vont être retournées vers le navigateur (on parle de &quot;page web&quot;). On sait tous, de nos jours, qu'UNE page web n'est plus l'affaire d'une page (et une seule)... Si le routing, ça ne vous dit rien, c'est parce que la plupart du temps, ça s'est fait tout seul... Plus maintenant.</p>
+<h2>Un peu d'historique</h2>
+<h3>En HTML</h3>
+<p>Pour ceux qui ont commencé à faire des sites web en HTML, on a acquis une mauvaise habitude : l'URL de la page HTML correspond au chemin du fichier .html dans le système de fichiers.</p>
+<p>En bon vieux HTML, pour l'URL : <code>http://www.monsite.com/accueil/hello/world.html</code>, on devait mettre le fichier dans <code>{WEBROOT}/accueil/hello/world.html</code>.</p>
+<p>Il n'y a donc pas à se soucier du routing. Le serveur (<strong>Apache</strong>) faisait le boulot pour nous et tout allait bien.</p>
+<h3>Au début du PHP</h3>
+<p>Pour ceux qui ont commencé en PHP avec les prémices d'un front controller, on avait une page <code>index.php</code> unique avec un tas de paramétres dans la requête qui disait vers quelle page partir.</p>
+<p>Pour l'URL : <code>http://www.monsite.com/index.php?page=helloworld</code>, on avait, dans le fichier <code>{WEBROOT}/index.php</code> une redirection ou un include vers le fichier php qui correspondait au contenu de <code>page=helloworld</code>.</p>
+<h3>Zend Framework 1</h3>
+<p>Pour ceux qui sont passés par <strong>Zend Framework 1</strong>, ici encore, le routing était transparent. En soit, c'était bien pratique parce que quand on découvre un framework, ça faisait toujours ça de moins à gérer. Mais c'est une erreur parce qu'on continue avec nos mauvaises habitudes. Avec <strong>Zend Framework 1</strong> (si je me souviens bien), pour l'URL <code>http://www.monsite.com/accueil/hello/world</code>, le contenu de la page se trouvait dans l'action <code>WorldAction</code> du contrôleur <code>HelloController</code> du module <code>Accueil</code> (et la vue associée).</p>
+<p>C'était pratique mais ça pouvait générer des casses têtes pour l'organisation des contrôleurs et des actions.</p>
+<p>En effet, comment par exemple, mettre en place nos contrôleurs et actions si on a ce type de pages :</p>
+<ul>
+<li>monsite.com/album/list</li>
+<li>monsite.com/admin/album/list</li>
+</ul>
+<p>Il faudrait coder un premier module avec la liste des albums d'une part, pour la partie <strong>front</strong> puis créer un module <strong>admin</strong> et RE coder la liste des albums, pour la partie admin ?? On n'a pas l'impression de travailler deux fois pour rien ?</p>
+<h3>Zend Framework 2</h3>
+<p>Avec l'arrivée de <strong>Zend Framework 2</strong>, il y a eu des changements.</p>
+<p>La Team de <strong>ZF2</strong> a décidé que le routing ne se ferait plus de manière transparente. Finie la règle <em>module\controller\action</em> qui régnait. (Note : on pouvait la surcharger, la changer et en faire ce qu'on voulait, mais c'était compliqué et finalement, pour ceux qui découvrait le framework, c'était plus complexe de changer).</p>
+<p>Désormais, il est impératif de définir ses propres routes. L'avantage, c'est qu'on en fait ce qu'on veut. On garde le contrôle et l'organisation de nos modules, nos contrôleurs est complètement décorélé de l'arborescence de notre site.</p>
+<p>Si vous souhaitez utiliser les composants de routing de <strong>Zend Framework 2</strong> en standalone (hors de l'application Zend Framework par défaut), je vous recommande de vous reférer à la <a href="http://framework.zend.com/manual/current/en/modules/zend.mvc.routing.html" target="_blank">documentation officielle</a> et de voir comment vous pouvez instancier vos routes.</p>
+<p>Pour ceux qui utilisent le <strong>Zend Framework Skeleton Application</strong>, le mécanisme de routing est déjà chargé (avec l'objet <code>Zend\Mvc\Router\Http\TreeRouteStack</code>) dans l'application. Il ne reste plus qu'à paramétrer nos routes, c-a-d définir les URL d'une part (la requête) et leur assigner les contrôleurs et les actions qui correspondent.</p>
+<p>En plus de l'objet <strong>TreeRouteStack</strong> qui est monté par défaut dans l'application de <strong>Zend Framework</strong> et qui prend le routing en charge, il y a l'objet <code>Zend\Mvc\Router\RoutePluginManager</code> qui permet de paramétrer nos routes à partir d'un tableau (<code>array</code>) de configuration.</p>
+<p>Toute la construction / chargement des différentes routes se fait alors automatiquement à partir de la configuration.</p>
+<h2>Le paramétrage des routes</h2>
+<h3>Les types de routes</h3>
+<p>Chaque route a <strong>un nom</strong>, <strong>un type</strong> et les différentes <strong>options</strong>, en fonction du type de route que l'on va définir.</p>
+<p><strong>Zend Framework</strong> définit par défaut un certain nombre de types différents. Chaque type a un nom raccourci (le nom du plugin) utilisé par le <strong>RoutePluginManager</strong>.</p>
+<h4>De base, j'ai envie de dire que vous n'aurez besoin que deux types différents :</h4>
+<ul>
+<li><code>Zend\Mvc\Router\Http\Literal</code> (plugin : <em>literal</em>)</li>
+<li><code>Zend\Mvc\Router\Http\Segment</code> (plugin : <em>segment</em>)</li>
+</ul>
+<p>Ainsi que d'un type que vous allez utiliser indirectement :</p>
+<ul>
+<li><code>Zend\Mvc\Router\Http\Part</code> (plugin : <em>part</em>)</li>
+</ul>
+<p>Nous allons voir ces types plus en détail plus bas.</p>
+<h4>Les autres types qui existent :</h4>
+<ul>
+<li><code>Zend\Mvc\Router\Http\Hostname</code> (plugin : <em>hostname</em>)</li>
+<li><code>Zend\Mvc\Router\Http\Method</code> (plugin : <em>method</em>)</li>
+<li><code>Zend\Mvc\Router\Http\Regex</code> (plugin : <em>regex</em>)</li>
+<li><code>Zend\Mvc\Router\Http\Scheme</code> (plugin : <em>scheme</em>)</li>
+<li><code>Zend\Mvc\Router\Http\Method</code> (plugin : <em>method</em>)</li>
+</ul>
+<p>Je vous invite à consulter la documentation directement pour ces autres types de routes.</p>
+<h4>Deux types sont documentés mais sont marqués obsolètes :</h4>
+<ul>
+<li><code>Zend\Mvc\Router\Http\Query</code></li>
+<li><code>Zend\Mvc\Router\Http\Widlcard</code></li>
+</ul>
+<p>Je vous recommande de ne pas les utiliser... enfin, c'est du bon sens en fait :p</p>
+<h3>L'usage... quotidien</h3>
+<p><code>Zend\Mvc\Router\Http\Literal</code></p>
+<p>Le type Literal sert à définir des routes qui ont une URL fixe.</p>
+<ul>
+<li>http://www.monsite.com/about-me</li>
+<li>http://www.monsite.com/accueil</li>
+<li>http://www.monsite.com/forum</li>
+<li>http://www.monsite.com/catalogue/musique/album/list</li>
+<li>http://www.monsite.com/catalogue/lecture/auteur/list</li>
+</ul>
+<p>Voici comment marche la route (pour moi) :</p>
+<ul>
+<li>Je détermine la requête (l'URL) où je veux situer mes informations.</li>
+<li>Je choisis le contrôleur et l'action avec lesquels je pourrais afficher ces informations.</li>
+<li>Je donne un nom à cette route (rappel : la route, c'est le fait d'associer la requête au contrôleur/action correspondant)</li>
+</ul>
+<p>Et je fais le paramétrage qui va bien :</p>
+<pre><code class="language-php">// module/MON_MODULE/config/module.config.php
+return array(
+  'controllers' =&gt; array(
+    'invokables' =&gt; array(
+      'AboutMeController' =&gt; 'MON_MODULE\Controller\AboutMeController',
+      'IndexController' =&gt; 'MON_MODULE\Controller\IndexController',
+      'LivreController' =&gt; 'MON_MODULE\Controller\BookController',
+      'MusiqueController' =&gt; 'MON_MODULE\Controller\MusicController',
+    ),
+  ),
+  'router' =&gt; array(
+    'routes' =&gt; array(
+      
+      // le nom de ma route : aboutme
+      'aboutme' =&gt; array(
+        'type' =&gt; 'literal',
+        'options' =&gt; array(
+          'route' =&gt; '/about-me',
+          'defaults' =&gt; array(
+            // utiliser les alias des controleurs
+            // dans la clé 'controllers'
+            'controller' =&gt; 'AboutMeController',
+            'action' =&gt; 'aboutme', // AboutMeController::AboutmeAction()
+          ),
+        ),
+      ),
+
+      'home' =&gt; array(
+        'type' =&gt; 'literal',
+        'options' =&gt; array(
+          'route' =&gt; '/accueil',
+          'defaults' =&gt; array(
+            // utiliser les alias des controleurs
+            // dans la clé 'controllers'
+            'controller' =&gt; 'IndexController',
+            'action' =&gt; 'index', // IndexController::IndexAction()
+          ),
+        ),
+      ),
+      
+      'forum' =&gt; array(
+        'type' =&gt; 'literal',
+        'options' =&gt; array(
+          'route' =&gt; '/forum',
+        ),
+      ),
+ 
+      'listAlbum' =&gt; array(
+        'type' =&gt; 'literal',
+        'options' =&gt; array(
+          'route' =&gt; '/catalogue/musique/album/list',
+          'defaults' =&gt; array(
+            // utiliser les alias des controleurs
+            // dans la clé 'controllers'
+            'controller' =&gt; 'MusiqueController',
+            'action' =&gt; 'album', // MusiqueController::AlbumAction()
+          ),
+        ),
+      ),
+ 
+      'listAuteur' =&gt; array(
+        'type' =&gt; 'literal',
+        'options' =&gt; array(
+          'route' =&gt; '/catalogue/lecture/auteur/list',
+          'defaults' =&gt; array(
+            // utiliser les alias des controleurs
+            // dans la clé 'controllers'
+            'controller' =&gt; 'LivreController',
+            'action' =&gt; 'auteur', // LivreController::AuteurAction()
+          ),
+        ),
+      ),
+    ),
+  ),
+);
+</code></pre>
+<p>Comme on peut le voir avec les requêtes concernant le catalogue :</p>
+<ul>
+<li>on peut avec une URL qui ne correspond pas à nos controllers</li>
+<li>on peut avoir des alias de contrôleurs qui ne correspondent pas à nos objets contrôleurs</li>
+</ul>
+<p>D'autre part, comme pour la requête du forum, il n'y a pas de contrôleur et d'action défini : par exemple, parce que dans le répertoire <code>/forum</code>, sur le serveur, il y a un phpBB qui est installé...</p>
+<p>On est vraiment libre de faire ce qu'on veut. Il faut garder à l'esprit que les routes de type literal sont celles qui, pour une URL, affiche un même contenu... (modulo par ex, les informations stockées en session, que vous pouvez utiliser pour changer l'affichage...)</p>
+<p>Avec les routes définies à l'instant, il faut savoir que vous n'avez RIEN de prévu pour ce type de requête :</p>
+<ul>
+<li>http://www.monsite.com/catalogue</li>
+<li>http://www.monsite.com/catalogue/musique</li>
+<li>http://www.monsite.com/catalogue/lecture</li>
+</ul>
+<p>Pour le moment, comme il n'y a rien prévu pour ces requêtes, l'internaute va obtenir une erreur 404. Du coup, il va falloir définir une route pour chacune des étapes du lien... Ou gérer avec une redirection d'URL... à vous de voir.</p>
+<p><code>Zend\Mvc\Router\Http\Segment</code></p>
+<p>Bon, si à chaque requête on a toujours le même contenu, on est d'accord, autant faire de la page HTML, ça ira bien plus vite...</p>
+<p>Non, nous, ce qui nous intéresse, ce sont les informations qui changent dynamiquement, en fonction de la page, du contexte, des liens...</p>
+<p>Et des informations qui changent dynamiquement, ce sont des routes de type <strong>segment</strong>.</p>
+<ul>
+<li>monsite.com/profil/marie</li>
+<li>monsite.com/profil/jean</li>
+<li>monsite.com/album</li>
+<li>monsite.com/album/2</li>
+<li>monsite.com/produit/read/1</li>
+<li>monsite.com/produit/edit/1</li>
+<li>monsite.com/produit/delete/1</li>
+</ul>
+<pre><code class="language-php">// module/MON_MODULE/config/module.config.php
+
+return array(
+  'controllers' =&gt; array(
+    'invokables' =&gt; array(
+      'ProfilController' =&gt; 'MON_MODULE\Controller\ProfilController',
+      'AlbumController' =&gt; 'MON_MODULE\Controller\AlbumController',
+      'ProduitController' =&gt; 'MON_MODULE\Controller\ProduitController',
+    ),
+  ),
+  'router' =&gt; array(
+    'routes' =&gt; array(
+      // les fiches profil
+      'profil' =&gt; array(
+        'type' =&gt; 'segment',
+        'options' =&gt; array(
+          'route' =&gt; '/profil/:name',
+          'constraints' =&gt; array(
+            'name' =&gt; '[a-zA-Z]+', // regex, débrouillez vous, je suis nulle à ce jeu
+          ),
+          'defaults' =&gt; array(
+            // utiliser les alias des controleurs
+            // dans la clé 'controllers'
+            'controller' =&gt; 'ProfilController',
+            'action' =&gt; 'index', // ProfilController::IndexAction()
+          ),
+        ),
+      ),
+      'album' =&gt; array(
+        'type' =&gt; 'literal',
+        'options' =&gt; array(
+          'route' =&gt; '/album[/:id]',
+          'constraints' =&gt; array(
+            'id' =&gt; '[0-9]+',
+          ),
+          'defaults' =&gt; array(
+            'controller' =&gt; 'AlbumController',
+            'action' =&gt; 'index', // AlbumController::IndexAction()
+            'id' =&gt; 1,
+          ),
+        ),
+      ),
+      'produit' =&gt; array(
+        'type' =&gt; 'literal',
+        'options' =&gt; array(
+          'route' =&gt; '/produit[/:action/:id]',
+          'constraints' =&gt; array(
+            'action' =&gt; '[a-z]+',
+            'id' =&gt; '[0-9]+',
+          ),
+          'defaults' =&gt; array(
+            'controller' =&gt; 'ProduitController',
+            'action' =&gt; 'index', // ProduitController::IndexAction()
+          ),
+        ),
+      ),
+    ),
+  ),
+);
+</code></pre>
+<p>Dans les exemples ci dessus, on peut noter plusieurs éléments :</p>
+<p>Dans la route '<em>profil</em>', on note que</p>
+<ul>
+<li>il y a un élément variable : <code>:name</code>.</li>
+<li>cet élément <code>:name</code> est forcément alphabétique.</li>
+<li>cet élément <code>:name</code> est obligatoire dans l'URL</li>
+</ul>
+<p>Cette requête <code>monsite.com/profil/marie</code> va utiliser le contrôleur <code>ProfilController</code>, l'action <code>IndexAction</code> et la valeur de <code>name</code> sera <strong>marie</strong>.
+Cette requête <code>monsite.com/profil/jean</code> va utiliser le contrôleur <code>ProfilController</code>, l'action <code>IndexAction</code> et la valeur de <code>name</code>sera <strong>jean</strong>.</p>
+<p>Cette requête <code>monsite.com/profil/marie3</code> va provoquer une erreur.</p>
+<p>Dans la route '<em>album</em>', on note que</p>
+<ul>
+<li>l'élément variable s'appelle <code>:id</code></li>
+<li>cet élément <code>:id</code> est optionnel (présence des crochets <code>[ ]</code>)</li>
+<li>si cet élément <code>:id</code> est omis dans l'url, alors par défaut, on considèrera que c'est l'id <em>1</em></li>
+</ul>
+<p>Cette requête <code>monsite.com/album</code> va utiliser le contrôleur <code>AlbumController</code> et l'action <code>IndexAction</code> et l'<code>id = 1</code>
+Cette requête <code>monsite.com/album/2</code> va utiliser le contrôleur <code>AlbumController</code>et l'action <code>IndexAction</code>et l'<code>id = 2</code></p>
+<p>Dans la route '<em>produit</em>', on note que</p>
+<ul>
+<li>il y a deux éléments variables : <code>:action</code> et <code>:id</code></li>
+<li>les deux éléments variables sont optionnels ensemble.</li>
+<li>il n 'y a pas de valeur par défaut pour <code>:id</code> mais il y a une action par défaut.</li>
+</ul>
+<p>Cette requête <code>monsite.com/produit</code> va utiliser le contrôleur <code>ProduitController</code> et l'action <code>IndexAction</code>
+Cette requête <code>monsite.com/produit/read/1</code> va utiliser le contrôleur <code>ProduitController</code>, l'action <code>ReadAction</code> et l'<code>id = 1</code>
+Cette requête <code>monsite.com/produit/edit/1</code> va utiliser le contrôleur <code>ProduitController</code>, l'action <code>EditAction</code> et l'<code>id = 1</code>
+Cette requête <code>monsite.com/produit/delete/1</code> va utiliser le contrôleur <code>ProduitController</code>, l'action <code>DeleteAction</code> et l'<code>id = 1</code></p>
+<p>En revanche, cette requête <code>monsite.com/produit/read</code> va retourner une erreur parce qu'il manque l'élément <code>id</code>.</p>
+<h3>Une arborescence de routes</h3>
+<p>A partir de là, vous pouvez combiner vos routes :</p>
+<pre><code class="language-php">// module/MON_MODULE/config/module.config.php
+return array(
+  'controllers' =&gt; array(
+    'invokables' =&gt; array(
+      'CatalogueController' =&gt; 'MON_MODULE\Controller\StoreController',
+      'LivreController' =&gt; 'MON_MODULE\Controller\BookController',
+    ),
+  ),
+  'router' =&gt; array(
+    'routes' =&gt; array(
+      // nom de la route
+      'ma_route_catalogue' =&gt; array(
+        'type' =&gt; 'literal',
+        'options' =&gt; array(
+          'route' =&gt; '/catalogue',
+          'defaults' =&gt; array(
+            'controller' =&gt; 'CatalogueController',
+            'action' =&gt; 'index', // CatalogueController::IndexAction()
+          ),
+        ),
+        'may_terminate' =&gt; true,
+        'child_routes' =&gt; array(
+          // nom de la route
+          'ma_route_lecture' =&gt; array(
+            'type' =&gt; 'literal',
+            'options' =&gt; array(
+              'route' =&gt; '/lecture',
+              'defaults' =&gt; array(
+                'controller' =&gt; 'BookController',
+              ),
+            ),
+            'child_routes' =&gt; array(
+              // nom de la route
+              'ma_route_auteur' =&gt; array(
+                'type' =&gt; 'segment',
+                'options' =&gt; array(
+                  'route' =&gt; '/auteur/:id'
+                  'constraints' =&gt; array(
+                    'id' =&gt; '['a-zA-Z']',
+                  ),
+                  'defaults' =&gt; array(
+                    'action' =&gt; 'auteur', // BookController::AuteurAction()
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    ),
+  ),
+);
+</code></pre>
+<p>Cette requête <code>monsite.com/catalogue</code> (<code>CatalogueController::IndexAction</code>) est possible parce qu'on a signalé que la route '<code>ma_route_catalogue</code>' pouvait se terminer. (<code>may_terminate = true</code>)</p>
+<p>Cette requête <code>monsite.com/catalogue/lecture</code> (<code>BookController</code>, pas d'action) n'est pas possible parce qu'on a signalé que la route '<code>ma_route_catalogue/ma_route_lecture</code>' ne pouvait pas se terminer à ce moment de l'arbre (<code>may_terminate</code> non défini, <em>false</em> par défaut)</p>
+<p>Cette requête <code>monsite.com/catalogue/lecture/auteur</code> (<code>BookController::AuteurAction</code>) n'est pas possible parce que dans la route '<code>ma_route_catalogue/ma_route_lecture/ma_route_auteur</code>', le paramètre <code>id</code> est obligatoire</p>
+<p>Cette requête <code>monsite.com/catalogue/lecture/auteur/1</code> (<code>BookController::AuteurAction</code>, <code>id = 1</code>) est possible.</p>
+<h2>Utiliser les routes</h2>
+<p>Définir des routes, c'est bien. Encore faut il pouvoir en faire usage.</p>
+<h3>Configuration de la navigation</h3>
+<p>Lorsque vous configurez l'arborescence de votre navigation, vous utiliser les noms des routes</p>
+<pre><code class="language-php">// module/MON_MODULE/config/module.config.php
+
+return array(
+  'navigation' =&gt; array(
+    'default' =&gt; array(
+      array(
+        'label' =&gt; 'Catalogue',
+        'route' =&gt; 'ma_route_catalogue',
+      ),
+    ),
+  ),
+);
+</code></pre>
+<h3>Faire des liens dans les vues</h3>
+<p>A partir de n'importe lequel de vos fichiers .phtml, vous pouvez accéder à vos routes ainsi</p>
+<p><code>&lt;a href='&lt;?php echo $this-&gt;url('ma_route_catalogue') ; ?&gt;'&gt;Le catalogue&lt;/a&gt;</code></p>
+<p><code>&lt;form action='&lt;?php echo $this-&gt;url('ma_route_catalogue/ma_route_lecture/ma_route_auteur', array('id' =&gt; 4)) ; ?&gt;'      method='post'&gt;</code></p>
+<p><code>&lt;a href='&lt;?php echo $this-&gt;url('ma_route_catalogue/ma_route_lecture/ma_route_auteur', array('id' =&gt; 5)) ; ?&gt;'&gt;     Voir la fiche de l'auteur avec id = 5&lt;/a&gt;</code></p>
+<p>La clé du tableau <code>array('id' =&gt; 5)</code> est déterminée lorsque vous créez votre route. Si votre élément variable de votre route s'appelle <code>:id</code>, la clé du tableau plus tard sera <code>'id'</code>. Si votre élément variable est <code>:toto</code>, alors <code>$this-&gt;url('nom_de_la_route', array('toto' =&gt; $valeur)) ;</code></p>
+<h3>Faire les redirections dans vos contrôleurs</h3>
+<p>A partir de n'importe laquelle de vos contrôleurs, vous pouvez faire une redirection comme ceci :</p>
+<pre><code class="language-php">class MonController extends AbstractActionController
+{
+  public function toDoAction()
+  {
+    // faire sa tambouille
+
+    return $this-&gt;redirect()-&gt;toRoute('nom_de_la_route', array('name' =&gt; $name));
+  }
+}
+</code></pre>
+<h3>Récupérer la portion variable pour la traiter</h3>
+<p>Dans le contrôleur, pour récupérer les paramètres de votre URL :</p>
+<pre><code class="language-php">class ProfilController extends AbstractActionController
+{
+  public function indexAction()
+  {
+    $nom = $this-&gt;params()-&gt;fromRoute('name');
+
+    // faire sa tambouille
+  }
+}
+</code></pre>
+<p>(souvenez vous, c'était la route '<em>profil</em>' avec une route comme ceci : <code>'route' =&gt; '/profil/:name'</code>)</p>
+<h3>Pour récupérer les informations de la route avant le contrôleur</h3>
+<p>Pour savoir quelle route est utilisée, le composant <strong>MVC</strong> de l'application <strong>Zend Framework</strong> retourne un composant <strong>RouteMatch</strong> qui contient toutes les informations de la route :</p>
+<p>Attention (contrairement à ce que j'ai pu dire), la route n'existe pas encore au moment du bootstrap. Pour déterminer de quelle route il s'agit, il faut le faire en deux temps :</p>
+<ol>
+<li>Créer un listener dans lequel on pourra tester la route</li>
+<li>Attacher le listener à l'événement <code>MvcEvent::EVENT_DISPATCH</code></li>
+</ol>
+<p><em>Petites explications très rapides : Lorsqu'une &quot;page&quot; se charge avec une application Zend Framework, entre le moment - très rapide - où on présente la requête et le moment où l'application apporte la réponse (la page), il y a plusieurs étapes qui se franchissent les unes après les autres, chacune de ces étapes étant marquées par un événement. Vous trouverez la liste des événements dans la <a href="http://framework.zend.com/manual/current/en/modules/zend.mvc.mvc-event.html#order-of-events" target="_blank">documentation de l'objet MvcEvent</a>.</em></p>
+<p><em>Si vous souhaitez que quelquechose se passe AVANT d'arriver au contrôleur, je vous invite à reproduire le même principe, en changeant l'événement si nécessaire.</em></p>
+<pre><code class="language-php">class Module
+{
+  public function checkMatchedRouteName($mvcEvent)
+  {
+    $routeMatch = $mvcEvent-&gt;getRouteMatch() ;
+    // pour trouver l'alias de votre contrôleur (celui qui est déclaré dans la route)
+    $routeMatch-&gt;getParam('controller') ;
+
+    // pour trouver la classe Controller du contrôleur
+    // c'est le ControllerManager qui sait à quel alias correspond quelle classe
+    // le ServiceManager sait où trouver le ControllerManager
+    // l'Application sait où trouver le ServiceManager
+    // la classe MvcEvent sait trouver l'Application
+
+    // trouver l'Application
+    $application = $mvcEvent-&gt;getApplication() ;
+    // trouver le ServiceManager
+    $serviceManager = $application-&gt;getServiceManager() ;
+    // trouver le ControllerManager
+    $controllerManager = $serviceManager-&gt;get('ControllerManager') ;
+    // trouver la classe qui correspond à l'alias de contrôleur (aliasDeController)
+    get_class($controllerManager-&gt;get(aliasDeController)) ;
+
+    // pour trouver l'action
+    $routeMatch-&gt;getParam('action') ;
+
+    // pour trouver la route
+    $routeMatch-&gt;getMatchedRouteName() ;
+
+    // pour trouver les autres param
+    $routeMatch-&gt;getParam('name') ; //(si la route a un paramètre :name)
+  }
+ 
+  public function onBootstrap(MvcEvent $e)
+  {
+    // attacher le callback à l'événement dispatch
+    $eventManager = $e-&gt;getApplication()-&gt;getEventManager() ;
+    $eventManager-&gt;attach(MvcEvent::EVENT_DISPATCH, array($this, 'checkMatchedRouteName')) ;
+  }
+}
+</code></pre>
+<p>NOTE : la méthode <code>Module::onBootstrap()</code> admet TOUJOURS un paramètre de type <code>MvcEvent</code>. Vous n'avez pas votre mot à dire et vous n'avez pas le choix. Grâce à cet <code>MvcEvent</code>, vous pouvez accéder à votre application et de là, à tous les autres managers : <strong>service manager, module manager, event manager</strong> etc... si nécesssaire.</p>
+<p>Si vous attachez un callback à un des événements de l'objet <code>MvcEvent</code>, vous aurez toujours un objet de type <code>MvcEvent</code> en paramètre de votre callback parce qu'au moment où l'application déclenche son événement, c'est un objet <code>MvcEvent</code> qu'elle envoie...</p>
+<p>Vous pouvez également récupérer votre objet <code>routeMatch</code> dans le contrôleur puisque n'importe quel contrôleur qui hérite de <code>AbstractActionController</code> accède à l'objet <code>MvcEvent</code> ainsi :</p>
+<p><code>AbstractActionController::getEvent()</code></p>
+<p>Ainsi, vous savez comment faire vos routes avec Zend Framework 2. Grâce aux routes, vous pouvez construire votre navigation, faire vos liens (sans avoir à écrire la vraie URL, cela devient bien pratique le jour où vous décidez de changer les URL) dans les vues, faire les redirections dans les contrôleurs et identifiez les routes les unes des autres grâce à l'objet <strong>RouteMatch</strong>.</p>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/fr/tags/routing">routing</a></li><li><a href="/fr/tags/zend-router">Zend Router</a></li><li><a href="/fr/tags/zend-framework-2">zend framework 2</a></li></ul>
+        </div>
+      
+
+      
+    
+
+      
+        <section id="oldcomment">
+          <h2>Commentaires historiques</h2><article>
+              <div class="level1">
+  <h3>Merci</h3>
+  <div class="meta">buddhi 2015-04-19T00:09 </div>
+  <div class="body">Merci pour ce taf, c'est exactement ce que je recherchais. Un cours sur les routes qui est clair et détaillé avec des exemples parfaits.</div>
+
+  
+  
+</div>
+
+            </article><article>
+              <div class="level1">
+  <h3>Pour récupérer les informations de la route avant le contrôleur</h3>
+  <div class="meta">Bertin 2020-01-23T16:38 </div>
+  <div class="body">Merci pour ça.<br />
+<br />
+Franchement très bon article !</div>
+
+  
+  
+</div>
+
+            </article></section>
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>Sur moi</h3>
+      <p>J&#39;ai appris le php il y a quelques années, quand Internet était à ses débuts. Pour diverses raisons, j&#39;ai arrêté en route et j&#39;ai perdu le fil des nouveaux Internets que je redécouvre. Résultat, je me sens constamment à courir après l&#39;histoire mais je suis toujours motivée à reprendre des projets personnels. Je me propose de vous partager mes découvertes. Au delà des sujets de programmation, j&#39;aime également partager mes infos concernant notamment l&#39;Histoire, l&#39;Astronomie, la Linguistique, les Films, les Livres et les Anime. J&#39;espère que vous aimerez suivre mon blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. Tous droits réservés.</p>
+        <p>Propulsé par <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

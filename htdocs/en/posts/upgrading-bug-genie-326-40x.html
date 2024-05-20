@@ -1,0 +1,271 @@
+<!doctype html>
+<html class="no-js" lang="en" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>Upgrading The Bug Genie from 3.2.6 to 4.0.x&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">French</a>
+        <a href="/en/">English</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/en/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/en/books/0/index.html">Collections</a>
+        <a href="/en/">Home</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/en/">Home</a><i class="fas fa-angle-right"></i>Upgrading The Bug Genie from 3.2.6 to 4.0.x
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>Upgrading The Bug Genie from 3.2.6 to 4.0.x</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>7/21/2015, 7:49:00 AM
+        
+        <i class="fas fa-th-large"></i><!--a href="/en/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->, <!--a href="/en/sites/haclong-projects.html" class="tag-sites"-->Haclong projects<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/engrenages.jpg" class="node-banner" />
+        
+      </div>
+
+      <p><p>I try to use The Bug Genie as bug tracker. It's not really successful for the moment but well... I just noticed the package has a brand new version. So this is how to upgrade it.</p>
+<p>I installed <a href="http://www.thebuggenie.org/" target="_blank">The Bug Genie</a> few months... years (?) ago. The install was a 3.2.6 version.</p>
+<p>Freshly released few weeks ago, there's a new 4.0.0 version. As you can notice, this is a major version upgrade. Indeed, there's a lot of changes on the package and how to install it.</p>
+<p>I'd say that 3.2.x where old fashioned app with manual upgrade :</p>
+<blockquote>"Download the archive from the main download site.
+<p>Extract the files into your current installation, overwriting existing files where prompted.</p>
+<p>When this is done, clear the contents of the B2DB cache folder &quot;...</p>
+</blockquote>
+<p>The Bug Genie 4.0 is now on github, use Composer to download dependencies and PHPUnit for unit testing.</p>
+<p>For what i see, the file structure has slightly changed too so the upgrade steps can't just be overwrite old files and we're done with it.</p>
+<p>As for most of upgrade first thing first :</p>
+<h2>Securing the old version</h2>
+<p>If the upgrade goes wrong, we don't want to loose everything, do we ?</p>
+<ul>
+<li>download your whole <strong>The Bug Genie</strong> old files</li>
+<li>dump the whole database</li>
+</ul>
+<p>Keep all those in a safe place.</p>
+<h2>Downloading the last 3.2.7 version</h2>
+<p>My previous attempts to upgrade having failed miserably, i decided that upgrading to a fresh new 4.0.x version from the last 3.2.x version might be better. Actually, it did not ease anything and i've found why my upgrade has failed after but i keep this step for those who wish it.</p>
+<ul>
+<li>Download the <a href="http://www.thebuggenie.org/download" target="_blank">last 3.2.7 version</a></li>
+<li>Unzip the archive</li>
+</ul>
+<p>Based on the install/upgrade instructions from The Bug Genie website :</p>
+<ul>
+<li>Copy the content of the archive to your The Bug Genie installation. Pay attention to the <strong><code>/thebuggenie</code></strong> folder for it is the webroot folder of the &lt; 4.0 version. Maybe you'd have - like me - to change the name of the folder, dependint on your hosting provider.</li>
+<li>Delete all files in <code>**/core/cache/B2DB**</code> and <code>**/core/cache**</code> (leaving the <code>**/B2DB**</code> folder empty but still there)</li>
+<li>Create a file called <code>**/upgrade**</code> in the directory where <code>**/installed**</code> is located</li>
+</ul>
+<h2>Now downloading the new version</h2>
+<ul>
+<li>Go to <a href="http://github.com/thebuggenie/thebuggenie" target="_blank">https://github.com/thebuggenie/thebuggenie</a></li>
+<li>Download the archive of the project</li>
+<li>Unzip the archive</li>
+</ul>
+<h2>Copying the new version to the old</h2>
+<p>What you ought to know before copying</p>
+<p>The old The Bug Genie installation 3.2.x uses the <code>**/thebuggenie**</code> folder as webroot.</p>
+<p>The new The Bug Genie installation 4.0+ uses the <code>**/public**</code> folder as webroot.</p>
+<p>Depending on your host, maybe you'd have to rename the <code>**/public**</code> folder before going further. Just make sure that the <code>**/public**</code> folder new name matches the directory you use as webroot in your old installation.</p>
+<ul>
+<li>Copy the new files to the old installation, overriding existing files.</li>
+</ul>
+<h2>Preparing the upgrade</h2>
+<ul>
+<li>Check the <code>**/installed**</code> file contains the 3.2 version number.</li>
+<li>Remove the whole <code>**/core/cache**</code> folders</li>
+<li>Add a <code>**/cache**</code> folder</li>
+<li>Copy the <code>**/core/config/b2db.sample.yml**</code> to <code>**/core/config/b2db.yml**</code></li>
+<li>Edit the old <code>**/core/b2db_bootstrap.inc.php**</code></li>
+<li>Edit the <code>**/core/config/b2db.yml**</code> and use the values of <code>**/core/b2db_bootstrap.inc.php**</code> to complete the <code>**/core/config/b2db.yml**</code> file.</li>
+<li>Create an empty <code>**/upgrade**</code> file (next to <code>**/installed**</code>)</li>
+<li>Delete the <code>**/{your_webroot}/css/oxygen**</code> file.</li>
+<li>Replace with a symbolic link</li>
+</ul>
+<pre><code class="language-sh"> ln -s ../../themes/oxygen/css oxygen
+</code></pre>
+<ul>
+<li>Delete the <code>**/{your_webroot}/css/firehouse**</code> file.</li>
+<li>Replace with a symbolic link</li>
+</ul>
+<pre><code class="language-sh"> ln -s ../../themes/firehouse/css firehouse
+</code></pre>
+<h2>Getting Composer</h2>
+<p>If you don't already have a handy <code>** composer.phar**</code> anywhere, you can get yours at <a href="https://getcomposer.org/download/" target="_blank"><strong>https://getcomposer.org/download/</strong></a></p>
+<ul>
+<li>Put the <code>**composer.phar**</code> into your The Bug Genie installation (next to <code>**composer.json**</code>)</li>
+</ul>
+<h2>Installing the dependencies</h2>
+<ul>
+<li>Log into your server through an SSH access.</li>
+</ul>
+<p>If you're using an old <code>**composer.phar**</code>, don't forget to update it first</p>
+<pre><code class="language-sh"> php composer.phar self-update
+</code></pre>
+<ul>
+<li>Install the dependencies</li>
+</ul>
+<pre><code class="language-sh"> php composer.phar update --prefer-dist
+</code></pre>
+<p>or</p>
+<pre><code class="language-sh"> php composer.phar install
+</code></pre>
+<h2>Follow the upgrade script</h2>
+<p>Once the dependencies are installed successfully :</p>
+<ul>
+<li>Get a browser</li>
+<li>Open the <code>**http://your_the_bug_genie_installation/upgrade**</code> page</li>
+<li>Follow the steps</li>
+</ul>
+<h2>Fixing the vendor/thebuggenie/b2db/src/Table.php</h2>
+<p>I've had an issue when the upgrade script were running. I had an error : <strong>Variable $sql undefined</strong>.</p>
+<p>How to fix the <code>**vendor/thebuggenie/b2db/src/Table.php**</code> file</p>
+<pre><code class="language-php">protected function _getAlterColumnDefaultSQL($details)
+{
+  $sql = '';
+  $default_definition = $this-&gt;_getColumnDefaultDefinitionSQL($details);
+
+  if($default_definition) {
+    switch (Core::getDBtype()) {
+      case 'pgsql':
+        $sql = 'ALTER TABLE ' . $this-&gt;_getTableNameSQL();
+        $qc = $this-&gt;getQC();
+        $sql .= &quot; ALTER COLUMN $qc&quot; . $this-&gt;_getRealColumnFieldName($details['name']) . &quot;$qc SET&quot;;
+        $sql .= $default_definition;
+      break;
+    }
+  }
+
+  return $sql;
+}
+</code></pre>
+<p>If everything goes right, you should get an &quot;<strong>UPGRADE SUCCESSFULLY COMPLETED</strong>&quot; screen.</p>
+<p>With your FTP Client, remove the <code>**/upgrade**</code> file BEFORE clicking the <code>**Finish**</code> button.</p>
+<p>Installation is done.</p>
+<h2>TROUBLESHOOTING</h2>
+<h3>Duplicate column 'closed'</h3>
+<p>If during the upgrade process, you keep getting an** Duplicate column 'closed'** error, it means you are trying to upgrade tables which were already upgraded. Just drop all the tables, import the old tables as they were (remember, you've saved them somewhere safe) and try the upgrade again.</p>
+<h3>Yuk ! i can't believe how this 4.0 version is so ugly</h3>
+<p>If the screen look positively ugly and there's clearly no templating AT ALL, check this folder <code>**/public/css**</code> and check the symbolic links you should have done.</p>
+<ul>
+<li>The oxygen link should links to <code>**/themes/oxygen/css**</code></li>
+<li>The firehouse link should links to <code>**/themes/firehouse/css**</code></li>
+</ul>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/en/tags/the-bug-genie">the bug genie</a></li><li><a href="/en/tags/upgrade">upgrade</a></li><li><a href="/en/tags/howto">HOWTO</a></li></ul>
+        </div>
+      
+
+      
+    
+
+      
+        <section id="oldcomment">
+          <h2>Old system comments</h2><article>
+              <div class="level1">
+  <h3>dans l'agence d'animation</h3>
+  <div class="meta">lionel 2017-03-07T11:37 </div>
+  <div class="body">dans l'agence d'animation motion design où je suis stagiaire la majorité code en php sauf un qui passe par un système jugé obsolète, merci pour ce tuto bien interessant, je suis en terminal et je compte faire des études en informatique</div>
+
+  
+  
+</div>
+
+            </article></section>
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3></h3>
+      <p></p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. All rights reserved.</p>
+        <p>Powered by <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,21 @@
+
+{% extends "main.njk" %}
+
+{% block content %}
+<div class="container-xl" id="collection">
+<h1>{{ title }}</h1>
+
+{{content | safe}}
+
+{% for post in posts %}
+  {% if not post.data.draft %}
+    {% include "blocks/booksummary.njk" %}
+  {% endif %}
+{% endfor %}
+
+{% include "blocks/pagination.njk" %}
+
+</div>
+
+
+{% endblock %}

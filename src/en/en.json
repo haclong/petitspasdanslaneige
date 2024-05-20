@@ -1,0 +1,18 @@
+{
+    "lang": "en",
+    "locale": "en",
+    "i18n": {
+      "fr": "French",
+      "en": "English"
+    },
+    "nav": {
+      "book": "Collections",
+      "home": "Home"
+    },
+    "powered": "Powered by ",
+    "copyright": "All rights reserved.",
+    "credit_label": "Credit",
+    "readmore_label": "Read more about... ",
+    "tagged_with": "Tagged with ",
+    "oldcomment": "Old system comments"
+}

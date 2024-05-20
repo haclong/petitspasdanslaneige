@@ -1,0 +1,16 @@
+<div class="level1">
+  <h3>{{ oldcomment.title | safe }}</h3>
+  <div class="meta">{{ oldcomment.author | safe }} {{ oldcomment.date }} </div>
+  <div class="body">{{oldcomment.body | safe | nl2br }}</div>
+
+  {% if oldcomment.replies | length > 0 %}
+    {% for reply in oldcomment.replies %}
+      <div class="level2">
+        <h3>{{ reply.title | safe }}</h3>
+        <div class="meta">{{ reply.author | safe }} {{ reply.date }}</div>
+        <div class="body">{{ reply.body | safe | nl2br }}</div>
+      </div>
+    {% endfor %}
+  {% endif %}
+  
+</div>

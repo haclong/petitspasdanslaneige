@@ -1,0 +1,97 @@
+[
+    {
+        "rank": 0,
+        "url": "/fr/posts/application-coffeebar-119-introduction-la-programmation-evenementielle.html",
+        "title": "Application CoffeeBar 1/19 - Introduction à la programmation événementielle"
+    },
+    {
+        "rank": 1,
+        "url": "/fr/posts/application-coffeebar-219-installer-la-base-de-developpement.html",
+        "title": "Application CoffeeBar 2/19 - Installer la base de développement"
+    },
+    {
+        "rank": 2,
+        "url": "/fr/posts/application-coffeebar-319-espionner-notre-cache.html",
+        "title": "Application CoffeeBar 3/19 - Espionner notre cache"
+    },
+    {
+        "rank": 3,
+        "url": "/fr/posts/application-coffeebar-419-le-formulaire-de-commande.html",
+        "title": "Application CoffeeBar 4/19 - Le formulaire de commande"
+    },
+    {
+        "rank": 4,
+        "url": "/fr/posts/application-coffeebar-519-provoquer-louverture-de-commande.html",
+        "title": "Application CoffeeBar 5/19 - Provoquer l'ouverture de commande"
+    },
+    {
+        "rank": 5,
+        "url": "/fr/posts/application-coffeebar-619-gerer-la-commande.html",
+        "title": "Application CoffeeBar 6/19 - Gérer la commande"
+    },
+    {
+        "rank": 6,
+        "url": "/fr/posts/application-coffeebar-719-gerer-les-commandes-ouvertes.html",
+        "title": "Application CoffeeBar 7/19 - Gérer les commandes ouvertes"
+    },
+    {
+        "rank": 7,
+        "url": "/fr/posts/application-coffeebar-819-afficher-les-notes-en-cours.html",
+        "title": "Application CoffeeBar 8/19 - Afficher les notes en cours"
+    },
+    {
+        "rank": 8,
+        "url": "/fr/posts/application-coffeebar-919-commander-les-plats-et-les-boissons.html",
+        "title": "Application CoffeeBar 9/19 - Commander les plats et les boissons"
+    },
+    {
+        "rank": 9,
+        "url": "/fr/posts/application-coffeebar-1019-passer-commande-le-formulaire.html",
+        "title": "Application CoffeeBar 10/19 - Passer commande, le formulaire"
+    },
+    {
+        "rank": 10,
+        "url": "/fr/posts/application-coffeebar-1119-traiter-le-formulaire.html",
+        "title": "Application CoffeeBar 11/19 - Traiter le formulaire"
+    },
+    {
+        "rank": 11,
+        "url": "/fr/posts/application-coffeebar-1219-traiter-la-commande.html",
+        "title": "Application CoffeeBar 12/19 - Traiter la commande"
+    },
+    {
+        "rank": 12,
+        "url": "/fr/posts/application-coffeebar-1319-la-todo-list-du-chef.html",
+        "title": "Application CoffeeBar 13/19 - La Todo list du Chef"
+    },
+    {
+        "rank": 13,
+        "url": "/fr/posts/application-coffeebar-1419-marquer-les-plats-prepares.html",
+        "title": "Application CoffeeBar 14/19 - Marquer les plats préparés"
+    },
+    {
+        "rank": 14,
+        "url": "/fr/posts/application-coffeebar-1519-les-plats-sont-prets-reaction.html",
+        "title": "Application CoffeeBar 15/19 - Les plats sont prêts, réaction."
+    },
+    {
+        "rank": 15,
+        "url": "/fr/posts/application-coffeebar-1619-afficher-la-todo-list-du-staff.html",
+        "title": "Application CoffeeBar 16/19 - Afficher la todo list du staff"
+    },
+    {
+        "rank": 16,
+        "url": "/fr/posts/application-coffeebar-1719-le-service.html",
+        "title": "Application CoffeeBar 17/19 - Le service"
+    },
+    {
+        "rank": 17,
+        "url": "/fr/posts/application-coffeebar-1819-inevitablement-laddition.html",
+        "title": "Application CoffeeBar 18/19 - Inévitablement, l'addition"
+    },
+    {
+        "rank": 18,
+        "url": "/fr/posts/application-coffeebar-1919-clore-la-note.html",
+        "title": "Application CoffeeBar 19/19 - Clore la note"
+    }
+]

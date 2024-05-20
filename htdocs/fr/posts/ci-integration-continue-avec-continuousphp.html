@@ -1,0 +1,356 @@
+<!doctype html>
+<html class="no-js" lang="fr" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>CI - Intégration Continue avec ContinuousPHP&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">Français</a>
+        <a href="/en/">Anglais</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/fr/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/fr/books/0/index.html">Séries</a>
+        <a href="/fr/">Accueil</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/fr/">Accueil</a><i class="fas fa-angle-right"></i>CI - Intégration Continue avec ContinuousPHP
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>CI - Intégration Continue avec ContinuousPHP</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>17/12/2016 09:12:00
+        
+        <i class="fas fa-th-large"></i><!--a href="/fr/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/9363900-los-engranajes-de-los-viejos-billetes.jpg" class="node-banner" />
+        
+      </div>
+
+      <p><p>Pour ceux que ça peut intéresser, je vais vous donner le paramétrage utilisé pour un projet Zend Framework 2+ avec <a href="https://continuousphp.com/" target="_blank">ContinuousPHP</a></p>
+<h2>Caractéristiques du projet</h2>
+<ul>
+<li><strong>Dépôt de sources sur Bitbucket</strong></li>
+<li><strong>Framework Zend Framework MVC Skeleton v 3.0.2dev installé avec Composer</strong></li>
+</ul>
+<p>C'est une installation minimale mais avec <a href="https://getcomposer.org/" target="_blank"><strong>Composer</strong></a>, j'ai ajouté les packages qui m'intéressaient. Les nouveaux packages ont été inscrits dans le fichier <code>composer.json</code>. Pour les tests, il faut penser à ajouter <a href="https://docs.zendframework.com/zend-test/" target="_blank"><strong>zend-test</strong></a></p>
+<pre><code class="language-sh">composer require zendframework/zend-test
+</code></pre>
+<ul>
+<li><strong>Suite de tests PHPUnit</strong></li>
+</ul>
+<p>C'est la librairie <a href="https://phpunit.de/" target="_blank"><strong>PHPUnit</strong></a> qui est utilisée pour faire des tests unitaires. Si vous créez un nouveau module pour votre application (ce que j'ai fait), il faut désormais gérer l'autoloading de votre module et des fichiers de tests dans le fichier <code>composer.json</code>.</p>
+<p><strong>RAPPEL</strong> : Lorsqu'on créait un nouveau module dans ZF2 anciennement, on rajoutait un snippet dans chacune de nos classes <code>Module</code> pour que notre module soit automatiquement chargé au besoin. Cela permettait au framework de faire la correspondance entre un nom d'espace et son chemin dans le système de fichiers.</p>
+<pre><code class="language-php">// module/MonModule/Module.php
+
+Class Module {
+  public function getAutoloaderConfig()
+  {
+    return array(
+      'Zend\Loader\StandardAutoloader' =&gt; array(
+        'namespaces' =&gt; array(
+          __NAMESPACE__ =&gt; __DIR__ . '/src/' . __NAMESPACE__,
+        ),
+      ),
+    ) ;
+  }
+}
+</code></pre>
+<p>Désormais, on ne rajoute plus le code ci-dessus dans les classes <code>Module</code> mais ce code directement dans le fichier <code>composer.json</code> :</p>
+<pre><code class="language-json">// composer.json
+  
+  &quot;autoload&quot;: {
+    &quot;psr-4&quot;: {
+      &quot;Application\\&quot;: &quot;module/Application/src/&quot;,
+      &quot;MonModule\\&quot;: &quot;module/MonModule/src/&quot;
+    }
+  },
+  &quot;autoload-dev&quot;: {
+    &quot;psr-4&quot;: {
+      &quot;ApplicationTest\\&quot;: &quot;module/Application/test/&quot;,
+      &quot;MonModuleTest\\&quot;: &quot;module/MonModule/test/&quot;
+    }
+  },
+</code></pre>
+<p>Evidemment, même si on ne le fait pas trop, vous êtes libre de donner le nom que vous souhaitez pour votre espace de nom. Maintenant, c'est sûr que ce serait moins se couper les cheveux en quatre si l'espace de nom correspondait au nom du module... Je dis ça, mais je dis rien...</p>
+<p>Afin que ce soit clair pour tout le monde, on est bien d'accord :</p>
+<pre><code class="language-json">// composer.json
+ 
+  &quot;autoload&quot;: {
+    &quot;psr-4&quot;: {
+      ...,
+      &quot;MonModule\\&quot;: &quot;module/MonModule/src/&quot;
+    }
+  },
+</code></pre>
+<p>désigne le chemin où se situent les sources de votre module et</p>
+<pre><code class="language-json">// composer.json
+  
+  &quot;autoload-dev&quot;: {
+    &quot;psr-4&quot;: {
+      ...,
+      &quot;MonModuleTest\\&quot;: &quot;module/MonModule/test/&quot;
+    }
+  },
+</code></pre>
+<p>désigne le chemin où se situent vos tests unitaires.</p>
+<p>Assurez vous également que vos fichiers de tests sont bien ajoutés au paramétrage de PHPUnit (qui ne puise pas ses informations dans <code>composer.json</code> mais dans le <code>phpunit.xml.dist</code>).</p>
+<pre><code class="language-xml">// phpunit.xml.dist
+
+&lt;phpunit colors=&quot;true&quot;&gt;
+  &lt;testsuites&gt;
+    &lt;testsuite name=&quot;ZendSkeletonApplication Test Suite&quot;&gt;
+      &lt;directory&gt;./module/Application/test&lt;/directory&gt;
+    &lt;/testsuite&gt;
+    &lt;testsuite name=&quot;MonModule Test Suite&quot;&gt;
+      &lt;directory&gt;./module/MonModule/test&lt;/directory&gt;
+    &lt;/testsuite&gt;
+  &lt;/testsuites&gt;
+&lt;/phpunit&gt;
+</code></pre>
+<ul>
+<li><strong>Utilisation d'une base de données MySQL</strong></li>
+</ul>
+<p>La présence de la base de données est intéressante parce que cela signifie qu'il y a forcément un fichier <code>config/autoload/dbadapter.local.php</code> qui contient les informations - sensibles - de la chaîne de connexion à la base de données et qui a été ignoré par git pour des raisons évidentes de sécurité.</p>
+<p>Le fichier <code>config/autoload/dbadapter.local.php</code> contient en principe le nom du serveur de base de données, le user, le mot de passe pour accéder à la base de données.</p>
+<p>En principe, git ignore ce fichier parce qu'on lui a dit que tous les fichiers <code>*.local.php</code> ne doivent pas être commités (règle de sécurité de base, incluse par défaut dans le framework et visible dans le fichier <code>.gitignore</code>) :</p>
+<pre><code class="language-php">// .gitignore
+local.php
+*.local.php
+</code></pre>
+<p>On est bien d'accord, si vous souhaitez exécuter votre application SANS ce fichier de configuration <code>dbadapter.local.php</code>, vous allez FATALEMENT obtenir une exception.</p>
+<p>En même temps, vous voulez faire de l'intégration continue. Donc vous voulez FATALEMENT installer votre projet à la volée et exécuter ledit projet A CHAQUE FOIS.</p>
+<p>Voyons comment.</p>
+<h2>S'identifier sur Continuous PHP</h2>
+<p>Pour commencer, il faut s'identifier sur <strong>ContinuousPHP</strong> avec un compte <strong>github</strong> / <strong>bitbucket</strong> / <strong>gitlab</strong>. De toutes évidences, il faut utiliser le compte sur lequel se trouve vos sources.</p>
+<p>Lorsque vous vous identifierez pour la première fois, <strong>ContinuousPHP</strong> va demander votre autorisation pour faire plein de choses (assez effrayantes au demeurant) sur votre compte <strong><a href="https://bitbucket.org/">Bitbucket</a></strong>. Vous n'avez que deux choix possibles : soit la pilule rouge et vous êtes d'accord (pour tout dans son intégralité) et vous continuez, soit la pilule bleue et tout s'arrête là.</p>
+<p>A votre accord, <strong>ContinuousPHP</strong> va récupérer la liste de tous les dépôts que vous avez sur votre compte <strong>github</strong> / <strong>bitbucket</strong> / <strong>gitlab</strong>. Cliquez sur <code>[Setup]</code> (face au projet que vous souhaitez intégrer avec <strong>ContinuousPHP</strong>) pour continuer. Ainsi <strong>ContinuousPHP</strong> saura OÙ sont vos sources (souvenez vous, il faut dire au serveur d'intégration OÙ sont les sources pour qu'il puisse faire ce qu'il a à faire).</p>
+<p>Qu'on soit bien d'accord, <strong>ContinuousPHP</strong> n'a pas vocation de transformer votre projet, de modifier votre projet ou d'y faire quoique ce soit. Il n'y a aucune modification opérée dans vos fichiers. Concernant <strong>Bitbucket</strong> (parce que c'est mon cas), il y a éventuellemment des modifications sur votre compte <strong>Bitbucket</strong> afin que <strong>ContinuousPHP</strong> puisse accéder au compte.</p>
+<h2>Paramétrage du build</h2>
+<p>Maintenant que <strong>ContinuousPHP</strong> sait où sont vos sources, on va lui demander d'installer notre projet. On choisit à ce moment là quelle branche <strong>ContinuousPHP</strong> doit surveiller. Comme c'est un projet monté sur un framework moderne, il y a forcément des dépendances qui ne sont pas présentes dans les sources mais dont l'application a besoin pour fonctionner (typiquement, les modules Zend Framework qui vont bien pour faire tourner A MINIMA le socle MVC de base.)</p>
+<p>Avec <strong>ContinuousPHP</strong> (comme avec d'autres), on peut lui demander d'installer le projet sur plusieurs instances différentes de PHP. On peut donc en profiter pour tester l'installation du projet sur plusieurs versions différentes de PHP.</p>
+<p>Il est toujours bon, dans le cadre d'une application web, d'indiquer au serveur d'intégration continue quel est le fichier web principal (en principe, le fichier <code>index.php</code> qui lance l'application). Dans le cadre d'un MVC Skeleton de Zend Framework, le <em>Document Root</em> est <code>/htdocs/index.php</code></p>
+<p>Je n'ai (pour le moment) eu aucune utilité pour les rubriques <strong>Environment Variables</strong>, <strong>Phing</strong>, <strong>Shell Scripts</strong>, <strong>Credentials</strong>, <strong>SSH Keys</strong> et <strong>HTTP Basic Authentication</strong>. En revanche, pour l'installation des dépendances, c'est l'affaire de <strong>Composer</strong>. En principe, avec la présence du fichier <code>composer.json</code>, <strong>ContinuousPHP</strong> devrait pré-remplir ce champ. Les options &quot;<em>Enable caching of Composer packages</em>&quot; et &quot;<em>Run Composer Hooks</em>&quot; sont cochés.</p>
+<h2>Paramétrage des tests</h2>
+<p>Maintenant que <strong>ContinuousPHP</strong> sait comment installer le projet, on va pouvoir lui dire d'exécuter les tests.</p>
+<p>Avec la présence du fichier <code>phpunit.xml.dist</code> et <code>phpcs.xml</code>, <strong>ContinuousPHP</strong> a détecté qu'on avait des tests unitaires et qu'on souhaitait également tester la qualité de notre code. Ainsi dans le paramétrage des tests de <strong>ContinuousPHP</strong>, le serveur a bien pris en compte des tests <strong>PHPUnit</strong> ainsi que des tests <strong>PHPCS</strong>. Comme je n'ai rien de prêt et sérieux pour <strong>PHPCS</strong>, j'ai désactivé cette partie là et ai choisi délibéremment de me concentrer sur les tests unitaires. Mais rien ne vous empêche de tester la qualité de votre code.</p>
+<p>Concernant <strong>PHPUnit</strong>, on choisit que les tests soient bloquant (on coche la case) et on dit que le fichier de bootstrap de <strong>PHPUnit</strong> est effectivement <code>phpunit.xml.dist</code>.</p>
+<p>Arrivé à ce moment, vous n'arriverez pas à exécuter votre projet. A l'exécution, vous allez attrapper une exception concernant l'absence de chaîne de connexion à la base de données.</p>
+<p>Afin d'y arriver, il va falloir apporter quelques modifications à notre projet et y ajouter quelques scripts.</p>
+<h4>Créer le script de connexion à la base de données.</h4>
+<p>Il faut tout d'abord le script de connexion à la base de données (le fameux fichier <code>config/autoload/dbadapter.local.php</code> qui nous fait défaut).</p>
+<p>Moi j'ai opté pour un script dans lequel je me proposais de créer un fichier <code>dbadapter.local.php</code> à partir d'une chaîne de caractères. Comme c'est un script, j'ai décidé également de stocker tous mes scripts dans un répertoire <code>scripts/</code> qui sera commité par <strong>git</strong>. Evidemment, dans le cadre de l'intégration continue, la base de données qui va être installée ne va être installée que temporairement, le temps d'exécuter le projet et ses tests. A la fin du build, il ne restera plus rien de cette base. Pour accéder à cette base temporaire créée à la volée au moment où on exécute le projet, la documentation de <strong>ContinuousPHP</strong> nous donne les <a href="https://continuousphp.com/documentation/databases/mysql/" target="_blank">informations de la chaîne de connexion</a> sur le serveur Mysql utilisé par <strong>ContinuousPHP</strong>.</p>
+<pre><code class="language-sh">// scripts/continuousphp_dbadapter.config.sh
+#!/bin/bash
+
+cat &gt; ../config/autoload/dbadapter.local.php &lt;&lt; EOF
+&lt;?php
+
+return [
+ 'db' =&gt; [
+ 'adapters' =&gt; [
+ 'MyDbAdapter' =&gt; [
+ 'driver' =&gt; 'Pdo_Mysql',
+ 'database' =&gt; 'mydatabase',
+ 'dsn' =&gt; 'mysql:dbname=mydatabase;host=localhost',
+ 'username' =&gt; 'root',
+ 'password' =&gt; '',
+ 'driver_options' =&gt; [
+ PDO::MYSQL_ATTR_INIT_COMMAND =&gt; 'SET NAMES \'UTF8\''
+ ],
+ ],
+ ],
+ ],
+];
+EOF
+</code></pre>
+<p>Il faudra veiller à ce que ce script soit bien inclus dans les sources du projet afin de pouvoir l'envoyer jusqu'au serveur <strong>ContinuousPHP</strong>.</p>
+<p>Dans la configuration du build dans <strong>ContinuousPHP</strong>, on va ouvrir l'onglet <strong>Tests Settings</strong> et ajouter un premier script <strong>Shell</strong> :</p>
+<p>On donne les droits d'exécution sur le script <code>scripts/continuousphp_dbadapter.config.sh</code></p>
+<pre><code class="language-sh">cd scripts &amp;amp;&amp;amp; chmod 764 continuousphp_dbadapter.config.sh
+</code></pre>
+<p>Le script <code>scripts/continuousphp_dbadapter.config.sh</code> qu'on va exécuter maintenant va créer le fichier <code>config/autoload/dbadapter.local.php</code></p>
+<pre><code class="language-sh">cd scripts &amp;amp;&amp;amp; ./continuousphp_dbadapter.config.sh
+</code></pre>
+<p>Notez qu'il faut RETOURNER dans le répertoire <code>scripts/</code> puisqu'à chaque script, on repart à la racine du projet.</p>
+<p>Si vous ne vous êtes pas trompé dans votre script, le fichier <code>dbadapter.local.php</code> est bien installé dans le bon dossier <code>config/autoload/</code></p>
+<h4>Maintenant installer la base de données.</h4>
+<p>Pour installer la base de données, nous avons besoin d'un second script :</p>
+<pre><code class="language-sh">// scripts/continuous_db_create.sh
+#!/bin/bash
+
+mysqladmin -u root create mydatabase
+
+mysql --user=root mydatabase &lt; mydatabase.sql
+</code></pre>
+<p>en s'assurant que le script <code>mydatabase.sql</code> est bien envoyé vers <strong>ContinuousPHP</strong> également. Pour ma part, on trouvera le fichier <code>mydatabase.sql</code> dans le répertoire <code>scripts/</code> et c'est le fichier sql obtenu à l'exportation à partir de phpMyAdmin. Comme je n'ai pas besoin de tester les données de la base de données (pour le moment), le fichier .sql ne contient que la structure de la base de données.</p>
+<p>Dans <strong>ContinuousPHP</strong>, toujours dans le paramétrage des tests, on va également ajouter :</p>
+<pre><code class="language-sh">cd scripts &amp;amp;&amp;amp; chmod 764 continuous_db_create.sh
+</code></pre>
+<p>et</p>
+<pre><code class="language-sh">cd scripts &amp;amp;&amp;amp; ./continuousphp_db_create.sh
+</code></pre>
+<h2>Paramétrage du package</h2>
+<p>Nos tests sont enfin prêts. Il faut maintenant choisir le format du package.</p>
+<p>Pour ma part, je n'ai pas trouvé d'options intéressantes à ce jour sur le paramétrage du package. J'ai choisi <strong>Generic Tarball</strong> pour le type de package et j'ai laissé les valeurs par défaut (majoritairement des champs laissés vides) et je suis passé directement sur le paramétrage du déploiement.</p>
+<h2>Paramétrage du déploiement</h2>
+<p>Je n'ai rien fait à cette étape. J'ai bien essayé de rajouter des scripts afin que le projet, une fois qu'il a passé avec succès les tests, soit mergé et poussé vers une branche de prod par exemple mais <strong>ContinuousPHP</strong> ne permet pas de le faire.</p>
+<h2>Le déroulement</h2>
+<p>Lorsque vous poussez votre code sur votre dépôt <strong>Bitbucket</strong>, <strong>ContinuousPHP</strong> va s'en apercevoir.</p>
+<ul>
+<li>Il va cloner vos sources vers plusieurs instances dédiées à votre build (une pour chaque version de PHP sur laquelle vous souhaitez tester votre projet)</li>
+<li>Il va lancer <code>php -d memory_limit=-1 composer install -o --no-interaction --ansi --no-progress</code> afin d'installer toutes les dépendances</li>
+<li>Il va faire pointer le serveur web vers le fichier <code>htdocs/index.php</code> comme indiqué</li>
+<li>Il va exécuter les scripts concernant la base de données sur chacune des instances</li>
+</ul>
+<pre><code class="language-sh">cd scripts &amp;amp;&amp;amp; chmod 764 continuousphp_dbadapter.config.sh
+cd scripts &amp;amp;&amp;amp; chmod 764 continuous_db_create.sh
+cd scripts &amp;amp;&amp;amp; ./continuousphp_db_create.sh
+cd scripts &amp;amp;&amp;amp; ./continuousphp_dbadapter.config.sh
+</code></pre>
+<ul>
+<li>Il va lancer <code>phpunit</code></li>
+</ul>
+<p>Une fois que tous les tests auront été joués, <strong>ContinuousPHP</strong> va effacer tous les fichiers temporaires, la(es) base(s) de données, le projet intégralement. Il ne restera plus que les packages téléchargeables :</p>
+<p>Le package de déploiement comprenant :</p>
+<ul>
+<li>l'intégralité de vos sources (le répertoire <code>scripts/</code> qui fait parti de votre projet),</li>
+<li>pas de fichier <code>config/autoload/dbadapter.local.php</code></li>
+<li>l'intégralité des packages des dépendances installés par <strong>Composer</strong> (soit tous les modules Zend Framework nécessaires etc...)</li>
+</ul>
+<p>quelques fichiers en plus :</p>
+<ul>
+<li>
+<p><code>continuousphp.package</code></p>
+</li>
+<li>
+<p><code>phing.phar</code></p>
+</li>
+<li>
+<p>Le package utilisé pour les tests. En fonction du paramétrage que je vous ai présenté, j'obtiens exactement les mêmes fichiers que pour le package de déployment. Mais je suppose qu'il doit y avoir des versions où on devrait obtenir des fichiers temporaires en plus.</p>
+</li>
+<li>
+<p>Les rapports de coverage sur chaque version de PHP si vous souhaitez que <strong>phpUnit</strong> vous calcule le taux de coverage de vos tests</p>
+</li>
+<li>
+<p>Les rapports de tests pour chaque version de PHP.</p>
+</li>
+</ul>
+<h2>Rajoutez le calcul de couverture des tests.</h2>
+<p>Pour que <strong>PHPUnit</strong> calcule le taux de couverture de vos tests, il faut ajouter un filtre dans le fichier de paramétrage de phpUnit</p>
+<pre><code class="language-xml">// phpunit.xml.dist
+
+  &lt;filter&gt;
+    &lt;whitelist processUncoveredFilesFromWhitelist=&quot;true&quot;&gt;
+      &lt;directory suffix=&quot;.php&quot;&gt;module/Application/src&lt;/directory&gt;
+      &lt;directory suffix=&quot;.php&quot;&gt;module/MonModule/src&lt;/directory&gt;
+    &lt;/whitelist&gt;
+  &lt;/filter&gt;
+</code></pre>
+<p>Et voila !!</p>
+<p>C'est un long post mais j'espère qu'il va être utile pour certains d'entre vous.</p>
+<p>Mon prochain post sur l'intégration continue va concerner le server Go CD.</p>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/fr/tags/integration-continue">intégration continue</a></li><li><a href="/fr/tags/zend-framework-3">zend framework 3</a></li><li><a href="/fr/tags/tdd">TDD</a></li><li><a href="/fr/tags/phpunit">phpunit</a></li><li><a href="/fr/tags/continuousphp">continuousPHP</a></li><li><a href="/fr/tags/bitbucket">bitbucket</a></li></ul>
+        </div>
+      
+
+      
+    
+
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>Sur moi</h3>
+      <p>J&#39;ai appris le php il y a quelques années, quand Internet était à ses débuts. Pour diverses raisons, j&#39;ai arrêté en route et j&#39;ai perdu le fil des nouveaux Internets que je redécouvre. Résultat, je me sens constamment à courir après l&#39;histoire mais je suis toujours motivée à reprendre des projets personnels. Je me propose de vous partager mes découvertes. Au delà des sujets de programmation, j&#39;aime également partager mes infos concernant notamment l&#39;Histoire, l&#39;Astronomie, la Linguistique, les Films, les Livres et les Anime. J&#39;espère que vous aimerez suivre mon blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. Tous droits réservés.</p>
+        <p>Propulsé par <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

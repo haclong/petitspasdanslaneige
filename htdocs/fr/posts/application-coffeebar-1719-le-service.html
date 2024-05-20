@@ -1,0 +1,465 @@
+<!doctype html>
+<html class="no-js" lang="fr" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>Application CoffeeBar 17/19 - Le service&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">Français</a>
+        <a href="/en/">Anglais</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/fr/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/fr/books/0/index.html">Séries</a>
+        <a href="/fr/">Accueil</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/fr/">Accueil</a><i class="fas fa-angle-right"></i>Application CoffeeBar 17/19 - Le service
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>Application CoffeeBar 17/19 - Le service</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>05/05/2015 15:12:00
+        
+        <i class="fas fa-th-large"></i><!--a href="/fr/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/file9271237667217.jpg" class="node-banner" />
+        
+          <p><strong>Crédit</strong> : Morguefile.com </p>
+        
+      </div>
+
+      <p><p>Le staff peut à présent voir en un coup d'oeil la liste des boissons et des plats à servir, par table. On a vu ensemble que les plats servis et les boissons servies ne déclenchaient pas tout à fait le même événement. Voyons à quoi s'en tenir désormais dans nos observers.</p>
+<p><em>NOTE : le long du tutoriel, je vais vous faire rééditer des classes et des vues sur lesquels on sera déjà passé. Il va y avoir des parties qui n'apparaitront plus systématiquement au second passage : typiquement les use, les instructions extends, implements etc... Cela ne veut pas dire qu'il faut les retirer. C'est juste pour alléger le code. S'il faut retirer du code, soit je vous remettrais le passage intégralement, pour voir ce qui a disparu, soit je vous signalerais qu'il faut effacer une ligne pour la remplacer par une autre.</em></p>
+<h2>L'historique des notes</h2>
+<h3>Traitement des opérations</h3>
+<p>Les opérations sont systématiquement interceptées par le service <strong>TabAggregate</strong>. C'est là qu'on va effectuer les contrôles de cohérence avant de déclencher véritablement un nouvel événement, validant ainsi la bonne exécution de la commande envoyée.</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Service/TabAggregate.php
+
+&lt;?php
+namespace CoffeeBar\Service ;
+
+use CoffeeBar\Event\DrinksServed;
+use CoffeeBar\Event\FoodServed;
+use CoffeeBar\Exception\DrinksNotOutstanding;
+use CoffeeBar\Exception\FoodNotPrepared;
+
+class TabAggregate
+{
+  public function attach(EventManagerInterface $events)
+  {
+    $this-&gt;listeners[] = $events-&gt;attach('markDrinksServed', array($this, 'onMarkDrinksServed')) ;
+    $this-&gt;listeners[] = $events-&gt;attach('markFoodServed', array($this, 'onMarkFoodServed')) ;
+  }
+ 
+  public function onMarkDrinksServed($events)
+  {
+    $markDrinksServed = $events-&gt;getParam('markDrinksServed') ;
+ 
+    $story = $this-&gt;loadStory($markDrinksServed-&gt;getId()) ;
+
+    if(!$story-&gt;areDrinksOutstanding($markDrinksServed-&gt;getDrinks()))
+    {
+      throw new DrinksNotOutstanding('une ou plusieurs boissons ne font pas parties de la commande') ;
+    }
+ 
+    $drinksServed = new DrinksServed() ;
+    $drinksServed-&gt;setId($markDrinksServed-&gt;getId()) ;
+    $drinksServed-&gt;setDrinks($markDrinksServed-&gt;getDrinks()) ;
+    $this-&gt;events-&gt;trigger('drinksServed', $this, array('drinksServed' =&gt; $drinksServed)) ;
+  }
+
+  public function onMarkFoodServed($events)
+  {
+    $markFoodServed = $events-&gt;getParam('markFoodServed') ;
+ 
+    $story = $this-&gt;loadStory($markFoodServed-&gt;getId()) ;
+
+    if(!$story-&gt;isFoodPrepared($markFoodServed-&gt;getFood()))
+    {
+      throw new FoodNotPrepared('les plats ne sont pas encore prêts') ;
+    }
+ 
+    $foodServed = new FoodServed() ;
+    $foodServed-&gt;setId($markFoodServed-&gt;getId()) ;
+    $foodServed-&gt;setFood($markFoodServed-&gt;getFood()) ;
+    $this-&gt;events-&gt;trigger('foodServed', $this, array('foodServed' =&gt; $foodServed)) ;
+  }
+}
+</code></pre>
+<p>Pour contrôler l'état des notes avant de déclencher les événements, il faut vérifier</p>
+<ul>
+<li>que les boissons ont bien été commandées et pas encore servies d'une part, et</li>
+<li>que les plats ont bien été préparés et pas encore servis d'autre part.</li>
+</ul>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Entity/TabStory/TabStory.php
+
+&lt;?php
+namespace CoffeeBar\Entity\TabStory ;
+
+class TabStory
+{
+  // on vérifie si les boissons sont bien commandées mais non servies
+  public function areDrinksOutstanding(array $menuNumbers)
+  {
+    return $this-&gt;areAllInList($menuNumbers, $this-&gt;outstandingDrinks) ;
+  }
+ 
+  // on vérifie que les plats sont bien préparés mais non servis
+  public function isFoodPrepared(array $menuNumbers)
+  {
+    return $this-&gt;areAllInList($menuNumbers, $this-&gt;preparedFood) ;
+  }
+}
+</code></pre>
+<p>Si les boissons à servir n'ont pas été commandés, on retourne une exception <code>CoffeeBar\Exception\DrinksNotOutstanding</code></p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Exception/DrinksNotOutstanding.php
+
+namespace CoffeeBar\Exception ;
+
+use Exception;
+
+class DrinksNotOutstanding extends Exception {}
+</code></pre>
+<p>Si les plats à servir n'ont pas été préparés, on retourne une exception <code>CoffeeBar\Exception\FoodNotPrepared</code></p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Exception/FoodNotPrepared.php
+
+namespace CoffeeBar\Exception ;
+
+use Exception;
+
+class FoodNotPrepared extends Exception {}
+</code></pre>
+<p>Il reste à présenter les deux objets <code>CoffeeBar\Event\DrinksServed</code> et <code>CoffeeBar\Event\FoodServed</code></p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Event/DrinksServed.php
+
+&lt;?php
+namespace CoffeeBar\Event ;
+
+class DrinksServed
+{
+  protected $id ; // int (guid) - id unique de la note
+  protected $drinks ; // array - liste des numéros de menu
+
+  // getters &amp;amp; setters
+}
+</code></pre>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Event/FoodServed.php
+
+&lt;?php
+namespace CoffeeBar\Event ;
+
+class FoodServed
+{
+  protected $id ; // int (guid) - id unique de la note
+  protected $food ; // array - liste des numéros de menu
+
+  // getters &amp;amp; setters
+}
+</code></pre>
+<h3>Traitement des événements</h3>
+<p>Une fois que les deux opérations sont traitées par le service <strong>TabAggregate</strong>, deux événements sont déclenchés : '<code>drinksServed</code>' et '<code>foodServed</code>'.</p>
+<p>Rappelons nous que nous sommes dans un café/snack bar. Il faut compter combien nos clients doivent payer. De plus, selon notre scénario, il n'est pas possible de clore une note tant que l'addition n'est pas payée. Au moment de servir les plats et les boissons est le moment idéal pour comptabiliser le montant de chaque élément servi. Ainsi, il ne pourra pas y avoir de litige possible : On ne comptera pas un plat commandé mais non servi.</p>
+<p>Lorsqu'on sert un plat et/ou une boisson, on ajoute le prix de l'élément dans le total de la note.</p>
+<p>Le <em>total de la note</em> est une propriété de l'historique de la note : <code>TabStory::$itemsServedValue</code></p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Entity/TabStory/TabStory.php
+
+&lt;?php
+namespace CoffeeBar\Entity\TabStory ;
+
+class TabStory
+{
+  protected $itemsServedValue ; // float - total de la note
+ 
+  public function __construct()
+  {
+    $this-&gt;itemsServedValue = 0 ;
+  }
+
+  public function getItemsServedValue() 
+  {
+    return $this-&gt;itemsServedValue;
+  }
+
+  public function addValue($value)
+  {
+    $this-&gt;itemsServedValue += $value ;
+    return $this-&gt;itemsServedValue ;
+  }
+}
+</code></pre>
+<p>Voyons l'articulation dans le service <strong>TabAggregate</strong> :</p>
+<ul>
+<li>Quand une boisson est servie, on la retire de la liste <code>TabStory::$outstandingDrinks</code> et on ajoute le prix de la boisson à la propriété <code>TabStory::$itemsServedValue</code>.</li>
+<li>Quand un plat est servi, on le retire de la liste <code>TabStory::$preparedFood</code> et on ajoute le prix du plat à la propriété <code>TabStory::$itemsServedValue</code>.</li>
+</ul>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Service/TabAggregate.php
+
+&lt;?php
+namespace CoffeeBar\Service ;
+
+class TabAggregate
+{
+  public function attach(EventManagerInterface $events)
+  {
+    $this-&gt;listeners[] = $events-&gt;attach('drinksServed', array($this, 'onDrinksServed')) ;
+    $this-&gt;listeners[] = $events-&gt;attach('foodServed', array($this, 'onFoodServed')) ;
+  }
+ 
+  public function onDrinksServed($events)
+  {
+    $drinksServed = $events-&gt;getParam('drinksServed') ;
+ 
+    $story = $this-&gt;loadStory($drinksServed-&gt;getId()) ;
+    foreach($drinksServed-&gt;getDrinks() as $drink)
+    {
+      // on retrouve l'index de l'élément de menu qui est dans le tableau $outstandingDrinks
+      $key = $story-&gt;getOutstandingDrinks()-&gt;getKeyById($drink) ;
+
+      if($key !== null)
+      {
+        // on récupère le tarif de l'objet OrderedItem qui correspond à l'index identifié plus haut
+        $price = $story-&gt;getOutstandingDrinks()-&gt;offsetGet($key)-&gt;getPrice() ;
+        $story-&gt;addValue($price) ;
+
+        // retrait de l'élément de la liste $outstandingDrinks
+        $story-&gt;getOutstandingDrinks()-&gt;offsetUnset($key) ;
+      }
+    }
+    $this-&gt;saveStory($drinksServed-&gt;getId(), $story) ;
+  }
+
+  public function onFoodServed($events)
+  {
+    $foodServed = $events-&gt;getParam('foodServed') ;
+
+    $story = $this-&gt;loadStory($foodServed-&gt;getId()) ;
+    $story-&gt;addEvents($foodServed) ;
+ 
+    foreach($foodServed-&gt;getFood() as $food)
+    {
+      // il faut récupérer l'index du plat servi dans le tableau $preparedFood
+      $key = $story-&gt;getPreparedFood()-&gt;getKeyById($food) ;
+ 
+      if($key !== null)
+      {
+        // on récupère le prix de l'objet OrderedItem qui correspond à l'index identifié plus haut
+        $price = $story-&gt;getPreparedFood()-&gt;offsetGet($key)-&gt;getPrice() ;
+        $story-&gt;addValue($price) ;
+ 
+        // retrait de l'élément de la liste $preparedFood
+        $story-&gt;getPreparedFood()-&gt;offsetUnset($key) ;
+      }
+    }
+    $this-&gt;saveStory($foodServed-&gt;getId(), $story) ;
+  }
+}
+</code></pre>
+<h2>Liste des notes ouvertes.</h2>
+<p>Il faut maintenant modifier également la liste des notes ouvertes.</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Service/OpenTabs.php
+
+&lt;?php
+
+namespace CoffeeBar\Service ;
+
+class OpenTabs implements ListenerAggregateInterface
+{
+  public function attach(EventManagerInterface $events)
+  {
+    $this-&gt;listeners[] = $events-&gt;attach('drinksServed', array($this, 'onDrinksServed')) ;
+    $this-&gt;listeners[] = $events-&gt;attach('foodServed', array($this, 'onFoodServed')) ;
+  }
+
+  /**
+   * Move the served items from the itemsToServe list to the itemsServed list
+   * @param Events $events
+   */
+  public function onDrinksServed($events)
+  {
+    $drinksServed = $events-&gt;getParam('drinksServed') ;
+
+    // on charge l'objet TodoByTab du cache
+    $this-&gt;loadTodoByTab() ;
+    // on récupère l'objet Tab identifié par l'id unique
+    $tab = $this-&gt;todoByTab-&gt;offsetGet($drinksServed-&gt;getId()) ;
+ 
+    foreach($drinksServed-&gt;getDrinks() as $drink)
+    {
+      // pour chaque boisson servie, on ne récupère que le numéro de menu correspondant
+      // il faut pouvoir identifier à quel index se situe cet élément de menu dans la liste des plats à servir
+      // on pourra ainsi manipuler les objets ArrayObject à partir du moment où on sait de quel index on parle
+      $key = $tab-&gt;getItemsToServe()-&gt;getKeyByMenuNumber($drink) ;
+      if($key !== null)
+      {
+        // on récupère l'objet TabItem qui se situe à cet index $key dans l'objet ItemsToServe (ArrayObject)
+        $value = $tab-&gt;getItemsToServe()-&gt;offsetGet($key) ;
+        // on reprend l'objet extrait de ItemsToServe (ArrayObject) et on le rajoute dans l'objet ItemsServed (ArrayObject)
+        $tab-&gt;getItemsServed()-&gt;addItem($value) ;
+        // on supprime l'objet qui était dans les ItemsToServe (ArrayObject)
+        $tab-&gt;getItemsToServe()-&gt;offsetUnset($key) ;
+      }
+    }
+    // on stocke sur le même index (id unique) l'objet Tab mis à jour avec les nouveaux éléments
+    $this-&gt;todoByTab-&gt;offsetSet($drinksServed-&gt;getId(), $tab) ;
+    $this-&gt;saveTodoByTab() ;
+  }
+ 
+  /**
+   * Move the served items from the itemsToServe list to the itemsServed list
+   * @param Events $events
+   */
+  public function onFoodServed($events)
+  {
+    $foodServed = $events-&gt;getParam('foodServed') ;
+
+    // on charge l'objet TodoByTab du cache
+    $this-&gt;loadTodoByTab() ;
+    // on récupère l'objet Tab identifié par l'id unique
+    $tab = $this-&gt;todoByTab-&gt;offsetGet($foodServed-&gt;getId()) ;
+ 
+    foreach($foodServed-&gt;getFood() as $food)
+    {
+      // pour chaque plat à servir, on ne récupère que le numéro de menu correspondant
+      // il faut pouvoir identifier à quel index se situe cet élément de menu dans la liste des plats à servir
+      // on pourra ainsi manipuler les objets ArrayObject à partir du moment où on sait de quel index on parle
+      $key = $tab-&gt;getItemsToServe()-&gt;getKeyByMenuNumber($food) ;
+      if($key !== null)
+      {
+        // on récupère l'objet TabItem qui se situe à cet index $key dans l'objet ItemsToServe (ArrayObject)
+        $value = $tab-&gt;getItemsToServe()-&gt;offsetGet($key) ; 
+        // on reprend l'objet extrait de ItemsToServed (ArrayObject) et on le rajoute dans l'objet ItemsServed (ArrayObject) 
+        $tab-&gt;getItemsServed()-&gt;addItem($value) ;
+        // on supprime l'objet qui était dans les ItemsToServe (ArrayObject) et qui n'y est plus
+        $tab-&gt;getItemsToServe()-&gt;offsetUnset($key) ;
+      }
+    }
+    // on stocke sur le même index (id unique) l'objet Tab mis à jour avec les nouveaux éléments
+    $this-&gt;todoByTab-&gt;offsetSet($foodServed-&gt;getId(), $tab) ;
+    $this-&gt;saveTodoByTab() ;
+  }
+}
+</code></pre>
+<p>Ici aussi, on déplace les éléments d'une liste à une autre.</p>
+<p>Dans la liste des notes ouvertes, on déplace les éléments (plats et boissons confondus) de la liste <code>Tab::$itemsToServe</code> à la liste <code>Tab::$itemsServed</code></p>
+<p>Et nos boissons et plats se déplacent gentimment d'une liste à une autre... Le scénario prend fin lorsque la note est soldée.</p>
+<p><em>Vous trouverez l'intégralité de l'application sur mon <a href="https://github.com/haclong/coffeebar" target="_blank">github</a></em></p>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/fr/tags/zend-framework-2">zend framework 2</a></li><li><a href="/fr/tags/oop">OOP</a></li><li><a href="/fr/tags/programmation-evenementielle">programmation événementielle</a></li></ul>
+        </div>
+      
+
+      
+        <nav id="book-navigation">
+    
+       <li class="link-previous"><a href="/fr/posts/application-coffeebar-1619-afficher-la-todo-list-du-staff.html"><i class="fas fa-long-arrow-alt-left"></i> Application CoffeeBar 16/19 - Afficher la todo list du staff</li>
+    
+
+    
+        <li class="link-next"><a href="/fr/posts/application-coffeebar-1819-inevitablement-laddition.html">Application CoffeeBar 18/19 - Inévitablement, l&#39;addition <i class="fas fa-long-arrow-alt-right"></i></a></li>
+    
+
+    
+        <li class="link-up"><a href="/fr/books/gerer-un-cafe-avec-une-programmation-evenementielle.html"><i class="fas fa-book-open"></i> Gérer un café avec une programmation événementielle</li>
+    
+</nav>
+
+      
+    
+
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>Sur moi</h3>
+      <p>J&#39;ai appris le php il y a quelques années, quand Internet était à ses débuts. Pour diverses raisons, j&#39;ai arrêté en route et j&#39;ai perdu le fil des nouveaux Internets que je redécouvre. Résultat, je me sens constamment à courir après l&#39;histoire mais je suis toujours motivée à reprendre des projets personnels. Je me propose de vous partager mes découvertes. Au delà des sujets de programmation, j&#39;aime également partager mes infos concernant notamment l&#39;Histoire, l&#39;Astronomie, la Linguistique, les Films, les Livres et les Anime. J&#39;espère que vous aimerez suivre mon blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. Tous droits réservés.</p>
+        <p>Propulsé par <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

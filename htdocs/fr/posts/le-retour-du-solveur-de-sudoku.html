@@ -1,0 +1,164 @@
+<!doctype html>
+<html class="no-js" lang="fr" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>Le retour du solveur de sudoku&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">Français</a>
+        <a href="/en/">Anglais</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/fr/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/fr/books/0/index.html">Séries</a>
+        <a href="/fr/">Accueil</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/fr/">Accueil</a><i class="fas fa-angle-right"></i>Le retour du solveur de sudoku
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>Le retour du solveur de sudoku</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>07/12/2016 09:20:00
+        
+        <i class="fas fa-th-large"></i><!--a href="/fr/sites/haclong-projects.html" class="tag-sites"-->Haclong projects<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/Sudoku_Board_Game.jpg" class="node-banner" />
+        
+      </div>
+
+      <p><p>Dans la première version de mon solveur de sudoku, l'algorithme de résolution de la grille de sudoku était beaucoup trop massif, mal optimisé. Avec le recul, lorsque je le relis, je m'aperçois que les objets sont très très mal conçus, que les responsabilités, quoique clairement définies au début finissent avec des frontières floues. Mais il y avait de l'idée. Peut mieux faire.</p>
+<p>L'algorithme d'alors était systématique, sans grande intelligence. Il faisait plus vite ce que je faisais moi même devant une grille de sudoku. Il itérait sur chacune des lignes, chacune des colonnes, chacune des régions pour essayer de voir si on avait éliminé suffisamment de chiffres possibles dans chaque case pour déduire le chiffre définitif de la case. Le solveur lisait toutes les cases sans distinction, et revérifiait systématiquement chaque case, en dépit des chances de trouver le bon chiffre vu le trop grand nombre de chiffres possibles dans la case, ou dans le cas contraire, quand le chiffre avait déjà été trouvé. C'était redondant, sans saveur et manquait cruellement d'élégance.</p>
+<p>Avec les bidouillages sur l'application Coffee Bar, j'avais été introduite au pattern CQRS. Cela me semblait pas mal convenir pour optimiser l'algorithme de résolution d'une grille de sudoku.</p>
+<p>J'ai décidé de refaire mon solveur en basant l'algorithme sur un développement événementiel. Mettre un chiffre dans une case déclenche un événement. Les autres cases écoutent cet événement. Les cases se mettent à jour instantanément au fur et à mesure de l'avancée de la grille.</p>
+<p>Mais voilà.</p>
+<p>Développer une application avec une architecture basée sur les événements n'est pas une sinécure pour un développeur habitué à faire du séquentiel. Je m'aperçois qu'on ne peut plus penser en terme d'instructions successivement ordonnées.</p>
+<p>En séquentiel, avant de vous lancer dans un développement, vous avez dressé la liste des éléments à développer. C'est une liste séquentielle de tâches à accomplir pour atteindre l'object de la fonctionnalité que vous êtes en train de coder. Il y a une liste par fonctionnalité. Ainsi, quand vous avez fini de développer une fonctionnalité, toutes les tâches de votre TODO List sont résolues et on n'en parle plus.</p>
+<p>En événementiel, avant de vous lancer dans un développement, vous avez également dressé la liste des éléments à développer. Mais cette fois ci, au lieu d'une liste de tâches ordonnées, vous avez plusieurs listes d'action et de réaction. Selon votre préférence, soit une liste par événement identifié dans l'application, soit une liste par objet. Par événement, identifier ce que chaque objet de votre application doit faire en réaction à cet événement. Par objet, identifier le comportement de votre objet pour chacun des événements de l'application.</p>
+<p>Même si cela semble dire la même chose, je me suis aperçue que je ne me le représentais pas du tout de la même façon dans mon esprit. Du coup, choisir de travailler soit en séquentiel, soit en événementiel requiert beaucoup plus d'investissement que je ne l'aurais soupçonné. Et je ne parle pas d'adhésion à la méthode. Je parle de logique et d'architecture. Et de méthode.</p>
+<p>Evidemment, pour ceux qui sont rompu à l'exercice, ils auront peut être oublié comment étaient leurs débuts. Cependant, la démarche cognitive est très intéressante et stimulante, j'ai adoré même si je me suis fait des noeuds au cerveau plus d'une fois et que j'ai du faire des schéma récapitulatifs pour bien vérifier que j'avais bien branché tous mes objets aux bons événements. J'ai passé mon temps à me demander qui devait faire quoi et à quel moment. Finalement, avec une gestion événementielle, on se demande surtout &quot;A quel moment&quot; alors qu'en séquentiel, on se demande &quot;Dans quel ordre&quot;... C'est un honteux raccourci mais c'est mon impression générale.</p>
+<p>Finalement, d'événements en événements, petit à petit, mon solveur prend forme.</p>
+<p>J'ai ajouté une couche AJAX pour que la grille se remplisse au fur et à mesure. Dans la première version, il y avait une première requête, le solveur résolvait la grille et retournait le grille résolue en réponse. Désormais, la grille se remplie sous nos yeux ébahis.</p>
+<p>J'ai également ajouté le niveau &quot;tests unitaires&quot; qui s'est révélé un exercice tout aussi fun et grâce à eux, j'ai pu refactorer mon code plusieurs fois durant les étapes de développement, au fur et à mesure de mes tâtonnements.</p>
+<p>Toutefois, pendant le développement, je me suis aperçue de défauts dans la conception :</p>
+<ul>
+<li>A chaque fois qu'un événement était modifié, l'ensemble de mes écouteurs étaient lourdement impactés. La modification d'un événement ne devrait pas avoir autant d'impact sur une application aussi simple qu'un solveur de sudoku.</li>
+<li>Dans le but d'éviter des dépendances croisées, certaines informations étaient dupliquées d'un objet à l'autre.</li>
+<li>Mais au final, il a quand même fallu faire intervenir tous les objets SYSTEMATIQUEMENT à chaque action.</li>
+</ul>
+<p>Et en même temps, je me suis intéressée à de la documentation sur l'Event Sourcing et le CQRS. En fait, CQRS/ES de son petit nom. Et là, PATATRAS !!! V'la que je découvre que, même si je pars sur une bonne intention, j'ai finalement bricolé une architecture bâtarde plus tellement OOP, pas tout à fait DDD pour mon solveur de sudoku qui rend l'application BEAUCOUP TROP complexe avec des répétitions et des objets sans cohérence. A la lecture des différentes documentations sur CQRS/ES, je m'aperçois qu'il me manquait des concepts de base qui m'auraient permis de faire un travail efficace :</p>
+<p><strong>Le Bounded Context</strong></p>
+<p>Mon incapacité à modéliser convenablement un bounded context a réparti les responsabilités sur plusieurs objets nommés aggregate mais qui finalement n'en sont pas, ce qui a généré des dépendances croisées entre les objets qui compensent du coup avec des infos dupliquées.</p>
+<p><strong>Les commandes vs les événements</strong></p>
+<p>Je n'ai pas fait de distinction entre commandes et événements ce qui porte préjudice à la structure du code et à l'architecture logicielle.</p>
+<p>Globalement, en CQRS, les commandes valident l'action et l'exécutent (on vérifie qu'on peut mettre le chiffre dans la case et on le met) alors que les événements ne servent qu'à enregistrer le statut. Dans le cas particulier du solveur de sudoku, cela signifie que je dois stocker l'état de la grille à chaque événement.</p>
+<p>Reste à déterminer ce que signifie l'état de la grille.</p>
+<p>J'ai d'abord pensé (à tort) stocker uniquement l'ordre des chiffres à mettre dans chaque grille -&gt; FAUX : cela signifierait que je serais en train de stocker les commandes et non pas les événements.</p>
+<p>Ou encore stocker uniquement l'état de la grille résolue -&gt; FAUX : il faut également que je stocke les données annexes tel que le tableau de tous les chiffres possibles qui n'ont pas encore été écartés de ma grille de sudoku. Si je ne stocke pas ce tableau, je serais obligée de le recalculer à chaque fois. Or, si je ne stocke pas les commandes, je ne pourrais pas recalculer ledit tableau.</p>
+<p>Finalement, l'absence de normalisation des messages et des formats de données a complexifié inutilement une application déjà confuse.</p>
+<p>Ah je vous jure, je n'étais pas fière. Tellement que j'ai eu du mal à finir le solveur. L'idée de finaliser un produit ni fait ni à faire porte un coup au moral et alors que j'apportais les dernières touches à l'application, je suis déjà en train de planifier la 3me version en tentative d'application des concepts DDD / CQRS / ES.</p>
+<p>Enfin, si vous voulez voir le résultat de cette débâcle, c'est sur mon <a href="https://github.com/haclong/sudokusolver2" target="_blank"><strong>github</strong></a>.</p>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/fr/tags/symfony">symfony</a></li><li><a href="/fr/tags/tdd">TDD</a></li><li><a href="/fr/tags/cqrs">CQRS</a></li><li><a href="/fr/tags/es">ES</a></li><li><a href="/fr/tags/programmation-evenementielle">programmation événementielle</a></li></ul>
+        </div>
+      
+
+      
+    
+
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>Sur moi</h3>
+      <p>J&#39;ai appris le php il y a quelques années, quand Internet était à ses débuts. Pour diverses raisons, j&#39;ai arrêté en route et j&#39;ai perdu le fil des nouveaux Internets que je redécouvre. Résultat, je me sens constamment à courir après l&#39;histoire mais je suis toujours motivée à reprendre des projets personnels. Je me propose de vous partager mes découvertes. Au delà des sujets de programmation, j&#39;aime également partager mes infos concernant notamment l&#39;Histoire, l&#39;Astronomie, la Linguistique, les Films, les Livres et les Anime. J&#39;espère que vous aimerez suivre mon blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. Tous droits réservés.</p>
+        <p>Propulsé par <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,197 @@
+<!doctype html>
+<html class="no-js" lang="en" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>Docbook, publication hard time&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">French</a>
+        <a href="/en/">English</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/en/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/en/books/0/index.html">Collections</a>
+        <a href="/en/">Home</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/en/">Home</a><i class="fas fa-angle-right"></i>Docbook, publication hard time
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>Docbook, publication hard time</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>6/28/2012, 4:55:00 PM
+        
+        <i class="fas fa-th-large"></i><!--a href="/en/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/books.jpg" class="node-banner" />
+        
+      </div>
+
+      <p><p>Few weeks ago, i've decided to build a manual with docbook. I have found the <a href="http://www.docbook.org/tdg/en/html/docbook.html" target="_blank">Docbook Definitive Guide</a> and though I didn't read it in its integrality, i've got a pretty good look at how this is working. Then I tried to publish my book using the Docbook-Xsl package available out there. As you all know with <a href="/en/posts/nice-meet-you-mr-docbook.html">my previous post on this subject</a>, I have tried a quick and dirty transformation method and it is working. Now, of course, I'd like to have a more definitive one.</p>
+<p><strong>Quick and dirty publication</strong></p>
+<p>As you already know, you can transform your .xml file into a nice HTML view while adding an <em>xml-stylesheet</em> declaration into your .xml file.</p>
+<pre><code class="language-xml">&lt;?xml-stylesheet type=&quot;text/xsl&quot; href=&quot;path_to_your_xsl_directory/html/docbook.xsl&quot;?&gt;
+</code></pre>
+<p>After adding this declaration, just open your .xml file (drag and drop may be enough), into your favorite browser. Your .xml file content will display as a HTML page.</p>
+<p>But with this method, you can only use the html/docbook.xsl stylesheet. You can't try with the html/chunk.xsl because the html/chunk.xsl stylesheet will create html pages. It will need a real xslt processor.</p>
+<p><strong>Introducing XSL processor</strong></p>
+<p>There's several XSL processors out there. The <a href="http://www.sagehill.net/docbookxsl/index.html" target="_blank">Docbook XSL : The Complete Guide</a> will list the most important ones : Saxon, Xalan, xsltproc, MSXSL etc... Most of them sound familiar to me although I never really installed or use any of them.</p>
+<p>I've hoped that my XML editor (Altova) includes a full XSL processor with it. But all I can do is doing the quick and dirty publication nicer... Plus, Altova can't validate the docbook XML because there's no DTD included (since in the Docbook 5 documentation, they explain that you don't need DTD anymore but the schema is on RELAX-NG type)...</p>
+<p>So I realize that I have more powerful IDE : Eclipse. I don't know how to use Eclipse. My friend installed it to me because I was collaborating with his full javaproject and he needs me to commit few css and few xsl stylesheets only. So my Eclipse, for all I know, is a customized one, based on the Ganymede version, with customized packages etc... Meaning : don't touch it because whatever you'll do, you'll break it... My friend project is over but I kept this Eclipse, you never know...</p>
+<p>I've found a step by step tutorial to publish docbook with Xalan using Eclipse. But the tutorial was meant for Eclipse Europa... Following the tutorial, i have created my project, add my XML files, my stylesheets and the xalan jar. I've written the build.xml just like they tell me to do. Not working. I've get an error. Something is missing... Since I just want to publish my book and not learning the how and why of the Ant, I didn't want to read more documenation for extra features which does not concern my objective directly.</p>
+<p>I installed then the Saxon jar. Changed the build.xml accordingly. This processor seems to work better but now, it pretends that my entities in my XML do not exist... Since this is not working and since i still have cards in my sleeve, I just delete my failed project.</p>
+<p>I decided to add the Docbook XSL and my XML to my friend existing java project, which includes a XML/XSL transformation with a lot of java libraries and development. I copy all my files to his project and update his configuration files to match my files names. This won't do. The application returns that it can't find my transformation... Dammit...</p>
+<p>I quit my attempts with Eclipse for now. Microsoft has its own xsl processor. I'll try this one. I installed their msxsl.exe into the C:/Windows/System32 directory and run it with the command line. I get an error involving the docbook XSL package... Something about a variable (or a parameters) which is not matching its type...</p>
+<p>I tried to install the xsltproc package so there's few pages out there linking to <a href="http://www.zlatkovic.com/libxml.en.html" target="_blank">Igor Zlatkovic's website</a> where I can find the binaries to run xsltproc. But the install process tell that's better to unzip all the zips (4 at least) and copy and paste all the binaries into the C:\Windows\System32 directory. Which makes me uneasy on a Windows system. (Don't ask why...)</p>
+<p>I decided to install the same xsltproc into my linux machine. Publicating my book works well except there's few docbook tags which do not seem to be taken into account by the Docbook XSL stylesheets... I'll see this later. I've tried with the html/chunk.xsl stylesheets and once again, it is working well.</p>
+<p>So back to my Windows machine where I installed successfully the binaries.</p>
+<ul>
+<li>On Igor Zlatkovic's website, download those packages : iconv, libxml2, libxslt, zlib. The xsltproc.exe is inside the libxslt archives.</li>
+<li>Unzip all archives.</li>
+<li>If, like me, you don't want to mix those binaries with the Windows binaries, just create a new directory (C:\Program Files\xsltproc)</li>
+<li>In each archives, copy all the bin/<em>.dll and all the bin/</em>.exe into your C:\Program Files\xsltproc directory</li>
+</ul>
+<p><strong>Check 1 : is xsltproc running correctly ?</strong></p>
+<ul>
+<li>Open a command prompt.</li>
+<li>Browse to the correct directory (meaning C:\Program Files\xsltproc).</li>
+<li>Type &quot;xsltproc&quot; in the command prompt. xsltproc help page should displayed. xsltproc is running correctly.</li>
+</ul>
+<p>This is positive. You can try to publish your first docbook typing</p>
+<pre><code class="language-sh">$ xsltproc path_to_your_docbook-xsl-stylesheet/html/docbook.xsl path_to_your_docbook/docbook.xml
+</code></pre>
+<p>You'll get the entire html content inside your command prompt. Except the fact that the html is inside the command prompt, we can see that we have two issues here</p>
+<ol>
+<li>when we want to publish our docbook, we have to browse to our xsltproc directory first</li>
+<li>then we have to type in the whole path to our stylesheet and to our xml file.</li>
+</ol>
+<p>This is tiresome. What we would like most : be able to browse to our docbook directory (hopefully, our stylesheets and our xml are located closeby), then run xsltproc from there. This will allow us to shorten the relative paths to the stylesheet and the xml.</p>
+<p>If we need the xsltproc to be able to run from anywhere, we have to add its directory to the PATH environment variable. Adding new directory to the PATH variable tutorials are easily available on the web. Basically, for Windows users, the variable settings are inside one of the &quot;My Computer&quot; properties tabs.</p>
+<p>For Windows XP, you'll find your PATH variable here : &quot;My Computer &gt; Properties &gt; Advanced &gt; Environment Variables&quot;. There you can edit your &quot;Path&quot; system variables. At the end of the variable value line, add the path to the directory where you dropped the xsltproc binaries (in our case, C:\Program Files\xsltproc). Do not add trailing slash. It seems that we have to restart the computer.</p>
+<p><strong>Check 2 : is xsltproc running from anywhere ?</strong></p>
+<ul>
+<li>To be sure if this is working from anywhere, just open a command prompt.</li>
+<li>Make sure you're not in the xsltproc directory.</li>
+<li>Type &quot;xsltproc&quot; from there. xsltproc help page should be displayed.</li>
+</ul>
+<p>This is positive. You can try, again, to publish your docbook</p>
+<pre><code class="language-sh">$ xsltproc -o index.html relative_path_to_your_docbook-xsl-stylesheet/html/docbook.xsl relative_path_to_your_docbook/docbook.xml
+</code></pre>
+<p>Note that we add <code>-o index.html</code> options. This will put the xsltproc output inside a file, we named <code>index.html</code>. The html content is now inside an index.html file.</p>
+<p>Drag and drop the index.html file into your favorite browser. Your book is there. Not as clean as you'll may like it and not as perfect as you'll may wish it to be but it's there nevertheless.</p>
+<p>For my part, the Docbook XSL stylesheets eases the work load and displays a first draft of my book. But there are still issues :</p>
+<ol>
+<li>The layout is basic and not-so-nice</li>
+<li>TOC seems sometimes misplaced (for my opinion)</li>
+<li>Some Docbook 5 tags are not managed. I believe i'll have to do it.</li>
+</ol>
+<p>CONCLUSION : I'll have to</p>
+<ol>
+<li>Create a correct CSS stylesheet to put some nicer prez</li>
+<li>Set some Docbook XSL Stylesheets params</li>
+<li>Customize my own XSL stylesheets.</li>
+</ol>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/en/tags/docbook">docbook</a></li><li><a href="/en/tags/xml">xml</a></li><li><a href="/en/tags/xslt">xslt</a></li></ul>
+        </div>
+      
+
+      
+    
+
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>About me</h3>
+      <p>I learned coding with php several years ago, when Internet was still young. For multiple reasons, i had stopped then and missed most of this new Internet i&#39;m discovering once again. So, i feel like a newbie again and since i&#39;m ready to start over personal project, i&#39;ll share with you some of my discoveries. Beyond coding topics, i&#39;ll enjoy sharing with you several subjects such as History, Astronomy, Linguistics, Movies, Books, Music and Anime among others. I hope you&#39;ll enjoy reading this blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. All rights reserved.</p>
+        <p>Powered by <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

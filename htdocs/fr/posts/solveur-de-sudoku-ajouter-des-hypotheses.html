@@ -1,0 +1,410 @@
+<!doctype html>
+<html class="no-js" lang="fr" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>Solveur de Sudoku - Ajouter des hypothèses&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">Français</a>
+        <a href="/en/">Anglais</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/fr/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/fr/books/0/index.html">Séries</a>
+        <a href="/fr/">Accueil</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/fr/">Accueil</a><i class="fas fa-angle-right"></i>Solveur de Sudoku - Ajouter des hypothèses
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>Solveur de Sudoku - Ajouter des hypothèses</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>11/06/2014 23:04:00
+        
+        <i class="fas fa-th-large"></i><!--a href="/fr/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/Sudoku_Board_Game.jpg" class="node-banner" />
+        
+      </div>
+
+      <p><p>Notre solveur peut maintenant résoudre des grilles de niveau facile et des grilles de niveau moyen. Notre algorithme écarte des chiffres possibles et déduit des chiffres dans deux cas : soit tous les numéros possibles ont été éliminés et le dernier numéro possible est alors validé dans la case, soit un numéro n'est possible que dans une seule case d'un groupe de cases (ligne, colonne ou région). Toutefois, ces deux méthodes ne suffisent pas toujours pour résoudre une grille de sudoku.</p>
+<p>Nous allons mettre en place un mécanisme pour émettre des hypothèses dans notre solveur.</p>
+<p>Evidemment, il m'est impossible de reproduire ici les nombreuses hésitations et tergiversations que j'ai eu durant le développement de cette partie. Vous hériterez donc de la version finale et on pourrait alors croire que tout était planifié depuis le début...</p>
+<p>Voici les principes de notre développement :</p>
+<ul>
+<li>faire une première hypothèse. L'hypothèse consiste à valider dans une case vide un des numéros qui n'a pas encore été éliminé par les déductions antérieures.</li>
+<li>une fois que l'hypothèse est faite, on applique sur la grille les mêmes déductions développées : éliminer des options dans la ligne, la colonne et la région et déduire des chiffres dans les colonnes, les lignes et les régions...</li>
+<li>si l'hypothèse mène à une boucle infinie, alors il est impossible de dire si l'hypothèse est bonne ou si elle est fausse. On va donc ignorer l'hypothèse émise, revenir à la grille telle qu'elle était avant l'hypothèse et on va émettre une autre hypothèse.
+<ul>
+<li>il faut pouvoir revenir à l'état de la grille avant hypothèse</li>
+<li>par conséquent, il faut avoir sauvegarder la grille avant de faire l'hypothèse.</li>
+</ul>
+</li>
+<li>si l'hypothèse mène à une incohérence (deux numéros sur la même ligne, sur la même colonne ou sur la même région), alors on va considérer que l'hypothèse est fausse, on va éliminer le chiffre en statut POSSIBLE dans la case de l'hypothèse, retourner à la grille telle qu'elle était avant l'hypothèse, et on va émettre une autre hypothèse.
+<ul>
+<li>il faut une méthode pour déterminer si une grille est incohérente ou pas</li>
+<li>il faut stocker les informations de l'hypothèse faussée pour savoir dans quelle case de la grille on doit éliminer quel chiffre.</li>
+</ul>
+</li>
+<li>si l'hypothèse mène à la résolution de la grille, on va pas se poser de questions... après tout, c'est le but de notre solveur non ?</li>
+</ul>
+<p>Allez, voyons nos méthodes</p>
+<pre><code class="language-php">// module/Application/src/Application/Model/Solveur.php
+
+&lt;?php
+namespace Application\Model ;
+
+class Solveur
+{
+  /**
+   * Identifier une case vide, arbitrairement, la première.
+   *
+   * @return $case | bool
+   */
+  protected function identifierCaseVide()
+  {
+    // on parcourt toutes les cases de la grille
+    foreach($this-&gt;grille-&gt;getCases() as $case) {
+      // on retourne la première case vide trouvée
+      if($case-&gt;chiffre-&gt;estInconnu()) {
+        return $case ;
+      }
+    }
+    return false ;
+  }
+
+  /**
+   * Identifier le premier chiffre possible dans la case.
+   *
+   * @param $case CaseSudoku
+   *
+   * @return int $chiffre
+   */
+  protected function identifierChiffrePossible($case)
+  {
+    for($chiffre = 1; $chiffre &lt;= $this-&gt;grille-&gt;getTaille(); $chiffre++) {
+      if($case-&gt;chiffre-&gt;getStatutDuNumero($chiffre) == 2) {
+        return $chiffre ;
+      }
+    }
+    return false ;
+  }
+ 
+  /**
+   * Sauvegarder la grille - copier la grille dans une version sauvegardée
+   *
+   * @return void
+   */
+  public function sauverGrille()
+  {
+    foreach($this-&gt;grille-&gt;getCases() as $case) {
+      $case-&gt;sauvegarderChiffre() ;
+    }
+  }
+
+  /**
+   * Restaurer la grille - récupérer la version sauvegarder
+   *
+   * @return array CaseSudoku
+   */
+  public function restaurerGrille()
+  {
+    foreach($this-&gt;grille-&gt;getCases() as $case) {
+      $case-&gt;restaurerChiffre() ;
+    }
+  }
+
+  // Rajouter la propriété au début du fichier
+  /**
+   * La propriété va sauvegarder les informations de l'hypothèse
+   *
+   * @var array
+   */
+  private $hypothese = array() ;
+
+  /**
+   * Faire une hypothèse
+   *
+   * @return void
+   */
+  protected function emettreHypothese()
+  {
+    // tester si la propriété $hypothese est remplie ou pas
+    if(count($this-&gt;hypothese) == 0) {
+      // si l'hypothèse est vide, sauvegarder la grille avant de faire une hypothèse.
+      $this-&gt;sauverGrille() ;
+    } else {
+      // si l'hypothèse a déjà été faite cela signifie que l'hypothèse précédente produit une boucle infinie. Il faut annuler l'hypothèse, revenir à la grille sauvegardée et émettre une autre hypothèse.
+      $this-&gt;restaurerGrille() ;
+      $this-&gt;sauverGrille() ;
+    }
+
+    // identifier la case sur laquelle on va faire notre hypothèse.
+    // pour que notre code soit correct, on devrait tester que la méthode identifierCaseVide() retourne bien un objet CaseSudoku et non pas un booléen
+    $caseHypothese = $this-&gt;identifierCaseVide() ;
+    // identifier le chiffre qui va servir pour l'hypothèse.
+    $chiffreHypothese = $this-&gt;identifierChiffrePossible($caseHypothese) ;
+    // stocker les informations de la case et du chiffre utilisé pour l'hypothèse.
+    $this-&gt;hypothese = array('ligne' =&gt; $caseHypothese-&gt;getLigne(), 'colonne' =&gt; $caseHypothese-&gt;getColonne(), 'chiffre' =&gt; $chiffreHypothese) ;
+
+    // une fois que la case est identifiée et que le chiffre aussi, on fait l'hypothèse en validant le chiffre dans la case.
+    $this-&gt;grille-&gt;validerChiffre($caseHypothese-&gt;getLigne(), $caseHypothese-&gt;getColonne(), $chiffreHypothese) ;
+  }
+
+  /**
+   * Revenir en arrière et annuler les effets de l'hypothèse
+   *
+   * @return void
+   */
+  protected function annulerHypothese()
+  {
+    // récupérer la grille sauvegardée
+    $this-&gt;restaurerGrille() ;
+
+    // utiliser les informations de l'hypothèse, stockées dans la propriété $hypothèse pour éliminer une possibilité dans une case de la grille. 
+    $this-&gt;grille-&gt;eliminerChiffre($this-&gt;hypothese['ligne'], $this-&gt;hypothese['colonne'], $this-&gt;hypothese['chiffre']) ;
+    // réinitialiser la propriété $hypothese
+    $this-&gt;hypothese = array() ;
+  }
+}
+</code></pre>
+<p>Toutes nos méthodes sont définies. Pour la validation de la grille (et vérifier que les règles de sudoku sont bien respectées), souvenons nous que nous avons une méthode <code>estValide()</code> dans notre objet <strong>Grille</strong>.</p>
+<p>Complétons notre méthode <code>deduit()</code> en lui intégrant les hypothèses : faire une hypothèse, si la grille n'est pas valide, restaurer la grille.</p>
+<pre><code class="language-php">protected function deduit($iteration)
+{
+  // si, après avoir éliminé toutes les options disponibles, on rencontre une boucle infinie, on essaie de déterminer les chiffres dans les colonnes.
+  if($this-&gt;boucleInfinie($iteration)) {
+    $this-&gt;validerChiffreDansColonne() ;
+    $this-&gt;tentatives[$iteration] = array() ;
+    $this-&gt;tentatives[$iteration] = $this-&gt;photo($this-&gt;grille) ;
+
+    // si, après avoir éliminé toutes les options, validé les chiffres dans les colonnes, re-éliminé toutes les options, on rencontre une boucle infinie, on essaie de déterminer les chiffres dans les lignes.
+    if($this-&gt;boucleInfinie($iteration)) {
+      $this-&gt;validerChiffreDansLigne() ;
+      $this-&gt;tentatives[$iteration] = array() ;
+      $this-&gt;tentatives[$iteration] = $this-&gt;photo($this-&gt;grille) ;
+
+      // si, après avoir éliminé toutes les options, validé les chiffres dans les colonnes, relancer l'élimination des options, validé les chiffres dans les lignes, relance l'élimination des options, on est finalement bloqué par une boucle infinie, on essaie de déterminer les chiffres dans les régions
+      if($this-&gt;boucleInfinie($iteration)) {
+        $this-&gt;validerChiffreDansRegion() ;
+        $this-&gt;tentatives[$iteration] = array() ;
+        $this-&gt;tentatives[$iteration] = $this-&gt;photo($this-&gt;grille) ;
+
+        // si, après avoir éliminé toutes les options, validé les chiffres dans les colonnes, dans les lignes et dans les régions, on est toujours dans une boule infinie, on émet une hypothèse.
+        if($this-&gt;boucleInfinie($iteration)) {
+          $this-&gt;emettreHypothese() ;
+          $this-&gt;tentatives[$iteration] = array() ;
+          $this-&gt;tentatives[$iteration] = $this-&gt;photo($this-&gt;grille) ;
+ 
+          // si, malgré tout, on est toujours dans une boucle infinie, alors on quitte le solveur.
+          if($this-&gt;boucleInfinie($iteration)) {
+            return false ;
+          }
+        }
+      }
+    }
+  }
+
+  // on élimine systématiquement les possibilités chaque fois qu'on valide des numéros.
+  $this-&gt;eliminerOptions() ;
+  // on annule l'hypothèse si la grille n'est pas valide
+  if(!$this-&gt;grille-&gt;estValide()) {
+    $this-&gt;annulerHypothese() ;
+  }
+
+  // retourner true va nous permettre de continuer de boucler
+  return true ;
+}
+</code></pre>
+<p>Et voila... notre solveur est terminé.</p>
+<p>Les tests unitaires à faire sont relativement simple : on crée une grille de sudoku, on fait une première assertion pour démontrer que la grille n'est pas résolue. On instancie alors un objet <strong>Solveur</strong> qu'on exécute et on fait une deuxième assertion qui confirme que la grille est résolue.</p>
+<pre><code class="language-php">// module/Application/test/ApplicationTest/Model/SolveurTest.php
+&lt;?php
+namespace ApplicationTest\Model ;
+
+use Application\Model\Solveur ;
+use Application\Model\Grille ;
+use PHPUnit_Framework_TestCase ;
+
+class SolveurTest extends PHPUnit_Framework_TestCase
+{
+  public function testResolution()
+  {
+    $g = new Grille(9) ;
+    $g-&gt;validerChiffre(1, 5, 4) ;
+    $g-&gt;validerChiffre(1, 9, 5) ;
+    $g-&gt;validerChiffre(2, 3, 1) ;
+    $g-&gt;validerChiffre(2, 5, 7) ;
+    $g-&gt;validerChiffre(2, 7, 9) ;
+    $g-&gt;validerChiffre(2, 9, 2) ;
+    $g-&gt;validerChiffre(3, 4, 3) ;
+    $g-&gt;validerChiffre(3, 8, 7) ;
+    $g-&gt;validerChiffre(3, 9, 8) ;
+    $g-&gt;validerChiffre(4, 1, 1) ;
+    $g-&gt;validerChiffre(4, 2, 8) ;
+    $g-&gt;validerChiffre(4, 4, 2) ;
+    $g-&gt;validerChiffre(4, 5, 3) ;
+    $g-&gt;validerChiffre(4, 6, 4) ;
+    $g-&gt;validerChiffre(4, 8, 5) ;
+    $g-&gt;validerChiffre(5, 3, 2) ;
+    $g-&gt;validerChiffre(5, 4, 9) ;
+    $g-&gt;validerChiffre(5, 8, 8) ;
+    $g-&gt;validerChiffre(6, 1, 4) ;
+    $g-&gt;validerChiffre(6, 2, 5) ;
+    $g-&gt;validerChiffre(6, 4, 8) ;
+    $g-&gt;validerChiffre(6, 5, 6) ;
+    $g-&gt;validerChiffre(6, 6, 7) ;
+    $g-&gt;validerChiffre(6, 7, 2) ;
+    $g-&gt;validerChiffre(6, 8, 1) ;
+    $g-&gt;validerChiffre(7, 2, 1) ;
+    $g-&gt;validerChiffre(7, 3, 5) ;
+    $g-&gt;validerChiffre(7, 5, 9) ;
+    $g-&gt;validerChiffre(7, 7, 8) ;
+    $g-&gt;validerChiffre(7, 8, 2) ;
+    $g-&gt;validerChiffre(8, 2, 3) ;
+    $g-&gt;validerChiffre(8, 4, 7) ;
+    $g-&gt;validerChiffre(8, 7, 5) ;
+    $g-&gt;validerChiffre(8, 9, 1) ;
+    $g-&gt;validerChiffre(9, 2, 2) ;
+
+    $this-&gt;assertFalse($g-&gt;estResolue()) ;
+    $s = new Solveur($g) ;
+    $s-&gt;execute() ;
+    $this-&gt;assertTrue($g-&gt;estResolue()) ;
+  }
+}
+</code></pre>
+<p>Tadaaa. 4 objets, quelques méthodes plus tard et hop ! Nous avons un solveur de sudoku raisonnablement correct. On peut déplorer que la méthode execute() ne s'arrête qu'au moment où elle a fini d'exécuter l'intégralité de l'algorithme.</p>
+<p>L'application est perfectible :</p>
+<ul>
+<li>Trouver un nouvel algorithme avec éventuellement moins de boucles.</li>
+<li>Envoyer les chiffres trouvés les uns après les autres vers la vue... d'abord, on verrait notre solveur fonctionner devant nos yeux et ensuite, on ferait des boucles &quot;plus courtes&quot;... potentiellement on supprimerait les risques de time out.</li>
+</ul>
+<p>Potentiellement, je pense que c'est l'objet <strong>Solveur</strong> seul qu'il faut faire évoluer.</p>
+<h3>Comment étendre notre application</h3>
+<ul>
+<li>Ajouter des fonctionnalités Ajax pour transformer notre solveur en véritable application de sudoku jouable</li>
+<li>Ajouter des fonctionnalités pour pouvoir charger une grille préenregistrée</li>
+<li>Créer des objets Exception dédiée à la grille de Sudoku plutôt que d'utiliser des objets Exception de base.</li>
+<li>Valider que tous les chiffres qui figurent dans la grille de Sudoku sont des chiffres possibles dans la grille</li>
+</ul>
+<p>Je vous laisse vous amuser avec tout ça.</p>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/fr/tags/poo">POO</a></li></ul>
+        </div>
+      
+
+      
+        <nav id="book-navigation">
+    
+       <li class="link-previous"><a href="/fr/posts/le-solveur-de-sudoku-mettre-en-place-la-grille.html"><i class="fas fa-long-arrow-alt-left"></i> Le solveur de Sudoku - Mettre en place la grille</li>
+    
+
+    
+        <li class="link-next"><a href="/fr/posts/solveur-de-sudoku-developper-le-solveur.html">Solveur de Sudoku - Développer le solveur <i class="fas fa-long-arrow-alt-right"></i></a></li>
+    
+
+    
+        <li class="link-up"><a href="/fr/books/aborder-la-programmation-orientee-objet-par-lexemple-concevoir-un-solveur-de-sudoku.html"><i class="fas fa-book-open"></i> Aborder la programmation orientée objet par l&#39;exemple. Concevoir un solveur de sudoku</li>
+    
+</nav>
+
+      
+    
+
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>Sur moi</h3>
+      <p>J&#39;ai appris le php il y a quelques années, quand Internet était à ses débuts. Pour diverses raisons, j&#39;ai arrêté en route et j&#39;ai perdu le fil des nouveaux Internets que je redécouvre. Résultat, je me sens constamment à courir après l&#39;histoire mais je suis toujours motivée à reprendre des projets personnels. Je me propose de vous partager mes découvertes. Au delà des sujets de programmation, j&#39;aime également partager mes infos concernant notamment l&#39;Histoire, l&#39;Astronomie, la Linguistique, les Films, les Livres et les Anime. J&#39;espère que vous aimerez suivre mon blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. Tous droits réservés.</p>
+        <p>Propulsé par <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,206 @@
+<!doctype html>
+<html class="no-js" lang="fr" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>It&#39;s a small world after all !!&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">Français</a>
+        <a href="/en/">Anglais</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/fr/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/fr/books/0/index.html">Séries</a>
+        <a href="/fr/">Accueil</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/fr/">Accueil</a><i class="fas fa-angle-right"></i>It's a small world after all !!
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>It's a small world after all !!</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>22/04/2014 16:48:00
+        
+        <i class="fas fa-th-large"></i><!--a href="/fr/sites/haclong-projects.html" class="tag-sites"-->Haclong projects<!--/a-->, <!--a href="/fr/sites/footprints-in-the-snow.html" class="tag-sites"-->Footprints in the snow<!--/a-->, <!--a href="/fr/sites/linguistique.html" class="tag-sites"-->Linguistique<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/Banderas-ONU.jpg" class="node-banner" />
+        
+      </div>
+
+      <p><p>En 1964, les <a href="http://fr.wikipedia.org/wiki/Fr%C3%A8res_Sherman" target="_blank">frères Sherman</a> ont écrit une chanson qui, une fois entendue, ne vous quitte plus durant les heures qui suivront... “<em>car le monde est tout petit, devant le ciel on se dit, que nous sommes des fourmis, le monde est petit</em>”... Paix et joie aux hommes de bonnes volontés... Le monde est tout petit, le monde est gentil, le monde est uni... uni... sauf en informatique...</p>
+<p><cite>Si on définit la portée d’un sujet - dans tous les champs d’étude - par la distance qu’il couvre avant d’être méconnu/inconnu, alors on observe dans le courant du dernier siècle des sujets qui ont des portées de plus en plus grandes. En fait, certains sujets couvrent des surfaces si grandes que leurs portées sortent des frontières du pays qui les ont vu naître.</cite></p>
+<p>Avec l’avènement d’internet, les sujets atteignent en peu de temps une portée mondiale. Il n’est alors plus un endroit dans le monde qui n’ait entendu parler ou qui n’ait utilisé le sujet en question. Mais la portée internationale a un prix à payer.</p>
+<ul>
+<li>Le monde entier <strong>ne parlant pas la même langue</strong>, il faut permettre au monde entier de <strong>comprendre le sujet</strong>.</li>
+<li>Le monde entier <strong>n’écrivant pas la même langue</strong>, il faut permettre au monde entier de <strong>s’exprimer</strong> dans sa propre langue.</li>
+</ul>
+<p>Ces deux contraintes couvrent notamment trois sujets en informatique :</p>
+<ul>
+<li>Input Method / méthode de saisie.</li>
+<li>i18n</li>
+<li>l10n</li>
+</ul>
+<h2>Trois sujets qui tournent au casse tête en informatique.</h2>
+<h3>La méthode de saisie</h3>
+<p>Je vois - à mon niveau - quatre cas d’utilisation différentes pour les méthodes de saisie</p>
+<h4>Cas 1 : Saisie d’un système alphabétique latin avec graphes non accentués</h4>
+<p>L’alphabet, simplissime est sans accent… C'est typiquement l'alphabet anglais. C’est personnellement celui que je blâme parce que l’informatique est universellement anglo saxonne, les systèmes sont anglo saxon et une fois que ça marche avec des caractères - de base -, leur travail est fini et tout les autres cas sont reléguées au niveau de minorités invisibles...</p>
+<h4>Cas 2 : Saisie d’un système alphabétique latin étendu comprenant des graphes accentués</h4>
+<p>Les alphabets sont des alphabets anglais “étendus” avec quelques caractères en plus deci delà...</p>
+<p>Historiquement et avec l’usage, ces langues ont appris à composer si leurs caractères accentués sont absents du clavier qu’ils utilisent : le français se tolère sans accent et l’allemand, le norvégien combinent des lettres pour remplacer leurs caractères accentués absents : par exemple, l’allemand et le norvégien combinent deux caractères non accentués pour représenter leurs caractères accentués originaux.</p>
+<p>En allemand : ae = ä, ss = ß.</p>
+<h4>Cas 3 : Saisie d’un système alphabétique non latin</h4>
+<p>Au delà de l’alphabet latin qui compose ce texte par ex, il existe d’autres écritures qui composent leurs mots avec des caractères non latin : le russe et le grec par ex. Dans un raccourci aussi rapide qu’honteux, on peut réduire la complexité de la chose en admettant que le changement d’alphabet n’est qu’un problème de mapping de caractères...</p>
+<h4>Cas 4 : Saisie d’un système non alphabétique</h4>
+<p>Un système alphabétique est un système qui décompose chaque son d’une langue en caractères distincts. L’écriture de la langue est alors une composition linéaire de caractères alignés qui forment des mots - par conséquent, des sons. Or, il existe de part le monde d’autres langues qui ont adoptées une écriture non alphabétique : un graphe peut représenter un son, une syllable ou un ensemble de syllables. Nous avons forcément une pensée pour les langues asiatiques comme le japonais (kanji et syllabaires), le coréen et le chinois.</p>
+<h3>Les contraintes du système</h3>
+<p>En informatique, la saisie - au clavier - de chacun des cas implique deux contraintes inévitables :</p>
+<ul>
+<li>il faut que l’ordinateur ait quelque part dans le système, <strong>les tables de caractères</strong> qui vont bien <strong>pour afficher le caractère qu’on veut écrire</strong>.</li>
+<li>il faut qu’un programme - de préférence dans le système - puisse <strong>associer le code en provenance du clavier</strong> (lorsque l’utilisateur appuie sur une (ou plusieurs) touches de son clavier) <strong>avec un des caractères qui figure dans la table de caractère</strong>.</li>
+</ul>
+<p><strong>A partir de là, c’est la panique :</strong></p>
+<h4>Saisie d’un caractère non accentué</h4>
+<p>La saisie d’un caractère simple associe la frappe unique d’une touche du clavier avec un caractère de la table de caractère.</p>
+<p>Typiquement, sur le clavier français, n’importe quelles lettres sans accents ni signes diacritiques (a, z, e, r, t, y)</p>
+<p>Ce mode de saisie concerne nos cas 1, 2 et 3, pour le cas 3, il suffit d’associer le code de la touche à un caractère non latin.</p>
+<h4>Saisie d’un caractère accentué</h4>
+<p>La saisie de caractères accentués associe selon les claviers :</p>
+<ul>
+<li>la frappe de deux touches successives avec un seul caractère de la table de caractère, (^ + o = ô sur le clavier français par ex)</li>
+<li>ou la frappe d’une touche unique du clavier avec un seul caractère de la table de caractère (é, ç sur le clavier français)</li>
+</ul>
+<p>On retrouve les caractères accentués dans les cas 1, 2, 3 et également 4</p>
+<h4>Saisie de graphes complexes</h4>
+<p>La saisie de graphes complexes associe la frappe de plusieurs touches du clavier avec un seul caractère de la table de caractère et la complexité de la langue chinoise fait que, pour la même combinaison de touches, plusieurs graphes peuvent être disponibles...</p>
+<p>Ce mode de saisie est ciblé par le cas 4 mais concerne également dans une moindre mesure les alphabets latins étendus comme le viêtnamien (ne me demandez pas pourquoi en revanche)...</p>
+<p>Non contents d’avoir un système suffisamment compliqué pour écrire avec un clavier, il existe des conventions différentes qui se sont développées et qui, une fois adoptées par le grand public, deviennent plus compliquées à changer. En viêtnamien, un même caractère complexe peut être écrit avec plusieurs combinaisons de touches différentes selon le type de saisie qu’on préfère / qui existe.</p>
+<p>pour écrire <span style="font-size:16px;">Ặ</span></p>
+<ul>
+<li><code>**A** + **W** + **J**</code> en telex</li>
+<li><code>**Shift 1** + **9**</code> en TCVN 6064</li>
+<li><code>**A** + **8** + **5**</code> en VNI</li>
+<li><code>**A** + **(** + **.**</code> en VIQR</li>
+</ul>
+<p>Ecrire le vietnamien associe donc un mode de saisie de graphes complexes (comme pour le chinois) mais une table de caractères de base latin étendu (enfin, plusieurs tables pour être exact mais on ne va pas s’étendre dessus).</p>
+<p>Voila... nous voilà bien contents... <strong>Mais c’est pas fini !</strong></p>
+<p>On a installé nos tables de caractères (probablement disponibles dans les packs langues qu’on télécharge à l’installation de notre système, que ce soit Linux, Mac ou Windows)</p>
+<p>On a installé notre système de saisie (ibus pour Linux/Ubuntu, natif après installation chez Windows)</p>
+<p>Mais nous sommes des heureux utilisateurs d’un clavier <strong>AZERTY</strong>… Et oui, vous ne le croirez que si vous le vivez :</p>
+<p><strong>Windows</strong> intègre un système de saisie en vietnamien mais le clavier qui est embarqué est un clavier QWERTY… Même si vous avez un clavier AZERTY branché à votre machine, si vous souhaitez écrire un A, il faudra appuyer sur la touche [Q] de votre clavier...</p>
+<p><strong>Windows Phone 8</strong> embarque un clavier QWERTY mais bon, sur un téléphone, généralement, j’ai les yeux collés au clavier pour écrire...</p>
+<p><strong>Mac</strong> est épargné, je ne sais pas ce qu’il fait.</p>
+<p><strong>Google Mail</strong> opte pour un mix de tous les claviers : les lettres semblent suivre le mapping du clavier AZERTY mais la 1ere rangée de touches + les touches de ponctuations sous la main droite suivent le clavier QWERTY.</p>
+<p><strong>Linux/Ubuntu</strong> intègre un système de saisie en vietnamien (<strong>ibus</strong>) qui embarque, selon la version de Ubuntu, un clavier soit QWERTY, soit AZERTY… Par exemple, sur Ubuntu 13.04, j’appuyais sur la touche A pour écrire un A. Depuis Ubuntu 13.10, je dois appuyer sur Q pour obtenir le A... Tout ça parce qu’au développement de la 13.10, quelqu’un a pensé qu’il était inutile d’intégrer le clavier AZERTY dans les claviers possibles de <strong>ibus</strong>... merci pour la charmante attention messieurs... Il faut savoir que la criticité de ce problème est qualifiée de “low”... AZERTY users : on est ravi !</p>
+<h3>Sur les épaules de l'application</h3>
+<p>Et une fois qu’on a franchi tous ces problèmes, il faut encore que l’application qu’on utilise accepte les saisies multilingues et stocke les informations correctements dans les bases applicatives. Par exemple, il y a quelques années, une application cliente que j’ai utilisé propose des fonctionnalités multilingues (qui sont là pour faire jolie mais qui ne fonctionnent pas) et les caractères accentués ne sont pas correctement encodés dans la base de données… L’outil étant assez massif, il n’a pas été question de le faire évoluer. Par la force des choses, il a fallu faire un bon de 30 ans en arrière et tout saisir sans accents...</p>
+<h3>Last but not least</h3>
+<p>Reste un dernier détail qui tient également du casse tête... Tout le monde connaît les raccourcis universels : <code>Ctrl + S</code>, <code>Ctrl + C</code>, <code>Ctrl + V</code>, <code>Ctrl + X</code>...</p>
+<p>Encore faut il que votre machine les comprennent... Les heureux utilisateurs d’alphabets non latin par ex rencontrent parfois des difficultés à faire un copier coller parce que le système ne comprend pas ce que signifie <code>Ctrl + ψ</code> et <code>Ctrl + ω</code> !!</p>
+<p>Toujours sympa comme bug / regression... Evidemment, la solution que j’ai trouvé - remapper tous les raccourcis - n’est définitivement pas une solution valide à mes yeux...</p>
+<p>Le problème dans l’internationalisation / les saisies complexes / les interactions avec les fonctionnalités systèmes est véritablement un problème mineur dans un système complexe. Il est maîtrisé par une minorité des développeurs mais il est utilisé par la majorité des utilisateurs.</p>
+<p>Le monde devient de plus en plus petit, un système qui décide de passer délibéremment à côté de telles fonctionnalités loupe complètement son entrée sur la scène internationale. A l’échelle des sites et applications web, la plupart des frameworks et CMS offrent - cahin-caha - des fonctionnalités multilingues. Il ne faut pas hésiter à les explorer et à les utiliser si besoin, si votre future cible se veut plus large que le cercle de vos amis...</p>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/fr/tags/linguistique">linguistique</a></li><li><a href="/fr/tags/multilingual">multilingual</a></li><li><a href="/fr/tags/daily-life">daily life</a></li></ul>
+        </div>
+      
+
+      
+    
+
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>Sur moi</h3>
+      <p>J&#39;ai appris le php il y a quelques années, quand Internet était à ses débuts. Pour diverses raisons, j&#39;ai arrêté en route et j&#39;ai perdu le fil des nouveaux Internets que je redécouvre. Résultat, je me sens constamment à courir après l&#39;histoire mais je suis toujours motivée à reprendre des projets personnels. Je me propose de vous partager mes découvertes. Au delà des sujets de programmation, j&#39;aime également partager mes infos concernant notamment l&#39;Histoire, l&#39;Astronomie, la Linguistique, les Films, les Livres et les Anime. J&#39;espère que vous aimerez suivre mon blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. Tous droits réservés.</p>
+        <p>Propulsé par <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

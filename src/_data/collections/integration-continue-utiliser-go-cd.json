@@ -1,0 +1,32 @@
+    [
+        {
+            "rank": 0,
+            "url": "/fr/posts/integration-continue-les-concepts-de-gocd.html",
+            "title": "Intégration continue - Les concepts de GoCD"
+        },
+        {
+            "rank": 1,
+            "url": "/fr/posts/integration-continue-installer-gocd.html",
+            "title": "Intégration Continue - Installer GoCD"
+        },
+        {
+            "rank": 2,
+            "url": "/fr/posts/integration-continue-installer-le-projet.html",
+            "title": "Intégration continue - Installer le projet"
+        },
+        {
+            "rank": 3,
+            "url": "/fr/posts/integration-continue-tester-le-projet-12.html",
+            "title": "Intégration continue - Tester le projet 1/2"
+        },
+        {
+            "rank": 4,
+            "url": "/fr/posts/integration-continue-tester-le-projet-22.html",
+            "title": "Intégration continue - Tester le projet 2/2"
+        },
+        {
+            "rank": 5,
+            "url": "/fr/posts/integration-continue-avec-gocd-monitorer-les-pipelines.html",
+            "title": "Intégration Continue avec GoCD - Monitorer les pipelines"
+        }
+    ]

@@ -1,0 +1,741 @@
+<!doctype html>
+<html class="no-js" lang="fr" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>Zend Framework 2, la classe Module&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">Français</a>
+        <a href="/en/">Anglais</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/fr/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/fr/books/0/index.html">Séries</a>
+        <a href="/fr/">Accueil</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/fr/">Accueil</a><i class="fas fa-angle-right"></i>Zend Framework 2, la classe Module
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>Zend Framework 2, la classe Module</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>02/06/2015 15:31:00
+        
+        <i class="fas fa-th-large"></i><!--a href="/fr/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->, <!--a href="/fr/sites/haclong-projects.html" class="tag-sites"-->Haclong projects<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/lego_pieces1.jpg" class="node-banner" />
+        
+      </div>
+
+      <p><p>Chacun des modules d'une <strong>application MVC avec Zend Framework 2</strong> doit obligatoirement avoir une classe <code>Module</code>. Cette classe <code>Module</code> n'hérite d'aucune autre classe et sa documentation, quoique présente, est atypique.</p>
+<p>Voici donc la classe <code>Module</code> et ses méthodes.</p>
+<h2>Pourquoi la classe Module ?</h2>
+<p>Zend Framework 2 se démarque de sa version précédente en expliquant notamment qu'ils avaient élargis les éléments à configurer, supprimant ainsi des mécanismes automatisés et finalement, &quot;cachés&quot;. Il reste toutefois, au moins un dernier élément qui est obligatoire et qu'on ne peut pas modifier : la classe <code>Module</code>.</p>
+<p>Pour chacun des modules qui doit être chargé dans l'application, on doit lui créer une classe <code>Module</code> qui se situe obligatoirement à la racine du module. Certains contournent cette dernière contrainte en faisant un include de la vraie classe <code>Module</code> s'ils avaient décidés de la mettre ailleurs.</p>
+<p>On peut surcharger cette contrainte en personnalisant la classe <code>Zend\ModuleManager\Listener\ModuleResolverListener</code> mais... est-ce vraiment nécessaire ?</p>
+<p>Le module étant finalement votre création propre, la classe <code>Module</code> n'hérite de personne, d'aucune autres classes de ZF2. Toutefois, elle a des méthodes que tous utilisent et que l'application Zend Framework reconnaît et décode et nous permet de travailler sur notre application.</p>
+<h2>Les méthodes disponibles</h2>
+<p>Les méthodes de la classe <code>Module</code> sont documentées dans la <a href="http://framework.zend.com/manual/current/en/modules/zend.module-manager.module-manager.html" target="_blank">documentation officielle</a>.</p>
+<ul>
+<li><a href="#getAutoloaderConfig">Module::getAutoloaderConfig()</a></li>
+<li><a href="#getConfig">Module::getConfig()</a></li>
+<li><a href="#getModuleDependencies">Module::getModuleDependencies()</a></li>
+<li><a href="#init">Module::init()</a></li>
+<li><a href="#onBootstrap">Module::onBootstrap()</a></li>
+<li><a href="#getServiceConfig">Module::getServiceConfig()</a></li>
+<li><a href="#getControllerConfig">Module::getControllerConfig()</a></li>
+<li><a href="#getFormElementConfig">Module::getFormElementConfig()</a></li>
+<li><a href="#getViewHelperConfig">Module::getViewHelperConfig()</a></li>
+<li><a href="#getControllerPluginConfig">Module::getControllerPluginConfig()</a></li>
+<li><a href="#getFilterConfig">Module::getFilterConfig()</a></li>
+<li><a href="#getInputFilterConfig">Module::getInputFilterConfig()</a></li>
+<li><a href="#getValidatorConfig">Module::getValidatorConfig()</a></li>
+<li><a href="#getHydratorConfig">Module::getHydratorConfig()</a></li>
+<li><a href="#getRouteConfig">Module::getRouteConfig()</a></li>
+<li><a href="#getSerializerConfig">Module::getSerializerConfig()</a></li>
+<li><a href="#getLogProcessorConfig">Module::getLogProcessorConfig()</a></li>
+<li><a href="#getLogWriterConfig">Module::getLogWriterConfig()</a></li>
+</ul>
+<p><strong>ATTENTION</strong></p>
+<p><em>Dans les exemples de code, j'utilise toujours la clé 'invokables'. Toutefois, il faut savoir que dans le gestionnaire de services, il y a plusieurs types de services à déclarer. J'utilise pas défaut 'invokables' mais consulter la documentation du gestionnaire de services pour savoir quels sont les autres types disponibles.</em></p>
+<h3><a name="getAutoloaderConfig" id="getAutoloaderConfig">Méthode Module::getAutoloaderConfig()</a></h3>
+<p>La méthode définit un tableau associatif pour que l'application sache quel est le chemin à associer à l'espace de nom de votre module.</p>
+<p>Ce tableau est ensuite passé à l'instance de <code>Zend\Loader\AutoloaderFactory</code> afin que les classes de votre module soient reconnues et soient autochargées. C'est cette brique qui vous économise les lignes de <code>include()</code> que vous deviez faire lorsque vous codiez sans framework.</p>
+<p><strong>Modèle de la méthode &quot;par défaut&quot;</strong></p>
+<pre><code class="language-php">// Module.php
+
+class Module
+{
+  public function getAutoloaderConfig()
+  {
+    return array(
+      'Zend\Loader\StandardAutoloader' =&gt; array(
+        'namespaces' =&gt; array(
+          // vous pouvez changer le chemin si l'envie vous en dit.
+          __NAMESPACE__ =&gt; __DIR__ . '/src/' . __NAMESPACE__,
+        ),
+      ),
+    ) ;
+  }
+}
+</code></pre>
+<p>Si vous souhaitez personnaliser l'autoload, voir la documentation sur <a href="http://framework.zend.com/manual/current/en/modules/zend.loader.autoloader-factory.html" target="_blank"><strong>Zend\Loader</strong></a></p>
+<h3><a name="getConfig" id="getConfig"></a>Méthode Module::getConfig()</h3>
+<p>Cette méthode définit un tableau associatif qui contient toute la configuration de votre module. Il faut savoir qu'à son lancement, l'application charge tous les fichiers de configuration et les concatène en un seul tableau de configuration. Vous n'êtes donc pas tenu de faire tenir toute la configuration de votre module dans un seul fichier <code>module.config.php</code>. Elle peut en effet être répartie sur plusieurs fichiers de configuration. De même, vous n'êtes pas tenu d'utiliser un fichier <code>module.config.php</code> du tout : soit parce que votre module ne nécessite pas de configuration, soit parce que vous avez opté pour éclater la configuration de votre module dans plusieurs fichiers différents.</p>
+<p><strong>Modèle de la méthode par défaut</strong></p>
+<pre><code class="language-php">// Module.php
+
+class Module
+{
+  public function getConfig()
+  {
+    // choisir un autre chemin si l'envie vous en prend
+    return include __DIR__ . '/config/module.config.php' ;
+  }
+}
+</code></pre>
+<h3><a name="getModuleDependencies" id="getModuleDependencies"></a>Méthode Module::getModuleDependencies()</h3>
+<p>Cette méthode permet de vérifier que les modules dont votre module est dépendant sont bien chargés au lancement de l'application. Si l'un des modules est absent, alors une exception de type <code>Zend\ModuleManager\Exception\MissingDependencyModuleException</code> est envoyée.</p>
+<p><strong>Modèle de la méthode par défaut</strong></p>
+<pre><code class="language-php">// Module.php
+
+class Module
+{
+  public function getModuleDependencies()
+  {
+    return array('Module1', 'Module2') ;
+  }
+}
+</code></pre>
+<p>Notez que <strong>Composer</strong> peut également vous permettre de vous en sortir. Cela dépend si vous souhaitez que l'exception soit gérée dans l'application ou à l'installation.</p>
+<h3><a name="init" id="init"></a>Méthode Module::init()</h3>
+<p>Cette méthode est appelée lorsque l'événement <code>ModuleEvent::EVENT_LOAD_MODULE</code> est déclenché. Elle admet pour argument unique le gestionnaire de module courant.</p>
+<p><strong>Modèle de la méthode par défaut</strong></p>
+<pre><code class="language-php">// Module.php
+
+class Module
+{
+  public function init(Zend\ModuleManager\ModuleManager $moduleManager)
+  {
+    // code, probablement en utilisant $moduleManager
+  }
+}
+</code></pre>
+<p>Les méthodes de la classe <code>Zend\ModuleManager\ModuleManager</code> sont disponibles dans l'<a href="http://framework.zend.com/apidoc/2.4/classes/Zend.ModuleManager.ModuleManager.html" target="_blank">API de Zend Framework 2</a> mais vous aurez probablement un intérêt pour les méthodes suivantes :</p>
+<ul>
+<li><code>ModuleManager::getEvent</code> : l'objet <strong>Zend\ModuleManager\ModuleEvent</strong></li>
+<li><code>ModuleManager::getEventManager</code> : l'objet <strong>Zend\EventManager\EventManagerInterface</strong></li>
+<li><code>ModuleManager::getLoadedModules</code> : la liste des modules chargés</li>
+<li><code>ModuleManager::getModule(nom du module)</code> : l'objet <strong>Module</strong> par son nom</li>
+<li><code>ModuleManager::getModules</code> : la liste des modules à charger</li>
+</ul>
+<p>La document précise toutefois qu'il n'est pas possible de garantir que tous les modules aient été correctement chargés au moment où la méthode <code>Module::init()</code> est appelée. Cela peut générer des problèmes si la méthode <code>Module::init()</code> a des dépendances avec d'autres modules. Il est donc recommandé de faire usage de l'événement <code>ModuleEvent::EVENT_LOAD_MODULES_POST</code> afin d'assurer que tout se passe bien.</p>
+<pre><code class="language-php">class Module
+{
+  public function init(Zend\ModuleManager\ModuleManager $moduleManager)
+  {
+    $events = $moduleManager-&gt;getEventManager() ;
+    $events-&gt;attach('ModuleEvent::EVENT_LOAD_MODULES_POST', array($this, 'onceModulesLoaded')) ;
+  }
+
+  public function onceModulesLoaded(Zend\EventManager\EventInterface $event)
+  {
+    $moduleManager = $event-&gt;getTarget() ;
+    // faire ce qui est nécessaire maintenant
+    // qu'on s'est assuré que tous les modules étaient chargés
+    // et qu'on a récupéré le moduleManager
+  }
+}
+</code></pre>
+<h3><a name="onBootstrap" id="onBootstrap">Méthode Module::onBootstrap()</a></h3>
+<p>Cette méthode est appelée lorsque l'événement <code>MvcEvent::EVENT_BOOTSTRAP</code> est déclenché. Elle admet pour argument unique un objet <strong>Zend\Mvc\MvcEvent</strong>. Il faut savoir que l'événement <code>MvcEvent::EVENT_BOOTSTRAP</code> est déclenché après l'événement <code>ModuleEvent::EVENT_LOAD_MODULES_POST</code>.</p>
+<p><strong>Modèle de la méthode par défaut</strong></p>
+<pre><code class="language-php">// Module.php
+
+class Module
+{
+  public function onBootstrap(Zend\Mvc\MvcEvent $mvcEvent)
+  {
+    // code, probablement en utilisant $mvcEvent
+  }
+}
+</code></pre>
+<p>Les méthodes de la classe <code>Zend\Mvc\MvcEvent</code> sont disponibles dans l'<a href="http://framework.zend.com/apidoc/2.4/classes/Zend.Mvc.MvcEvent.html" target="_blank">API de Zend Framework 2</a> mais vous aurez probablement un intérêt pour les méthodes suivantes :</p>
+<ul>
+<li><code>MvcEvent::getApplication</code>: l'objet <strong>Zend\Mvc\ApplicationInterface</strong></li>
+<li><code>MvcEvent::getController</code> : le nom du contrôleur courant</li>
+<li><code>MvcEvent::getControllerClass</code> : le nom de la classe du contrôleur</li>
+<li><code>MvcEvent::getError</code> : le message d'erreur</li>
+<li><code>MvcEvent::getName</code> : le nom de l'événement</li>
+<li><code>MvcEvent::getParam(nom du paramètre)</code> : le paramètre</li>
+<li><code>MvcEvent::getParams</code> : le tableau des paramètres</li>
+<li><code>MvcEvent::getRequest</code> : l'objet <strong>Zend\Stdlib\RequestInterface</strong></li>
+<li><code>MvcEvent::getResponse</code> : l'objet <strong>Zend\Stdlib\ResponseInterface</strong></li>
+<li><code>MvcEvent::getResult</code></li>
+<li><code>MvcEvent::getRouteMatch</code> : l'objet <strong>Zend\Mvc\Router\RouteMatch</strong></li>
+<li><code>MvcEvent::getRouter</code> : l'objet <strong>Zend\Mvc\Router\RouteStackInterface</strong></li>
+<li><code>MvcEvent::getTarget</code> : la cible de l'événement</li>
+<li><code>MvcEvent::getViewModel</code> : l'objet <strong>Zend\View\Model\ModelInterface</strong></li>
+<li><code>MvcEvent::isError</code> : booléen</li>
+<li><code>MvcEvent::propagationIsStopped</code> : booléen</li>
+</ul>
+<p>Pour les méthodes <code>Module::init()</code> et <code>Module::onBootstrap()</code>, il faut savoir que ces deux méthodes sont appelées à chaque fois qu'on appelle une page, sur chacun des modules qui les utilisent. Il n'est donc pas recommandé d'en abuser.</p>
+<p>Les deux méthodes sont appelées 'pratiquement' au même moment. Toutefois, l'intérêt de l'une et de l'autre, d'après moi, est que <code>Module::init()</code> qui accepte une instance du <strong>Zend\ModuleManager\ModuleManager</strong> comme argument, permet d'intervenir directement sur les modules, et savoir quoi faire après leur chargement alors que <code>Module::onBootstrap()</code> accepte une instance de <strong>Zend\Mvc\MvcEvent</strong> comme argument et permet d'intervenir sur l'application plutôt.</p>
+<h3><a name="getServiceConfig" id="getServiceConfig">Méthode Module::getServiceConfig()</a></h3>
+<p>Cette méthode est celle que vous utilisez le plus si vous faites appel, comme c'est recommandé, au <strong>gestionnaire de services</strong>. Mais, en parcourant la documentation, on s'aperçoit que le gestionnaire de services à son tour charge d'autres gestionnaires qui viennent s'ajouter à l'application.</p>
+<p>Vous trouverez toute la documentation utile sur la page <a href="http://framework.zend.com/manual/current/en/modules/zend.service-manager.quick-start.html" target="_blank">Quick Start du <strong>Service Manager</strong></a> et sur la page des <a href="http://framework.zend.com/manual/current/en/modules/zend.mvc.services.html" target="_blank">services de l'application</a>.</p>
+<p>Le <strong>gestionnaire de services</strong> utilisé par défaut dans l'application de Zend Framework, c'est <strong>Zend\ServiceManager\ServiceManager</strong>.</p>
+<p><strong>Modèle de la méthode par défaut</strong></p>
+<pre><code class="language-php">// Module.php
+
+class Module
+{
+  function getServiceConfig()
+  {
+    return array(
+      'invokables' =&gt; array(
+        'ServiceName' =&gt; 'Namespace\To\My\Service',
+      ),
+    ) ;
+  }
+}
+</code></pre>
+<p>Si vous ne souhaitez pas alourdir votre classe <code>Module</code>, vous pouvez également déclarer les mêmes services, mais cette fois directement dans un fichier de configuration de votre choix. Il faut juste utiliser la clé '<em>service_manager</em>'.</p>
+<pre><code class="language-php">// module.config.php ou un autre fichier
+
+return array(
+  'service_manager' =&gt; array(
+    'invokables' =&gt; array(
+      'ServiceName' =&gt; 'Namespace\To\My\Service',
+    ),
+  ),
+) ;
+</code></pre>
+<p>Si vous ne souhaitez pas alléger la classe <code>Module</code> pour alourdir le fichier <code>module.config.php</code>, <a href="https://juriansluiman.nl/article/120/using-zend-framework-service-managers-in-your-application" target="_blank"><strong>Jurian Sluiman</strong></a> a une solution intéressante : créer un tableau de configuration dédié aux services.</p>
+<pre><code class="language-php">// Module.php
+
+class Module
+{
+  function getServiceConfig()
+  {
+    return include __DIR__ . '/config/service.config.php';
+  }
+}
+</code></pre>
+<p><strong>Attention pour ceux qui optent pour les services dans le tableau de configuration (soit dans <code>service.config.php</code>, soit dans <code>module.config.php</code>)</strong>.</p>
+<p>Concernant la création des services avec une fabrique : <strong>Evan Coury</strong> (son article n'est plus disponible à ce jour) a noté que la <em>fabrique par closure</em> ne fonctionnait pas bien dans le tableau de configuration. Il valait mieux, dans ce cas, créer une classe qui implémente <code>Zend\ServiceManager\FactoryInterface</code>. Cette information date un peu et elle mérite d'être vérifiée. Personnellement, mes services sont créés avec des fabriques directement dans ma classe <code>Module</code> : je ne suis donc pas concerné. Je tâcherais de faire un article sur les fabriques un de ces jours.</p>
+<p>Si vous souhaitez bricoler votre propre <strong>gestionnaire de services</strong>, il faudra qu'il implémente l'interface <code>Zend\ModuleManager\Feature\ServiceProviderInterface</code>.</p>
+<h3><a name="getControllerConfig" id="getControllerConfig">Méthode Module::getControllerConfig()</a></h3>
+<p>Cette méthode fait appel au <strong>gestionnaire de contrôleurs</strong>. Le gestionnaire de contrôleurs est chargé par le <strong>gestionnaire de services</strong>.</p>
+<p>Vous pouvez y accéder avec cette clé</p>
+<pre><code class="language-php">$serviceManager-&gt;get('ControllerLoader') ;
+</code></pre>
+<p>Contrairement à ZF1 pour ceux qui se souviennent, un contrôleur était identifié s'il s'appelait <em>Controller/qqchController</em>... (ou un truc comme ça). Avec ZF2, l'application n'identifie plus les contrôleurs d'elle même. Il faut donner la liste des contrôleurs utilisés. Certains parleront de sécurité. D'autres parleront de modularité. Je n'ai pas plus d'explication en la matière mais ma conviction est que moins d'éléments restent &quot;cachés&quot;, moins il sera compliqué de s'en affranchir.</p>
+<p>Le <strong>gestionnaire de contrôleurs</strong> par défaut de l'application MVC, c'est <strong>Zend\Mvc\Controller\ControllerManager</strong>.</p>
+<p><strong>Modèle de la méthode</strong></p>
+<pre><code class="language-php">// Module.php
+
+class Module
+{
+  function getControllerConfig()
+  {
+    return array(
+      'invokables' =&gt; array(
+        'ControllerName' =&gt; 'Namespace\To\My\Controller',
+      ),
+    ) ;
+  }
+}
+</code></pre>
+<p>Si vous ne souhaitez pas alourdir votre classe <code>Module</code>, vous pouvez également déclarer les mêmes services, mais cette fois directement dans un fichier de configuration de votre choix. Il faut juste utiliser la clé '<em>controllers</em>'.</p>
+<pre><code class="language-php">// module.config.php ou un autre
+
+return array(
+  'controllers' =&gt; array(
+    'invokables' =&gt; array(
+      'ControllerName' =&gt; 'Namespace\To\My\Controller',
+    ),
+  ),
+) ;
+</code></pre>
+<p>Si vous souhaitez bricoler votre propre <strong>gestionnaire de contrôleurs</strong>, il faudra qu'il implémente l'interface <code>Zend\ModuleManager\Feature\ControllerProviderInterface</code>.</p>
+<h3><a name="getFormElementConfig" id="getFormElementConfig">Méthode Module::getFormElementConfig()</a></h3>
+<p>Cette méthode fait appel au <strong>gestionnaire d'éléments de formulaire</strong>. Le gestionnaire d'éléments de formulaire est chargé par le <strong>gestionnaire de services</strong>.</p>
+<p>Vous pouvez y accéder avec cette clé</p>
+<pre><code class="language-php">$serviceManager-&gt;get('FormElementManager') ;
+</code></pre>
+<p>Afin de <a href="http://framework.zend.com/manual/current/en/modules/zend.form.advanced-use-of-forms.html#handling-dependencies" target="_blank">gérer les dépendances dans les éléments de formulaire</a>, avec ZF2, vous allez devoir créer des éléments de formulaire personnalisé avec leurs dépendances. Ces éléments personnalisés doivent être déclarés dans le gestionnaire d'éléments de formulaire afin de pouvoir être utilisés dans l'application.</p>
+<p>Le <strong>gestionnaire d'éléments de formulaire</strong> par défaut de l'application MVC, c'est <strong>Zend\Form\FormElementManager</strong>.</p>
+<p><strong>Modèle de la méthode</strong></p>
+<pre><code class="language-php">// Module.php
+
+class Module
+{
+  function getFormElementConfig()
+  {
+    return array(
+      'invokables' =&gt; array(
+        'ElementName' =&gt; 'Namespace\To\My\Form\Element',
+      ),
+    ) ;
+  }
+}
+</code></pre>
+<p>Si vous ne souhaitez pas alourdir votre classe <code>Module</code>, vous pouvez également déclarer les mêmes services, mais cette fois directement dans un fichier de configuration de votre choix. Il faut juste utiliser la clé '<em>form_elements</em>'.</p>
+<pre><code class="language-php">// module.config.php ou un autre
+
+return array(
+  'form_elements' =&gt; array(
+    'invokables' =&gt; array(
+      'ElementName' =&gt; 'Namespace\To\My\Form\Element',
+    ),
+  ),
+) ;
+</code></pre>
+<p>Si vous souhaitez bricoler votre propre <strong>gestionnaire d'éléments de formulaire</strong>, il faudra qu'il implémente l'interface <code>Zend\ModuleManager\Feature\FormElementProviderInterface</code>.</p>
+<h3><a name="getViewHelperConfig" id="getViewHelperConfig">Méthode Module::getViewHelperConfig()</a></h3>
+<p>Cette méthode fait appel au <strong>gestionnaire d'aides de vue</strong>. Le gestionnaire d'aides de vue est chargé par le <strong>gestionnaire de services</strong>.</p>
+<p>Vous pouvez y accéder avec cette clé</p>
+<pre><code class="language-php">$serviceManager-&gt;get('ViewHelperManager') ;
+</code></pre>
+<p>Les <a href="http://framework.zend.com/manual/current/en/modules/zend.view.helpers.advanced-usage.html" target="_blank">aides de vues</a> (<em>View Helper</em> en anglais) sont des objets qui peuvent être appelés par n'importe quel template de vue de votre application et qui vont pouvoir traiter de l'information. C'est, à peu près, l'équivant d'un plugin, d'un snippet, d'un bloc chez Drupal ou d'un widget chez Wordpress. Bon, je dis n'importe quel template mais je pense beaucoup aux templates HTML. Je ne vois pas comment on peut exploiter ça en json ou en XML mais si on peut le faire en HTML, je ne vois pas pourquoi on ne pourrait pas le faire pour un autre format de template...</p>
+<p>Le <strong>gestionnaire d'aide de vue</strong> utilisé par défaut dans l'application MVC, c'est <strong>Zend\View\HelperPluginManager</strong>.</p>
+<p><strong>Modèle de la méthode</strong></p>
+<pre><code class="language-php">// Module.php
+
+class Module
+{
+  function getViewHelperConfig()
+  {
+    return array(
+      'invokables' =&gt; array(
+        'ViewHelperName' =&gt; 'Namespace\To\My\View\Helper',
+      ),
+    ) ;
+  }
+}
+</code></pre>
+<p>Si vous ne souhaitez pas alourdir votre classe <code>Module</code>, vous pouvez également déclarer les mêmes services, mais cette fois directement dans un fichier de configuration de votre choix. Il faut juste utiliser la clé '<em>view_helpers</em>'.</p>
+<pre><code class="language-php">// module.config.php ou un autre
+
+return array(
+  'view_helpers' =&gt; array(
+    'invokables' =&gt; array(
+      'ViewHelperName' =&gt; 'Namespace\To\My\View\Helper',
+    ),
+  ),
+) ;
+</code></pre>
+<p>Si vous souhaitez bricoler votre propre <strong>gestionnaire d'aide de vue</strong>, il faudra qu'il implémente l'interface <code>Zend\ModuleManager\Feature\ViewHelperProviderInterface</code>.</p>
+<h3><a name="getControllerPluginConfig" id="getControllerPluginConfig">Méthode Module::getControllerPluginConfig()</a></h3>
+<p>Cette méthode fait appel au <strong>gestionnaire de plugins de contrôleur</strong>. Le gestionnaire de plugins de contrôleur est chargé par le <strong>gestionnaire de services</strong>.</p>
+<p>Vous pouvez y accéder avec cette clé</p>
+<pre><code class="language-php">$serviceManager-&gt;get('ControllerPluginManager') ;
+</code></pre>
+<p>Les <a href="http://framework.zend.com/manual/current/en/modules/zend.mvc.plugins.html" target="_blank">plugins de contrôleur</a>, anciennement <em>aides d'action</em> avec ZF1 (<em>Action Helper</em>en anglais) sont des objets qui peuvent être appelés par n'importe quel objet contrôleur. Un plugin quoi... De quoi traiter les informations de la même façon d'un contrôleur à un autre sans avoir à tout réécrire à chaque fois...</p>
+<p>Il manque une documentation étendue sur la façon de créer son propre plugin de contrôleur. Toutefois, on trouve des tutoriaux assez facilement sur internet et à franchement parler, ce n'est pas sorcier. Je ferais un article sur ce sujet plus tard.</p>
+<p>Le <strong>gestionnaire de plugin de contrôleur</strong> utilisé par défaut dans l'application MVC, c'est <strong>Zend\Mvc\Controller\PluginManager</strong>.</p>
+<p><strong>Modèle de la méthode</strong></p>
+<pre><code class="language-php">// Module.php
+
+class Module
+{
+  function getControllerPluginConfig()
+  {
+    return array(
+      'invokables' =&gt; array(
+        'ControllerPluginName' =&gt; 'Namespace\To\My\Controller\Plugin',
+      ),
+    ) ;
+  }
+}
+</code></pre>
+<p>Si vous ne souhaitez pas alourdir votre classe <code>Module</code>, vous pouvez également déclarer les mêmes services, mais cette fois directement dans un fichier de configuration de votre choix. Il faut juste utiliser la clé '<em>controller_plugins</em>'.</p>
+<pre><code class="language-php">// module.config.php ou un autre
+
+return array(
+  'controller_plugins' =&gt; array(
+    'invokables' =&gt; array(
+      'ControllerPluginName' =&gt; 'Namespace\To\My\Controller\Plugin',
+    ),
+  ),
+) ;
+</code></pre>
+<p>Si vous souhaitez bricoler votre propre <strong>gestionnaire de plugins de contrôleur</strong>, il faudra qu'il implémente l'interface <code>Zend\ModuleManager\Feature\ControllerPluginProviderInterface</code>.</p>
+<h3><a name="getFilterConfig" id="getFilterConfig">Méthode Module::getFilterConfig()</a></h3>
+<p>Cette méthode fait appel au <strong>gestionnaire de filtres</strong>. Le gestionnaire de filtres est chargé par le <strong>gestionnaire de services</strong>.</p>
+<p>Vous pouvez y accéder avec cette clé</p>
+<pre><code class="language-php">$serviceManager-&gt;get('FilterManager') ;
+</code></pre>
+<p>Voir la <a href="http://framework.zend.com/manual/current/en/modules/zend.filter.html" target="_blank">documentation de <strong>Zend\Filter</strong></a>.</p>
+<p>Le <strong>gestionnaire de filtres</strong> utilisé par défaut est <strong>Zend\Filter\FilterPluginManager</strong>.</p>
+<p><strong>Modèle de la méthode</strong></p>
+<pre><code class="language-php">// Module.php
+
+class Module
+{
+  function getFilterConfig()
+  {
+    return array(
+      'invokables' =&gt; array(
+        'FilterName' =&gt; 'Namespace\To\My\Filter',
+      ),
+    ) ;
+  }
+}
+</code></pre>
+<p>Si vous ne souhaitez pas alourdir votre classe <code>Module</code>, vous pouvez également déclarer les mêmes services, mais cette fois directement dans un fichier de configuration de votre choix. Il faut juste utiliser la clé '<em>filters</em>'.</p>
+<pre><code class="language-php">// module.config.php ou un autre
+
+return array(
+  'filters' =&gt; array(
+    'invokables' =&gt; array(
+      'FilterName' =&gt; 'Namespace\To\My\Filter',
+    ),
+  ),
+) ;
+</code></pre>
+<p>Si vous souhaitez bricoler votre propre <strong>gestionnaire de filtres</strong>, il faudra qu'il implémente l'interface <code>Zend\ModuleManager\Feature\FilterProviderInterface</code>.</p>
+<h3><a name="getInputFilterConfig" id="getInputFilterConfig">Méthode Module::getInputFilterConfig()</a></h3>
+<p>Cette méthode fait appel au <strong>gestionnaire de filtres de saisie</strong>. Le gestionnaire de filtres de saisie est chargé par le <strong>gestionnaire de services</strong>.</p>
+<p>Vous pouvez y accéder avec cette clé</p>
+<pre><code class="language-php">$serviceManager-&gt;get('InputFilterManager') ;
+</code></pre>
+<p>On parle ici des <a href="http://framework.zend.com/manual/current/en/modules/zend.input-filter.intro.html" target="_blank">filtres appliqués sur les éléments de formulaire</a>.</p>
+<p>Le <strong>gestionnaire de filtre de saisie</strong> est <strong>Zend\InputFilter\InputFilterPluginManager</strong>.</p>
+<p><strong>Modèle de la méthode</strong></p>
+<pre><code class="language-php">// Module.php
+
+class Module
+{
+  function getInputFilterConfig()
+  {
+    return array(
+      'invokables' =&gt; array(
+        'InputFilterName' =&gt; 'Namespace\To\My\Input\Filter',
+      ),
+    ) ;
+  }
+}
+</code></pre>
+<p>Si vous ne souhaitez pas alourdir votre classe <code>Module</code>, vous pouvez également déclarer les mêmes services, mais cette fois directement dans un fichier de configuration de votre choix. Il faut juste utiliser la clé '<em>input_filters</em>'.</p>
+<pre><code class="language-php">// module.config.php ou un autre
+
+return array(
+  'input_filters' =&gt; array(
+    'invokables' =&gt; array(
+      'InputFilterName' =&gt; 'Namespace\To\My\Input\Filter',
+    ),
+  ),
+) ;
+</code></pre>
+<p>Si vous souhaitez bricoler votre propre <strong>gestionnaire de filtres de saisie</strong>, il faudra qu'il implémente l'interface <code>Zend\ModuleManager\Feature\InputFilterProviderInterface</code>.</p>
+<h3><a name="getValidatorConfig" id="getValidatorConfig">Méthode Module::getValidatorConfig()</a></h3>
+<p>Cette méthode fait appel au <strong>gestionnaire de validateurs</strong>. Le gestionnaire de validateurs est chargé par le <strong>gestionnaire de services</strong>.</p>
+<p>Vous pouvez y accéder avec cette clé</p>
+<pre><code class="language-php">$serviceManager-&gt;get('ValidatorManager') ;
+</code></pre>
+<p>Voir la <a href="http://framework.zend.com/manual/current/en/modules/zend.validator.html" target="_blank">documentation de <strong>Zend\Validator</strong></a></p>
+<p>Le <strong>gestionnaire de validateurs</strong> est <strong>Zend\Validator\ValidatorPluginManager</strong>.</p>
+<p><strong>Modèle de la méthode</strong></p>
+<pre><code class="language-php">// Module.php
+
+class Module
+{
+  function getValidatorConfig()
+  {
+    return array(
+      'invokables' =&gt; array(
+        'ValidatorName' =&gt; 'Namespace\To\My\Validator',
+      ),
+    ) ;
+  }
+}
+</code></pre>
+<p>Si vous ne souhaitez pas alourdir votre classe <code>Module</code>, vous pouvez également déclarer les mêmes services, mais cette fois directement dans un fichier de configuration de votre choix. Il faut juste utiliser la clé '<em>validators</em>'.</p>
+<pre><code class="language-php">// module.config.php ou un autre
+
+return array(
+  'validators' =&gt; array(
+    'invokables' =&gt; array(
+      'ValidatorName' =&gt; 'Namespace\To\My\Validator',
+    ),
+  ),
+) ;
+</code></pre>
+<p>Si vous souhaitez bricoler votre propre <strong>gestionnaire de validateurs</strong>, il faudra qu'il implémente l'interface <code>Zend\ModuleManager\Feature\ValidatorProviderInterface</code>.</p>
+<h3><a name="getHydratorConfig" id="getHydratorConfig">Méthode Module::getHydratorConfig()</a></h3>
+<p>Cette méthode fait appel au <strong>gestionnaire d'hydrateurs</strong>. Le gestionnaire d'hydrateurs est chargé par le <strong>gestionnaire de services</strong>.</p>
+<p>Vous pouvez y accéder avec cette clé</p>
+<pre><code class="language-php">$serviceManager-&gt;get('HydratorManager') ;
+</code></pre>
+<p>Ce gestionnaire me laisse perplexe. Il faudra jeter un coup d'oeil soit sur la documentation, soit dans le source pour voir de quoi il s'agit. Toutefois, voici la <a href="http://framework.zend.com/manual/current/en/modules/zend.stdlib.hydrator.html" target="_blank">documentation des hydrateurs</a> par défaut de Zend Framework 2.</p>
+<p>Le <strong>gestionnaire d'hydrateurs</strong> utilisé par défaut est un objet <strong>Zend\Stdlib\Hydrator\HydratorPluginManager</strong>.</p>
+<p><strong>Modèle de la méthode</strong></p>
+<pre><code class="language-php">// Module.php
+
+class Module
+{
+  function getHydratorConfig()
+  {
+    return array(
+      'invokables' =&gt; array(
+        'HydratorName' =&gt; 'Namespace\To\My\Hydrator',
+      ),
+    ) ;
+  }
+}
+</code></pre>
+<p>Si vous ne souhaitez pas alourdir votre classe <code>Module</code>, vous pouvez également déclarer les mêmes services, mais cette fois directement dans un fichier de configuration de votre choix. Il faut juste utiliser la clé '<em>hydrators</em>'.</p>
+<pre><code class="language-php">// module.config.php ou un autre
+
+return array(
+  'hydrators' =&gt; array(
+    'invokables' =&gt; array(
+      'HydratorName' =&gt; 'Namespace\To\My\Hydrator',
+    ),
+  ),
+) ;
+</code></pre>
+<p>Si on souhaite créer son propre <strong>gestionnaire d'hydrateurs</strong>, il faut implémenter l'interface <code>Zend\ModuleManager\Feature\HydratorProviderInterface</code>.</p>
+<h3><a name="getRouteConfig" id="getRouteConfig">Méthode Module::getRouteConfig()</a></h3>
+<p>Cette méthode fait appel au <strong>gestionnaire de routes</strong>. Le gestionnaire de routes est chargé par le <strong>gestionnaire de services</strong>.</p>
+<p>Toutefois, je reste très prudente sur cette méthode : Le <strong>gestionnaire de services</strong> charge une clé '<em>router</em>' qui fait un lien symbolique vers la classe <code>Zend\Mvc\Service\RouterFactory</code> qui, selon l'environnement, déclenche soit <code>ConsoleRouter</code>, soit <code>HttpRouter</code>. <code>HttpRouter</code> est lié quant à lui à l'objet <code>Zend\Mvc\Service\RouterFactory</code> qui a pour tâche de récupérer dans le tableau de configuration la clé '<em>router</em>' et de créer toutes les routes contenues sous cette clé. Pour faire court, la clé '<em>router</em>' crée - normalement - <em>l'unique arbre des routes</em>.</p>
+<p>D'autre part, le <strong>gestionnaire de services</strong> charge également une autre clé '<em>RoutePluginManager</em>' qui correspond à l'objet <strong>Zend\Mvc\Service\RoutePluginManagerFactory</strong>. Généralement, dans ZF2, les <strong>PluginManager</strong> servent à créer des objets grâce à un tableau associatif et si on se réfère aux autres méthodes de la classe <code>Module</code>, les autres méthodes concernent également des <strong>PluginManager</strong>. La clé '<em>RoutePluginManager</em>' crée donc toutes les routes, une à une.</p>
+<p>Je pense que <code>Module::getRouteConfig()</code> devrait correspondre plutôt à la clé '<em>RoutePluginManager</em>' (<code>$serviceManager-&gt;get('HydratorManager') ;</code>) si on se réfère au type d'utilisation qu'on fait sur les autres <strong>PluginManager</strong> : il y a <strong>un seul</strong> arbre de routes mais <strong>plusieurs</strong> routes. Du coup, ça a plus de sens de se dire que le <strong>gestionnaire de routes</strong> gère <strong>les routes</strong> et non pas l'arbre des routes... mais je ne suis pas sûr.</p>
+<p>Dans ces cas là, la clé à utiliser dans le tableau de configuration serait '<em>route_manager</em>' : gestion des routes.</p>
+<p>De base dans les documentations et tutoriaux, vous trouverez plutôt une clé '*router *' dans le tableau de configuration. C'est la clé qui correspond à l'arbre des routes.</p>
+<p>Vous trouverez de la documentation complémentaire pour <a href="http://http://framework.zend.com/manual/current/en/modules/zend.mvc.routing.html" target="_blank"><strong>Zend\Mvc\Router</strong></a>.</p>
+<p>Le <strong>gestionnaire de routes</strong> utilisé par défaut est l'objet <strong>Zend\Mvc\Router\RoutePluginManager</strong></p>
+<p><strong>Modèle de la méthode</strong></p>
+<pre><code class="language-php">// Module.php
+
+class Module
+{
+  function getRouteConfig()
+  {
+    return array() ;
+  }
+}
+</code></pre>
+<p>Si vous ne souhaitez pas alourdir votre classe <code>Module</code>, vous pouvez également déclarer les mêmes services, mais cette fois directement dans un fichier de configuration de votre choix. Il faut juste utiliser la clé '<em>route_manager</em>' (d'après mon raisonnement ci dessus). Dans la documentation du router, on mentionne une clé '<em>route_plugins</em>' qui correspond également à la classe <strong>Zend\Mvc\Router\RoutePluginManager</strong>. Du coup, potentiellement, c'est l'une ou l'autre clé.</p>
+<pre><code class="language-php">// module.config.php ou un autre
+
+return array(
+  'route_manager' =&gt; array(),
+) ;
+</code></pre>
+<p>Personnellement, j'utilise la clé '<em>router</em>' dans le tableau de configuration et je construit toute mes routes à cet endroit là. Je n'utilise donc pas le gestionnaire de routes. De toutes façons, la fabrique qui construit toute les routes à partir de la clé '<em>router</em>' du fichier de configuration doit forcément inclure le <strong>gestionnaire de routes</strong>...</p>
+<p><em>TODO</em> : Toutefois, lorsqu'il y a beaucoup de routes imbriquées les unes dans les autres, j'avoue que le tableau associatif qui en résulte est très compliqué à maintenir et qu'on se retrouve rapidement avec de nombreuses indentations. Si cela se révèle assez illisible (et ça peut), il faudra se pencher sur ce gestionnaire.</p>
+<p>Si on souhaite créer son propre <strong>gestionnaire de routes</strong>, il faut implémenter l'interface <code>Zend\ModuleManager\Feature\RouteProviderInterface</code>.</p>
+<h3><a name="getSerializerConfig" id="getSerializerConfig">Méthode Module::getSerializerConfig()</a></h3>
+<p>Cette méthode fait appel au <strong>gestionnaire de serialisation</strong>. Le gestionnaire de serialisation est chargé par le <strong>gestionnaire de services</strong>.</p>
+<p>Vous pouvez y accéder avec cette clé</p>
+<pre><code class="language-php">$serviceManager-&gt;get('SerializerAdapterManager') ;
+</code></pre>
+<p>Voir la <a href="http://framework.zend.com/manual/current/en/modules/zend.serializer.html" target="_blank">documentation de <strong>Zend\Serializer</strong></a>.</p>
+<p>Le <strong>gestionnaire de serialisation</strong> utilisé par défaut est le <strong>Zend\Serializer\AdapterPluginManager</strong>.</p>
+<p><strong>Modèle de la méthode</strong></p>
+<pre><code class="language-php">// Module.php
+
+class Module
+{
+  function getSerializerConfig()
+  {
+    return array(
+      'invokables' =&gt; array(
+        'SerializerName' =&gt; 'Namespace\To\My\Serializer',
+      ),
+    ) ;
+  }
+}
+</code></pre>
+<p>Si vous ne souhaitez pas alourdir votre classe <code>Module</code>, vous pouvez également déclarer les mêmes services, mais cette fois directement dans un fichier de configuration de votre choix. Il faut juste utiliser la clé '<em>serializers</em>'.</p>
+<pre><code class="language-php">// module.config.php ou un autre
+
+return array(
+  'serializers' =&gt; array(
+    'invokables' =&gt; array(
+      'SerializerName' =&gt; 'Namespace\To\My\Serializer',
+    ),
+  ),
+) ;
+</code></pre>
+<p>Si on souhaite créer son propre <strong>gestionnaire de serialisation</strong>, il faut implémenter l'interface <code>Zend\ModuleManager\Feature\SerializerProviderInterface</code>.</p>
+<h3><a name="getLogProcessorConfig" id="getLogProcessorConfig">Méthode Module::getLogProcessorConfig()</a></h3>
+<p>Cette méthode fait appel au <strong>gestionnaire de moteur de journalisation (?)</strong>. Le gestionnaire de moteur de journalisation est chargé par le <strong>gestionnaire de services</strong>.</p>
+<p>Vous pouvez y accéder avec cette clé</p>
+<pre><code class="language-php">$serviceManager-&gt;get('LogProcessorManager') ;
+</code></pre>
+<p>Voir <a href="http://framework.zend.com/manual/current/en/modules/zend.log.overview.html" target="_blank">la documentation de <strong>Zend\Log</strong></a></p>
+<p>Le <strong>gestionnaire de moteurs de journalisation</strong> utilisé par défaut est le <strong>Zend\Log\ProcessorPluginManager</strong>.</p>
+<p><strong>Modèle de la méthode</strong></p>
+<pre><code class="language-php">// Module.php
+
+class Module
+{
+  function getLogProcessorConfig()
+  {
+    return array(
+      'invokables' =&gt; array(
+        'ProcessorName' =&gt; 'Namespace\To\My\Log\Processor',
+      ),
+    ) ;
+  }
+}
+</code></pre>
+<p>Si vous ne souhaitez pas alourdir votre classe <code>Module</code>, vous pouvez également déclarer les mêmes services, mais cette fois directement dans un fichier de configuration de votre choix. Il faut juste utiliser la clé '<em>log_processors</em>'.</p>
+<pre><code class="language-php">// module.config.php ou un autre
+
+return array(
+  'log_processors' =&gt; array(
+    'invokables' =&gt; array(
+      'ProcessorName' =&gt; 'Namespace\To\My\Log\Processor',
+    ),
+  ),
+) ;
+</code></pre>
+<p>Si on souhaite créer son propre <strong>gestionnaire de processeurs de journalisation</strong>, il faut implémenter l'interface <code>Zend\ModuleManager\Feature\LogProcessorProviderInterface</code>.</p>
+<h3><a name="getLogWriterConfig" id="getLogWriterConfig">Méthode Module::getLogWriterConfig()</a></h3>
+<p>Cette méthode fait appel au <strong>gestionnaire de destination de journalisation</strong>. Le gestionnaire de destination de journalisation est chargé par le <strong>gestionnaire de services</strong>.</p>
+<p>Vous pouvez y accéder avec cette clé</p>
+<pre><code class="language-php">$serviceManager-&gt;get('LogWriterManager') ;
+</code></pre>
+<p>Le <strong>gestionnaire de destination de journalisation</strong> utilisé par défaut est le <strong>Zend\Log\WriterPluginManager</strong>.</p>
+<p><strong>Modèle de la méthode</strong></p>
+<pre><code class="language-php">// Module.php
+
+class Module
+{
+  function getLogWriterConfig()
+  {
+    return array(
+      'invokables' =&gt; array(
+        'LogWriterName' =&gt; 'Namespace\To\My\Log\Writer',
+      ),
+    ) ;
+  }
+}
+</code></pre>
+<p>Si vous ne souhaitez pas alourdir votre classe <code>Module</code>, vous pouvez également déclarer les mêmes services, mais cette fois directement dans un fichier de configuration de votre choix. Il faut juste utiliser la clé '<em>log_writers</em>'.</p>
+<pre><code class="language-php">// module.config.php ou un autre
+
+return array(
+  'log_writers' =&gt; array(
+    'invokables' =&gt; array(
+      'LogWriterName' =&gt; 'Namespace\To\My\Log\Writer',
+    ),
+  ),
+) ;
+</code></pre>
+<p>Si on souhaite créer son propre <strong>gestionnaire de destination de journalisation</strong>, il faut implémenter l'interface <code>Zend\ModuleManager\Feature\LogWriterProviderInterface</code>.</p>
+<h2>Ce qu'il faut également savoir sur les modules</h2>
+<p>Normalement (non testé), vous pouvez accéder à votre module (pourquoi donc se faire ?) en utilisant ce code :</p>
+<pre><code class="language-php">$serviceManager-&gt;get('NomDuModule').
+</code></pre>
+<p>C'est peut être bon à savoir même si je ne sais pas si c'est utile à quelqu'un. Je n'ai pas trouvé d'application pratique sur le net... pour le moment.</p>
+<p>Voila tout ce que j'ai trouvé sur la classe <code>Module</code>. J'étais parti pour recenser toutes ces méthodes que je découvrais au fur et à mesure dans les tutoriaux, en pestant parce que bon-dieu-mais-pourquoi-ça-ils-le-disent-pas-avant ? mais finalement, comme la plupart du temps, j'étais mauvaise langue. Tout est soigneusement documenté. Je n'ai pas su lire la doc.</p>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/fr/tags/zend-framework-2">zend framework 2</a></li><li><a href="/fr/tags/zend-application">zend application</a></li><li><a href="/fr/tags/modules">Modules</a></li><li><a href="/fr/tags/service-manager">Service Manager</a></li></ul>
+        </div>
+      
+
+      
+    
+
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>Sur moi</h3>
+      <p>J&#39;ai appris le php il y a quelques années, quand Internet était à ses débuts. Pour diverses raisons, j&#39;ai arrêté en route et j&#39;ai perdu le fil des nouveaux Internets que je redécouvre. Résultat, je me sens constamment à courir après l&#39;histoire mais je suis toujours motivée à reprendre des projets personnels. Je me propose de vous partager mes découvertes. Au delà des sujets de programmation, j&#39;aime également partager mes infos concernant notamment l&#39;Histoire, l&#39;Astronomie, la Linguistique, les Films, les Livres et les Anime. J&#39;espère que vous aimerez suivre mon blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. Tous droits réservés.</p>
+        <p>Propulsé par <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

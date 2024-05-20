@@ -1,0 +1,384 @@
+<!doctype html>
+<html class="no-js" lang="en" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>CoffeeBar Application 9/19 - Placing an order, mixing drinks and food&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">French</a>
+        <a href="/en/">English</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/en/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/en/books/0/index.html">Collections</a>
+        <a href="/en/">Home</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/en/">Home</a><i class="fas fa-angle-right"></i>CoffeeBar Application 9/19 - Placing an order, mixing drinks and food
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>CoffeeBar Application 9/19 - Placing an order, mixing drinks and food</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>3/4/2015, 7:45:00 PM
+        
+        <i class="fas fa-th-large"></i><!--a href="/en/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/file9271237667217.jpg" class="node-banner" />
+        
+          <p><strong>Credit</strong> : Morguefile.com </p>
+        
+      </div>
+
+      <p><p>In today chapters, we will see how we can manage the logic around the PlaceOrder command. Keep in mind we have only one form to order drinks and food. But we have two different workflows so we have to know, when the order is placed, which item is a drink and which one is a food and send the item in the correct workflow.</p>
+<p><em>NOTE : throughout the tutorial, i will reedit numerous classes and views i already talked about. On the second edition, some datas will be missing such as use keyword, extends and implements keywords etc... It doesn't mean you have to delete those existing lines. It is intended to lighten this tutorial. In the case we need to remove lines, i'll say it so plainly, even re-editing the whole part to make myself clear on that item.</em></p>
+<p>Several entities are used in this part. When an order is placed, we can order menu items several times, no matter if it is a drink or food. So we will use a class to represent the ordered items.</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Entity/TabStory/OrderedItem.php
+
+&lt;?php
+namespace CoffeeBar\Entity\TabStory ;
+
+class OrderedItem
+{
+  protected $id ; // int - Menu number
+  protected $description ; // string
+  protected $price ; // float
+  protected $isDrink ; // bool
+
+ // getters &amp;amp; setters
+}
+</code></pre>
+<p>Several <code>**CoffeeBar\Entity\TabStory\OrderedItem**</code>(s) are grouped into a <code>**CoffeeBar\Entity\TabStory\OrderedItems**</code>.</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Entity/TabStory/OrderedItems.php
+
+&lt;?php
+namespace CoffeeBar\Entity\TabStory ;
+
+use ArrayObject;
+
+class OrderedItems extends ArrayObject
+{
+}
+</code></pre>
+<p>Once we have the list of ordered items, we will be able to sort the drinks and the food, using two methods.</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Entity/TabStory/OrderedItems.php
+
+class OrderedItems
+{
+  // les autres méthodes
+
+  // return : CoffeeBar\Entity\TabStory\OrderedItems
+  public function getDrinkableItems()
+  { 
+    $iterator = $this-&gt;getIterator() ;
+    $items = new OrderedItems() ;
+
+    // $item de type CoffeeBar\Entity\TabStory\OrderedItem
+    foreach($iterator as $item)
+    {
+      if($item-&gt;getIsDrink())
+      {
+        $items-&gt;offsetSet(NULL, $item) ;
+      }
+    }
+
+    return $items ;
+  }
+ 
+  // return : CoffeeBar\Entity\TabStory\OrderedItems
+  public function getEatableItems()
+  {
+    $iterator = $this-&gt;getIterator() ;
+    $items = new OrderedItems() ;
+
+    // $item de type CoffeeBar\Entity\TabStory\OrderedItem
+    foreach($iterator as $item)
+    {
+      if(!$item-&gt;getIsDrink())
+      {
+        $items-&gt;offsetSet(NULL, $item) ;
+      }
+    }
+
+    return $items ;
+  }
+}
+</code></pre>
+<p>Then, once we have ensured that we can sort ordered drinks from ordered food, we can focus on the <code>**CoffeeBar\Command\PlaceOrder**</code> command. Again, the <code>**CoffeeBar\Command\PlaceOrder**</code> will trigger a '<em>placeOrder</em>' event.</p>
+<p>That means : dependency on the <strong>Event Manager</strong>.</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Command/PlaceOrder.php
+
+&lt;?php
+namespace CoffeeBar\Command ;
+
+use Zend\EventManager\EventManagerAwareInterface;
+use Zend\EventManager\EventManagerInterface;
+
+class PlaceOrder implements EventManagerAwareInterface
+{
+  protected $id ; // int
+  protected $items ; // CoffeeBar\Entity\TabStory\OrderedItems
+  protected $events ;
+
+  // ajouter getters et setters
+
+  // We have a named method, we won't use hydrator here.
+  public function placeOrder($id, $items)
+  {
+    $this-&gt;setId($id) ;
+    $this-&gt;setItems($items) ;
+    $this-&gt;events-&gt;trigger('placeOrder', '', array('placeOrder' =&gt; $this)) ;
+  }
+
+  // mandatory method when we implements EventManagerAwareInterface
+  public function setEventManager(EventManagerInterface $events)
+  {
+    $this-&gt;events = $events;
+
+    return $this;
+  }
+ 
+  // mandatory method when we implements EventManagerAwareInterface
+  public function getEventManager()
+  {
+    return $this-&gt;events;
+  }
+}
+</code></pre>
+<p>When we had a <code>**CoffeeBar\Command\OpenTab**</code> command, we had a <code>**CoffeeBar\Event\TabOpened**</code> event.</p>
+<p>Now we have a <code>**CoffeeBar\Command\PlaceOrder**</code> command, we will have the <code>CoffeeBar\Event\DrinksOrdered**</code> event and the <code>**CoffeeBar\Event\FoodOrdered**</code> event.</p>
+<p>Here is the <code>**CoffeeBar\Event\DrinksOrdered**</code> event object, with two properties : the <strong>unique id</strong> of the tab ordering and the <strong>list of ordered drinks</strong>.</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Event/DrinksOrdered.php
+
+&lt;?php
+namespace CoffeeBar\Event ;
+
+use CoffeeBar\Entity\TabStory\OrderedItems;
+
+class DrinksOrdered
+{
+  protected $id ; // guid - id unique de la note
+  protected $items ; // CoffeeBar\Entity\TabStory\OrderedItems
+
+  // getters &amp;amp; setters
+}
+</code></pre>
+<p>Here is the <code>**CoffeeBar\Event\FoodOrdered**</code> event object, with two properties : the <strong>unique id</strong> of the tab ordering and the <strong>list of ordered food</strong>.</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Event/FoodOrdered.php
+
+&lt;?php
+namespace CoffeeBar\Event ;
+
+use CoffeeBar\Entity\TabStory\OrderedItems;
+
+class FoodOrdered
+{
+  protected $id ; // guid - id unique de la note
+  protected $items ; // CoffeeBar\Entity\TabStory\OrderedItems
+
+  // getters &amp;amp; setters
+}
+</code></pre>
+<p>Now, let's place all of those components within our <strong>TabAggregate</strong> service.</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Service/TabAggregate.php
+
+&lt;?php
+use CoffeeBar\Command\PlaceOrder;
+use CoffeeBar\Event\DrinksOrdered;
+use CoffeeBar\Event\FoodOrdered;
+use CoffeeBar\Exception\TabNotOpen;
+
+class TabAggregate
+{
+  // other methods
+  ...
+
+  public function attach(EventManagerInterface $events)
+  {
+    // if the 'placeOrder' event is triggered, the TabAggregate::onPlaceOrder() method is called
+    $this-&gt;listeners[] = $events-&gt;attach('placeOrder', array($this, 'onPlaceOrder')) ;
+  }
+ 
+  public function onPlaceOrder($events)
+  {
+    // CoffeeBar\Command\PlaceOrder
+    $placeOrder = $events-&gt;getParam('placeOrder') ;
+
+    // load the TabStory of the tab using its unique id
+    $story = $this-&gt;loadStory($placeOrder-&gt;getId()) ;
+
+    // checking if the tab is not opened yet, throw an exception
+    if(!$story-&gt;isTabOpened())
+    {
+      throw new TabNotOpen('Tab is not open yet') ; // CoffeeBar\Exception\TabNotOpen
+    // other wise, ordering drinks and food
+    } else {
+      $this-&gt;orderDrink($placeOrder) ; // triggers 'drinksOrdered'
+      $this-&gt;orderFood($placeOrder) ; // triggers 'foodOrdered'
+    }
+  }
+
+  protected function orderDrink(PlaceOrder $order)
+  {
+    // for each ordered items in the PlaceOrder object
+    // check if it is a drink or not
+    // $order-&gt;getItems() return an OrderedItems object
+    $drinks = $order-&gt;getItems()-&gt;getDrinkableItems() ;
+
+    // if there is drinks ordered, return a DrinksOrdered() object
+    // trigger a 'drinksOrdered' event
+    if(count($drinks) != 0)
+    {
+      $orderedDrinks = new DrinksOrdered() ;
+      $orderedDrinks-&gt;setId($order-&gt;getId()) ;
+      $orderedDrinks-&gt;setItems($drinks) ;
+
+      $this-&gt;events-&gt;trigger('drinksOrdered', $this, array('drinksOrdered' =&gt; $orderedDrinks)) ;
+    }
+  }
+ 
+  // same logic for food
+  protected function orderFood(PlaceOrder $order)
+  {
+    $foods = $order-&gt;getItems()-&gt;getEatableItems() ;
+
+    if(count($foods) != 0)
+    {
+      $orderedFoods = new FoodOrdered() ;
+      $orderedFoods-&gt;setId($order-&gt;getId()) ;
+      $orderedFoods-&gt;setItems($foods) ;
+
+      $this-&gt;events-&gt;trigger('foodOrdered', $this, array('foodOrdered' =&gt; $orderedFoods)) ;
+    }
+  }
+}
+</code></pre>
+<p>The exception, easy :</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Exception/TabNotOpen.php
+
+namespace CoffeeBar\Exception ;
+
+use Exception;
+
+class TabNotOpen extends Exception {}
+</code></pre>
+<p>In the next chapter, we will build the form and place our order.</p>
+<p><em>You'll find the full application in my <a href="https://github.com/haclong/coffeebar" target="_blank">github</a></em></p>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/en/tags/zend-framework-2">zend framework 2</a></li><li><a href="/en/tags/programmation-evenementielle">programmation événementielle</a></li><li><a href="/en/tags/event-manager">Event Manager</a></li><li><a href="/en/tags/events">events</a></li></ul>
+        </div>
+      
+
+      
+        <nav id="book-navigation">
+    
+       <li class="link-previous"><a href="/en/posts/coffeebar-application-819-displaying-active-tabs.html"><i class="fas fa-long-arrow-alt-left"></i> CoffeeBar Application 8/19 - Displaying active tabs</li>
+    
+
+    
+        <li class="link-next"><a href="/en/posts/coffeebar-application-1019-building-form-place-order.html">CoffeeBar Application 10/19 - Building a form to place the order <i class="fas fa-long-arrow-alt-right"></i></a></li>
+    
+
+    
+        <li class="link-up"><a href="/en/books/manage-coffeebar-event-driven-programming.html"><i class="fas fa-book-open"></i> Manage a coffeebar with event driven programming</li>
+    
+</nav>
+
+      
+    
+
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>About me</h3>
+      <p>I learned coding with php several years ago, when Internet was still young. For multiple reasons, i had stopped then and missed most of this new Internet i&#39;m discovering once again. So, i feel like a newbie again and since i&#39;m ready to start over personal project, i&#39;ll share with you some of my discoveries. Beyond coding topics, i&#39;ll enjoy sharing with you several subjects such as History, Astronomy, Linguistics, Movies, Books, Music and Anime among others. I hope you&#39;ll enjoy reading this blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. All rights reserved.</p>
+        <p>Powered by <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

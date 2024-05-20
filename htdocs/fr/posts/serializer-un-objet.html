@@ -1,0 +1,352 @@
+<!doctype html>
+<html class="no-js" lang="fr" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>Sérializer un objet&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">Français</a>
+        <a href="/en/">Anglais</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/fr/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/fr/books/0/index.html">Séries</a>
+        <a href="/fr/">Accueil</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/fr/">Accueil</a><i class="fas fa-angle-right"></i>Sérializer un objet
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>Sérializer un objet</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>03/10/2016 15:52:00
+        
+        <i class="fas fa-th-large"></i><!--a href="/fr/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/search_engine_friendly.jpg" class="node-banner" />
+        
+      </div>
+
+      <p><p>En français, on dit linéariser... Voyons comment on peut stocker un objet.</p>
+<p>En développant avec des objets, il peut nous arriver de vouloir stocker des objets entiers soit temporairement (dans un cache user ou bien en session) ou de manière persistante (en base de données).</p>
+<p>On souhaite pouvoir faire quelque chose comme ça :</p>
+<pre><code class="language-php">$panier = new Panier() ;
+$_SESSION['panier'] = $panier ;
+</code></pre>
+<p>Et hop, une fois notre objet <code>$panier</code> dans la SESSION, on souhaite pouvoir l'utiliser en faisant :</p>
+<pre><code class="language-php">$panier = $_SESSION['panier'] ;
+var_dump($panier-&gt;produits) ;
+</code></pre>
+<p>Afin de stocker proprement l'objet <code>$panier</code> dans la SESSION, (ou le cache user ou la base de données), il faut le <strong>linéariser</strong>.</p>
+<pre><code class="language-php">$panier = new Panier() ;
+$_SESSION['panier'] = serialize($panier) ;
+</code></pre>
+<p>et pour le récupérer</p>
+<pre><code class="language-php">$panier = unserialize($_SESSION['panier']) ;
+var_dump($panier-&gt;produits) ;
+</code></pre>
+<p>Linéariser un objet, c'est - comme le dit si bien la doc - <a href="http://php.net/manual/fr/language.oop5.serialization.php" target="_blank">générer une représentation stockable d'une valeur</a>. C'est une empreinte toute plate, linéaire, de l'objet, débarrassé de ses méthodes, représenté uniquement par ces données. Pour récupérer les méthodes, il faut penser à faire l'<code>include</code> de l'objet (ou utiliser un <code>autoload</code>) pour que PHP sache que votre objet est une instance de cette classe et que cette classe contient ces méthodes...</p>
+<p>La doc dit également que la fonction <code>session_register()</code> fait la linéarisation / délinéarisation automatiquement. Mais comme la fonction tend à être obsolète, je recommande de prendre les bonnes habitudes d'office. Il faut savoir que les frameworks avec des objets <code>Session()</code> prévoient sûrement de faire cette opération de linéarisation et délinéarisation automatiquement.</p>
+<h2>Linéariser un objet</h2>
+<p>Pour linéariser / délinéariser un objet, nous avons à notre disposition les fonctions</p>
+<pre><code class="language-php">$serialized_object = serialize($myObject) ;
+$deserialized_object = unserialize($serialized_object) ;
+</code></pre>
+<p>Lorsqu'on utilise <a href="http://php.net/manual/fr/function.serialize.php" target="_blank"><code>serialize()</code></a>, grosso modo, PHP va regarder l'objet, récupérer toutes les propriétés et construire une chaîne de caractères avec.</p>
+<p>Si vous voulez changer cette logique - parce que vos données ont besoin d'un traitement avant d'être stockées, parce que votre objet est trop gros et que vous ne souhaitez pas tout conserver - vous pouvez utiliser la fonction magique <a href="http://php.net/manual/fr/language.oop5.magic.php#object.sleep" target="_blank"><code>__sleep()</code></a>.</p>
+<p>Dans ces cas là, lorsque vous utilisez <code>serialize()</code>, PHP va regarder les instructions que vous avez laissé dans <code>__sleep()</code> et il utilisera ces instructions pour linéariser votre objet.</p>
+<pre><code class="language-php">class Panier
+{
+  protected $datetime ;
+  protected $strippedDate ;
+  protected $products ;
+  protected $total ;
+  protected $id ;
+  public function __construct()
+  {
+    $this-&gt;id = uniqid() ;
+    // la propriété datetime est un objet Datetime.
+    // on pourrait linéariser l'objet DateTime intégralement
+    // mais on pourrait aussi ne garder que la date
+    // parce qu'on n'a pas envie de garder les autres propriétés de l'objet DateTime
+    $this-&gt;datetime = new DateTime() ;
+    $this-&gt;products = array() ;
+  }
+
+  public function addProductToCart($product)
+  {
+    $item['designation'] = $product-&gt;getName() ;
+    $item['quantite'] = $product-&gt;getNumber() ;
+    $item['price'] = $product-&gt;getPrice() ;
+    $this-&gt;products[] = $item ;
+  }
+
+  // la propriété $total est calculée
+  // on n'est donc pas obligée de la gardée stockée au moment de la linéarisation
+  protected function setTotal()
+  {
+    $this-&gt;total = 0 ;
+    foreach($this-&gt;products as $product)
+    {
+      $this-&gt;total += $product['quantite'] * $product['price'] ;
+    }
+    return $this-&gt;total ;
+  }
+
+  // on simplifie la propriété DateTime
+  // on ne conserve pas le total
+  public function __sleep()
+  {
+    $this-&gt;strippedDate = $this-&gt;datetime-&gt;format('Y-m-d H:i:s') ;
+    return ['id', 'strippedDate', 'products'] ;
+  }
+
+  // au moment de délinéariser, on rétablit $datetime et $total
+  public function __wakeup()
+  {
+    $this-&gt;datetime = new DateTime($this-&gt;strippedDate) ;
+    $this-&gt;setTotal() ;
+  }
+}
+</code></pre>
+<p>Notons bien que la fonction <code>__sleep()</code> retourne <strong>TOUJOURS</strong> un tableau avec le nom des propriétés qu'on souhaite linéariser.</p>
+<p>Si vous obtenez l'erreur <em><strong>__sleep should return an array only containing the names of instance-variables to serialize</strong></em>, c'est que vous avez probablement écrit un truc dans le genre :</p>
+<pre><code class="language-php">// retourne une erreur __sleep should return an array only containing 
+// the names of the instance-variables to serialize
+public function __sleep()
+{
+  return [$this-&gt;strippedDate, $this-&gt;products] ;
+}
+
+// ce qu'il faut faire
+public function __sleep()
+{
+  return ['strippedDate', 'products'] ;
+}
+</code></pre>
+<p>Il y a une interface assez récente qui peut faire la même chose: <a href="http://php.net/manual/fr/class.serializable.php" target="_blank"><code>Serializable</code></a>. Par contre, soit vous utilisez les fonctions magiques <code>__sleep()</code> et <code>__wakeup()</code>, soit l'interface. Les deux jeux de fonctions ne sont pas compatibles.</p>
+<p>Si vous choisissez de choisir l'interface, voici notre objet <code>Panier</code></p>
+<pre><code class="language-php">class Panier implements Serializable
+{
+  protected $datetime ;
+  protected $strippedDate ;
+  protected $products ;
+  protected $total ;
+  protected $id ;
+
+  public function __construct()
+  {
+    $this-&gt;id = uniqid() ;
+    // la propriété datetime est un objet Datetime.
+    // on pourrait linéariser l'objet DateTime intégralement
+    // mais on pourrait aussi ne garder que la date
+    // parce qu'on n'a pas envie de garder les autres propriétés de l'objet DateTime
+    $this-&gt;datetime = new DateTime() ;
+    $this-&gt;products = array() ;
+  }
+
+  public function addProductToCart($product)
+  {
+    $item['designation'] = $product-&gt;getName() ;
+    $item['quantite'] = $product-&gt;getNumber() ;
+    $item['price'] = $product-&gt;getPrice() ;
+    $this-&gt;products[] = $item ;
+  }
+
+  // la propriété $total est calculée
+  // on n'est donc pas obligée de la gardée stockée au moment de la linéarisation
+  protected function setTotal()
+  {
+    $this-&gt;total = 0 ;
+    foreach($this-&gt;products as $product)
+    {
+      $this-&gt;total += $product['quantite'] * $product['price'] ;
+    }
+    return $this-&gt;total ;
+  }
+
+  // on simplifie la propriété DateTime
+  // on ne conserve pas le total
+  public function serialize()
+  {
+    $this-&gt;strippedDate = $this-&gt;datetime-&gt;format('Y-m-d H:i:s') ;
+    return serialize([$this-&gt;id, $this-&gt;strippedDate, $this-&gt;products]) ;
+  }
+
+  // au moment de délinéariser, on rétablit $datetime et $total
+  public function unserialize($data)
+  {
+    list($this-&gt;id, $this-&gt;strippedDate, $this-&gt;products) = unserialize($data) ;
+  }
+}
+</code></pre>
+<p>Nos deux classes <code>Panier</code> feront EXACTEMENT la même chose. Deux façons de le faire, c'est tout.</p>
+<p>ATTENTION !! contrairement à <code>__sleep()</code>, la méthode <code>serialize()</code> de l'interface <code>Serializable</code> n'utilise pas les mêmes informations.</p>
+<pre><code class="language-php">// voici ce qu'il faut faire dans __sleep() 
+public function __sleep()
+{
+  return ['strippedDate', 'products'] ;
+}
+
+// voici la même chose quand c'est une interface Serializable
+public function serialize()
+{
+  return serialize([$this-&gt;strippedDate, $this-&gt;products]) ;
+}
+</code></pre>
+<h2>Ce qu'on ne peut pas linéariser.</h2>
+<p>Bon, on peut linéariser nos objets. Pratiquement TOUS.</p>
+<p>On peut filtrer ce qu'on veut linéariser.</p>
+<p>Mais il y a QUAND MÊME des choses que PHP, tout almighty qu'il est, ne peut pas faire : <strong>linéariser des ressources</strong>.</p>
+<p><em>Ah, mais qu'est ce que cela, des ressources ?</em></p>
+<p>Vous en avez sûrement croisés dans la doc de PHP. Typiquement, quand vous utilisez une connexion à une base de données, ce qui est retourné à ce moment là, c'est une ressource. Un truc qui fait que ça marche. Et quand c'est une ressource, on ne peut pas linéariser.</p>
+<p>Et là, j'ai un problème.</p>
+<p>J'ai écrit une belle classe. Dans ma classe, une méthode qui renvoie un événement chaque fois que la méthode est appelée. Voici ce que donne le résumé de ma classe :</p>
+<pre><code class="language-php">class Box implements Serializable
+{
+  protected $eventManager ;
+  protected $openEvent ;
+  protected $content ;
+  protected $id ;
+
+  // en vertu des principes d'injection de dépendances,
+  // j'injecte dans le constructeur le gestionnaire d'événement et l'événement
+  public function __construct($eventManager, $openEvent)
+  {
+    $this-&gt;openEvent = $openEvent ;
+    $this-&gt;eventManager = $eventManager ;
+  }
+
+  public function openMe()
+  {
+    $this-&gt;openEvent-&gt;setBoxContent() ;
+    $this-&gt;eventManager-&gt;trigger('open.box', $this-&gt;openEvent) ;
+  }
+
+  public function serialize()
+  {
+    return serialize([$this-&gt;content, $this-&gt;id]) ;
+  }
+
+  public function unserialize($data)
+  {
+    list($this-&gt;content, $this-&gt;id) = unserialize($data) ;
+  }
+}
+</code></pre>
+<p>Si vous faites un contrôle sur votre objet et que vous faites :</p>
+<pre><code class="language-php">var_dump($maBoite)
+</code></pre>
+<p>vous verrez que les propriétés <code>$eventManager</code> et <code>$openEvent</code> sont bien remplies.</p>
+<p>Si vous linéarisez votre objet et puis délinéariser, vous vous apercevrez que les propriétés <code>$eventManager</code> et <code>$openEvent</code> sont <code>null</code> désormais.
+-&gt; vous ne pouvez pas linéariser la propriété <code>$eventManager</code> parce que c'est un lien vers une ressource
+-&gt; vous n'avez pas linéarisé <code>$openEvent</code></p>
+<p>Comme ce sont des dépendances, vous ne pouvez pas les reconstruire dans la méthode <code>unserialize()</code>.</p>
+<p>Coincé.</p>
+<p>Ce que j'ai réussi à glaner et qui maintenant paraît tellement évident que je ne comprends pas pourquoi j'ai pu me fourvoyer à ce point : un objet de type Model ou Entity de votre application, qui correspond à une vraie donnée (la voiture quoi), ne <em>doit contenir QUE des propriétés</em> et éventuellement quelques méthodes pour assigner / retourner les propriétés, contrôler l'intégrité des données, les filtrer etc... c'est tout. Aucune autre forme d'interaction.</p>
+<p>Si vous devez interagir avec votre objet, il faut utiliser un objet qui ne fera que ça : <em>intervenir sur l'objet</em>. Ce sera donc cet objet qui va porter les dépendances.</p>
+<p>Le développement objet est sans pitié. J'ai voulu faire ma radine, faire vite et crade et non... pas vite. pas crade. Enfin, peut être que si, un peu :p</p>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/fr/tags/php">PHP</a></li><li><a href="/fr/tags/oop">OOP</a></li></ul>
+        </div>
+      
+
+      
+    
+
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>Sur moi</h3>
+      <p>J&#39;ai appris le php il y a quelques années, quand Internet était à ses débuts. Pour diverses raisons, j&#39;ai arrêté en route et j&#39;ai perdu le fil des nouveaux Internets que je redécouvre. Résultat, je me sens constamment à courir après l&#39;histoire mais je suis toujours motivée à reprendre des projets personnels. Je me propose de vous partager mes découvertes. Au delà des sujets de programmation, j&#39;aime également partager mes infos concernant notamment l&#39;Histoire, l&#39;Astronomie, la Linguistique, les Films, les Livres et les Anime. J&#39;espère que vous aimerez suivre mon blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. Tous droits réservés.</p>
+        <p>Propulsé par <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

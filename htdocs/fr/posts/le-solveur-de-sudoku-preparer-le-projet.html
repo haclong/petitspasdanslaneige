@@ -1,0 +1,373 @@
+<!doctype html>
+<html class="no-js" lang="fr" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>Le solveur de sudoku - Préparer le projet&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">Français</a>
+        <a href="/en/">Anglais</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/fr/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/fr/books/0/index.html">Séries</a>
+        <a href="/fr/">Accueil</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/fr/">Accueil</a><i class="fas fa-angle-right"></i>Le solveur de sudoku - Préparer le projet
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>Le solveur de sudoku - Préparer le projet</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>09/03/2014 16:45:00
+        
+        <i class="fas fa-th-large"></i><!--a href="/fr/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/Sudoku_Board_Game.jpg" class="node-banner" />
+        
+      </div>
+
+      <p><h3>L'objectif</h3>
+<p>Quand vous commencez un projet de développement, vous avez nécessairement un objectif. Voici le nôtre :</p>
+<ul>
+<li>pouvoir initialiser une grille de sudoku en déclarant les numéros d'une grille existante (notre projet n'a pas l'ambition de générer une grille de sudoku au hasard)</li>
+<li>le moteur doit pouvoir résoudre la grille initialisée, quelque soit le niveau de la grille présentée.</li>
+</ul>
+<h3>Les fonctionnalités</h3>
+<p>Avant de se lancer à corps perdu dans le développement, il nous faut des fonctionnalités. Il n'est pas faux de dire qu'aucun développement n'a d'utilité si il n'y a pas de fonctionnalités définies pour orienter le développement.</p>
+<p>Les fonctionnalités de notre projet :</p>
+<ul>
+<li>on doit pouvoir initialiser une grille avant de lancer notre solveur</li>
+<li>en lançant le solveur, la grille doit être résolue</li>
+<li>on doit pouvoir recommencer une nouvelle grille quand on le souhaite</li>
+</ul>
+<p>La résolution de la grille se fait selon les règles du sudoku que tout le monde connait :</p>
+<ul>
+<li>une grille de sudoku est composée d'autant de lignes que de colonnes que de régions.</li>
+<li>chaque ligne a autant de cases qu'une colonne a de cases et autant qu'une région a de cases</li>
+<li>chaque case comporte un chiffre</li>
+<li>sur chacune des lignes de la grille, aucun chiffre ne peut apparaître deux fois</li>
+<li>sur chacune des colonnes de la grille, aucun chiffre ne peut apparaître deux fois</li>
+<li>dans chacune des régions de la grille, aucun chiffre ne peut apparaître deux fois</li>
+</ul>
+<h3>Initialiser le projet</h3>
+<p>Maintenant qu'on a notre objectif bien en vue et les fonctionnalités définies, on va commencer à installer notre projet</p>
+<ol>
+<li>Récupérer le <a href="https://github.com/zendframework/ZendSkeletonApplication" target="_blank"><strong>ZendSkelettonApplication</strong></a> et l'installer dans l'environnement de développement. Si vous n'avez pas encore la librairie Zend Framework 2, installez la avec <a href="http://framework.zend.com/manual/2.2/en/user-guide/skeleton-application.html" target="_blank"><strong>Composer</strong></a>.</li>
+<li>Renommer le répertoire <code>ZendSkeletonApplication-master/</code> en <code>SudokuSolver/</code></li>
+<li>Il faut maintenant configurer Apache et le virtual host</li>
+<li>Editer le fichier de configuration d'Apache 2</li>
+</ol>
+<pre><code class="language-sh"> gedit /etc/apache2/sites-available/default&lt;/pre&gt;
+</code></pre>
+<ol start="5">
+<li>Ajoutez le virtual host suivant :</li>
+</ol>
+<pre><code class="language-sh">  Alias /SudokuSolver/ {chemin_de_votre_serveur_web}/SudokuSolver/public/
+ 
+  &lt;Directory {chemin_de_votre_serveur_web}/SudokuSolver/public/ &gt;
+    Options Indexes MultiViews FollowSymLinks
+    AllowOverride All
+    Order allow,deny
+    Allow from all
+  &lt;/Directory&gt;
+</code></pre>
+<ol start="6">
+<li>Redémarrez Apache</li>
+</ol>
+<pre><code class="language-sh"> sudo /etc/init.d/apache2 restart
+</code></pre>
+<blockquote>
+<p><em>Où est votre serveur web ?</em></p>
+<p><em>Sur une installation ubuntu, votre serveur web est dans le répertoire /var/www par défaut.</em></p>
+<p><em>Sur une installation WAMP, voir le distributeur de votre installation qui vous aura très certainement donné l'indication où se situait le répertoire www/</em></p>
+<p><em>Si vous avez modifié la configuration de apache, votre serveur web se situe là où vous avez l'intention de mettre vos fichiers web</em></p>
+<p><em>De manière générale, le serveur web = l'adresse <a href="http://localhost">http://localhost</a> sur votre navigateur.</em></p>
+</blockquote>
+<h3>Installer le projet sur netbeans</h3>
+<ol>
+<li>Créer un nouveau projet PHP - <em>PHP Application with Existing Source</em></li>
+<li>Passez à l'écran suivant</li>
+<li>Sources Folder : trouvez votre répertoire <code>SudokuSolver/</code></li>
+<li>Project Name : donnez lui un nom - <em>Sudoku Solver</em></li>
+<li>PHP Version : <em>PHP 5.3</em></li>
+<li>Default Encoding : <em>UTF-8</em></li>
+<li>Passez à l'écran suivant</li>
+<li>Run as : <em>Local Web Site (running on local web server)</em></li>
+<li>Project URL : <code>http://localhost/SudokuSolver</code></li>
+<li>Index File : <code>index.php</code></li>
+<li>Cliquer sur Finish</li>
+</ol>
+<h3>Préparez l'environnement de tests unitaires</h3>
+<p>Le tutoriel de Zend Framework explique comment créer un module. Dans le cadre de notre solveur de Sudoku, nous n'avons pas besoin d'ajouter un module dédié. Nous allons donc travailler directement dans le module <strong>Application</strong> initial du skeleton.</p>
+<p>Dans Netbeans, ouvrez votre projet avec la vue <strong>Files</strong>.</p>
+<ol>
+<li>Créer un répertoire <code>module/Application/test/</code></li>
+<li>Créer le répertoire <code>module/Application/test/ApplicationTest/</code></li>
+<li>Créer le fichier <code>module/Application/test/Bootstrap.php</code></li>
+</ol>
+<pre><code class="language-php">&lt;?php
+namespace ApplicationTest;
+
+use Zend\Loader\AutoloaderFactory ;
+use Zend\Mvc\Service\ServiceManagerConfig ;
+use Zend\ServiceManager\ServiceManager ;
+use RuntimeException ;
+
+error_reporting(E_ALL | E_STRICT) ;
+chdir(__DIR__) ;
+
+/**
+* Test bootstrap, for setting up autoloading
+*/
+class Bootstrap
+{
+  protected static $serviceManager ;
+ 
+  public static function init()
+  {
+    $zf2ModulePaths = array(dirname(dirname(__DIR__))) ;
+    if(($path = static::findParentPath('vendor'))) {
+      $zf2ModulePaths[] = $path ;
+    }
+    if(($path = static::findParentPath('module')) !== $zf2ModulePaths[0]) {
+      $zf2ModulePaths[] = $path ;
+    }
+ 
+    static::initAutoloader() ;
+ 
+    // use ModuleManager to load this module and it's dependencies
+    $config = array(
+      'module_listener_options' =&gt; array(
+        'module_paths' =&gt; $zf2ModulePaths,
+      ),
+      'modules' =&gt; array(
+        'SudokuSolver'
+      )
+    ) ;
+ 
+    $serviceManager = new ServiceManager(new ServiceManagerConfig()) ;
+    $serviceManager-&gt;setService('ApplicationConfig', $config) ;
+    $serviceManager-&gt;get('ModuleManager')-&gt;loadModules() ;
+    static::$serviceManager = $serviceManager ;
+  }
+ 
+  public static function chroot()
+  {
+    $rootPath = dirname(static::findParentPath('module')) ;
+    chdir($rootPath) ;
+  }
+ 
+  public static function getServiceManager()
+  {
+    return static::$serviceManager ;
+  }
+ 
+  protected static function initAutoloader()
+  {
+    $vendorPath = static::findParentPath('vendor') ;
+ 
+    $zf2Path = getenv('ZF2_PATH') ;
+    if (!$zf2Path) {
+      if (defined('ZF2_PATH')) {
+        $zf2Path = ZF2_PATH ;
+      } elseif (is_dir($vendorPath . '/ZF2/library')) {
+        $zf2Path = $vendorPath . '/ZF2/library' ;
+      } elseif (is_dir($vendorPath . '/zendframework/zendframework/library')) {
+        $zf2Path = $vendorPath . '/zendframework/zendframework/library' ;
+      }
+    }
+ 
+    if (!$zf2Path) {
+      throw new RuntimeException(
+        'Unable to load ZF2. Run `php composer.phar install` or'
+        . ' define a ZF2_PATH environment variable.'
+      ) ;
+    }
+ 
+    if (file_exists($vendorPath . '/autoload.php')) {
+      include $vendorPath . '/autoload.php' ;
+    }
+ 
+    include $zf2Path . '/Zend/Loader/AutoloaderFactory.php' ;
+    AutoloaderFactory::factory(array(
+      'Zend\Loader\StandardAutoloader' =&gt; array(
+        'autoregister_zf' =&gt; true,
+        'namespaces' =&gt; array(
+          __NAMESPACE__ =&gt; __DIR__ . '/' . __NAMESPACE__,
+        ),
+      ),
+    )) ;
+  }
+ 
+  protected static function findParentPath($path)
+  {
+    $dir = __DIR__ ;
+    $previousDir = '.' ;
+    while (!is_dir($dir . '/' . $path)) {
+      $dir = dirname($dir) ;
+      if ($previousDir === $dir) return false ;
+      $previousDir = $dir ;
+    }
+ 
+    return $dir . '/' . $path ;
+  }
+}
+
+Bootstrap::init() ;
+Bootstrap::chroot() ;
+?&gt;
+</code></pre>
+<p>ATTENTION ! On trouve différentes versions du fichier <code>Bootstrap.php</code> sur le net. Dans les grosses lignes, le principe reste le même.</p>
+<ol start="4">
+<li>Créer le fichier <code>module/Application/test/phpunit.xml</code></li>
+</ol>
+<pre><code class="language-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+
+&lt;phpunit bootstrap=&quot;Bootstrap.php&quot; colors=&quot;true&quot;&gt;
+  &lt;testsuites&gt;
+    &lt;testsuite name=&quot;zf2tutorial&quot;&gt;
+    &lt;directory&gt;./ApplicationTest&lt;/directory&gt;
+  &lt;/testsuite&gt; 
+  &lt;/testsuites&gt;
+&lt;/phpunit&gt;
+</code></pre>
+<ol start="5">
+<li>Revenez sur la vue Projects</li>
+<li>Clic droit sur le projet &gt; Propriétés</li>
+</ol>
+<pre><code>- Sources &gt; Project Folder : {chemin_de_votre_serveur_web}/SudokuSolver
+- Sources &gt; Source Folder : {chemin_de_votre_serveur_web}/SudokuSolver
+- Sources &gt; Test Folder : {chemin_de_votre_serveur_web}/SudokuSolver/module/Application/test
+- Sources &gt; Web Root : public
+- Sources &gt; Copy files from Sources Folder to another location : N
+- Sources &gt; Encoding : UTF-8
+- Sources &gt; PHP Version : PHP 5.3
+- Sources &gt; Allow short tags : N
+- Sources &gt; Allow ASP tags : N
+- PHPUnit &gt; Use Bootstrap : Y
+- PHPUnit &gt; Bootstrap : {chemin_de_votre_serveur_web}/SudokuSolver/module/Application/test/Bootstrap.php
+- PHPUnit &gt; Use Bootstrap for Creating New Unit Tests : N
+- PHPUnit &gt; Use XML Configuration : Y
+- PHPUnit &gt; XML Configuration : {chemin_de_votre_serveur_web}/SudokuSolver/module/Application/test/phpunit.xml
+- PHPUnit &gt; Use Custom Test Suite : N
+- PHPUnit &gt; Run All *Test Files Using PHPUnit : N
+</code></pre>
+<p>Le projet est enfin créé. Nous pouvons désormais concevoir notre solveur, ce qui reste quand même le but ultime de notre développement.</p>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/fr/tags/netbeans">Netbeans</a></li><li><a href="/fr/tags/poo">POO</a></li><li><a href="/fr/tags/zend-framework">Zend Framework</a></li></ul>
+        </div>
+      
+
+      
+        <nav id="book-navigation">
+    
+
+    
+        <li class="link-next"><a href="/fr/posts/le-solveur-de-sudoku-concevoir-les-objets.html">Le solveur de sudoku - Concevoir les objets <i class="fas fa-long-arrow-alt-right"></i></a></li>
+    
+
+    
+        <li class="link-up"><a href="/fr/books/aborder-la-programmation-orientee-objet-par-lexemple-concevoir-un-solveur-de-sudoku.html"><i class="fas fa-book-open"></i> Aborder la programmation orientée objet par l&#39;exemple. Concevoir un solveur de sudoku</li>
+    
+</nav>
+
+      
+    
+
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>Sur moi</h3>
+      <p>J&#39;ai appris le php il y a quelques années, quand Internet était à ses débuts. Pour diverses raisons, j&#39;ai arrêté en route et j&#39;ai perdu le fil des nouveaux Internets que je redécouvre. Résultat, je me sens constamment à courir après l&#39;histoire mais je suis toujours motivée à reprendre des projets personnels. Je me propose de vous partager mes découvertes. Au delà des sujets de programmation, j&#39;aime également partager mes infos concernant notamment l&#39;Histoire, l&#39;Astronomie, la Linguistique, les Films, les Livres et les Anime. J&#39;espère que vous aimerez suivre mon blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. Tous droits réservés.</p>
+        <p>Propulsé par <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

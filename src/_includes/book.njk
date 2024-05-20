@@ -1,0 +1,57 @@
+{% extends "main.njk" %}
+
+{% block content %}
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/{{ locale }}/">{{ nav.home }}</a><i class="fas fa-angle-right"></i>{{ title | safe }}
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>{{ title | safe }}</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>{{ author }}
+        <i class="fas fa-calendar"></i>{{ page.date.toLocaleString(locale) }}
+        {% if sites | length > 0 %}
+        <i class="fas fa-th-large"></i>
+          {%- for site in sites -%}
+            <!--a href="/{{ locale }}/sites/{{site | slugify}}.html" class="tag-sites"-->{{ site }}<!--/a-->{{ ", " if site != sites|last }}
+          {%- endfor -%}
+        {% endif %}
+      </div>
+
+      <div class="node-banner">
+        <img src="{{ media.path }}" class="node-banner" />
+        {% if media.credit|length > 0 %}
+          <p><strong>{{ credit_label }}</strong> : {{ media.credit }} </p>
+        {% elif credit|length > 0 %}
+          <p><strong>{{ credit_label }}</strong> : {{ credit }} </p>
+        {% endif %}
+      </div>
+
+      <p>{{ content | safe }}</p>
+
+      <ul>
+        {% for book in slug | getGlobalData %}
+           <li><a href="{{book.url}}">{{book.title}}</a></li>
+        {% endfor %}
+      </ul>
+
+      {% if tags|length > 0 %}
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul>
+          {%- for tag in tags -%}
+            <li><a href="/{{ locale }}/tags/{{ tag | slugify }}">{{ tag }}</a></li>
+          {%- endfor -%}
+          </ul>
+        </div>
+      {% endif %}
+
+      {% include "blocks/booknavigation.njk" %}
+    
+    </article>
+
+{% endblock %}

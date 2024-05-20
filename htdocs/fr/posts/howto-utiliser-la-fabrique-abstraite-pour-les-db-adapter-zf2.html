@@ -1,0 +1,311 @@
+<!doctype html>
+<html class="no-js" lang="fr" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>HOWTO - Utiliser la fabrique abstraite pour les Db Adapter (ZF2)&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">Français</a>
+        <a href="/en/">Anglais</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/fr/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/fr/books/0/index.html">Séries</a>
+        <a href="/fr/">Accueil</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/fr/">Accueil</a><i class="fas fa-angle-right"></i>HOWTO - Utiliser la fabrique abstraite pour les Db Adapter (ZF2)
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>HOWTO - Utiliser la fabrique abstraite pour les Db Adapter (ZF2)</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>28/07/2015 06:37:00
+        
+        <i class="fas fa-th-large"></i><!--a href="/fr/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->, <!--a href="/fr/sites/haclong-projects.html" class="tag-sites"-->Haclong projects<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/musictechnique.jpg" class="node-banner" />
+        
+      </div>
+
+      <p><p>Un tout petit tuto sur le paramétrage de votre <strong>Db Adapter</strong>.</p>
+<p>(le <strong>Db Adapter</strong>, c'est l'objet qui va vous service à vous connecter sur votre base de données).</p>
+<h2>Ce que vous avez</h2>
+<ul>
+<li>Vous avez une installation du <strong>Zend Framework Application Skeleton</strong> (version Zend Framework 2)</li>
+<li>Vous utilisez une base de données (au moins une)</li>
+</ul>
+<h2>Les basiques</h2>
+<p>D'après cette <a href="http://framework.zend.com/manual/current/en/user-guide/database-and-models.html" target="_blank">page de la documentation officielle de ZF2</a>, vous savez comment on paramètre les accès à la base de données.</p>
+<pre><code class="language-php">// /config/autoload/local.php
+return array(
+  'db' =&gt; array(
+    'driver' =&gt; 'Pdo',
+    'dsn' =&gt; 'mysql:dbname=zf2tutorial;host=localhost',
+    'username'       =&gt; 'YOUR USERNAME HERE',
+    'password'       =&gt; 'YOUR PASSWORD HERE',
+    'driver_options' =&gt; array(
+      PDO::MYSQL_ATTR_INIT_COMMAND =&gt; 'SET NAMES \'UTF8\''
+    ),
+  ),
+);
+</code></pre>
+<p>Je sais, le tutoriel dit que les données sont dans le fichier <code>/config/autoload/global.php</code> mais si vous préférez les mettre dans le fichier <code>/config/autoload/local.php</code>, c'est également correct. En fait, tout ça, c'est une question de sécurité. Vous le savez bien maintenant.</p>
+<p>Oh, à propos de la clé '<em>db</em>'. Celle ci est, en quelque sorte, obligatoire. Vous pouvez utilisez une autre clé si vous préférez (ou si vous n'avez pas le choix) mais alors, il faudra alors dire à votre adapter où vous avez paramétré les données d'autentification à la base de données.</p>
+<p>Une fois que vous avez paramétré les données de la base de données, on va ajouter le <strong>Db adapter</strong> à notre <strong>Gestionnaire de services</strong> comme ça, vous pourrez l'appeler plus tard.</p>
+<pre><code class="language-php">// /config/autoload/global.php
+return array(
+  'service_manager' =&gt; array(
+    'factories' =&gt; array(
+      'Zend\Db\Adapter\Adapter' =&gt; 'Zend\Db\Adapter\AdapterServiceFactory',
+    ),
+  ),
+);
+</code></pre>
+<p><code>/config/autoload/global.php</code> est un fichier un peu mieux adapté à ces infos puisqu'il n'y a rien de confidentiel dedans. Cependant, la plupart du temps, j'ai plutôt tendance à ajouter ce code dans le même fichier où j'ai déclaré les informations de connexion de la base de données. It's up to you. En fait, vous pouvez mettre ça où vous voulez.</p>
+<p>Quand vous souhaitez accéder à votre <strong>Db Adapter</strong> (parce que vous avez un objet qui a besoin de se connecter à la base de données), vous avez juste à faire :</p>
+<pre><code class="language-php">$serviceManager-&gt;get('Zend\Db\Adapter\Adapter') ;
+</code></pre>
+<h4>Ce qu'il y a à savoir :</h4>
+<p><code>$serviceManager</code>, c'est n'importe quelle méthodes, fonctions, objets ou n'importe quoi qui retourne le <strong>Gestionnaire de service</strong> de votre application.</p>
+<p>On peut trouver le gestionnaire de service dans sa config même :</p>
+<pre><code class="language-php">Module::getServiceConfig()
+{
+  return array(
+    'factories' =&gt; array(
+      'services' =&gt; function($sm) {
+        // $sm : le voilà
+      }
+    ) ;
+  );
+}
+</code></pre>
+<p>ou dans l'objet <strong>MvcEvent</strong> :</p>
+<pre><code class="language-php">MvcEvent-&gt;getApplication()-&gt;getServiceManager()
+</code></pre>
+<p>ou dans le <strong>Controller</strong> :</p>
+<pre><code class="language-php">AbstractActionController-&gt;getServiceLocator()
+</code></pre>
+<p>ou dans n'importe quelle fabrique de service:</p>
+<pre><code class="language-php">class anyCustomizedFactory implements FactoryInterface {
+  public function createService(ServiceLocatorInterface $sm)
+  {
+    // $sm : le voilà
+  }
+}
+</code></pre>
+<p>Il y a d'autres endroits où vous pourriez accéder au <strong>Gestionnaire de service</strong>. Consultez <a href="http://framework.zend.com/manual/current/en/modules/zend.service-manager.quick-start.html" target="_blank">la documentation</a>. Chercher surtout pour l'interface <code>ServiceLocatorAwareInterface</code> si vous souhaitez créer des objets qui accèdent directement au <strong>Gestionnaire de service</strong>.</p>
+<p>Une fois que vous accédez au <strong>Gestionnaire de service</strong>, vous pouvez récupérer les services que vous avez créé, comme par exemple votre <strong>Db Adapter</strong>.</p>
+<p>Le nom du service (ici <code>Zend\Db\Adapter\Adapter</code>) est juste une chaîne de caractère. Vous pouvez donc l'appelez comme vous voulez.</p>
+<p>Donc, d'après les basiques :</p>
+<ul>
+<li>vous utilisez un premier tableau (de configuration) avec la clé <em>db</em> pour déclarer les informations de connexion à votre base de données</li>
+<li>puis vous créez un adapter déclaré dans le <strong>Gestionnaire de service</strong>.</li>
+</ul>
+<h2>Utiliser la fabrique abstraite</h2>
+<p><strong>ZF2 framework</strong> possède des fabriques abstraites. L'une d'elle permet de créer vos Db Adapter automatiquement, du moment qu'on conserve la structure et les clés attendues. Voici comment faire ça :</p>
+<p>Retournous dans le fichier <code>/config/autoload/local.php</code> (celui avec les informations de connexion)</p>
+<pre><code class="language-php">// /config/autoload/local.php
+return array(
+  'db' =&gt; array(
+    'adapters' =&gt; array(
+      'Zend\Db\Adapter\Adapter' =&gt; array(
+        'driver' =&gt; 'Pdo',
+        'dsn' =&gt; 'mysql:dbname=zf2tutorial;host=localhost',
+        'username'       =&gt; 'YOUR USERNAME HERE',
+        'password'       =&gt; 'YOUR PASSWORD HERE',
+        'driver_options' =&gt; array(
+          PDO::MYSQL_ATTR_INIT_COMMAND =&gt; 'SET NAMES \'UTF8\''
+        ),
+      ),
+    ),
+  ),
+);
+</code></pre>
+<p>Que venons nous de faire ?</p>
+<ul>
+<li>Au tableau '<em>db</em>', on lui a déclaré une clé '<em>adapters</em>'.</li>
+<li>la clé '<em>adapters</em>' est un tableau (<code>array</code>) (cela signifie également que vous pouvez en mettre plusieurs).</li>
+<li>Chaque <em>adapter</em> a un nom de service et, le plus important, les informations de connexion.</li>
+</ul>
+<p>Maintenant que nous avons fait ça, nous n'avons plus besoin de notre fabrique d'<code>adapter</code> que nous avons déclaré dans la clé '<em>service_manager</em>', n'est ce pas ?</p>
+<pre><code class="language-php">// /config/autoload/global.php
+&lt;strike&gt;return array(
+   'service_manager' =&gt; array(
+     'factories' =&gt; array(
+       'Zend\Db\Adapter\Adapter' =&gt; 'Zend\Db\Adapter\AdapterServiceFactory',
+     ),
+   ),
+);&lt;/strike&gt;
+</code></pre>
+<p>Voyons notre application.</p>
+<p>Bien sûr, vous avez une erreur. C'est parce que nous n'avons pas dit à l'application que nous allions utiliser une fabrique abstraite. Dans une application Zend Framework 2, il y a un endroit où toutes les fabriques abstraites sont déclarées (bon, en fait, dans le tableau de configuration, donc vous pouvez mettre ça où vous le souhaitez, mais il y a une endroit où on a déjà déclaré d'autres fabriques abstraites).</p>
+<pre><code class="language-php">// /module/Application/config/module.config.php
+
+return array(
+  ...
+  'service_manager' =&gt; array(
+    'abstract_factories' =&gt; array(
+      'Zend\Cache\Service\StorageCacheAbstractServiceFactory',
+      'Zend\Log\LoggerAbstractServiceFactory',
+
+      // rajouter la nouvelle fabrique abstraite
+      'Zend\Db\Adapter\AdapterAbstractServiceFactory',
+    ),
+  ),
+)
+</code></pre>
+<p>Et... Tadaaa !! ça marche.</p>
+<h2>Last but not least</h2>
+<p>OK, j'ai mentionné plus tôt que la clé '<em>db</em>' était obligatoire. Que faire si vous souhaitez utiliser une autre clé ? pour n'importe quelle raison, après tout, qui est-on pour juger ?</p>
+<pre><code class="language-php">// /config/autoload/global.php
+return array(
+  'service_manager' =&gt; array(
+    'factories' =&gt; array(
+      'myFirstDbAdapter' =&gt; function ($sm) {
+        // 'config' est la clé du gestionnaire de service pour
+        // récupérer les données stockées dans les fichiers de config
+        $config = $sm-&gt;get('config');
+        $adapter = new Zend\Db\Adapter\Adapter($config['db1']);
+        return $adapter ;
+      },
+
+      'mySecondDbAdapter' =&gt; function ($sm) {
+        $config = $sm-&gt;get('config') ;
+        $dbconfig = $config['doctrine']['connection']['orm_default']['params'] ;
+        $adapter = new Zend\Db\Adapter\Adapter(array(
+          'database' =&gt; $dbconfig['dbname'],
+          'username' =&gt; $dbconfig['user'],
+          'password' =&gt; $dbconfig['password'],
+          'hostname' =&gt; $dbconfig['host'],
+          'driver' =&gt; 'Pdo_Mysql',
+          'dsn' =&gt; 'mysql:dbname=' .$dbconfig['dbname']. ';host=' . $dbconfig['host'],
+          'driver_options' =&gt; array(
+            PDO::MYSQL_ATTR_INIT_COMMAND =&gt; 'SET NAMES \'UTF8\''
+          ),
+        ));
+        return $adapter ;
+      }
+    ),
+  ),
+);
+</code></pre>
+<p>Dans le premier exemple, les données de connexion se seraient présentées comme suit :</p>
+<pre><code class="language-php">// /config/autoload/dbadapter.local.php
+return array(
+  'db1' =&gt; array(
+    'driver' =&gt; 'Pdo',
+    'dsn' =&gt; 'mysql:dbname=db1_name;host=db1_host',
+    'username' =&gt; 'db1user',
+    'password' =&gt; '#######',
+    'driver_options' =&gt; array(
+      PDO::MYSQL_ATTR_INIT_COMMAND =&gt; 'SET NAMES \'UTF8\''
+    ),
+  ),
+) ;
+</code></pre>
+<p>Dans le deuxième exemple, on souhaite utiliser les données de connexion déclarées pour le module Doctrine.</p>
+<p>Et Voila !</p>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/fr/tags/zf2">ZF2</a></li><li><a href="/fr/tags/gestionnaire-de-service">gestionnaire de service</a></li><li><a href="/fr/tags/configuration">configuration</a></li><li><a href="/fr/tags/factory">factory</a></li></ul>
+        </div>
+      
+
+      
+    
+
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>Sur moi</h3>
+      <p>J&#39;ai appris le php il y a quelques années, quand Internet était à ses débuts. Pour diverses raisons, j&#39;ai arrêté en route et j&#39;ai perdu le fil des nouveaux Internets que je redécouvre. Résultat, je me sens constamment à courir après l&#39;histoire mais je suis toujours motivée à reprendre des projets personnels. Je me propose de vous partager mes découvertes. Au delà des sujets de programmation, j&#39;aime également partager mes infos concernant notamment l&#39;Histoire, l&#39;Astronomie, la Linguistique, les Films, les Livres et les Anime. J&#39;espère que vous aimerez suivre mon blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. Tous droits réservés.</p>
+        <p>Propulsé par <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

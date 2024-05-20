@@ -1,0 +1,202 @@
+<!doctype html>
+<html class="no-js" lang="en" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>Zend Application : Scope issues&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">French</a>
+        <a href="/en/">English</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/en/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/en/books/0/index.html">Collections</a>
+        <a href="/en/">Home</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/en/">Home</a><i class="fas fa-angle-right"></i>Zend Application : Scope issues
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>Zend Application : Scope issues</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>10/30/2012, 5:44:00 PM
+        
+        <i class="fas fa-th-large"></i><!--a href="/en/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/interlocking-balls.jpg" class="node-banner" />
+        
+      </div>
+
+      <p><p>One thing i have to learn when coding with Zend Framework is the issue of scopes. When coding with procedural method, i never really care about the scope. If i'm not clear here (maybe because i'm not using the correct word), i mean : where, in your code, your variable is valid (meaning : exists).</p>
+<p>When coding with the procedural method, I never really care about this scope stuff. All I know was a variable is valid in the php file i were coding and not outside. So, basically, a variable is valid when i create it and disappears at the end of the page. If i need variables to be accessible outside the page, i simply store it into my _SESSION array.</p>
+<h3>Now, what with Zend Framework ?</h3>
+<p>In a lot of tutorials and even in the ZF documentation, they just told you : add this code {blabla} and it should be working like a charm... It's soooooo simple that most of their authors did not even bother to mention WHERE to put the sample code. And either you can't help but think angrily all alone in front or your blank screen : &quot;WHERE ?, or you can post a comment where you can express all your frustration to get so close to the solution without getting what looks like the most important information.</p>
+<p>This is not even clearer when I discover that you can use Zend Framework as a simple toolbox <em>OR</em> as a full MVC framework.</p>
+<p>In the case you planned to use the components of Zend Framework as a regular library (or a toolbox) with a procedural coding method, the scope of each classes and variables depends on the persistency of your datas : either the $_SESSION array or the single page scope etc... I mean, this usage should be &quot;as usual&quot;. Just instanciate the object and use its properties and its methods as you used to use other PHP objects, functions and variables.</p>
+<p>In the case you planned to use Zend Framework as a MVC application (as is my case), the scope is slightly changed. This is what i'll try to explain here.</p>
+<h3>The index.php step</h3>
+<p>Building an application with Zend Framework starts with the index.php file AND the .htaccess including the rewriting rules. The .htaccess will ensure that all HTTP requests (meaning : ANYTHING) going to your application will <em>MANDATORY</em> go through your index.php page.</p>
+<p>Therefore, the scope of index.php is rather wide. You can set your CONSTANT there. Or call for static methods. But, on the other side, nothing about your application was instanciated yet. So you are barely in a &quot;procedural&quot; state and not yet in the MVC application.</p>
+<p>Since we are working in a MVC application framework, better to use the application scope.</p>
+<p>Therefore, index.php is instanciating Zend Application, bootstrap it and run the application.</p>
+<h3>The bootstrap step</h3>
+<p>Zend Application will use the bootstrap.php file AND the application.ini file to bootstrap the application. This means that components considered as mandatory for a MVC application will all be instantiated at this step.</p>
+<p>First component to be instantiated : Zend_Loader and Zend_Application (of course).</p>
+<p>With the help of the application.ini file, Zend Application will instantiate several components called <strong>application resources</strong>. The list of available resources is <a href="http://framework.zend.com/manual/1.12/en/zend.application.available-resources.html" target="_blank">here</a>.</p>
+<p>Resources are instantiation of other Zend Components such as Zend_Cache, Zend_Db, Zend_Dojo, Zend_Controller_Front, Zend_Layout, Zend_Locale, Zend_Log, Zend_Mail, Zend_Application_Module, Zend_Navigation, Zend_Controller_Router, Zend_Session, Zend_Translate, Zend_Http_UserAgent and Zend_View.</p>
+<p>Each resources are, basically, the component you may know. But with the help of the application.ini file, you won't have to instantiate it yourself. I older version of Zend Framework, you have to instantiate them in the bootstrap file with method such as _initView()... but all this part is automated since ZF 1.1x. Each resources is a resource of the application bootstrap. Meaning that the component is &quot;alive&quot; somewhere within the application. All you have to do is to get your bootstrap instance to get to each resource.</p>
+<p>From within an action controller for example :</p>
+<pre><code class="language-php">$bootstrap = $this-&gt;getInvokeArg('bootstrap') ; // $this = Zend_Controller_Action
+
+// You can test either the resource exists or not
+$bootstrap-&gt;hasPluginResource(RESOURCE_NAME) ; // return true or false
+
+// Access the resource
+$resource = $bootstrap-&gt;getResource(RESOURCE_NAME) ;
+
+// Once you have the reference to your resource, you can use it.
+$resource-&gt;RESOURCE_METHOD() ; // RESOURCE_METHOD depends on the corresponding Zend_Component.
+</code></pre>
+<p>From another application resource for example :</p>
+<pre><code class="language-php">$this-&gt;getBootstrap()-&gt;getResource(RESOURCE_NAME) ; // $this = implementation of Zend_Application_Resource_ResourceAbstract
+</code></pre>
+<p>In the case you are running a regular Zend Application (you have the <code>$application-&gt;bootstrap()</code> method in your index.php file), you won't have to bootstrap your resource once more. All available resources are already bootstrapped.</p>
+<p>Beyond the available resources, you can use the bootstrap file to bootstrap customized resources, ie Controller plugins, set values in the Registry, maybe settings Gdata settings etc... Once you have bootstrapped those customized resources, you'll be able to access them in the same way with the <code>$bootstrap-&gt;getResource(resource_name) ;</code> method (or any other available method).</p>
+<h3>The Controller step and the View step</h3>
+<p>Once all elements have been bootstraped in the previous step, you will code you Controllers. All controllers are instance of Zend_Controller_Action. Meaning the $this is a Zend_Controller_Action instance.</p>
+<p>In an MVC application, the Controller and the View are tightly tied. Controller's job is to dispatch informations. Therefore, controllers manage the HTTP request, check the request, evaluate it, validate it and send back a response (most of the time, the response is another url or page contents). View's job is to display informations. Therefore, the controller, after validating a HTTP request, send back a response by passing page contents and informations to Zend_View. Zend View is materialized as phtml pages. Like a template page, the datas from Zend Controller will be displayed in the .phtml pages.</p>
+<p>Zend_Controller_Action stores page contents in its property $view. $view is an instance of Zend_View.</p>
+<p>In the phtml page, $this is a Zend_view instance.</p>
+<pre><code class="language-php">// datas set in a zend_Controller_Action instance
+// application/controllers/indexController.php
+public function indexAction()
+{
+  $this-&gt;view-&gt;pageTitle = &quot;my page title&quot; ; // $this = instance of Zend_Controller_Action
+}
+
+// datas accessed from a phtml page
+// application/views/scripts/index/index.phtml
+&lt;html&gt;
+  &lt;body&gt;
+    &lt;h1&gt;
+      &lt;?php echo $this-&gt;pageTitle ; ?&gt;
+    &lt;/h1&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+<h3>Zend_Registry</h3>
+<p>You can access the registry wherever you are in your application (or even outside, ie your library).</p>
+<p>Just use Zend_Registry static methods <code>Zend_Registry::set()</code> and <code>Zend_Registry::get()</code></p>
+<p>There's others Zend Components with static method which can be accessed from anywhere in your code.</p>
+<h3>Zend_Db_Adapter</h3>
+<p>Zend_Db_Adapter is an important case because the adapter will be bootstraped in the application, thanks to resources.db properties.</p>
+<p>But in opposite with Zend_View which you will likely not need anywhere, you'll need the Db Adapter from several places of your application, mostly from your models and from classes in your library.</p>
+<p>So, how to get to the Db Adapter, knowing that you can't likely connect twice to your database (once from bootstrap and another one from outside your application). The best solution would be to access the existing Db Adapter.</p>
+<p>This is easily done while using a Zend_Db_Table static method : <code>Zend_Db_Table::getDefaultAdapter()</code></p>
+<h3>Conclusion</h3>
+<p>For those who are not used with object oriented programmation (OOP) as i am, this is quite confusing for a start. But the thing we have to get is : for each method, which is the object which is returned. If you get the nature of the returned object, you can move on with properties and methods of the returned object etc...</p>
+<p>Once you grab this logic, you can develop your library and your models based on it. Objects calling to objects, instantiating objects and returning objects...</p>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/en/tags/zend-application">zend application</a></li><li><a href="/en/tags/zend-framework">Zend Framework</a></li><li><a href="/en/tags/mvc">MVC</a></li></ul>
+        </div>
+      
+
+      
+    
+
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>About me</h3>
+      <p>I learned coding with php several years ago, when Internet was still young. For multiple reasons, i had stopped then and missed most of this new Internet i&#39;m discovering once again. So, i feel like a newbie again and since i&#39;m ready to start over personal project, i&#39;ll share with you some of my discoveries. Beyond coding topics, i&#39;ll enjoy sharing with you several subjects such as History, Astronomy, Linguistics, Movies, Books, Music and Anime among others. I hope you&#39;ll enjoy reading this blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. All rights reserved.</p>
+        <p>Powered by <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

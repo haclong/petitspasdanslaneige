@@ -1,0 +1,421 @@
+<!doctype html>
+<html class="no-js" lang="en" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>CoffeeBar Application 8/19 - Displaying active tabs&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">French</a>
+        <a href="/en/">English</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/en/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/en/books/0/index.html">Collections</a>
+        <a href="/en/">Home</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/en/">Home</a><i class="fas fa-angle-right"></i>CoffeeBar Application 8/19 - Displaying active tabs
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>CoffeeBar Application 8/19 - Displaying active tabs</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>2/25/2015, 7:43:00 PM
+        
+        <i class="fas fa-th-large"></i><!--a href="/en/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/file9271237667217.jpg" class="node-banner" />
+        
+          <p><strong>Credit</strong> : Morguefile.com </p>
+        
+      </div>
+
+      <p><p>Our application is taking shape more and more. We have already built our main components and services. We have dumped unceremoniously the items from the cache. Now let's see if we can do better.</p>
+<p><em>NOTE : throughout the tutorial, i will reedit numerous classes and views i already talked about. On the second edition, some datas will be missing such as use keyword, extends and implements keywords etc... It doesn't mean you have to delete those existing lines. It is intended to lighten this tutorial. In the case we need to remove lines, i'll say it so plainly, even re-editing the whole part to make myself clear on that item.</em></p>
+<h2>Opened tab list</h2>
+<p>Let's create the dedicated <strong>action</strong>.</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Controller/TabController.php
+
+&lt;?php
+namespace CoffeeBar\Controller ;
+
+class TabController extends AbstractActionController
+{
+  public function listOpenedAction()
+  {
+    $cache = $this-&gt;serviceLocator-&gt;get('TabCache') ;
+    $openTabs = $cache-&gt;getOpenTabs() ;
+
+    return array('result' =&gt; $openTabs) ;
+  }
+}
+</code></pre>
+<p>We get the '<em>openTabs</em>' item from the cache. Remember, it is a <code>**CoffeeBar\Entity\OpenTabs\TodoByTab**</code> object, extending <code>**\ArrayObject**</code>. All we have to do is to iterate over it and display the datas into the <strong>view</strong>.</p>
+<pre><code class="language-php">// module/CoffeeBar/view/coffee-bar/tab/list-opened.phtml
+
+&lt;h1&gt;Opened tabs&lt;/h1&gt;
+
+&lt;table&gt;
+  &lt;tr&gt;&lt;th&gt;Waiter&lt;/th&gt;&lt;th&gt;Table number&lt;/th&gt;&lt;th&gt;&lt;/th&gt;&lt;/tr&gt;
+
+  &lt;?php
+    foreach($result as $k =&gt; $v)
+    {
+      echo &quot;&lt;tr&gt;&quot; ;
+      echo &quot;&lt;td&gt;&quot; .$v-&gt;getWaiter(). &quot;&lt;/td&gt;&quot; ;
+      echo &quot;&lt;td&gt;&quot; .$v-&gt;getTableNumber(). &quot;&lt;/td&gt;&quot; ;
+      echo &quot;&lt;td&gt;&lt;a href='&quot;.$this-&gt;url('tab/status', array('id' =&gt; $v-&gt;getTableNumber())).&quot;'&gt;See the status&lt;/a&gt;&lt;/td&gt;&quot; ;
+      echo &quot;&lt;/tr&gt;&quot; ;
+    }
+  ?&gt;
+&lt;/table&gt;
+</code></pre>
+<p>Now put the <strong>route</strong> and the <strong>navigation</strong> so we can access this page easily. (Adding the '<em>tab/status</em>' route too).</p>
+<pre><code class="language-php">// module/CoffeeBar/config/module.config.php
+
+&lt;?php
+return array(
+  'router' =&gt; array(
+    'routes' =&gt; array(
+
+      // ajouter aux autres routes
+      'tab' =&gt; array(
+        'child_routes' =&gt; array(
+
+          /**
+           * this URL : http://coffeebar.home/tab/opened leads to the following route
+           */
+          'opened' =&gt; array(
+            'type' =&gt; 'Literal',
+            'options' =&gt; array(
+              'route' =&gt; '/opened',
+              'defaults' =&gt; array(
+                'controller' =&gt; 'CoffeeBarController\Tab',
+                'action' =&gt; 'listOpened',
+              ),
+            ),
+            'may_terminate' =&gt; true,
+          ),
+
+          /**
+           * this URL : http://coffeebar.home/tab/status leads to the following route
+           */
+          'status' =&gt; array(
+            'type' =&gt; 'Segment',
+            'options' =&gt; array(
+              'route' =&gt; '/status/[:id]',
+              'defaults' =&gt; array(
+                'controller' =&gt; 'CoffeeBarController\Tab',
+                'action' =&gt; 'status',
+              ),
+            ),
+          ),
+        ),
+      ),
+    ),
+  ),
+) ;
+</code></pre>
+<p>The navigation :</p>
+<pre><code class="language-php">// module/CoffeeBar/config/module.config.php
+
+&lt;?php
+return array(
+  'navigation' =&gt; array(
+    'default' =&gt; array(
+
+      // add to previous pages
+      array(
+        'label' =&gt; 'Opened tabs',
+        'route' =&gt; 'tab/opened',
+      ),
+    ),
+  ),
+) ;
+</code></pre>
+<p>Let's go back to the controller and add the <code>TabController::statusAction()</code> action.</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Controller/TabController.php
+
+&lt;?php
+namespace CoffeeBar\Controller ;
+
+class TabController extends AbstractActionController
+{
+  public function statusAction()
+  {
+    $openTabs = $this-&gt;serviceLocator-&gt;get('OpenTabs') ;
+    $status = $openTabs-&gt;statusForTable($this-&gt;params()-&gt;fromRoute('id')) ;
+
+    return array('result' =&gt; $status) ;
+  }
+}
+</code></pre>
+<h3>The tab status page</h3>
+<p>Inside our <strong>OpenTabs</strong> service, we will add a method to get the status of a tab.</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Service/OpenTabs.php
+
+&lt;?php
+namespace CoffeeBar\Service ;
+
+use CoffeeBar\Entity\OpenTabs\TabStatus;
+
+class OpenTabs
+{
+  /**
+   * Return the status of the tab
+   * @param int $table - table number
+   * @return TabStatus
+   */
+  public function statusForTable($table)
+  {
+    $this-&gt;loadTodoByTab() ;
+    foreach($this-&gt;todoByTab-&gt;getArrayCopy() as $k =&gt; $v)
+    {
+      if($v-&gt;getTableNumber() == $table)
+      {
+        $status = new TabStatus() ;
+        $status-&gt;setTabId($k) ;
+        $status-&gt;setTableNumber($v-&gt;getTableNumber()) ;
+        $status-&gt;setItemsToServe($v-&gt;getItemsToServe()) ;
+        $status-&gt;setItemsInPreparation($v-&gt;getItemsInPreparation()) ;
+        $status-&gt;setItemsServed($v-&gt;getItemsServed()) ;
+
+        return $status ;
+      }
+    }
+
+    return NULL ;
+  }
+}
+</code></pre>
+<p>The <code>OpenTabs::statusForTable($table)</code> methods return a <code>**CoffeeBar\Entity\OpenTabs\TabStatus**</code> object.</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Entity/OpenTabs/TabStatus.php
+
+&lt;?php
+namespace CoffeeBar\Entity\OpenTabs ;
+
+use ArrayObject;
+
+class TabStatus
+{
+  protected $tabId; // int (guid) - unique id of the tab
+  protected $tableNumber; // int - table number
+  protected $itemsToServe; // ItemsArray (ArrayObject) - items to serve list
+  protected $itemsInPreparation; // ItemsArray (ArrayObject) - items in preparation list
+  protected $itemsServed; // ItemsArray (ArrayObject) - items served list
+
+  // getters &amp;amp; setters
+}
+</code></pre>
+<p>The original tutorial use a strict application of the following rule : each method should return an object. This looks systematic. This is not shocking at all but i have to admit this is generating an awful amount of objects. But on the other side, i think we can update an object without breaking any other part of the application... One object = single responsibility.</p>
+<p>Now we know how the object returned from the <code>OpenTabs::statusForTable()</code> is made of, we we'll be able to focus on our view.</p>
+<pre><code class="language-php">// module/CoffeeBar/view/coffee-bar/tab/status.phtml
+
+&lt;h1&gt;Tab status&lt;/h1&gt;
+
+&lt;h2&gt;Table #&lt;?php echo $result-&gt;getTableNumber(); ?&gt;&lt;/h2&gt;
+
+&lt;div&gt;&lt;a href=&quot;&lt;?php echo $this-&gt;url('tab/order', array('id' =&gt; $result-&gt;getTableNumber())) ;?&gt;&quot;&gt;Order Food/Drink&lt;/a&gt;&lt;/div&gt;
+
+&lt;h3&gt;Items to serve&lt;/h3&gt;
+
+&lt;?php
+  if(count($result-&gt;getItemsToServe()) == 0)
+  {
+    echo 'Pas de commande en cours' ;
+  } else {
+?&gt;
+    &lt;table&gt;
+      &lt;tr&gt;
+        &lt;th&gt;Menu #&lt;/th&gt;
+        &lt;th&gt;Description&lt;/th&gt;
+      &lt;/tr&gt;
+&lt;?php
+      foreach($result-&gt;getItemsToServe() as $k=&gt; $v)
+      {
+        echo &quot;&lt;tr&gt;&quot; ;
+          echo &quot;&lt;td&gt;&quot; .$v-&gt;getMenuNumber(). &quot;&lt;/td&gt;&quot; ;
+          echo &quot;&lt;td&gt;&quot; .$v-&gt;getDescription() . &quot;&lt;/td&gt;&quot; ;
+        echo &quot;&lt;/tr&gt;&quot; ;
+      }
+?&gt;
+    &lt;/table&gt;
+&lt;?php
+  }
+?&gt;
+
+&lt;h3&gt;Food in preparation&lt;/h3&gt;
+
+&lt;?php
+  if(count($result-&gt;getItemsInPreparation()) == 0)
+  {
+    echo 'Pas de commande en cours' ;
+  } else {
+?&gt;
+    &lt;table&gt;
+      &lt;tr&gt;
+        &lt;th&gt;Menu #&lt;/th&gt;
+        &lt;th&gt;Description&lt;/th&gt;
+      &lt;/tr&gt;
+&lt;?php 
+      foreach($result-&gt;getItemsInPreparation() as $k=&gt; $v)
+      {
+        echo &quot;&lt;tr&gt;&quot; ;
+          echo &quot;&lt;td&gt;&quot; .$v-&gt;getMenuNumber(). &quot;&lt;/td&gt;&quot; ;
+          echo &quot;&lt;td&gt;&quot; .$v-&gt;getDescription() . &quot;&lt;/td&gt;&quot; ;
+        echo &quot;&lt;/tr&gt;&quot; ;
+      }
+?&gt;
+    &lt;/table&gt;
+&lt;?php
+  }
+?&gt;
+
+&lt;h3&gt;Items already served&lt;/h3&gt;
+
+&lt;?php
+  if(count($result-&gt;getItemsServed()) == 0)
+  {
+    echo 'Pas de commande en cours' ;
+  } else {
+?&gt;
+    &lt;table&gt;
+      &lt;tr&gt;
+        &lt;th&gt;Menu #&lt;/th&gt;
+        &lt;th&gt;Description&lt;/th&gt;
+      &lt;/tr&gt;
+&lt;?php 
+      foreach($result-&gt;getItemsServed() as $k=&gt; $v)
+      {
+        echo &quot;&lt;tr&gt;&quot; ;
+          echo &quot;&lt;td&gt;&quot; .$v-&gt;getMenuNumber(). &quot;&lt;/td&gt;&quot; ;
+          echo &quot;&lt;td&gt;&quot; .$v-&gt;getDescription() . &quot;&lt;/td&gt;&quot; ;
+        echo &quot;&lt;/tr&gt;&quot; ;
+      }
+?&gt;
+    &lt;/table&gt;
+&lt;?php
+  }
+?&gt;
+</code></pre>
+<p>Obviously, for the moment, our lists (<code>$itemsToServe</code>, <code>$itemsInPreparation</code> et <code>$itemsServed</code>) are empty. There's nothing. No order...</p>
+<p>So be it !! Let's get some order !!</p>
+<p><em>You'll find the full application in my <a href="https://github.com/haclong/coffeebar" target="_blank">github</a></em></p>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/en/tags/zend-framework-2">zend framework 2</a></li><li><a href="/en/tags/mvc">MVC</a></li><li><a href="/en/tags/programmation-evenementielle">programmation événementielle</a></li><li><a href="/en/tags/events">events</a></li><li><a href="/en/tags/oop">OOP</a></li></ul>
+        </div>
+      
+
+      
+        <nav id="book-navigation">
+    
+       <li class="link-previous"><a href="/en/posts/coffeebar-application-719-managing-opened-tabs.html"><i class="fas fa-long-arrow-alt-left"></i> CoffeeBar Application 7/19 - Managing opened tabs</li>
+    
+
+    
+        <li class="link-next"><a href="/en/posts/coffeebar-application-919-placing-order-mixing-drinks-and-food.html">CoffeeBar Application 9/19 - Placing an order, mixing drinks and food <i class="fas fa-long-arrow-alt-right"></i></a></li>
+    
+
+    
+        <li class="link-up"><a href="/en/books/manage-coffeebar-event-driven-programming.html"><i class="fas fa-book-open"></i> Manage a coffeebar with event driven programming</li>
+    
+</nav>
+
+      
+    
+
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>About me</h3>
+      <p>I learned coding with php several years ago, when Internet was still young. For multiple reasons, i had stopped then and missed most of this new Internet i&#39;m discovering once again. So, i feel like a newbie again and since i&#39;m ready to start over personal project, i&#39;ll share with you some of my discoveries. Beyond coding topics, i&#39;ll enjoy sharing with you several subjects such as History, Astronomy, Linguistics, Movies, Books, Music and Anime among others. I hope you&#39;ll enjoy reading this blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. All rights reserved.</p>
+        <p>Powered by <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

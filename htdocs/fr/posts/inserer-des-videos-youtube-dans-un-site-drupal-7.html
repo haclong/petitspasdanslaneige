@@ -1,0 +1,228 @@
+<!doctype html>
+<html class="no-js" lang="fr" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>Insérer des vidéos YouTube dans un site Drupal 7&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">Français</a>
+        <a href="/en/">Anglais</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/fr/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/fr/books/0/index.html">Séries</a>
+        <a href="/fr/">Accueil</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/fr/">Accueil</a><i class="fas fa-angle-right"></i>Insérer des vidéos YouTube dans un site Drupal 7
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>Insérer des vidéos YouTube dans un site Drupal 7</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>30/06/2015 06:45:00
+        
+        <i class="fas fa-th-large"></i><!--a href="/fr/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->, <!--a href="/fr/sites/haclong-projects.html" class="tag-sites"-->Haclong projects<!--/a-->, <!--a href="/fr/sites/footprints-in-the-snow.html" class="tag-sites"-->Footprints in the snow<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/logo-drupal-name.jpg" class="node-banner" />
+        
+          <p><strong>Crédit</strong> : Drupal </p>
+        
+      </div>
+
+      <p><p>Dans les anciennes versions du module <strong>Media</strong>, il suffisait d'installer le module <strong>Media: YouTube</strong> pour avoir facilement (sic) une vidéo Youtube insérée dans son article. Depuis la <strong>version 2</strong> du module <strong>Media</strong>, ce n'est pas aussi simple... Il a fallu que je fouille un peu.</p>
+<p>Finalement, la <strong>version 2</strong> du module <strong>Media</strong> offre une gestion plus pointue de la librairie de fichiers de votre site. Plus pointue, donc plus de liberté. Plus de liberté, le champ des possibles s'élargit considérablement, il faut donc s'attendre à trouver plus de paramétrages.</p>
+<h2>Faire l'installation</h2>
+<p>Installer <strong>Drupal 7</strong>.</p>
+<p>Installer et activer les modules</p>
+<ul>
+<li><strong>Media</strong> 7.x-2.0-alpha4</li>
+<li><strong>Media Internet Sources</strong> 7.x-2.0-alpha4</li>
+<li><strong>Media: YouTube</strong> 7.x-3.0</li>
+<li><strong>File entity</strong> 7.x-2.0-beta1</li>
+<li><strong>Wysiwyg</strong> 7.x-2.x</li>
+</ul>
+<p>Installer une <strong>librairie Wysiwyg</strong></p>
+<ul>
+<li>Télécharger <a href="http://ckeditor.com/download" target="_blank">CKEditor 3.6.5.7647</a></li>
+<li>Dézipper l'archive et la déposer en FTP à l'adresse <code>sites/all/libraries/ckeditor</code></li>
+</ul>
+<h2>Paramétrer l'éditeur wysiwyg</h2>
+<p>Allez dans <code>Configuration &gt; Wysiwyg profiles</code></p>
+<p>De base, Drupal s'installe avec trois formats de texte : le <em>Filtered HTML</em>, le <em>Full HTML</em> et le <em>Plain Text</em>.</p>
+<ul>
+<li>Editez successivement le <em>Full</em> et le <em>Filtered HTML</em>.</li>
+<li>Rajoutez dans les boutons le bouton <strong>Media Browser</strong> (ou <strong>Explorateur de médias</strong>).</li>
+</ul>
+<p>A titre indicatif, j'ai laissé les autres options telles quelles mais vous pouvez les modifier.</p>
+<p>Maintenant qu'on a ajouté le bouton <strong>Media browser</strong> à notre <strong>éditeur Wysiwyg</strong>, il faut modifier les filtres des formats textes.</p>
+<h2>Modifier les filtres textes</h2>
+<p>Allez dans <code>Configuration &gt; Text formats</code></p>
+<ul>
+<li>Pour chacun des formats pour lesquels on a activé le bouton <strong>Media browser</strong>, cliquez sur configurer</li>
+<li>Activez le filtre &quot;<em>Convertir les balises Media en balises HTML</em>&quot;.</li>
+</ul>
+<p>Dans l'ordre de priorisation des filtres, je l'ai positionné après la conversion des URL en liens et le filtre des balises HTML autorisées mais vous pouvez tester un autre ordre. Méfiez vous toutefois qu'un filtre ne modifie pas l'HTML d'un filtre précédent.</p>
+<ul>
+<li>Enregistrez</li>
+</ul>
+<h2>Rajouter le type de média Youtube</h2>
+<p>Allez dans <code>Structure &gt; File types</code></p>
+<ul>
+<li>Ajoutez un type de fichier</li>
+<li><strong>Nom</strong> : <em>Youtube</em></li>
+<li><strong>Description</strong> : le contenu du site Youtube</li>
+<li><strong>Mimetypes</strong> : <em>video/youtube</em> (Drupal va remplacer ce faux mimetype par les vrais)</li>
+<li>Enregistrez</li>
+<li>Editez maintenant votre nouveau type de fichier Youtube.</li>
+</ul>
+<p>Pas la peine en principe d'ajouter de champs supplémentaires, passons directement à la gestion de l'affichage de notre video Youtube.</p>
+<p>Typiquement, et cela va fonctionner de paire :</p>
+<h4>Je veux que la video soit lisible à l'intérieur du corps de l'article. C'est le mode WYSIWYG.</h4>
+<ul>
+<li><strong>Manage Display</strong> (Gérer l'affichage) <strong>&gt;</strong> <strong>mode WYSIWYG</strong> : Le format du champ &quot;<strong>File</strong>&quot; doit être &quot;<em>Visible</em>&quot;</li>
+<li><strong>Manage File Display</strong> (Gérer l'affichage des fichiers) <strong>&gt; mode WYSIWYG</strong> : Les affichages possibles vont être <strong>YouTube Video</strong> en priorité et <strong>YouTube Preview Image</strong> au cas où. Pour la configuration de <strong>Youtube Preview Image</strong>, choisir &quot;<em>None (original image)</em>&quot;. Faites les paramétrages que vous préférez pour la configuration du format <strong>YouTube video</strong>.</li>
+</ul>
+<h4>Je veux pas que la video soit visible à partir de la liste des articles. C'est le mode Teaser.</h4>
+<ul>
+<li><strong>Manage Display</strong> (Gérer l'affichage) <strong>&gt; mode Teaser</strong> : le format du champ &quot;<strong>File</strong>&quot; doit être &quot;<em>Hidden</em>&quot;</li>
+</ul>
+<h4>Je veux que la video soit visible comme une image fixe dans l'explorateur de média et dans la liste des contenus media. C'est le mode Preview.</h4>
+<ul>
+<li><strong>Manage Display</strong> (Gérer l'affichage) <strong>&gt; mode Preview</strong> : le format du champ &quot;<strong>File</strong>&quot; doit être &quot;<em>Visible</em>&quot;</li>
+<li><strong>Manage File Display</strong> (Gérer l'affichage des fichiers) <strong>&gt; mode Preview</strong> : les affichages à choisir sont <strong>YouTube Preview Image</strong>. Pour sa configuration, choisir le même <strong>image_style</strong> que pour les autres images de votre librairie, si vous souhaitez que les formats soient harmonisés.</li>
+</ul>
+<p>Sauvegardez à chaque fois.</p>
+<h2>Configurer les types de fichiers disponibles dans l'explorateur de media</h2>
+<p>Allez dans <code>Configuration &gt; Media browser settings</code> (Paramètres de l'explorateur de média)</p>
+<ul>
+<li>Assurez vous que votre nouveau type de fichiers Youtube est coché dans la liste des <strong>Allowed types in WYSIWYG</strong></li>
+<li>Enregistrez</li>
+</ul>
+<p>Si vous avez une configuration pour le mode d'affichage Wysiwyg, il vous reste à paramétrer le menu <code>Configuration &gt; Media Wysiwyg View Mode</code>. Pour ma part, je n'ai rien de particulier dans ce menu.</p>
+<h2>Ajouter une vidéo à votre contenu</h2>
+<p>Maintenant, lorsque vous ajoutez un nouveau contenu et que vous ajoutez un fichier média à votre article,</p>
+<ul>
+<li>cliquez sur le bouton** Media browser** de votre <strong>éditeur Wysiwyg</strong>.</li>
+<li>dans l'<strong>onglet Web</strong>, copiez l'adresse de votre <strong>video Youtube</strong></li>
+<li>cliquez sur <strong>suivant</strong></li>
+<li>à l'écran suivant, choisissez l'<strong>affichage</strong> comme <strong>WYSIWYG</strong></li>
+<li>cliquez sur le bouton <strong>Soumettre</strong></li>
+</ul>
+<p>La video est insérée dans votre article.</p>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/fr/tags/drupal-7">drupal 7</a></li><li><a href="/fr/tags/media-2">Media 2</a></li><li><a href="/fr/tags/youtube">YouTube</a></li><li><a href="/fr/tags/wysiwyg">WYSIWYG</a></li></ul>
+        </div>
+      
+
+      
+    
+
+      
+        <section id="oldcomment">
+          <h2>Commentaires historiques</h2><article>
+              <div class="level1">
+  <h3>Bon article !</h3>
+  <div class="meta">Debie 2018-11-07T10:22 </div>
+  <div class="body">Bon article !</div>
+
+  
+  
+</div>
+
+            </article></section>
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>Sur moi</h3>
+      <p>J&#39;ai appris le php il y a quelques années, quand Internet était à ses débuts. Pour diverses raisons, j&#39;ai arrêté en route et j&#39;ai perdu le fil des nouveaux Internets que je redécouvre. Résultat, je me sens constamment à courir après l&#39;histoire mais je suis toujours motivée à reprendre des projets personnels. Je me propose de vous partager mes découvertes. Au delà des sujets de programmation, j&#39;aime également partager mes infos concernant notamment l&#39;Histoire, l&#39;Astronomie, la Linguistique, les Films, les Livres et les Anime. J&#39;espère que vous aimerez suivre mon blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. Tous droits réservés.</p>
+        <p>Propulsé par <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

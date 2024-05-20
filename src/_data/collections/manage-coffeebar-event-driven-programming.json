@@ -1,0 +1,97 @@
+[
+    {
+        "rank": 0,
+        "url": "/en/posts/coffeebar-application-119-introduction-event-driven-programmation.html",
+        "title": "CoffeeBar Application 1/19 - Introduction to event driven programmation"
+    },
+    {
+        "rank": 1,
+        "url": "/en/posts/coffeebar-application-219-install-framework.html",
+        "title": "CoffeeBar Application 2/19 - Install the framework"
+    },
+    {
+        "rank": 2,
+        "url": "/en/posts/coffeebar-application-319-spying-our-cache.html",
+        "title": "CoffeeBar Application 3/19 - Spying on our cache"
+    },
+    {
+        "rank": 3,
+        "url": "/en/posts/coffeebar-application-419-open-tab-form.html",
+        "title": "CoffeeBar Application 4/19 - The Open Tab Form"
+    },
+    {
+        "rank": 4,
+        "url": "/en/posts/coffeebar-application-519-triggering-opening-tab.html",
+        "title": "CoffeeBar Application 5/19 - Triggering the opening of a tab"
+    },
+    {
+        "rank": 5,
+        "url": "/en/posts/coffeebar-application-619-listener-manager-tab-and-its-history.html",
+        "title": "CoffeeBar Application 6/19 - A listener to manager the tab and its history"
+    },
+    {
+        "rank": 6,
+        "url": "/en/posts/coffeebar-application-719-managing-opened-tabs.html",
+        "title": "CoffeeBar Application 7/19 - Managing opened tabs"
+    },
+    {
+        "rank": 7,
+        "url": "/en/posts/coffeebar-application-819-displaying-active-tabs.html",
+        "title": "CoffeeBar Application 8/19 - Displaying active tabs"
+    },
+    {
+        "rank": 8,
+        "url": "/en/posts/coffeebar-application-919-placing-order-mixing-drinks-and-food.html",
+        "title": "CoffeeBar Application 9/19 - Placing an order, mixing drinks and food"
+    },
+    {
+        "rank": 9,
+        "url": "/en/posts/coffeebar-application-1019-building-form-place-order.html",
+        "title": "CoffeeBar Application 10/19 - Building a form to place the order"
+    },
+    {
+        "rank": 10,
+        "url": "/en/posts/coffeebar-application-1119-processing-form.html",
+        "title": "CoffeeBar Application 11/19 - Processing the form"
+    },
+    {
+        "rank": 11,
+        "url": "/en/posts/coffeebar-application-1219-processing-order.html",
+        "title": "CoffeeBar Application 12/19 - Processing the order"
+    },
+    {
+        "rank": 12,
+        "url": "/en/posts/coffeebar-application-1319-chef-todo-list.html",
+        "title": "CoffeeBar Application 13/19 - Chef todo list"
+    },
+    {
+        "rank": 13,
+        "url": "/en/posts/coffeebar-application-1419-marking-prepared-food.html",
+        "title": "CoffeeBar Application 14/19 - Marking prepared food"
+    },
+    {
+        "rank": 14,
+        "url": "/en/posts/coffeebar-application-1519-food-prepared-reacting-it.html",
+        "title": "CoffeeBar Application 15/19 - Food is prepared, reacting to it"
+    },
+    {
+        "rank": 15,
+        "url": "/en/posts/coffeebar-application-1619-get-staff-todo-list.html",
+        "title": "CoffeeBar Application 16/19 - Get the staff todo list"
+    },
+    {
+        "rank": 16,
+        "url": "/en/posts/coffeebar-application-1719-serving.html",
+        "title": "CoffeeBar Application 17/19 - Serving"
+    },
+    {
+        "rank": 17,
+        "url": "/en/posts/coffeebar-application-1819-bill-last-not-least.html",
+        "title": "CoffeeBar Application 18/19 - The bill, last but not least"
+    },
+    {
+        "rank": 18,
+        "url": "/en/posts/coffeebar-application-1919-closing-tab.html",
+        "title": "CoffeeBar Application 19/19 - Closing the tab"
+    }
+]

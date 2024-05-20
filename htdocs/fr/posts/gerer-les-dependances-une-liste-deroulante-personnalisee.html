@@ -1,0 +1,319 @@
+<!doctype html>
+<html class="no-js" lang="fr" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>Gérer les dépendances - Une liste déroulante personnalisée&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">Français</a>
+        <a href="/en/">Anglais</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/fr/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/fr/books/0/index.html">Séries</a>
+        <a href="/fr/">Accueil</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/fr/">Accueil</a><i class="fas fa-angle-right"></i>Gérer les dépendances - Une liste déroulante personnalisée
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>Gérer les dépendances - Une liste déroulante personnalisée</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>25/11/2014 20:51:00
+        
+        <i class="fas fa-th-large"></i><!--a href="/fr/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/Capture_serveur_rack.PNG" class="node-banner" />
+        
+      </div>
+
+      <p><p>Un cas très très très fréquent :</p>
+<p>Vous avez un formulaire avec une liste déroulante. Les options de la liste déroulante sont des informations qui - très probablement - sont stockées dans votre base de données.</p>
+<p>Comment faire ?</p>
+<p>Ce tuto fonctionne au moins pour ZF2 2.1.5+</p>
+<h3>L'élément Select</h3>
+<p>Créer l'élément <code>Select</code> comme un champ personnalisé.</p>
+<p>Comme nous souhaitons gérer les dépendances et avoir très peu de contraintes entre nos entités et nos différentes niveaux de code, nous ne voulons pas que notre élément personnalisé ait des informations sur la base de données ou les tables ou n'importe quelles autres informations extérieures à l'élément lui même.... Nous allons donc injecter les données externes dans l'élément.</p>
+<p>Rappelons nous : l'élément <code>Select</code> attends un tableau <code>array</code> :</p>
+<pre><code class="language-php">$select-&gt;setValueOptions(array(
+  '0' =&gt; 'French',
+  '1' =&gt; 'English',
+  '2' =&gt; 'Japanese',
+  '3' =&gt; 'Chinese',
+));
+</code></pre>
+<p>Tout ce que nous aurons à faire et de fournir à notre élément personnalisé un tableau similaire : soit nous allons injecter un tableau déjà au format, avec des paires de clé/libellé, soit nous allons injecter un objet. Si cela doit être un objet, il faut garder à l'esprit qu'il faut pouvoir extraire le tableau au format à partir de l'objet.</p>
+<p>Injecter un tableau au format :</p>
+<pre><code class="language-php">// module/MyModule/src/MyModule/Form/CustomSelect.php
+
+&lt;?php
+namespace MyModule\Form ;
+
+use Zend\Form\Element\Select ;
+
+class CustomSelect extends Select
+{
+  public function __construct($arrayInjected)
+  {
+    $this-&gt;setName('mySelectField') ;
+    $this-&gt;setLabel('Choose the value') ;
+    $this-&gt;setValueOptions($arrayInjected) ;
+  }
+}
+</code></pre>
+<p>Injecter un objet : il faudra être capable d'itérer sur l'objet, ou, à minima, il faudra une méthode pour extraire le tableau à partir de l'objet.</p>
+<pre><code class="language-php">// module/MyModule/src/MyModule/Form/CustomSelect.php
+
+&lt;?php
+namespace MyModule\Form ;
+
+use Zend\Form\Element\Select ;
+
+class CustomSelect extends Select
+{
+  public function __construct($objectInjected)
+  {
+    $valuesInArray = $this-&gt;makeArray($objectInjectect)
+    $this-&gt;setName('mySelectField') ;
+    $this-&gt;setLabel('Choose the value') ;
+    $this-&gt;setValueOptions($valuesInjected) ;
+  }
+
+  protected function makeArray($iterativeObject)
+  {
+    $array = array() ;
+    foreach($iterativeObject as $value)
+    {
+      $array[$value-&gt;getId()] = $value-&gt;getName() ;
+    }
+  
+    return $array ;
+  }
+}
+</code></pre>
+<h3>Charger l'élément dans le gestionnaire de formulaire (Form Manager)</h3>
+<p>Editer le fichier <code>Module.php</code>. Nous allons charger l'élément dans le gestionnaire de formulaire</p>
+<pre><code class="language-php">// module/MyModule/Module.php
+
+&lt;?php
+namespace MyModule ;
+
+use MyModule\Form\CustomSelect ;
+
+class Module
+{
+  public function getFormElementConfig()
+  {
+    return array(
+      'factories' =&gt; array(
+        'MyOwnElement' =&gt; function($sm) {
+          $valuesToInject = $sm-&gt;getServiceLocator()-&gt;get('TableGateway') ;
+          // injecting the values in the constructor of our custom element 
+          $select = new CustomSelect($valuesToInject) ;
+      
+          return $select ;
+        },
+      ),
+    ) ;
+  }
+
+  public function getServiceConfig()
+  {
+    return array(
+      'factories' =&gt; array(
+        // do whatever it takes to access to your datas from your persistence layer
+        'TableGateway' =&gt; function ($sm) {
+          return new TableGateway(...) ;
+        },
+      ),
+    );
+  }
+}
+</code></pre>
+<p>Noter que dans ce cas, nous avons injecter un objet <strong>TableGateway</strong>. Très probablement, on va pouvoir itérer sur cet objet et récupérer les valeurs clé et libellé pour notre tableau.</p>
+<h3>Construire le formulaire</h3>
+<p>Construisons maintenant le formulaire</p>
+<pre><code class="language-php">// module/MyModule/src/MyModule/Form/MyForm.php
+
+&lt;?php
+namespace MyModule\Form ;
+
+use Zend\Form\Form ;
+
+class MyForm extends Form
+{
+  public function init()
+  {
+    $this-&gt;add(array(
+      'name' =&gt; 'mySelect',
+      'type' =&gt; 'MyOwnElement',
+    )) ;
+  }
+
+  public function __construct()
+  {
+    // construire les autres éléments du formulaire avec les briques standards de ZF2
+  }
+}
+</code></pre>
+<p>Quand vous créez des éléments personnalisés, vous devez les ajouter dans l'élément <code>Form</code> (ou n'importe quel élément <code>Fieldset</code>) en utilisant la méthode <code>init()</code>.</p>
+<p>Notez que nous utilisons l'alias qui a été défini dans la classe <code>Module</code>.</p>
+<h3>Declarer le formulaire dans la classe Module</h3>
+<pre><code class="language-php">// module/MyModule/Module.php
+
+&lt;?php
+namespace MyModule ;
+
+...
+
+class Module
+{
+  public function getServiceConfig()
+  {
+    return array(
+      'invokables' =&gt; array(
+        'MyForm' =&gt; 'MyModule\Form\MyForm',
+      );
+    ) ;
+  }
+}
+</code></pre>
+<p>Nous souhaitons juste être capable d'invoquer la classe MyForm. Nous n'avons pas besoin de lui injecter d'autres dépendances.</p>
+<h3>Finaliser le tout dans le controleur</h3>
+<pre><code class="language-php">// module/MyModule/src/MyModule/Controller/IndexController.php
+
+&lt;?php
+namespace MyModule\Controller ;
+
+use Zend\Mvc\Controller\AbstractActionController ;
+
+class IndexController extends AbstractActionController
+{
+  public function indexAction()
+  {
+    $formManager = $this-&gt;serviceLocator-&gt;get('FormElementManager') ;
+    $form = $formManager-&gt;get('MyForm') ;
+    
+    return array('form' = $form) ;
+  }
+}
+</code></pre>
+<h3>Maintenant, à la vue</h3>
+<p>Quant à la vue, il ne reste qu'à utiliser les <strong>View Plugins</strong> mis à disposition par ZF2 pour mettre en forme les éléments de formulaire. A ce niveau, il n'y a rien de changé sur la documentation de ZF2.</p>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/fr/tags/zend-framework-2">zend framework 2</a></li><li><a href="/fr/tags/service-manager">Service Manager</a></li><li><a href="/fr/tags/dependances">dépendances</a></li><li><a href="/fr/tags/formulaire">formulaire</a></li></ul>
+        </div>
+      
+
+      
+        <nav id="book-navigation">
+    
+
+    
+        <li class="link-next"><a href="/fr/posts/gerer-les-dependances-utiliser-linjection-dans-le-controleur.html">Gérer les dépendances - Utiliser l&#39;injection dans le controleur <i class="fas fa-long-arrow-alt-right"></i></a></li>
+    
+
+    
+        <li class="link-up"><a href="/fr/books/gerer-les-dependances-avec-zend-framework-2.html"><i class="fas fa-book-open"></i> Gérer les dépendances avec Zend Framework 2</li>
+    
+</nav>
+
+      
+    
+
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>Sur moi</h3>
+      <p>J&#39;ai appris le php il y a quelques années, quand Internet était à ses débuts. Pour diverses raisons, j&#39;ai arrêté en route et j&#39;ai perdu le fil des nouveaux Internets que je redécouvre. Résultat, je me sens constamment à courir après l&#39;histoire mais je suis toujours motivée à reprendre des projets personnels. Je me propose de vous partager mes découvertes. Au delà des sujets de programmation, j&#39;aime également partager mes infos concernant notamment l&#39;Histoire, l&#39;Astronomie, la Linguistique, les Films, les Livres et les Anime. J&#39;espère que vous aimerez suivre mon blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. Tous droits réservés.</p>
+        <p>Propulsé par <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

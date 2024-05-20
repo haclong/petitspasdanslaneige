@@ -1,0 +1,272 @@
+<!doctype html>
+<html class="no-js" lang="fr" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>Installer Drupal sur l&#39;hébergeur Online.net&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">Français</a>
+        <a href="/en/">Anglais</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/fr/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/fr/books/0/index.html">Séries</a>
+        <a href="/fr/">Accueil</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/fr/">Accueil</a><i class="fas fa-angle-right"></i>Installer Drupal sur l'hébergeur Online.net
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>Installer Drupal sur l'hébergeur Online.net</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>20/03/2013 16:25:00
+        
+        <i class="fas fa-th-large"></i><!--a href="/fr/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/_ben2585.jpg" class="node-banner" />
+        
+          <p><strong>Crédit</strong> : Benedict Chui </p>
+        
+      </div>
+
+      <p><p>Il y a quelques temps, j'ai écrit un article sur l'<a href="http://haclong.long2.net/en/content/installing-drupal-subdirectory.html#overlay-context=en" target="_blank">installation de Drupal dans un sous répertoire</a>. Voici une version actualisée du process.</p>
+<h3>L'hébergeur</h3>
+<p>Mon hébergeur est <a href="http://www.online.net" target="_blank">Online.net</a>. Comme je n'ai aucune compétence à la maintenance d'un serveur de production, que je ne prétends pas en avoir et, au dessus de tout ça, je ne souhaite pas du tout en avoir, j'ai opté pour une de leur offre Hébergement.</p>
+<p>Chez Online, en FTP, on a accès à des répertoires racines qui correspondent chacun à un des sous domaines. Par exemple, sur l'espace FTP, le répertoire /www va correspondre à l'adresse <a href="http://www.mondomaine.com">http://www.mondomaine.com</a> et le répertoire /forum va correspondre à l'adresse <a href="http://forum.mondomaine.com">http://forum.mondomaine.com</a>.</p>
+<h3>Le besoin</h3>
+<p>Je veux utiliser Drupal pour gérer la page d'accueil de mon site. Toutefois, afin de ne pas mélanger les fichiers de Drupal avec des fichiers d'autres packages que je serais amenée à utiliser, je souhaite que le package Drupal soit installé dans un répertoire dédié.</p>
+<h3>L'installation du package</h3>
+<ul>
+<li>Pour installer Drupal, télécharger la version de Drupal que vous souhaitez utiliser. Ce tutoriel convient pour la version 6.x et la 7.x.</li>
+<li>Dézipper le package et laisser reposer</li>
+<li>Connectez vous sur votre espace FTP (mis à disposition gracieusement par votre hébergeur)</li>
+<li>Sur le répertoire correspondant au sous-domaine que vous souhaitez utiliser (<code>/www</code>), créer un répertoire <code>/drupal</code></li>
+<li>Uploader le package Drupal vers le répertoire <code>/drupal</code>. Là, si vous tester votre installation Drupal à cette adresse : <a href="http://www.mondomaine.com/drupal">http://www.mondomaine.com/drupal</a>, vous obtiendrez une erreur 500 qui va commencer gentiment à vous stresser...</li>
+</ul>
+<h3>www/.htaccess</h3>
+<p>Pour commencer, on va créer un fichier <code>.htaccess</code> que l'on va mettre à la racine.</p>
+<p>Nous avons désormais cette arborescence</p>
+<pre><code>//www/
+drupal/
+// package drupal entièrement dézippé
+.htaccess
+</code></pre>
+<p>Editez le fichier <code>.htaccess</code></p>
+<pre><code class="language-sh"># ajouter ces lignes pour l'hébergeur Online.net utilise le moteur php5 pour les fichiers .php
+AddType application/x-httpd-php5 .php
+
+RewriteEngine On
+# paramétrer la redirection d'url
+RewriteCond %{DOCUMENT_ROOT}/drupal%{REQUEST_URI} -f
+RewriteRule .* drupal/$0 [L]
+RewriteRule .* drupal/index.php?q=$0 [QSA]
+</code></pre>
+<h3>www/drupal/.htaccess</h3>
+<p>Nous allons maintenant nous occuper du fichier <code>.htaccess</code> fourni par défaut par Drupal</p>
+<p>Editer le fichier <code>.htaccess</code></p>
+<pre><code class="language-js">// ajouter ces lignes pour l'hébergeur Online.net utilise le moteur php5 pour les fichiers .php
+AddType application/x-httpd-php5 .php
+
+// modifier ces lignes pour l'hébergeur Online.net qui n'autorise pas la commande Options.
+# Don't show directory listings for URLs which map to a directory.
+// mettre la ligne d'origine du .htaccess de Drupal en commentaire
+Options -Indexes
+
+// modifier ces lignes pour l'hébergeur Online.net.
+# Follow symbolic links in this directory.
+// mettre la ligne d'origine du .htaccess de Drupal en commentaire
+#Options +FollowSymLinks
+
+// Laisser le reste du fichier tel quel
+</code></pre>
+<p>Normalement, vous devriez maintenant accéder à la page d'installation de Drupal. Suivez les instructions pour avoir votre site tout beau tout propre.</p>
+<p><a href="http://www.mondomaine.com">http://www.mondomaine.com</a> devrait vous afficher la page par défaut de Drupal maintenant.</p>
+<h3>www/drupal/sites/default/files/.htaccess</h3>
+<p>Si vous comptez utiliser les fonctionnalités d'upload de Drupal (upload d'images par ex), le script d'installation de Drupal va créer un repertoire <code>www/drupal/sites/default/files/</code> dans lequel on trouvera un fichier <code>.htaccess</code>.</p>
+<p>Editer ce fichier <code>.htaccess</code></p>
+<pre><code class="language-js">SetHandler Drupal_Security_Do_Not_Remove_See_SA_2006_006
+// mettre les lignes d'origines du .htaccess de Drupal en commentaire
+Options None
+#Options +FollowSymLinks
+</code></pre>
+<h3>Installer un fichier googleXXXX</h3>
+<p>Maintenant qu'on a bien joué avec les redirections d'URL, comment installer le fichier <code>googlexxxxxx.html</code> que <strong>Google Webmaster Tools</strong> vous demande d'installer à la racine de votre site ?</p>
+<ul>
+<li>Enregistrer le fichier <code>googlexxxxxx.html</code> fourni par <strong>Google Webmaster Tools</strong></li>
+<li>Se connecter sur l'espace FTP du site (chez Online donc).</li>
+<li>Déposer le fichier <code>googlexxxxxxx.html</code> dans le répertoire <code>drupal/</code></li>
+<li>Editer le fichier <code>www/.htaccess</code> et modifier les règles de redirections d'URL</li>
+</ul>
+<pre><code class="language-js"># ajouter ces lignes pour l'hébergeur Online.net utilise le moteur php5 pour les fichiers .php
+AddType application/x-httpd-php5 .php
+
+# paramétrer la redirection d'url
+RewriteEngine On
+// Ajouter cette ligne pour que la redirection d'url ne fonctionne pas pour le fichier googlexxxx.html
+RewriteCond %{REQUEST_URI} !^googlexxxxxxxxxxx\.html$ [NC]
+RewriteCond %{DOCUMENT_ROOT}/drupal%{REQUEST_URI} -f
+RewriteRule .* drupal/$0 [L]
+RewriteRule .* drupal/index.php?q=$0 [QSA]
+</code></pre>
+<h3>Installer des packages dans d'autres sous répertoires</h3>
+<p>Si vous installez d'autres packages, chacun dans son sous répertoire pour que tout soit bien propre, vous allez avoir un problème parce que les règles de redirection édictées dans le premier fichier <code>.htaccess</code> va systématiquement vous rediriger vers Drupal et Drupal ne va pas comprendre quand vous voudrez afficher un fichier <code>index.php</code> qui ne correspond pas au fichier <code>index.php</code> de Drupal.</p>
+<p>Pour cela, il faut modifier les règles de redirections d'URL dans le fichier <code>www/.haccess</code></p>
+<pre><code class="language-js"># ajouter ces lignes pour l'hébergeur Online.net utilise le moteur php5 pour les fichiers .php
+AddType application/x-httpd-php5 .php
+
+# paramétrer la redirection d'url
+RewriteEngine On
+RewriteCond %{REQUEST_URI} !^googlexxxxxxxxxxx\.html$ [NC]
+// Ajouter cette ligne pour que la redirection d'url ne fonctionne pas pour le répertoire wiki
+RewriteCond %{REQUEST_URI} !wiki/
+RewriteCond %{DOCUMENT_ROOT}/drupal%{REQUEST_URI} -f
+RewriteRule .* drupal/$0 [L]
+RewriteRule .* drupal/index.php?q=$0 [QSA]
+</code></pre>
+<p>Dans le sous répertoire <code>/wiki/</code>, il faut ajouter ces lignes au fichier <code>.htaccess</code> existant ou bien ajouter un fichier <code>.htaccess</code> avec ces lignes</p>
+<pre><code class="language-js">RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} -s [OR]
+RewriteCond %{REQUEST_FILENAME} -l [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^.*$ - [NC,L]
+</code></pre>
+<p>Vous avez maintenant une arborescence de ce type</p>
+<pre><code>//www/
+drupal/
+   .htaccess
+   // package drupal entièrement dézippé
+   googlexxxxxx.html
+wiki/
+   .htaccess
+   // package wiki entièrement dézippé
+.htaccess
+</code></pre>
+<p>Lorsque vous saisissez cette adresse dans votre navigateur</p>
+<p><a href="http://www.mondomaine.com">http://www.mondomaine.com</a> -&gt; vous obtenez votre site sur Drupal</p>
+<p><a href="http://www.mondomaine.com/wiki">http://www.mondomaine.com/wiki</a> -&gt; vous obtenez votre wiki</p>
+<p><a href="http://www.mondomaine.com/googlexxxxxx.html">http://www.mondomaine.com/googlexxxxxx.html</a> devrait être valide pour Google Webmaster Tools</p>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/fr/tags/drupal">Drupal</a></li><li><a href="/fr/tags/howto">HOWTO</a></li><li><a href="/fr/tags/online-net">Online.net</a></li><li><a href="/fr/tags/redirection-rules">redirection rules</a></li></ul>
+        </div>
+      
+
+      
+    
+
+      
+        <section id="oldcomment">
+          <h2>Commentaires historiques</h2><article>
+              <div class="level1">
+  <h3>Remerciements !</h3>
+  <div class="meta">JePrefereEtreAnonyme 2015-02-15T16:15 </div>
+  <div class="body">Je ne peux que vous remercier pour vos précieux conseils.<br />
+<br />
+Etant chez Online.net j'ai effectivement rencontré ce souci avec Drupal.<br />
+<br />
+Après bien des tests et des recherches, une pointe de désespoir s'ajoutant à cela, vous avez été mon sauveur ! Que dis-je ?! Mon héros !<br />
+<br />
+En conclusion : merci beaucoup ! :-)<br />
+<br />
+Un petit geek devweb !</div>
+
+  
+  
+</div>
+
+            </article></section>
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>Sur moi</h3>
+      <p>J&#39;ai appris le php il y a quelques années, quand Internet était à ses débuts. Pour diverses raisons, j&#39;ai arrêté en route et j&#39;ai perdu le fil des nouveaux Internets que je redécouvre. Résultat, je me sens constamment à courir après l&#39;histoire mais je suis toujours motivée à reprendre des projets personnels. Je me propose de vous partager mes découvertes. Au delà des sujets de programmation, j&#39;aime également partager mes infos concernant notamment l&#39;Histoire, l&#39;Astronomie, la Linguistique, les Films, les Livres et les Anime. J&#39;espère que vous aimerez suivre mon blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. Tous droits réservés.</p>
+        <p>Propulsé par <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

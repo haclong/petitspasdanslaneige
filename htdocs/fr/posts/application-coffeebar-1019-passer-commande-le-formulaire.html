@@ -1,0 +1,588 @@
+<!doctype html>
+<html class="no-js" lang="fr" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>Application CoffeeBar 10/19 - Passer commande, le formulaire&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">Français</a>
+        <a href="/en/">Anglais</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/fr/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/fr/books/0/index.html">Séries</a>
+        <a href="/fr/">Accueil</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/fr/">Accueil</a><i class="fas fa-angle-right"></i>Application CoffeeBar 10/19 - Passer commande, le formulaire
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>Application CoffeeBar 10/19 - Passer commande, le formulaire</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>12/03/2015 14:35:00
+        
+        <i class="fas fa-th-large"></i><!--a href="/fr/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/file9271237667217.jpg" class="node-banner" />
+        
+          <p><strong>Crédit</strong> : Morguefile.com </p>
+        
+      </div>
+
+      <p><p>Ici encore, nous allons mettre un formulaire en place. Plus complexe que le précédent : il va inclure un élément de sélection et un élément de texte, ces deux éléments pouvant s'ajouter autant de fois qu'on le voudra dans le formulaire.
+Pour passer commande, nous allons mettre en place un formulaire avec un ensemble de champs : liste déroulante et champ de saisie libre pour chaque élément de menu. On pourra ajouter autant d'éléments de menu que l'on voudra dans notre formulaire. Un peu de dépendances et de javascript dans le tutoriel d'aujourd'hui.</p>
+<h3>Ce que nous allons faire</h3>
+<p>Pour passer commande, nous arriverons sur un formulaire où il y aura un élément de sélection, présentant chaque élément du menu et sur la même ligne, un élément de saisie où on pourra saisir le nombre de boissons et/ou de plats commandés. Il sera alors possible, si on veut commander une autre boisson ou un autre plat, de rajouter une ligne de plus : il y aura alors un nouvel élément de sélection et l'élément de saisie qui lui est associé.</p>
+<h3>L'élément de menu</h3>
+<p>L'élément de menu est composé d'un <em>numéro de menu</em>, d'une <em>description</em>, d'un <em>prix</em> et d'un <em>flag</em> si l'élément est une boisson ou pas.</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Entity/MenuItem.php
+
+&lt;?php
+namespace CoffeeBar\Entity ;
+
+class MenuItem
+{
+  protected $id ; // int
+  protected $description ; // string
+  protected $price ; // float
+  protected $isDrink ; // bool
+
+  // nous définissons des valeurs par défaut pour le prix et le statut boisson
+  public function __construct($id, $description, $price = 0.00, $isDrink = false)
+  {
+    $this-&gt;setId($id) ;
+    $this-&gt;setDescription($description) ;
+    $this-&gt;setPrice($price) ;
+    $this-&gt;setIsDrink($isDrink) ;
+  }
+ 
+  /* définir les getter et setter */
+}
+</code></pre>
+<p>Un menu complet est donc composé de plusieurs éléments de menu. <em>Qui m'entend déjà parler d'ArrayObject ?</em></p>
+<p>Là encore, ce sont des objets avec des données en dur mais il est très facile, à partir d'ici, de relier ces objets à une base de données.</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Entity/MenuItems.php
+
+&lt;?php
+namespace CoffeeBar\Entity ;
+
+use ArrayObject;
+
+class MenuItems extends ArrayObject
+{
+  public function __construct(Array $array=null)
+  {
+    $array = array() ;
+    $i = 0 ;
+    $array[] = new MenuItem($i++, 'Thé vert', 3.75, true) ;
+    $array[] = new MenuItem($i++, 'Café', 2.55, true) ;
+    $array[] = new MenuItem($i++, 'Limonade', 4.05, true) ;
+    $array[] = new MenuItem($i++, 'Soda', 4.20, true) ;
+    $array[] = new MenuItem($i++, 'Bière', 4.75, true) ;
+    $array[] = new MenuItem($i++, 'Frites', 5.25) ;
+    $array[] = new MenuItem($i++, 'Pizza', 9.80) ;
+    $array[] = new MenuItem($i++, 'Saucisses Frites', 7.75) ;
+    $array[] = new MenuItem($i++, 'Hot Dog', 7.00) ;
+    $array[] = new MenuItem($i++, 'Quiche', 6.65) ;
+    parent::__construct($array) ;
+  }
+}
+</code></pre>
+<p>On a donc une liste (<code>\ArrayObject</code>). Mais rappelons nous. Dans un élément de sélection, l'option <code>value_options</code> attend un tableau (<code>array</code>) à une dimension : <code>id =&gt; valeur</code>. Il faut donc mettre en place une méthode qui va extraire les données de <code>CoffeeBar\Entity\MenuItems</code> et qui va retourner juste le tableau qu'il nous faut. L'<code>id</code>, de toute évidence, sera le <em>numéro de menu</em> alors que la <code>valeur</code> sera la <em>description</em>.</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Entity/MenuItems.php
+
+&lt;?php
+namespace CoffeeBar\Entity ;
+
+class MenuItems ...
+{
+  // une méthode pour faire un tableau de paire id/value pour chaque objet MenuItem
+  public function getSelectValues()
+  {
+    $array = array() ;
+ 
+    // on accède à l'itérateur des objets ArrayObject avec la méthode getIterator()
+    $iterator = $this-&gt;getIterator() ;
+    foreach($iterator as $item)
+    {
+      $array[$item-&gt;getId()] = $item-&gt;getDescription() ;
+    }
+    return $array ;
+  }
+}
+</code></pre>
+<h3>Passons aux éléments de formulaire.</h3>
+<p>On va commencer par l'élément de sélection.</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Form/MenuSelect.php
+
+&lt;?php
+namespace CoffeeBar\Form ;
+
+use CoffeeBar\Entity\MenuItems;
+use Zend\Form\Element\Select;
+
+class MenuSelect extends Select
+{
+  protected $menus ;
+ 
+  // injecter l'objet MenuItems dans le constructeur
+  public function __construct(MenuItems $items)
+  {
+    $this-&gt;menus = $items ;
+  }
+
+  // assigner le tableau avec les paires id/value
+  // il faut le faire dans la méthode init() prévue à cet effet
+  public function init()
+  {
+    $this-&gt;setValueOptions($this-&gt;menus-&gt;getSelectValues()) ;
+  }
+}
+</code></pre>
+<p>Nous allons maintenant construire une classe <code>Fieldset</code> personnalisée qui contiendra, de paire, l'élément de sélection et l'élément de saisie de texte.</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Form/MenuItemFieldset.php
+
+&lt;?php
+namespace CoffeeBar\Form ;
+
+use Zend\Form\Fieldset;
+
+class MenuItemFieldset extends Fieldset
+{
+  // lorsqu'il y a des éléments personnalisés de formulaire
+  // la méthode init() est chargée en premier
+  public function init()
+  {
+    $this-&gt;add(array(
+      'name' =&gt; 'id',
+      'type' =&gt; 'MenuSelect', // utiliser la clé qui est dans le manager de formulaire
+      'attributes' =&gt; array(
+        'class' =&gt; 'form-control',
+      ),
+    )) ;
+  }
+
+  public function __construct()
+  {
+    parent::__construct('menuItems') ;
+ 
+    $this-&gt;add(array(
+      'name' =&gt; 'number',
+      'options' =&gt; array(
+        'label' =&gt; ' ',
+      ),
+      'attributes' =&gt; array(
+        'value' =&gt; 1,
+        'class' =&gt; 'form-control text-right',
+        'size' =&gt; 4,
+      ),
+    )) ;
+  }
+}
+</code></pre>
+<p>Afin d'assurer le rendu de ce fieldset (il n'existe aucune aide de vue fournie par Zend Framework 2 qui convienne à notre fieldset personnalisé), nous allons créer notre propre aide de vue.</p>
+<p>Je ne sais plus où j'ai trouvé la doc pour écrire mon aide de vue... Inspirez vous de celle ci :p</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Form/Helper/MenuItemFormCollection.php
+
+&lt;?php
+namespace CoffeeBar\Form\Helper ;
+
+use Zend\Form\View\Helper\FormCollection ;
+use Zend\Form\Element\Collection ;
+
+class MenuItemFormCollection extends FormCollection
+{
+  public function renderTemplate(Collection $collection)
+  {
+    $elementHelper = $this-&gt;getElementHelper();
+    $escapeHtmlAttribHelper = $this-&gt;getEscapeHtmlAttrHelper();
+    $fieldsetHelper = $this-&gt;getFieldsetHelper();
+    $element = $collection-&gt;getTemplateElement();
+ 
+    if ($element instanceof FieldsetInterface) {
+      $templateMarkup .= $fieldsetHelper($element);
+    }
+
+    $formRow = $this-&gt;view-&gt;plugin('FormRow') ;
+
+    $templateMarkup = '';
+    $templateMarkup .= '&lt;fieldset class=&quot;form-inline&quot;&gt;' ;
+    $templateMarkup .= $formRow($element-&gt;get('id')) . '&amp;amp;nbsp;&amp;amp;nbsp;';
+    $templateMarkup .= $formRow($element-&gt;get('number')) ;
+    $templateMarkup .= '&lt;/fieldset&gt;' ;
+
+    return sprintf(
+      $this-&gt;templateWrapper,
+      $escapeHtmlAttribHelper($templateMarkup)
+    );
+  }
+}
+</code></pre>
+<p>Après avoir créé votre aide de vue, il faut aller l'<a href="http://framework.zend.com/manual/current/en/modules/zend.view.helpers.advanced-usage.html#registering-helpers" target="_blank">enregistrer dans l'application</a> afin qu'on puisse y faire appel.</p>
+<pre><code class="language-php">// module/CoffeeBar/config/module.config.php
+
+&lt;?
+return array(
+  'view_helpers' =&gt; array(
+    'invokables' =&gt; array(
+      // comme d’habitude : la clé =&gt; l’objet
+      'MenuItemFormCollection' =&gt; 'CoffeeBar\Form\Helper\MenuItemFormCollection',
+    ),
+  ),
+);
+</code></pre>
+<p>Maintenant que l'aide de vue est prête, montons le formulaire. Un élément <code>fieldset</code> qu'on peut répéter à l'envi, Zend Framework 2 l'appelle <a href="http://http://framework.zend.com/manual/current/en/modules/zend.form.collections.html" target="_blank"><strong>Form Collection</strong></a> et le documente pas trop mal. Dans le formulaire, on va créer un élément de type <code>Zend\Form\Element\Collection</code>. Cet élément admet quelques options en plus pour gérer la répétition des informations.</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Form/PlaceOrderForm
+
+&lt;?php
+namespace CoffeeBar\Form ;
+
+use Zend\Form\Element\Csrf;
+use Zend\Form\Form;
+
+class PlaceOrderForm extends Form
+{
+  public function init()
+  {
+    $this-&gt;add(array(
+      // c'est un élément du framework. Il permet de faire des champs qui peuvent s'incrémenter dynamiquement
+      'type' =&gt; 'Zend\Form\Element\Collection',
+      'name' =&gt; 'items',
+      'options' =&gt; array(
+        'label' =&gt; 'Commandez vos plats',
+        // nombre d'éléments par défaut à l'ouverture du formulaire
+        'count' =&gt; 2,
+        // les deux options suivantes permettent d'ajouter autant de champs qu'on souhaite
+        'should_create_template' =&gt; true,
+        'allow_add' =&gt; true,
+        // cette option indique quel est l'élément à utiliser
+        'target_element' =&gt; array(
+          // chemin du vrai objet, pas un alias dans le Service Manager
+          'type' =&gt; 'CoffeeBar\Form\MenuItemFieldset',
+        ),
+      ),
+      'attributes' =&gt; array(
+        'class' =&gt; 'form-control',
+      ),
+    ));
+  }
+
+  public function __construct()
+  {
+    parent::__construct('order') ;
+ 
+    $this-&gt;setAttribute('method', 'post') ;
+    // il faudra ajouter l'hydrator et l'objet ici éventuellement
+ 
+    // numéro de la table
+    $this-&gt;add(array(
+      'name' =&gt; 'id',
+      'type' =&gt; 'hidden',
+    )) ;
+ 
+    $this-&gt;add(new Csrf('security')) ;
+ 
+    $this-&gt;add(array(
+      'name' =&gt; 'submit',
+      'type' =&gt; 'Submit',
+      'attributes' =&gt; array(
+        'value' =&gt; 'Place order',
+        'class' =&gt; 'btn btn-default',
+      ),
+    )) ;
+  }
+}
+</code></pre>
+<p>Notre formulaire est prêt. On va le charger dans le <strong>gestionnaire de services</strong>, l'invoquer dans le contrôleur et afficher le formulaire dans la vue, en profitant de notre <strong>aide de vue</strong> au passage.</p>
+<h4>Gestionnaire de services</h4>
+<pre><code class="language-php">// module/CoffeeBar/Module.php
+
+namespace CoffeeBar;
+
+use CoffeeBar\Form\MenuSelect;
+
+class Module implements FormElementProviderInterface
+{
+  // l'interface FormElementProvideInterface a la méthode getFormElementConfig()
+  public function getFormElementConfig() {
+    return array(
+      'factories' =&gt; array(
+        // déclarer l'élément de formulaire dans le Manager de formulaire
+        'MenuSelect' =&gt; function($sm) {
+          $serviceLocator = $sm-&gt;getServiceLocator() ;
+          // CoffeeBarEntity\MenuItems : clé dans le Service Manager
+          $menus = $serviceLocator-&gt;get('CoffeeBarEntity\MenuItems') ;
+          // MenuSelect : objet CoffeeBar\Form\MenuSelect
+          $select = new MenuSelect($menus) ;
+          return $select ;
+        },
+      ),
+    );
+  }
+
+  // on charge le service manager
+  public function getServiceConfig()
+  {
+    return array(
+      'invokables' =&gt; array(
+        'CoffeeBarEntity\MenuItems' =&gt; 'CoffeeBar\Entity\MenuItems',
+      ),
+      'factories' =&gt; array(
+        'PlaceOrderForm' =&gt; function($sm) {
+          $formManager = $sm-&gt;get('FormElementManager') ;
+          $form = $formManager-&gt;get('CoffeeBar\Form\PlaceOrderForm') ;
+          return $form ;
+        },
+      ),
+    ) ;
+  }
+}
+</code></pre>
+<h4>Le contrôleur</h4>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Controller/TabController.php
+
+&lt;?php
+namespace CoffeeBar\Controller ;
+
+use Zend\Mvc\Controller\AbstractActionController;
+
+class TabController extends AbstractActionController
+{
+  public function orderAction()
+  {
+    // utiliser la clé déclarée dans le Service Manager (classe Module)
+    $form = $this-&gt;serviceLocator-&gt;get('PlaceOrderForm') ;
+    $request = $this-&gt;getRequest() ;
+
+    // vérifier si on connait le numéro de la table pour laquelle on passe commande
+    if ($id = (int) $this-&gt;params()-&gt;fromRoute('id')) 
+    {
+      $form-&gt;get('id')-&gt;setValue($id) ;
+    // sinon, vérifier si le formulaire a été posté
+    } elseif($request-&gt;isPost()) {
+      $form-&gt;setData($request-&gt;getPost()) ;
+      if($form-&gt;isValid()) {
+        // traitement de la commande
+      }
+    // si on ne sait pas pour quelle table on va passer commande, retourner à la page 'Ouvrir une commande'
+    } else {
+      return $this-&gt;redirect()-&gt;toRoute('tab/open');
+    }
+ 
+    $result['form'] = $form ;
+    return array('result' =&gt; $result) ;
+  }
+}
+</code></pre>
+<h4>Et enfin la vue définitive.</h4>
+<p>N'oubliez pas le code javascript qui va nous permettre d'ajouter autant d'éléments qu'on veut.</p>
+<pre><code class="language-php">// module/CoffeeBar/view/coffee-bar/tab/order.phtml
+
+&lt;script&gt;
+  function add_item() {
+    var currentCount = $('form fieldset fieldset').length;
+    var template = $('form fieldset &gt; span').data('template');
+    template = template.replace(/__index__/g, currentCount);
+    $('form fieldset').last().append(template);
+
+    return false;
+  }
+&lt;/script&gt;
+
+&lt;h1&gt;Passer commande&lt;/h1&gt;
+
+&lt;?php
+  $form = $this-&gt;result['form'] ;
+  $form-&gt;prepare() ;
+
+  $form-&gt;setAttribute('action', $this-&gt;url('tab/order')) ;
+  $form-&gt;setAttribute('method', 'post') ;
+?&gt;
+
+&lt;?php echo $this-&gt;form()-&gt;openTag($form) ; ?&gt;
+
+&lt;div class='form-group'&gt;
+  &lt;?php echo $this-&gt;formRow($form-&gt;get('id')) ; ?&gt;
+&lt;/div&gt;
+
+&lt;div class='form-group'&gt;
+  &lt;fieldset&gt;
+    &lt;legend&gt;&lt;?php $this-&gt;formLabel($form-&gt;get('items')) ; ?&gt;&lt;/legend&gt;
+
+    &lt;?php
+      foreach($form-&gt;get('items')-&gt;getIterator() as $fieldset)
+      {
+        echo '&lt;fieldset class=&quot;form-inline&quot;&gt;' ;
+        echo $this-&gt;formRow($fieldset-&gt;get('id')). '&amp;amp;nbsp;&amp;amp;nbsp;' ;
+        echo $this-&gt;formRow($fieldset-&gt;get('number')) ;
+        echo '&lt;/fieldset&gt;' ;
+      }
+      // Et voici notre aide de vue
+      echo $this-&gt;MenuItemFormCollection()-&gt;renderTemplate($form-&gt;get('items'));
+    ?&gt;
+  
+  &lt;/fieldset&gt;
+  &lt;button onclick=&quot;return add_item()&quot;&gt;Add a new item&lt;/button&gt;
+&lt;/div&gt;
+
+&lt;?php
+  echo $this-&gt;formRow($form-&gt;get('security')) ;
+  echo $this-&gt;formRow($form-&gt;get('submit')) ;
+  echo $this-&gt;form()-&gt;closeTag() ;
+?&gt;
+</code></pre>
+<h4>La route</h4>
+<p>Avant de passer à la suite, on n'oublie pas de paramétrer la route qui va bien</p>
+<pre><code class="language-php">// module/CoffeeBar/config/module.config.php
+
+&lt;?php
+return array(
+  'router' =&gt; array(
+    'routes' =&gt; array(
+      // ajouter aux autres routes
+      'tab' =&gt; array(
+        'child_routes' =&gt; array(
+ 
+          /**
+           * cette URL : http://coffeebar.home/tab/order mène à cette route
+           */
+          'order' =&gt; array(
+            'type' =&gt; 'Segment',
+            'options' =&gt; array(
+              'route' =&gt; '/order[/:id]',
+              'constraints' =&gt; array(
+                'id' =&gt; '[a-zA-Z0-9_-]+',
+              ),
+              'defaults' =&gt; array(
+                'controller' =&gt; 'CoffeeBarController\Tab',
+                'action' =&gt; 'order',
+              ),
+            ),
+          ),
+        ),
+      ),
+    ),
+  ),
+) ;
+</code></pre>
+<p>Tadaaa... C'est pas génial ? Notre formulaire fonctionne. Fonctionne ?? Pas tout à fait, il reste maintenant à gérer le traitement des informations.</p>
+<p><em>Vous trouverez l'intégralité de l'application sur mon <a href="https://github.com/haclong/coffeebar" target="_blank">github</a></em></p>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/fr/tags/zend-framework-2">zend framework 2</a></li><li><a href="/fr/tags/aide-de-vue">aide de vue</a></li><li><a href="/fr/tags/mvc">MVC</a></li><li><a href="/fr/tags/javascript">javascript</a></li><li><a href="/fr/tags/zend-form">Zend Form</a></li><li><a href="/fr/tags/zend-form-collection">Zend Form Collection</a></li></ul>
+        </div>
+      
+
+      
+        <nav id="book-navigation">
+    
+       <li class="link-previous"><a href="/fr/posts/application-coffeebar-919-commander-les-plats-et-les-boissons.html"><i class="fas fa-long-arrow-alt-left"></i> Application CoffeeBar 9/19 - Commander les plats et les boissons</li>
+    
+
+    
+        <li class="link-next"><a href="/fr/posts/application-coffeebar-1119-traiter-le-formulaire.html">Application CoffeeBar 11/19 - Traiter le formulaire <i class="fas fa-long-arrow-alt-right"></i></a></li>
+    
+
+    
+        <li class="link-up"><a href="/fr/books/gerer-un-cafe-avec-une-programmation-evenementielle.html"><i class="fas fa-book-open"></i> Gérer un café avec une programmation événementielle</li>
+    
+</nav>
+
+      
+    
+
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>Sur moi</h3>
+      <p>J&#39;ai appris le php il y a quelques années, quand Internet était à ses débuts. Pour diverses raisons, j&#39;ai arrêté en route et j&#39;ai perdu le fil des nouveaux Internets que je redécouvre. Résultat, je me sens constamment à courir après l&#39;histoire mais je suis toujours motivée à reprendre des projets personnels. Je me propose de vous partager mes découvertes. Au delà des sujets de programmation, j&#39;aime également partager mes infos concernant notamment l&#39;Histoire, l&#39;Astronomie, la Linguistique, les Films, les Livres et les Anime. J&#39;espère que vous aimerez suivre mon blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. Tous droits réservés.</p>
+        <p>Propulsé par <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

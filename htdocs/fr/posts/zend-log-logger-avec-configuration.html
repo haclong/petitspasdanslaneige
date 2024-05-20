@@ -1,0 +1,301 @@
+<!doctype html>
+<html class="no-js" lang="fr" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>Zend Log Logger avec configuration&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">Français</a>
+        <a href="/en/">Anglais</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/fr/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/fr/books/0/index.html">Séries</a>
+        <a href="/fr/">Accueil</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/fr/">Accueil</a><i class="fas fa-angle-right"></i>Zend Log Logger avec configuration
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>Zend Log Logger avec configuration</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>17/06/2013 17:52:00
+        
+        <i class="fas fa-th-large"></i><!--a href="/fr/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/__table_de_mixage_2.jpg" class="node-banner" />
+        
+      </div>
+
+      <p><p>Comment configurer les writers d'un objet <code>Zend\Log\Logger</code> en utilisant la configuration seulement.</p>
+<p>J'espère que cette liste va vous aider à utiliser <code>Zend\Log\Logger</code></p>
+<h3>Les writers</h3>
+<p>Les writers indiquent à <code>Zend\Log\Logger</code> sur quel support on souhaite enregistrer nos logs.</p>
+<p>Voici la liste des writers de <code>Zend\Log</code></p>
+<pre><code class="language-php"> 'chromephp' =&gt; 'Zend\Log\Writer\ChromePhp',
+ 'db' =&gt; 'Zend\Log\Writer\Db',
+ 'fingerscrossed' =&gt; 'Zend\Log\Writer\FingersCrossed',
+ 'firephp' =&gt; 'Zend\Log\Writer\FirePhp',
+ 'mail' =&gt; 'Zend\Log\Writer\Mail',
+ 'mock' =&gt; 'Zend\Log\Writer\Mock',
+ 'null' =&gt; 'Zend\Log\Writer\Null',
+ 'stream' =&gt; 'Zend\Log\Writer\Stream',
+ 'syslog' =&gt; 'Zend\Log\Writer\Syslog',
+ 'zendmonitor' =&gt; 'Zend\Log\Writer\ZendMonitor',
+</code></pre>
+<h3>Les filtres</h3>
+<p>Les filtres indiquent à <code>Zend\Log\Logger</code> quels informations ne devraient pas être loggées.</p>
+<p>Voici la liste des filtres de <code>Zend\Log</code></p>
+<pre><code class="language-php"> 'mock' =&gt; 'Zend\Log\Filter\Mock',
+ 'priority' =&gt; 'Zend\Log\Filter\Priority',
+ 'regex' =&gt; 'Zend\Log\Filter\Regex',
+ 'suppress' =&gt; 'Zend\Log\Filter\SuppressFilter',
+ 'suppressfilter' =&gt; 'Zend\Log\Filter\SuppressFilter',
+ 'validator' =&gt; 'Zend\Log\Filter\Validator',
+</code></pre>
+<h3>Les formatteurs</h3>
+<p>Les formatteurs indiquent à <code>Zend\Log\Logger</code> en quels formats les informations doivent être loggées. Généralement, le format est fortement liés au writer.</p>
+<p>Voici la liste des formatteurs de <code>Zend\Log</code></p>
+<pre><code class="language-php"> 'base' =&gt; 'Zend\Log\Formatter\Base',
+ 'simple' =&gt; 'Zend\Log\Formatter\Simple',
+ 'xml' =&gt; 'Zend\Log\Formatter\Xml',
+ 'db' =&gt; 'Zend\Log\Formatter\Db',
+ 'errorhandler' =&gt; 'Zend\Log\Formatter\ErrorHandler',
+ 'exceptionhandler' =&gt; 'Zend\Log\Formatter\ExceptionHandler',
+</code></pre>
+<p>Voici l'ensemble entier :</p>
+<pre><code class="language-php">&lt;?php
+'writers' =&gt; array( // array
+  array(
+    // \Zend\Log\Logger-&gt;addWriter($name, $priority, $options)
+    'name' =&gt; string $name, // mandatory -&gt; voir la liste des writers
+    'priority' =&gt; int $priority, // default null (1)
+    'options' =&gt; array( // default null
+      'exceptionhandler' =&gt; bool // default false // registerExceptionHandler
+      'errorhandler' =&gt; bool // default false // registerErrorHandler
+
+      // si $name = 'chromephp' - default formatter ChromePhpFormatter()
+      'instance' =&gt; Zend\Log\Writer\ChromePhp\ChromePhpInterface $instance // mandatory
+
+      // si $name = 'db' - default formatter DbFormatter
+      'separator' =&gt; string $separator // default '_'
+      'column' =&gt; array $columnMap // default null
+      'table' =&gt; string $tableName // mandatory default null
+      'db' =&gt; Zend\Db\Adapter\Adapter $db // default null
+
+      // si $name = 'fingerscrossed'
+      'priority' =&gt; $priority // default Logger::WARN
+      'bufferSize' =&gt; int $bufferSize
+      'writer' =&gt; string $writer
+      'writer' =&gt; array(
+        'name' =&gt; $name
+        'options' =&gt; $options
+      ),
+
+      // si $name = 'firephp' - default formatter FirePhpFormatter
+      'instance' =&gt; FirePhp\FirePhpInterface $instance // mandatory
+
+      // si $name = 'mail' - default SimpleFormatter
+      'subject_prepend_text' =&gt; string $subject_prepend_text
+      'transport' =&gt; Transport\Sendmail $transport // default null
+      'mail' =&gt; Zend\Mail\Message $mail // default null
+
+      // si $name = 'mock' - writer pour faire des tests
+
+      // si $name = 'MongoDb'
+      'save_options' =&gt; $save_options // default null - mongo save options
+      'collection' =&gt; $collection // mandatory
+      'database' =&gt; $database // mandatory
+      'mongo' =&gt; MongoClient | Mongo $mongo // default null
+
+      // si $name = 'null'
+
+      // si $name = 'stream'
+      'mode' =&gt; $mode // default 'a'
+      'log_separator' =&gt; $log_separator // default PHP_EOL
+      'stream' =&gt; $stream // default null
+
+      // si $name = 'syslog' - default formatter = SimpleFormatter('%message%')
+      'application' =&gt; $application // default Zend\Log
+      'facility' =&gt; $facility // default LOG_USER
+
+      // si $name = 'zendmonitor'
+
+      // ajouter des filtres
+      'filters' =&gt; string 'filter1' // $this-&gt;addFilter('filter1')
+      'filters' =&gt; array('filter1', 'filter2') // this-&gt;addFilter('filter1'), $this-&gt;addFilter('filter2'),
+      'filters' =&gt; array( // $this-&gt;addFilter($name, $options)
+        array(
+          'name' =&gt; $name // mandatory -&gt; voir la liste des filtres
+          'options' =&gt; array( // default null
+
+            // si $name = 'mock' - pour les tests
+
+            // si $name = 'priority'
+            'operator' =&gt; string $operator // default '&lt;='
+            'priority' =&gt; int $priority // default null
+
+            // si $name = 'regex'
+            'regex' =&gt; $regex // default null
+
+            // si $name = 'suppress' | 'suppressfilter'
+            'suppress' =&gt; bool // default false
+
+            // si $name = 'validator'
+            'validator' =&gt; Zend\Validator\ValidatorInterface $validator // default null
+          ),
+        ),
+      ),
+    ),
+
+    // ajouter des formatteurs
+    'formatter' =&gt; string 'formatter1' // $this-&gt;setFormatter('formatter1')
+    'formatter' =&gt; array( // $this-&gt;setFormatter($name, $options)
+      'name' =&gt; $name // mandatory -&gt; voir la liste des formatteurs
+      'options' =&gt; array( // default null
+
+        // si $name = 'base'
+        'dateTimeFormat' =&gt; string $date_function_format // default 'c'
+
+        // si $name = 'db'
+        'dateTimeFormat' =&gt; string $date_function_format // default 'c'
+
+        // si $name = 'errorhandler'
+        'dateTimeFormat' =&gt; string $date_function_format // default 'c'
+        'format' =&gt; string $format // default '%timestamp% %priorityName% (%priority%) %message% (errno %extra[errno]%) in %extra[file]% on line %extra[line]%'
+
+        // si $name = 'exceptionhandler'
+
+        // si $name = 'simple'
+        'dateTimeFormat' =&gt; string $date_function_format // default 'c'
+        'format' =&gt; string $format // default '%timestamp% %priorityName% (%priority%): %message% %extra%'
+
+        // si $name = 'xml'
+        'elementMap' =&gt; array $elementMap
+        'encoding' =&gt; string $encoding // default 'UTF-8'
+        'dateTimeFormat' =&gt; string $date_function_format // default 'c'
+        'rootElement' =&gt; string $rootElement // default 'logEntry'
+      ),
+    ),
+  ),
+),
+</code></pre>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/fr/tags/zend-framework-2">zend framework 2</a></li><li><a href="/fr/tags/configuration">configuration</a></li><li><a href="/fr/tags/zend-log">Zend Log</a></li></ul>
+        </div>
+      
+
+      
+        <nav id="book-navigation">
+    
+       <li class="link-previous"><a href="/fr/posts/rajouter-zend-inputfilter.html"><i class="fas fa-long-arrow-alt-left"></i> Rajouter Zend InputFilter</li>
+    
+
+    
+        <li class="link-next"><a href="/fr/posts/zend-mvc-router-par-configuration.html">Zend Mvc Router par configuration <i class="fas fa-long-arrow-alt-right"></i></a></li>
+    
+
+    
+        <li class="link-up"><a href="/fr/books/configuration-dans-zend-framework-2.html"><i class="fas fa-book-open"></i> Configuration dans Zend Framework 2</li>
+    
+</nav>
+
+      
+    
+
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>Sur moi</h3>
+      <p>J&#39;ai appris le php il y a quelques années, quand Internet était à ses débuts. Pour diverses raisons, j&#39;ai arrêté en route et j&#39;ai perdu le fil des nouveaux Internets que je redécouvre. Résultat, je me sens constamment à courir après l&#39;histoire mais je suis toujours motivée à reprendre des projets personnels. Je me propose de vous partager mes découvertes. Au delà des sujets de programmation, j&#39;aime également partager mes infos concernant notamment l&#39;Histoire, l&#39;Astronomie, la Linguistique, les Films, les Livres et les Anime. J&#39;espère que vous aimerez suivre mon blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. Tous droits réservés.</p>
+        <p>Propulsé par <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,72 @@
+[
+    {
+        "rank": 0,
+        "url": "/fr/posts/le-solveur-de-sudoku-preparer-le-projet.html",
+        "title": "Le solveur de sudoku - Préparer le projet"
+    },
+    {
+        "rank": 1,
+        "url": "/fr/posts/le-solveur-de-sudoku-concevoir-les-objets.html",
+        "title": "Le solveur de sudoku - Concevoir les objets"
+    },
+    {
+        "rank": 2,
+        "url": "/fr/posts/un-solveur-de-sudoku-preparer-la-vue.html",
+        "title": "Un solveur de Sudoku - Préparer la vue"
+    },
+    {
+        "rank": 3,
+        "url": "/fr/posts/solveur-de-sudoku-route-et-controleur.html",
+        "title": "Solveur de Sudoku - Route et Contrôleur"
+    },
+    {
+        "rank": 4,
+        "url": "/fr/posts/un-solveur-de-sudoku-tester-le-controleur.html",
+        "title": "Un solveur de Sudoku - Tester le contrôleur"
+    },
+    {
+        "rank": 5,
+        "url": "/fr/posts/solveur-de-sudoku-lobjet-chiffre.html",
+        "title": "Solveur de Sudoku - L'objet Chiffre"
+    },
+    {
+        "rank": 6,
+        "url": "/fr/posts/solveur-de-sudoku-les-tests-unitaires-pour-lobjet-chiffre.html",
+        "title": "Solveur de Sudoku - Les tests unitaires pour l'objet Chiffre"
+    },
+    {
+        "rank": 7,
+        "url": "/fr/posts/sudoku-solver-developper-lobjet-case.html",
+        "title": "Sudoku Solver - Développer l'objet Case"
+    },
+    {
+        "rank": 8,
+        "url": "/fr/posts/le-solveur-de-sudoku-mettre-en-place-la-grille.html",
+        "title": "Le solveur de Sudoku - Mettre en place la grille"
+    },
+    {
+        "rank": 9,
+        "url": "/fr/posts/solveur-de-sudoku-ajouter-des-hypotheses.html",
+        "title": "Solveur de Sudoku - Ajouter des hypothèses"
+    },
+    {
+        "rank": 10,
+        "url": "/fr/posts/solveur-de-sudoku-developper-le-solveur.html",
+        "title": "Solveur de Sudoku - Développer le solveur"
+    },
+    {
+        "rank": 11,
+        "url": "/fr/posts/solveur-de-sudoku-la-grille-suite.html",
+        "title": "Solveur de Sudoku - La grille, suite"
+    },
+    {
+        "rank": 12,
+        "url": "/fr/posts/solveur-de-sudoku-mise-en-place-dans-le-controleur.html",
+        "title": "Solveur de Sudoku - Mise en place dans le contrôleur"
+    },
+    {
+        "rank": 13,
+        "url": "/fr/posts/solveur-de-sudoku-resoudre-des-grilles-plus-compliquees.html",
+        "title": "Solveur de Sudoku - Résoudre des grilles plus compliquées"
+    }
+]

@@ -1,0 +1,448 @@
+<!doctype html>
+<html class="no-js" lang="fr" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>Application CoffeeBar 14/19 - Marquer les plats préparés&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">Français</a>
+        <a href="/en/">Anglais</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/fr/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/fr/books/0/index.html">Séries</a>
+        <a href="/fr/">Accueil</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/fr/">Accueil</a><i class="fas fa-angle-right"></i>Application CoffeeBar 14/19 - Marquer les plats préparés
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>Application CoffeeBar 14/19 - Marquer les plats préparés</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>14/04/2015 13:32:00
+        
+        <i class="fas fa-th-large"></i><!--a href="/fr/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/file9271237667217.jpg" class="node-banner" />
+        
+          <p><strong>Crédit</strong> : Morguefile.com </p>
+        
+      </div>
+
+      <p><p>Maintenant que le chef accède à la liste des plats à préparer, il faut que le chef puisse marquer les plats qui ont été préparés et qui sont désormais prêts à servir.</p>
+<p><em>NOTE : le long du tutoriel, je vais vous faire rééditer des classes et des vues sur lesquels on sera déjà passé. Il va y avoir des parties qui n'apparaitront plus systématiquement au second passage : typiquement les use, les instructions extends, implements etc... Cela ne veut pas dire qu'il faut les retirer. C'est juste pour alléger le code. S'il faut retirer du code, soit je vous remettrais le passage intégralement, pour voir ce qui a disparu, soit je vous signalerais qu'il faut effacer une ligne pour la remplacer par une autre.</em></p>
+<h2>La vue du chef</h2>
+<p>Revoyons la vue (parce qu'après tout, l'interaction vient de là) et ajoutons lui quelques cases à cocher.</p>
+<pre><code class="language-php">// module/CoffeeBar/view/coffee-bar/chef/index.phtml
+
+&lt;h2&gt;Meals to prepare&lt;/h2&gt;
+
+// le formulaire, qui renvoie sur une action de traitement
+&lt;form action=&quot;&lt;?php echo $this-&gt;url('chef/markprepared') ; ?&gt;&quot; method=&quot;post&quot;&gt;
+  &lt;table&gt;
+    &lt;tr&gt;
+      &lt;th&gt;Menu #&lt;/th&gt;
+      &lt;th&gt;Description&lt;/th&gt;
+      &lt;th&gt;Prepared&lt;/th&gt;
+    &lt;/tr&gt;
+
+    &lt;?php
+      foreach($result as $group)
+      {
+        foreach($group-&gt;getItems() as $item)
+        {
+    ?&gt;
+ 
+          &lt;tr&gt;
+            &lt;td&gt;&lt;?php echo $item-&gt;getMenuNumber() ; ?&gt;&lt;/td&gt;
+            &lt;td&gt;&lt;?php echo $item-&gt;getDescription() ; ?&gt;&lt;/td&gt;
+            // la case à cocher, avec, inclus dans la valeur, l'id unique de la note, et le numéro de menu
+            &lt;td&gt;
+              &lt;input type=&quot;checkbox&quot; name=&quot;prepared[]&quot; value=&quot;prepared_&lt;?php echo $group-&gt;getTab() ; ?&gt;_&lt;?php echo $item-&gt;getMenuNumber() ; ?&gt;&quot;/&gt;
+            &lt;/td&gt;
+          &lt;/tr&gt;
+
+    &lt;?php
+        }
+      }
+    ?&gt;
+
+  &lt;/table&gt;
+
+  &lt;input type='submit' name='submit' value='Mark Prepared'/&gt;
+&lt;/form&gt;
+</code></pre>
+<p>Ainsi, lorsque le chef aura préparé ses plats, il cochera les plats prêts et il préviendra ainsi les serveurs que des plats sont prêts à être servis.</p>
+<h3>La route 'chef/markprepared'</h3>
+<p>Lorsque le formulaire est soumis, la route '<code>chef/markprepared</code>' est la route définie pour traiter le formulaire ainsi que c'est indiqué dans l'attribut <code>action</code> de la balise <code>&lt;form&gt;</code>.</p>
+<pre><code class="language-php">// module/CoffeeBar/config/module.config.php
+
+&lt;?php
+return array(
+  'router' =&gt; array(
+    'routes' =&gt; array(
+  
+      /**
+       * cette URL : http://coffeebar.home/chef mène à cette route
+       */
+      'chef' =&gt; array(
+        'type' =&gt; 'Literal',
+        'options' =&gt; array(
+          'route' =&gt; '/chef',
+          'defaults' =&gt; array(
+            'controller' =&gt; 'CoffeeBarController\Chef',
+            'action' =&gt; 'index',
+          ),
+        ),
+        'may_terminate' =&gt; true,
+        'child_routes' =&gt; array(
+          'markprepared' =&gt; array(
+            'type' =&gt; 'Literal',
+            'options' =&gt; array(
+              'route' =&gt; '/mark',
+              'defaults' =&gt; array(
+                'controller' =&gt; 'CoffeeBarController\Chef',
+                'action' =&gt; 'mark',
+              ),
+            ),
+          ),
+        ),
+      ),
+    ),
+  ),
+) ;
+</code></pre>
+<h3>Traitons le formulaire</h3>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Controller/ChefController.php
+
+&lt;?php
+namespace CoffeeBar\Controller;
+
+use Zend\Mvc\Controller\AbstractActionController;
+
+class ChefController extends AbstractActionController
+{
+  public function markAction()
+  {
+    $request = $this-&gt;getRequest() ; 
+    if($request-&gt;isPost()) 
+    {
+      if(!is_array($request-&gt;getPost()-&gt;get('prepared'))) 
+      {
+        $this-&gt;flashMessenger()-&gt;addErrorMessage('Aucun plat ou boisson n\'a été choisi pour servir');
+        return $this-&gt;redirect()-&gt;toRoute('chef');
+      }
+ 
+      $foodPerTab = $this-&gt;getPreparedFoodPerTab($request-&gt;getPost()-&gt;get('prepared')) ;
+
+      if(!empty($foodPerTab))
+      {
+        $markPrepared = $this-&gt;serviceLocator-&gt;get('MarkFoodPreparedCommand') ;
+        // $id = id unique de la note
+        // $food = numero des menus préparés (array)
+        foreach($foodPerTab as $id =&gt; $food)
+        {
+          $markPrepared-&gt;markPrepared($id, $food) ;
+        }
+      }
+    }
+    return $this-&gt;redirect()-&gt;toRoute('chef') ;
+  }
+ 
+  protected function getPreparedFoodPerTab($prepared)
+  {
+    $array = array() ;
+    foreach($prepared as $item)
+    {
+      $groups = explode('_', $item) ;
+      // $groups[1] = id unique de la note
+      // $groups[2] = numéro de plat qui est préparé
+      $array[$groups[1]][] = $groups[2] ;
+    }
+    return $array ;
+  }
+}
+</code></pre>
+<h3>Gestionnaire de services</h3>
+<p>Le gestionnaire de service, où on trouvera le service '<code>MarkFoodPreparedCommand</code>'</p>
+<pre><code class="language-php">// module/CoffeeBar/Module.php
+
+&lt;?php
+namespace CoffeeBar;
+
+use CoffeeBar\Command\MarkFoodPrepared;
+
+class Module
+{
+  public function getServiceConfig()
+  {
+    return array(
+      'factories' =&gt; array(
+        'MarkFoodPreparedCommand' =&gt; function($sm) {
+          $events = $sm-&gt;get('TabEventManager') ;
+          $markFoodPrepared = new MarkFoodPrepared() ;
+          // il nous faut le gestionnaire d'événements
+          // puisque la classe MarkFoodPrepared() va déclencher un événement, bien sûr !
+          $markFoodPrepared-&gt;setEventManager($events) ;
+          return $markFoodPrepared ;
+        },
+      ),
+    ) ;
+  }
+}
+</code></pre>
+<p>Enfin la classe <code>CoffeeBar\Command\MarkFoodPrepared</code></p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Command/MarkFoodPrepared.php
+
+&lt;?php
+namespace CoffeeBar\Command ;
+
+use Zend\EventManager\EventManagerAwareInterface;
+use Zend\EventManager\EventManagerInterface;
+
+class MarkFoodPrepared implements EventManagerAwareInterface
+{
+  protected $id ; // int - id unique de la note
+  protected $food ; // array - liste des numéros de menu
+  protected $events ;
+
+  // getters &amp;amp; setters - ne pas oubliers setEventManager() et getEventManager()
+ 
+  public function markPrepared($id, $menuNumbers)
+  {
+    $this-&gt;setId($id) ;
+    $this-&gt;setFood($menuNumbers) ;
+    $this-&gt;events-&gt;trigger('markFoodPrepared', '', array('markFoodPrepared' =&gt; $this)) ;
+  }
+}
+</code></pre>
+<p>Et voila, notre événement '<code>markFoodPrepared</code>' est déclenché.</p>
+<p>On a signalé que les plats avaient été préparés. Cela va déclencher mécaniquement un événement '<code>foodPrepared</code>'.</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Service/TabAggregate.php
+
+&lt;?php
+
+use CoffeeBar\Event\FoodPrepared;
+use CoffeeBar\Exception\FoodNotOutstanding;
+
+class TabAggregate
+{
+  ...
+ 
+  public function attach(EventManagerInterface $events)
+  {
+    $this-&gt;listeners[] = $events-&gt;attach('markFoodPrepared', array($this, 'onMarkFoodPrepared')) ;
+  }
+
+  public function onMarkFoodPrepared($events)
+  {
+    $markFoodPrepared = $events-&gt;getParam('markFoodPrepared') ;
+ 
+    $story = $this-&gt;loadStory($markFoodPrepared-&gt;getId()) ;
+
+    // on vérifie que les plats préparés ont bien été commandés
+    // en comparant la liste des numéros de menu préparés avec
+    // la liste des numéros de menu qui figurent dans la propriété TabStory::outstandingFood
+    if(!$story-&gt;isFoodOutstanding($markFoodPrepared-&gt;getFood()))
+    {
+      throw new FoodNotOutstanding('un ou plusieurs plats n\'ont pas été commandés') ;
+    }
+ 
+    $foodPrepared = new FoodPrepared() ;
+    $foodPrepared-&gt;setId($markFoodPrepared-&gt;getId()) ;
+    $foodPrepared-&gt;setFood($markFoodPrepared-&gt;getFood()) ;
+
+    // on déclenche un événement 'foodPrepared'
+    $this-&gt;events-&gt;trigger('foodPrepared', $this, array('foodPrepared' =&gt; $foodPrepared)) ;
+  }
+}
+</code></pre>
+<p>Pour info, voilà à quoi ressemble la méthode <code>TabStory::isFoodOutstanding()</code></p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Entity/TabStory/TabStory.php
+
+class TabStory
+{
+  public function isFoodOutstanding(array $menuNumbers)
+  {
+    return $this-&gt;areAllInList($menuNumbers, $this-&gt;outstandingFood) ;
+  }
+
+  protected function areAllInList(array $want, OrderedItems $have)
+  {
+    // on récupère uniquement les numéros de menu de la liste OrderedItems stockée
+    $currentHave = $this-&gt;getOrderedItemsId($have) ;
+
+    // pour chaque numéro de plats préparés, on vérifie
+    // que le numéro existe dans la liste des plats stockés ($outstandingFood)
+    foreach($want as $item)
+    {
+      // si le numéro existe, on retire cet élément de la liste temporaire des plats stockés
+      if(($key = array_search($item, $currentHave)) !== false) 
+      {
+        unset($currentHave[$key]);
+
+      // sinon, on interromps l'exécution de la méthode
+      } else {
+        return false ;
+      }
+    }
+    return true ;
+  }
+
+  protected function getOrderedItemsId(OrderedItems $items)
+  {
+    $array = array() ;
+    foreach($items as $item)
+    {
+      $array[] = $item-&gt;getId() ;
+    }
+    return $array ;
+  }
+}
+</code></pre>
+<p>Et l'objet événement `CoffeeBar\Event\FoodPrepared</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Event/FoodPrepared.php
+
+&lt;?php
+namespace CoffeeBar\Event ;
+
+class FoodPrepared
+{
+  protected $id ; // int - id unique de la note
+  protected $food ; // array - menu numbers
+
+  // getters &amp;amp; setters
+}
+</code></pre>
+<p>Voici l'exception <code>CoffeeBar\Exception\FoodNotOutstanding</code></p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Exception/FoodNotOutstanding.php
+
+namespace CoffeeBar\Exception ;
+
+use Exception;
+
+class FoodNotOutstanding extends Exception {}
+</code></pre>
+<p>Ainsi, le chef a préparé les plats. Il a marqué les plats qui avaient été préparés. En marquant ses plats, il a déclenché des événements '<code>markFoodPrepared</code>'.</p>
+<p>Grâce aux listes <code>TabStory::$outstandingFood</code> qui sont stockées dans chaque <code>CoffeeBar\Entity\TabStory\TabStory</code>, on peut vérifier que tous les plats préparés ont bien été commandés. S'il n'y a pas d'exception qui a été lancée, on peut déclencher un événement '<code>foodPrepared</code>'.</p>
+<p>Il est certain que nos différents objets vont réagir à ce nouvel événement.</p>
+<p><em>Vous trouverez l'intégralité de l'application sur mon <a href="https://github.com/haclong/coffeebar" target="_blank">github</a></em></p>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/fr/tags/zend-framework-2">zend framework 2</a></li><li><a href="/fr/tags/programmation-evenementielle">programmation événementielle</a></li><li><a href="/fr/tags/event-manager">Event Manager</a></li><li><a href="/fr/tags/oop">OOP</a></li></ul>
+        </div>
+      
+
+      
+        <nav id="book-navigation">
+    
+       <li class="link-previous"><a href="/fr/posts/application-coffeebar-1319-la-todo-list-du-chef.html"><i class="fas fa-long-arrow-alt-left"></i> Application CoffeeBar 13/19 - La Todo list du Chef</li>
+    
+
+    
+        <li class="link-next"><a href="/fr/posts/application-coffeebar-1519-les-plats-sont-prets-reaction.html">Application CoffeeBar 15/19 - Les plats sont prêts, réaction <i class="fas fa-long-arrow-alt-right"></i></a></li>
+    
+
+    
+        <li class="link-up"><a href="/fr/books/gerer-un-cafe-avec-une-programmation-evenementielle.html"><i class="fas fa-book-open"></i> Gérer un café avec une programmation événementielle</li>
+    
+</nav>
+
+      
+    
+
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>Sur moi</h3>
+      <p>J&#39;ai appris le php il y a quelques années, quand Internet était à ses débuts. Pour diverses raisons, j&#39;ai arrêté en route et j&#39;ai perdu le fil des nouveaux Internets que je redécouvre. Résultat, je me sens constamment à courir après l&#39;histoire mais je suis toujours motivée à reprendre des projets personnels. Je me propose de vous partager mes découvertes. Au delà des sujets de programmation, j&#39;aime également partager mes infos concernant notamment l&#39;Histoire, l&#39;Astronomie, la Linguistique, les Films, les Livres et les Anime. J&#39;espère que vous aimerez suivre mon blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. Tous droits réservés.</p>
+        <p>Propulsé par <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,390 @@
+<!doctype html>
+<html class="no-js" lang="fr" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>Migration d&#39;un Drupal de Online vers 1&amp;1&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">Français</a>
+        <a href="/en/">Anglais</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/fr/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/fr/books/0/index.html">Séries</a>
+        <a href="/fr/">Accueil</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/fr/">Accueil</a><i class="fas fa-angle-right"></i>Migration d'un Drupal de Online vers 1&1
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>Migration d'un Drupal de Online vers 1&1</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>16/09/2014 13:02:00
+        
+        <i class="fas fa-th-large"></i><!--a href="/fr/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->, <!--a href="/fr/sites/haclong-projects.html" class="tag-sites"-->Haclong projects<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/goutte.jpg" class="node-banner" />
+        
+      </div>
+
+      <p><p>Changement d’hébergeur pour un site Drupal. Comme j’ai bien galéré, peut être finalement que ce que j’ai fait peut être utile à d’autres.</p>
+<h3>Préparer le site</h3>
+<p>Récupérer les fichiers du répertoire <code>sites/</code>.</p>
+<p>Faire un dump de la base de données. De préférence sans les données des tables caches.</p>
+<h3>Uploader le site sur 1&amp;1</h3>
+<p>Installer un Drupal vierge, de préférence, la version de votre site (si le site n’était pas à jour à la migration).</p>
+<p>ATTENTION !! ne pas utiliser leur Drupal en un clic… Installer Drupal vous même avec votre serveur FTP. Vous aurez la maîtrise des fichiers. Face aux problèmes de la migration, j’avoue avoir été prêt de craquer et de prendre leur solution, mais vous devez perservérer. Vous finirez par y arriver...</p>
+<p>Sur 1&amp;1, pour que les règles de réécriture Apache fonctionne, il faut corriger la ligne <code>RewriteBase /</code> dans le fichier <code>.htaccess</code> à la racine de Drupal.</p>
+<p>Uploader les fichiers du répertoire <code>sites/</code>.</p>
+<p>Importer les données de la base de données.</p>
+<p>Editer le fichier <code>sites/default/settings.php</code> et corriger les informations de la base de données.</p>
+<p>Lancer votre site Drupal dans votre navigateur. Toutes vos informations devraient apparaître ok.</p>
+<h3>Les vérifications de base.</h3>
+<p>Hormis les vérifications de type :</p>
+<ul>
+<li>les nodes s’affichent,</li>
+<li>on peut rajouter des articles,</li>
+<li>on peut rajouter des commentaires</li>
+</ul>
+<p>Voici les différentes vérifications qui peut être utile de faire.</p>
+<p><strong>Installation de nouveaux modules</strong></p>
+<p>Vérifier que le formulaire pour installer les nouveaux modules à partir d’un URL fonctionne toujours.</p>
+<p><strong>Module Backup and Migrate</strong></p>
+<p>J’ai un module Backup and Migrate qui écrit dans le système de fichiers. Evidemment, si l’utilisateur de Backup and Migrate (probablement l’utilisateur Apache ?) n’a pas les droits pour écrire sur le disque, c’est mort.</p>
+<p>Après avoir épluché et retourné toutes les permissions de mes répertoires, j’ai fini par faire, dans le désordre :</p>
+<ul>
+<li>Désinstaller la version Backup and Migrate 7.x-2.8</li>
+<li>Réinstaller avec Backup and Migrate 7.x-3.0.</li>
+<li>Aller dans** Configuration &gt; Media &gt; File system** et définir le chemin pour les fichiers private (privés).</li>
+</ul>
+<p>En faisant cela, Drupal va créer le répertoire et lui donner les droits qui vont bien. J’ai préféré créer un tout nouveau répertoire privé parce que Drupal change les droits des répertoires et rajoute des fichiers <code>.htaccess</code>. Or, si vous étiez chez <strong>Online</strong>, vous savez que vous aviez du bidouiller ces mêmes fichiers parce qu’<strong>Online</strong> n’admettait ni les instructions <code>Options FollowSymLinks</code> ni <code>SetHandler</code>.</p>
+<ul>
+<li>Aller dans <strong>Reports &gt; Status report</strong> et reconstruire les droits d’accès…</li>
+<li>Tester avec un backup manuel. Ca devrait fonctionner.</li>
+</ul>
+<p>A toutes fins utiles, voici les permissions des répertoires :</p>
+<ul>
+<li>Le owner = compte utilisateur 1&amp;1</li>
+<li>Le groupe = groupe d’utilisateur FTP</li>
+</ul>
+<p>| drupal/ | 755 |
+| drupal/sites/ | 755 |
+| drupal/sites/default/ | 555 |
+| drupal/sites/default/files/ | 775 |
+| drupal/sites/default/files/private/ | 705 |
+| drupal/sites/default/files/private/backup_migrate/ | 705 |
+| drupal/sites/default/files/private/backup_migrate/manual/ | 775 |</p>
+<p>Normalement, si vous faites une install propre à partir du zip de Drupal, toutes les permissions devraient être gérées par Drupal.</p>
+<p><strong>Les fichiers .htaccess</strong></p>
+<p>Vous trouverez ce fichier <code>.htaccess</code> dans les répertoires suivants :</p>
+<ul>
+<li><code>drupal/sites/default/files/prive/backup_migrate/manual</code></li>
+<li><code>drupal/sites/default/files/prive</code></li>
+</ul>
+<pre><code class="language-sh">Deny from all
+# Turn off all options we don't need.
+Options None
+Options +FollowSymLinks
+# Set the catch-all handler to prevent scripts from being executed.
+SetHandler Drupal_Security_Do_Not_Remove_See_SA_2006_006
+
+&lt;Files *&gt;
+  # Override the handler again if we're run later in the evaluation list.
+  SetHandler Drupal_Security_Do_Not_Remove_See_SA_2013_003
+&lt;/Files&gt;
+
+# If we know how to do it safely, disable the PHP engine entirely.
+&lt;IfModule mod_php5.c&gt;
+  php_flag engine off
+&lt;/IfModule&gt;
+</code></pre>
+<p>Vous trouverez ce fichier <code>.htaccess</code> dans le répertoire suivant</p>
+<ul>
+<li><code>drupal/sites/default/files/</code></li>
+</ul>
+<pre><code class="language-sh"># Turn off all options we don't need.
+Options None
+Options +FollowSymLinks
+# Set the catch-all handler to prevent scripts from being executed.
+SetHandler Drupal_Security_Do_Not_Remove_See_SA_2006_006
+
+&lt;Files *&gt;
+  # Override the handler again if we're run later in the evaluation list.
+  SetHandler Drupal_Security_Do_Not_Remove_See_SA_2013_003
+&lt;/Files&gt;
+
+# If we know how to do it safely, disable the PHP engine entirely.
+&lt;IfModule mod_php5.c&gt;
+  php_flag engine off
+&lt;/IfModule&gt;
+</code></pre>
+<p><strong>Le champ Image avec le navigateur de média</strong></p>
+<p>Je n’ai pas eu de problème pour accéder au navigateur de média, uploader un nouveau fichier et l’afficher par la suite.</p>
+<p><strong>Insertion d’images dans le corps d’un article avec le navigateur de média.</strong></p>
+<p>Il est possible d’insérer des images dans le corps d’un article en combinant le module <strong>WYSIWYG</strong>, <strong>Media</strong> et la librairie <strong>CKEditor version 3.6.5.7647</strong>.</p>
+<p>En paramétrant le module <strong>WYSIWYG</strong> en utilisant un bouton <strong>navigateur de média</strong>, on peut accéder à la bibliothèque de media et insérer des images à partir de cette bibliothèque dans le corps de l’article OU ajouter des contenus média à ladite bibliothèque.</p>
+<p><u><strong>L’upload dans la bibliothèque de média fonctionne bien.</strong></u></p>
+<p>Pour tester :</p>
+<ul>
+<li>ajouter un contenu,</li>
+<li>aller dans le champ corps du contenu,</li>
+<li>cliquer sur le bouton de la barre WYSIWYG navigateur de média,</li>
+<li>choisir un fichier media de votre disque local,</li>
+<li>cliquer sur Upload</li>
+<li>valider</li>
+</ul>
+<p>Le navigateur de média va disparaitre.</p>
+<p>L’image ajoutée à la bibliothèque apparaît dans le corps de l’article.</p>
+<p>Si on rouvre la bibliothèque de média (pour ajouter une autre image par ex), la nouvelle image apparaît dans la bibliothèque de média.</p>
+<p><strong><u>L’insertion de média existant dans la bibliothèque.</u></strong></p>
+<p>Pour tester :</p>
+<ul>
+<li>ajouter un contenu,</li>
+<li>aller dans le champ corps du contenu,</li>
+<li>cliquer sur le bouton de la barre WYSIWYG navigateur de média,</li>
+<li>choisir un fichier media qui existe déjà dans la bibliothèque,</li>
+<li>valider.</li>
+</ul>
+<p>Le navigateur de média va disparaitre.</p>
+<p>L’image choisie apparaît dans le corps de l’article.</p>
+<p>J’ai eu un peu du mal à obtenir ce résultat après la migration.</p>
+<ul>
+<li>aller dans <strong>Configuration &gt; Development &gt; Performance</strong> et vider les caches.</li>
+<li>aller dans <strong>Configuration &gt; Content authoring &gt; Wysiwyg profiles</strong>, éditer chacun des profils wysiwyg que vous avez défini et (ré)enregistrer les.</li>
+<li>aller dans <strong>Configuration &gt; Content authoring &gt; Text format</strong>, éditer chacun des formats de texte définis et (ré)enregistrer les.</li>
+</ul>
+<p>Normalement, ça devrait refonctionner.</p>
+<p>Je suis désolé si ces instructions ne débloquent pas votre migration. J’ai cliqué dans tous les sens et un peu partout et ça a fini par fonctionner et par élimination, je pense que ce sont ces actions qui ont finalement réussi à débloquer la situation.</p>
+<p>Sur 1&amp;1, toutes ces fonctionnalités marchent. Si elles ne marchent pas sur votre site existant, il faut tenter de rafraichir, réinstaller, repartir à partir de données neuves…</p>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/fr/tags/1-and-1">1&amp;1</a></li><li><a href="/fr/tags/drupal">Drupal</a></li><li><a href="/fr/tags/migration">migration</a></li></ul>
+        </div>
+      
+
+      
+    
+
+      
+        <section id="oldcomment">
+          <h2>Commentaires historiques</h2><article>
+              <div class="level1">
+  <h3>problème avec les url simplifiées</h3>
+  <div class="meta">bigbert 2014-10-24T13:50 </div>
+  <div class="body">Bonjour, suivant vos instructions ainsi que d'autres tutaux, tout fonctionne correctement, sauf les url simplifiées dont les tests échouent systématiquement. J'ai pourtant modifié le .htaccess mais rien ne fonctionne.<br />
+<br />
+mon install est dans un dosssier, pas directement à la racine car je dois y coller 1 site et un sous-domaine (que je souhaite distincts de core)<br />
+<br />
+sur ma migration donc, rien à faire, quelques soient mes modifs, les test urls échouent systématiquement.<br />
+J'ai créé un autre site drupal vierge à la racine dans un autre dossier avec 7.32 et j'ai réussi à activer la réécriture mais je ne parviens pas de toute manière à effacer le nom du dossier d'install de l'url.<br />
+<br />
+Cela ne résout donc absolument pas mon problème, car même si je souhaite complètement refaire mon site, j'auraii toujours le problème de l'affichage du nom du dossier d'install dans l'url, et ça ne me paraît de toute manière ne pas être une bonne solution car pour des sites plus compliqués développés en local ce sera inenvisageable.<br />
+<br />
+Il me reste peut-être la solution de mettre mon site principal à la racine et de laisser mon dossier d'install du second site à sa place, mais ça ne me paraît pas être une bonne pratique.<br />
+<br />
+Auriez-vous une piste pour se débarrasser du nom du dossier dans l'url??</div>
+
+  
+  
+</div>
+
+            </article><article>
+              <div class="level1">
+  <h3>Bonjour</h3>
+  <div class="meta">haclong 2014-10-24T14:09 </div>
+  <div class="body">Bonjour<br />
+<br />
+Si j'ai bien compris, votre site Drupal se situe ici : /votre_domaine/drupal/votre_site et vous souhaitez que lorsque vous avez http://votre_domaine vous obteniez le site drupal, c'est bien ça?<br />
+<br />
+Avez vous essayé de modifier la variable $base_url qui est dans le fichier settings.php ?<br />
+<br />
+Sinon, dans 1&1, vous pouvez créer dans votre racine un répertoire www sur lequel vous pointerez votre domaine principal et un répertoire sous_domaine sur lequel vous ferez pointer votre sous domaine. Ainsi, c'est le pointage DNS qui fera le travail pour vous.<br />
+<br />
+Maintenant, si vous souhaitez, DANS LE MEME DOMAINE, installer deux packages différents (mettons Drupal et Dokuwiki, vous aurez probablement des soucis</div>
+
+  
+    
+      <div class="level2">
+        <h3>Bonjour et merci d'avoir</h3>
+        <div class="meta">bigbert 2014-10-24T14:40</div>
+        <div class="body">Bonjour et merci d'avoir répondu si rapidement,<br />
+<br />
+c'est effectivement ce que cherche à faire , à savoir :<br />
+monsite.com<br />
+et<br />
+monsite.com/blog/<br />
+avec deux core différents pour être sûr que malgé les lises à jour du core j' en ai toujours un des deux qui fonctionne... (peut-être un peu paranno, mais bon)<br />
+<br />
+en ce qui concerne le settings.php, je l'ai modifié effectivement modifié, sur les deux sites (migration et nouvelle install) et ça n'a aucune inscidence.<br />
+<br />
+Sinon, j'ai lu souvent qu'il fallait, comme vous l'indiquez, pointer son domaine principal, mais je ne comprend absolument pas comment on doit faire. Suffit-il juste de nommer le dossier WWW??? Quelle manip effectuer pour le faire pointer sur ce dossier??</div>
+      </div>
+    
+  
+  
+</div>
+
+            </article><article>
+              <div class="level1">
+  <h3>Hébergé chez 1&1</h3>
+  <div class="meta">haclong 2014-10-24T14:51 </div>
+  <div class="body">Bonjour<br />
+<br />
+Etes vous hébergé chez 1&1 ?<br />
+<br />
+Si oui, il faut<br />
+  - soit créer le répertoire dans votre espace web par FTP, puis<br />
+  - aller dans votre espace client et créer un domaine (vous lui donnez le nom que vous voulez, à savoir, chez 1&1, www.mon-domaine.net est domaine tout comme blog.mon-domaine.net est un autre domaine...<br />
+  - dire que votre nouveau domaine point sur votre répertoire créé en FTP<br />
+<br />
+  - soit tout faire à partir de l'espace client : en créant le domaine, vous créez également le répertoire.<br />
+<br />
+Quand vous souscrivez chez 1&1, le domaine www.mon-domaine.net pointe par défaut sur l'espace FTP par défaut mais vous pouvez le changer et dire que www.mon-domaine.net pointe sur espace_FTP/www.<br />
+<br />
+Vous pourrez ainsi créer autant de domaines indépendants que vous le souhaitez.<br />
+<br />
+Si vous êtes chez Online.net, vous n'aurez pas le choix, c'est Online qui va faire le lien entre le sous-domaine et votre répertoire. Tout ce que vous avez à faire, c'est de créer un répertoire dans votre espace FTP et automatiquement, votre répertoire sera votre sous domaine (ce qui, soit dit en passant, offre peu de souplesse)<br />
+<br />
+Si vous êtez chez Gandi.net, même punition. Vous créez à partir de votre espace client un nouveau "virtual host" et après un moment (le temps que les robots mettent le tout en place), vous avez un sous domaine au nom de votre virtual host. Là encore, peu de souplesse.</div>
+
+  
+    
+      <div class="level2">
+        <h3>(j'ai déjà le domaine)</h3>
+        <div class="meta">bigbert 2014-10-24T15:06</div>
+        <div class="body">(j'ai déjà le domaine)<br />
+<br />
+ok si je comprends bien<br />
+  1. je crée un rep /www avec mon site principal<br />
+  2. je laisse mon /blog au même niveau sans toucher à mon .htaccess<br />
+  3. je les appelle pour leur demander de pointer sur le rep /www<br />
+  4. après j'ai accès par www.monsite.com à mon site principal et www.monsite.com/blog à mon blog<br />
+<br />
+??<br />
+<br />
+Si ça fonctionne comme ça ça résoudera complètement mon problème d'url dans la mesure où je réinstallerai drupal pour mon site principal avec toutes les modifs. Pour le problème de migration je m’énerverai dessus plus tard. (je pense qu'il y avait des soucis au niveau de mon install en local car ça n'a pas de sens)<br />
+<br />
+en tous les cas merci infiniment pour ces infos</div>
+      </div>
+    
+      <div class="level2">
+        <h3>ok je viens de les appeler en</h3>
+        <div class="meta">bigbert 2014-10-24T15:42</div>
+        <div class="body">ok je viens de les appeler en fait tout est gérable depuis l'interface client depuis "Gestion des domaines"<br />
+Pour plus de simplicité, je vais créer un sous-domaine, simplement parce qu'il n'y a pas d'autres solutions (blog.monsite.com). Sur le même domaine, on aura toujours le souci de remonter tous les dossiers accessibles dans le dossier vers le quel pointe le serveur. Néanmoins, pointer vers un dossier permet de poser des fichiers non consultables directement depuis internet à la racine du serveur, ce qui semble être le plus correct.<br />
+<br />
+Voilà merci beaucoup pour votre aide, reste plus qu'à tout réinstaller...</div>
+      </div>
+    
+  
+  
+</div>
+
+            </article><article>
+              <div class="level1">
+  <h3>lik</h3>
+  <div class="meta">caroline 2015-10-02T21:25 </div>
+  <div class="body">bonjour<br />
+excellent article , j’ai pris bcp de plaisir à le lire , merci ^^<br />
+cordialement</div>
+
+  
+  
+</div>
+
+            </article></section>
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>Sur moi</h3>
+      <p>J&#39;ai appris le php il y a quelques années, quand Internet était à ses débuts. Pour diverses raisons, j&#39;ai arrêté en route et j&#39;ai perdu le fil des nouveaux Internets que je redécouvre. Résultat, je me sens constamment à courir après l&#39;histoire mais je suis toujours motivée à reprendre des projets personnels. Je me propose de vous partager mes découvertes. Au delà des sujets de programmation, j&#39;aime également partager mes infos concernant notamment l&#39;Histoire, l&#39;Astronomie, la Linguistique, les Films, les Livres et les Anime. J&#39;espère que vous aimerez suivre mon blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. Tous droits réservés.</p>
+        <p>Propulsé par <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

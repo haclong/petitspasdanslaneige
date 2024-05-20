@@ -1,0 +1,326 @@
+<!doctype html>
+<html class="no-js" lang="fr" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>J&#39;utilise git&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">Français</a>
+        <a href="/en/">Anglais</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/fr/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/fr/books/0/index.html">Séries</a>
+        <a href="/fr/">Accueil</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/fr/">Accueil</a><i class="fas fa-angle-right"></i>J'utilise git
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>J'utilise git</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>09/04/2013 12:40:00
+        
+        <i class="fas fa-th-large"></i><!--a href="/fr/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->, <!--a href="/fr/sites/haclong-projects.html" class="tag-sites"-->Haclong projects<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/Git-Logo-1788C.png" class="node-banner" />
+        
+      </div>
+
+      <p><p>Même si je suis seule maître à bord sur mon développement, 1/ il n'est pas exclu que je partage le boulot avec un autre développeur et de toutes façons, 2/ à moi toute seule, je démultiplie les sources puisque j'ai des postes différents pour développer... Après avoir testé les moyens du bord pour maintenir des sources propres, je tente les outils de gestion de version.</p>
+<h3>Choisir son outil de gestion de version</h3>
+<p>De réputation, j'en connais 2 : <a href="http://subversion.apache.org/" target="_blank"><strong>SVN</strong></a> d'une part et <a href="http://git-scm.com/" target="_blank"><strong>git</strong></a> de l'autre.</p>
+<p>Pour avoir testé SVN de manière passive (ON me l'a installé, ON me l'a configuré et quand je ne peux pas commiter, ON a corrigé le problème sans me dire pourquoi), j'ai hélas gardé l'impression que c'était un outil obscur et compliqué. C'est un mauvais souvenir basé sur un mauvais ressenti mais je ne me sentais pas le courage de me lancer dans SVN comme ça.</p>
+<p>En plus, à côté de ça, j'ai trouvé des commentaires vantant la facilité d'approche de <strong>git</strong> : <strong>git</strong> si léger, <strong>git</strong> si simple, <strong>git</strong> si convivial... Il n'y avait que des louanges... Peut être que je n'ai retenu que les bons points aussi. Je sais que j'ai vu passer des articles sur &quot;pourquoi <strong>git</strong> est si compliqué, si obscur, si ceci cela...&quot; Et surtout : &quot;pourquoi <strong>git</strong> ne parle pas comme les autres&quot;. Dans la mesure où je n'en connaissais vraiment aucun, que <strong>git</strong> parle comme ou différement des autres ne pouvait pas compter pour mon choix.</p>
+<p>Bref, j'ai tenté <strong>git</strong>.</p>
+<h3>Installer son repo git</h3>
+<p>Le <em>repository</em>, c'est l'endroit où vous allez stocker vos sources. Normalement, c'est l'endroit qui sera le plus &quot;propre&quot; en terme de développement et le plus à jour. Par simple bon sens, le repository se situe sur un serveur accessible par plusieurs. Soit un espace web, soit un espace sur le réseau local dans le cadre de développement professionnel. J'ai même tenté la clé USB pour mon premier repository... Passons.</p>
+<p>N'importe quelle machine ne peut pas accueillir un repository <strong>git</strong> parce qu'il faut que ladite machine puisse interpréter les commandes <strong>git</strong>. La conséquence est que, si vous avez souscrit une solution en hébergement mutualisé, votre espace d'hébergement ne peut pas forcément servir de repository. Il faut se renseigner sur ce point.</p>
+<p>Si vous désirez quand même avoir un repository <strong>git</strong> sur le web, <a href="https://github.com/" target="_blank">github.com</a> est là pour ça.</p>
+<p>Pour ma part, l'hébergeur <a href="http://www.gandi.net" target="_blank">Gandi.net</a> comprend dans son offre d'hébergement mutualisé Simple Hosting la possibilité de faire de son espace un repository <strong>git</strong>. Toutefois, quand on découvre <strong>git</strong>, c'est pas toujours évident de savoir quoi et comment faire.</p>
+<p>Pour le moment, Gandi n'autorise qu'un seul &quot;serveur <strong>git</strong>&quot; par vhost. <em>Je pense que le terme &quot;serveur&quot; est un abus de langage mais je crois que je le dis plusieurs fois, du coup, comprenez plutôt &quot;repository&quot; git.</em> Cela signifie que si un de vos vhosts comprends beaucoup de projets importants, alors ils seront tous compris dans le même repository <strong>git</strong> (donc dans les mêmes instructions <code>clone</code> et les même instructions <code>commit</code>...) Ce n'est pas pratique, bien évidemment, mais c'est mieux que rien.</p>
+<h3>Voyons comment installer son repo (repository pour les intimes) git</h3>
+<p>La documentation n'est pas très claire et j'ai eu beaucoup de mal à le faire mais finalement, il semblerait que cela soit simplissime. Je pense que je cherchais des complications là où il n'y en avait pas parce que la documentation officielle de git ne semble citer que github et que l'hébergeur Gandi.net avait son propre tutoriel.</p>
+<h3>Installer git sur votre machine locale</h3>
+<p>Il existe des applications pour Ubuntu comme pour Windows, servez vous. Personnellement, j'utilise <a href="http://msysgit.github.io/" target="_blank">msysGit</a> et NetBeans pour Windows et <a href="http://doc.ubuntu-fr.org/git" target="_blank">git </a>pour Ubuntu. J'ai bien <strong>gitg</strong> et <strong>gitk</strong> pour Ubuntu mais je ne sais pas encore les utiliser... ça va venir.</p>
+<p>Sur votre machine locale, placez vous à la racine de votre projet web (techniquement, là où se situe votre application).</p>
+<h4>Initialiser git</h4>
+<p>Déclarez que pour ce projet, vous allez travailler avec <strong>git</strong>.</p>
+<pre><code class="language-sh"> git init
+</code></pre>
+<p>La console vous réponds : <code>Initialized empty Git repository in /path/to/web/application/.git/</code></p>
+<p>Du coup, vous apprenez au passage que la commande <code>git init</code> a créé un répertoire <code>.git/</code> à la racine de votre projet.</p>
+<p>Ce répertoire <code>.git/</code>, c'est &quot;tout&quot; votre git. Tout est stocké là, tout est consigné etc...</p>
+<ul>
+<li>Si vous voulez tout réinitialiser parce que vous vous êtes mélangé les pinceaux, il faudra effacer ce répertoire <code>.git/</code>.</li>
+<li>Si vous transférez vos fichiers en FTP, ne transférez pas le répertoire <code>.git/</code>... Ni dans un sens, ni dans l'autre...</li>
+</ul>
+<h4>Protéger des fichiers</h4>
+<p>Le principe de <strong>git</strong>, c'est que vous allez stocker dans votre répertoire <code>.git/</code> tout votre projet : cela comprend l'intégralité des fichiers. Dans les grosses lignes, ce répertoire <code>.git/</code> va être transféré sur votre repository distant. Ainsi, tous vos collaborateurs et plus largement toutes les personnes qui souhaitent travailler sur votre projet pourront se procurer les sources du projet en recopiant ce répertoire <code>.git/</code>.</p>
+<p>Et là, si vous voyez à peu près là où je veux en venir, vous réalisez que vous allez forcément avoir dans vos sources des fichiers avec des informations délicates : les mots de passe pour accéder à des ressources de types comptes user ou comptes base de données par ex... L'open source, c'est beau, c'est joli mais c'est pas une raison pour être irrationnel et se faire trouer sa sécurité pour ses beaux yeux...</p>
+<p>Du coup, il faudra être rigoureux et stocker ces informations sur des fichiers qui ne seront pas à copier. Si vous êtes un minimum intentionné, vous laisserez une version &quot;publique&quot; avec des fausses infos pour que vos émules n'aient pas à chercher dans le noir le nom des variables utilisées par votre application. De même, vous laisserez également des fichiers sql avec à minima la structure de la base de données que vous utilisez. Ca peut aider.</p>
+<p>En attendant, il faut protéger vos fichiers sensibles.</p>
+<p>Pour cela, il faut mettre un fichier <code>.gitignore</code>. Dans ce fichier <code>.gitignore</code>, il faut lister les fichiers qui ne doivent pas être clonés. La liste peut être écrite litéralement, ou bien avec des expressions régulières. Il faut un fichier <code>.gitignore</code> par répertoire où il y a des fichiers à protéger. Des outils graphiques permettent de faire ça facilement avec des menus contextuels par ex. Je suppose qu'il doit être également possible d'alimenter le fichier <code>.gitignore</code> en ligne de commande.</p>
+<h4>Ajouter les fichiers à suivre (track)</h4>
+<p>Après avoir protégé les fichiers sensibles, il faut maintenant donner à <strong>git</strong> la liste des fichiers et répertoires que vous voulez que <strong>git</strong> suive.</p>
+<pre><code class="language-sh"> git add {liste des fichiers/répertoires séparés par un espace}
+</code></pre>
+<p>Je pense qu'il y a un moyen de faire <code>git add *</code> mais comme j'en suis à ma énième tentative, j'ai préféré choisir la sécurité. Pour vérifier que les fichiers ont bien été ajoutés, il faut ouvrir <code>.git/</code> et vérifier qu'il y a un fichier <code>index</code>. Toutefois, ce fichier <code>index</code> est crypté. Il faut juste faire une estimation en fonction du nombre de fichiers que vous avez ajoutés et la taille du fichier <code>index</code>.</p>
+<p>Sinon, on peut utiliser <code>git add -v {fichiers}</code>. L'option <code>-v</code> rend <code>git add</code> plus bavard... On peut donc suivre ce que fait <code>git add</code>.</p>
+<h4>Dites à git qui vous êtes</h4>
+<p>Dans la vie de votre projet, vous serez soit seul à maintenir votre projet, soit plusieurs. Dès que vous êtes plusieurs, il est toujours bien de savoir qui a fait quoi. Et pour savoir qui a fait quoi, il faut déclarer votre identité. Afin que <strong>git</strong> ajoute cette information dès que vous ferez mettrez le projet à jour.</p>
+<p>Ajoutez donc</p>
+<pre><code class="language-sh"> git config user.email &quot;{votre email}&quot;
+ git config user.name &quot;{votre nom}&quot;
+</code></pre>
+<p><strong>git</strong> n'est pas G+. Un pseudo fera toujours l'affaire, du moment qu'on peut vous identifier avec.</p>
+<h4>Déclarer le repository à distance (remote repository)</h4>
+<p>Il faut dire à votre répertoire local, sur lequel vous ferez vos développements, où se situe votre remote repository. Donnez un nom à votre repository à distance. Le notre va s'appeler &quot;<em>origin</em>&quot;</p>
+<pre><code class="language-sh"> git remote add origin {path/to/remote/repository}
+</code></pre>
+<p>Vous pourrez toujours vérifier cette information dans le fichier <code>.git/config</code>.</p>
+<h4>Votre premier commit</h4>
+<p>On a initialisé <strong>git</strong> pour le projet, on a ajouté la liste des fichiers à suivre, il faut maintenant faire le premier <strong>commit</strong> pour enregistrer le premier état de votre projet. C'est votre &quot;point de sauvegarde&quot;.</p>
+<pre><code class="language-sh"> git commit
+</code></pre>
+<p>Il est recommandé de laisser un commentaire pour identifier, tagger, marquer, annoter le point de sauvegarde. C'est toujours mieux pour le retrouver.</p>
+<pre><code class="language-sh"> git commit -m &quot;mon premier point de sauvegarde&quot;
+</code></pre>
+<p>La console liste tous les fichiers inclus dans le <strong>commit</strong>.</p>
+<h4>Envoyer le point de sauvegarde vers le repository à distance</h4>
+<p>Même si vous avez marqué votre point de sauvegarde, il faut savoir que celui ci n'est noté que sur votre poste de développement. Votre repository distant n'a pas encore enregistré ce point de sauvegarde. Il faut maintenant envoyer ces informations à notre repository à distance.</p>
+<pre><code class="language-sh"> git push origin master
+</code></pre>
+<p>On <em>pousse</em> le dernier point de sauvegarde de la branche <em>master</em> vers le repository qu'on a nommé <em>origin</em>.</p>
+<p>Et voila !</p>
+<p>Concernant <strong>github</strong>, je ne sais pas, mais concernant <strong>gandi.net</strong>, il semblerait que <code>git push</code> n'upload pas les fichiers vers le serveur. En fait, le <code>push</code> envoie sur le repository à distance les fichiers sources sous une forme &quot;git&quot;ée... Les transactions de type <code>push</code>, <code>pull</code> et <code>clone</code> soit encode les fichiers, soit les décode. Cela signifie deux choses :</p>
+<ul>
+<li>Il faut utiliser un client FTP pour transférer les &quot;vrais&quot; fichiers source pour que le site fonctionne.</li>
+<li>Le repository peut se situer sur un serveur (github par ex) alors que le véritable site (si site il y a) est hébergé sur un autre serveur.</li>
+</ul>
+<p>Sur Gandi.net, le repository se trouve hors du répertoire web. Il se trouve sur <code>lamp0/vcs/git/</code>.</p>
+<h3>Pour résumer</h3>
+<p>On crée un suivi des versions avec</p>
+<ul>
+<li><code>git init</code> (pour initialiser git)</li>
+<li><code>git config</code> (pour déclarer le nom et l'email de l'utilisateur)</li>
+<li><code>git remote add</code> (pour déclarer le chemin du dépôt à distance)</li>
+</ul>
+<p>On alimente (et on met à jour) le repository à distance avec</p>
+<ul>
+<li><code>git add</code> (pour déclarer les nouveaux fichiers à suivre)</li>
+<li><code>git commit</code> (pour marquer un point de sauvegarde)</li>
+<li><code>git push</code> (pour pousser le point de sauvegarde sur le repository à distance)</li>
+</ul>
+<p>Pendant le développement d'un projet, il faut penser à suivre les fichiers qui sont créés progressivement et éventuellement, suivre ceux qui sont supprimés (plus difficile à suivre). Il existe une option pour <code>git add</code> pour que ce soit <strong>git</strong> qui identifie tout seul les fichiers ajoutés et ceux qui sont supprimés. Personnellement, j'utilise un client graphique qui fait ça très bien.</p>
+<p><strong>RAPPEL</strong> : Mettre à jour le repository ne signifie pas que les fichiers seront téléchargés. Il faut le faire pour que le site soit en ligne.</p>
+<h3>Les autres opérations</h3>
+<h4>Récupérer un projet existant</h4>
+<p>Si vous souhaitez télécharger un projet existant :</p>
+<pre><code class="language-sh"> git clone {path/to/projet.git}
+</code></pre>
+<h4>Mettre à jour vos fichiers locaux (de dev) avec les fichiers du repository</h4>
+<p>Si vous souhaitez faire du travail collaboratif, il y a des réflexes à adopter.</p>
+<p>Par exemple, juste avant de mettre à jour un fichier sur le dépôt à distance, il faut vérifier que vous avez bien la dernière version du fichier.</p>
+<pre><code class="language-sh"> git pull
+</code></pre>
+<p>Faire votre développement et remettre le repository à jour.</p>
+<pre><code class="language-sh"> git add (si nécessaire)
+ git commit
+ git push
+</code></pre>
+<h4>Dé-branchez votre projet</h4>
+<p>Vous pouvez également faire des sous versions, des branches.</p>
+<p>Le principe, c'est de ne pas modifier l'axe principal du développement du projet. Par exemple pour garder une version stable aussi stable que possible disponible. Ou bien parce qu'on se lance dans un refactoring massif et qu'il ne faut pas casser toute les fonctionnalités.</p>
+<p><strong>Git</strong> permet alors de créer une nouvelle branche que vous allez développer et commiter de votre côté. Et quand votre développement sera stabilisé / terminé, alors on fusionne votre branche sur la branche principale.</p>
+<p><strong>Git</strong> sait et permet de faire tout ça.... Faut juste repérer les commandes qui vont bien.</p>
+<p><strong>Git</strong> propose de fusionner les sources (<code>merge</code>) lorsque le fichier qui se trouve sur le dépôt distant et celui qui a été modifié sur le poste local diffèrent.</p>
+<p>Il me reste encore plusieurs fonctionnalités à découvrir sur <strong>git</strong>. Mais j'ai déjà les informations de base pour commencer à travailler...</p>
+<p>J'espère que ce post peut s'avérer utile pour certains.</p>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/fr/tags/gandi-net">gandi.net</a></li><li><a href="/fr/tags/scm">scm</a></li></ul>
+        </div>
+      
+
+      
+    
+
+      
+        <section id="oldcomment">
+          <h2>Commentaires historiques</h2><article>
+              <div class="level1">
+  <h3>Autres infos sur git</h3>
+  <div class="meta">haclong 2014-06-24T10:42 </div>
+  <div class="body"><a href="https://try.github.io/levels/1/challenges/1" target="_blank">Un tuto sur git tout fun</a><br />
+<br />
+Si vous trouvez que github est un peu trop "open" à votre goût, il y a toujours une alternative avec <a href="https://bitbucket.org/" target="_blank">bitbucket</a></div>
+
+  
+  
+</div>
+
+            </article><article>
+              <div class="level1">
+  <h3>Déploiement gandi</h3>
+  <div class="meta">paul 2015-05-01T02:42 </div>
+  <div class="body">Merci pour ce post bien utile pour démarrer :)<br />
+<br />
+NB : sur gandi, on peut déployer son code une fois qu'on l'a pushé sur le serveur. cf. http://wiki.gandi.net/fr/simple/git#deployer_son_code<br />
+<br />
+Il suffit donc de faire :<br />
+$ ssh {login}@git.{datacenter_location}.gpaas.net 'deploy {vhost}.git [ {git_object} ]'<br />
+(exemple concret : ssg monlogin@git.dc0.gpaas.net 'deploy monvhost.git' )<br />
+<br />
+-> la modification se fait bien sur le serveur<br />
+Attention toutefois de bien faire son push à partir d'un dossier local "htdocs". Sans quoi sur le serveur gandi, on se trouve avec nos sources à la racine du vhost (à côté du dossier htdocs)<br />
+NB : cette remarque est valable à moins qu'on puisse définir son git remote avec "htdocs" pour working directory - ce que je ne sais pas faire. Je suis preneur si quelqu'un peut m'éclairer sur le sujet.</div>
+
+  
+    
+      <div class="level2">
+        <h3>Effectivement le déploiement</h3>
+        <div class="meta">Bruno 2016-09-16T23:44</div>
+        <div class="body">Effectivement le déploiement se fait correctement mais j'avoue je ne comprends pas bien la nécessité du deploy... Une spécificité Gandi ?</div>
+      </div>
+    
+  
+  
+</div>
+
+            </article><article>
+              <div class="level1">
+  <h3>Git, fonctionnalités avancées</h3>
+  <div class="meta">Dominique 2016-06-24T12:09 </div>
+  <div class="body">J’ai acquis mes connaissance sur l’utilisation du Git grâce à l’aide des tutoriels en vidéos sur http://www.alphorm.com/tutoriel/formation-en-ligne-git-fonctionnalites-avancees. c’est très pratique et facile à assimiler.</div>
+
+  
+  
+</div>
+
+            </article><article>
+              <div class="level1">
+  <h3>gandi et deploy</h3>
+  <div class="meta">haclong 2016-09-19T10:24 </div>
+  <div class="body">J'ai utilisé le repo git sur gandi à mes tout début.<br />
+J'avoue ne pas avoir réessayé. J'utilise github et bitbucket désormais.<br />
+Je ne me souviens pas de cette histoire de deploy mais effectivement, c'est peut être un git "customisé"...</div>
+
+  
+  
+</div>
+
+            </article><article>
+              <div class="level1">
+  <h3>git, fonctionnalités avancées</h3>
+  <div class="meta">haclong 2016-09-19T10:35 </div>
+  <div class="body">personnellement, la documentation de git (git-scm.com), stackoverflow et google sont mes références. Mais je comprends qu'on puisse préférer une formation structurée.<br />
+<br />
+Je trouve qu'en formation (magistrale), tout va trop vite. On voit plein de choses très vite parce que le contrat veut que la formation couvre un maximum de sujet en un minimum de temps (il faut en avoir pour son argent après tout). Les formations aménagent des exercices mais finalement, c'est un peu la redite de ce qu'on vient de voir. Juste copier le cours et remplacer deux trois variables pour dire que...<br />
+Et puis, surtout, il y a tellement de choses à assimiler, on essaie de retenir et de filtrer l'avalanche d'infos dont on est abreuvé et on n'a pas le temps de prendre le recul et poser les questions utiles.<br />
+Les questions que vous rencontrez quand vous arrivez dans la "vraie" vie :<br />
+  - c'est quoi la différence entre un post-commit et un post-receive ?<br />
+  - vaut-il mieux faire un rebase ou un merge ?<br />
+  - peut on créer un repo distant à partir de notre local (sur github) ?<br />
+  etc...</div>
+
+  
+  
+</div>
+
+            </article></section>
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>Sur moi</h3>
+      <p>J&#39;ai appris le php il y a quelques années, quand Internet était à ses débuts. Pour diverses raisons, j&#39;ai arrêté en route et j&#39;ai perdu le fil des nouveaux Internets que je redécouvre. Résultat, je me sens constamment à courir après l&#39;histoire mais je suis toujours motivée à reprendre des projets personnels. Je me propose de vous partager mes découvertes. Au delà des sujets de programmation, j&#39;aime également partager mes infos concernant notamment l&#39;Histoire, l&#39;Astronomie, la Linguistique, les Films, les Livres et les Anime. J&#39;espère que vous aimerez suivre mon blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. Tous droits réservés.</p>
+        <p>Propulsé par <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

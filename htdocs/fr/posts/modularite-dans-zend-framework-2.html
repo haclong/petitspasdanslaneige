@@ -1,0 +1,230 @@
+<!doctype html>
+<html class="no-js" lang="fr" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>Modularité dans Zend Framework 2&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">Français</a>
+        <a href="/en/">Anglais</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/fr/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/fr/books/0/index.html">Séries</a>
+        <a href="/fr/">Accueil</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/fr/">Accueil</a><i class="fas fa-angle-right"></i>Modularité dans Zend Framework 2
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>Modularité dans Zend Framework 2</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>14/06/2013 16:51:00
+        
+        <i class="fas fa-th-large"></i><!--a href="/fr/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/jeu_de_contruction.jpg" class="node-banner" />
+        
+      </div>
+
+      <p><p>Alors que j'étais en train de développer une application avec Zend Framework 1, j'ai fini par tout reprendre à zéro en changeant de framework. Je ne suis pas allée chercher ma nouvelle librairie très loin puisque mon choix s'est porté sur Zend Framework 2. J'étais toutefois assez anxieuse de cette modification parce que j'ai eu un peu de mal pendant la période d'apprentissage du premier Zend Framework. J'ai pensé que je n'avais peut être pas la patience de tout réapprendre... Et c'est à ce moment là que je découvre le module dans Zend Framework 2.</p>
+<p>Comme chacun sait désormais, le module dans Zend Framework 2 n'a absolument plus rien à voir avec le module de Zend Framework 1. En fait, il est si différent qu'après plusieurs jours de recherches, je n'avais toujours pas une idée claire sur la façon de gérer mes propres modules. J'avais surtout beaucoup de mal à faire coincider le système de module de Zend Framework 2 avec le modèle de données initial que j'avais adopté pour mon application. Et puis, parfois, la pratique reste quand même le meilleur moyen de saisir un concept. Du coup, je décide de me lancer finalement.</p>
+<p>Au fur et à mesure qu'avancent mes développements, je comprends enfin ce que l'équipe de développement de Zend Framework 2 s'est fixé comme objectifs pour le système de module du framework. En me basant sur les principes qui caractérisent le développement par l'objet, voici les conclusions auxquelles j'arrive :</p>
+<h3>Indépendance du module</h3>
+<p>Les modules doivent être (autant que possible) indépendant les uns des autres.</p>
+<p>Cela signifie notamment</p>
+<ul>
+<li>qu'on peut facilement remplacer un module par un autre sans avoir à réécrire toute l'application.</li>
+<li>qu'on peut supprimer totalement un module sans interférence avec les autres modules.</li>
+<li>qu'on peut ajouter un module sans avoir à réécrire dans les autres modules.</li>
+</ul>
+<p>Pour y arriver, notamment, j'ai découvert que moins on instanciait d'objets dans le code du modèle, mieux on se portait.</p>
+<p>Toutes les déclarations <code>new Class()</code> doivent se faire dans la classe <code>Module</code>, au niveau du <strong>Service Manager</strong> et si nos classes ont besoin d'un objet ou d'un autre, il valait mieux l'injecter avec un <code>setLaClasseDontJaiBesoin($laClasseDontJaiBesoin)</code> plutôt qu'avec une instruction <code>new</code>. Je me réserve la possibilité de revenir sur cette conclusion mais pour le moment, ça fonctionne bien.</p>
+<h3>Module monomaniaque</h3>
+<p>Les modules sont centrés sur un sujet. C'est par ailleurs mon principe favori parce qu'il est extrêmement utile pour découper mon application en modules.</p>
+<p>Poussé à l'extrême, cela veut dire que chaque module n'est responsable que d'une seule tâche. Je sais ainsi que si un de mes modules doit faire deux choses en même temps, c'est qu'il faut que je crée un second module.</p>
+<p>Dans la pratique, j'ai à ce jour :</p>
+<ul>
+<li>un module pour gérer les identifications des utilisateurs : il contient au moins un contrôleur, plusieurs vues, un formulaire de login, un formulaire de perte de mot de passe et le but, c'est de voir si l'utilisateur est connu ou pas dans la base de données.</li>
+<li>un module pour logger les messages : il ne contient ni contrôleur, ni vue, il se contente de paramétrer une instance de <code>Zend\Log\Log</code> avec les writers qui vont bien et quand il s'agit d'écrire quelquechose dans la (ou les) logs, il fait la distribution comme il faut.</li>
+<li>un module pour gérer les envois de mail : pas de contrôleur ni de vue pour celui ci non plus. Il se contente d'envoyer un mail et d'historiser l'envoi du mail dans la base de données.</li>
+</ul>
+<p>A venir : mon prochain module va se charger de gérer les autorisations des utilisateurs. Parce que si mon module identifie les utilisateurs, il ne s'occupe pas de savoir si tel ou tel utilisateur est autorisé à accéder à telles ou telles ressources...</p>
+<p>Cela génère beaucoup de modules mais en même temps, de mon point de vue, c'est rassurant parce que cela subdivise le projet en petits lots plus facile à gérer. En plus, on voit mieux l'avancée du projet parce qu'une fois que le développement d'un module est fini, on n'a pas à revenir dessus en principe et on peut passer à la suite.</p>
+<p>En plus, si on garde à l'esprit le principe d'indépendance des modules, certains des modules qui ont déjà été développés peuvent être réutilisés dans d'autres applications futures : la gestion du cache, la gestion des logs, le mailer par exemple sont des modules qui peuvent facilement être réutilisés d'une application à l'autre.</p>
+<h3>Interaction des modules</h3>
+<p>Les modules ne doivent pas être (et ne peuvent pas) être isolés les uns des autres. Pour cela, il existe plusieurs moyens de faire communiquer des modules ensemble :</p>
+<h3>Grâce au Service Manager</h3>
+<p>Le principe est que chaque module met à disposition de l'application un certain nombre de services. Les modules sont indépendants les uns des autres mais c'est comme aller poster son courrier. Le module &quot;La Poste&quot; met à votre disposition deux services : le &quot;guichet&quot; et &quot;la boite jaune&quot;. Si vous désirez poster un courrier, vous pouvez utiliser un de ces deux services. Du moment que vous utilisez le service &quot;guichet&quot; avec une adresse destinataire et une lettre, le module &quot;La Poste&quot; se charge d'acheminer votre courrier à votre destinataire.</p>
+<p>Vous pouvez coder un module &quot;La Poste&quot; qui se chargera d'acheminer un message vers un destinataire. A l'intérieur de votre module &quot;La Poste&quot;, vous n'aurez qu'à gérer le formattage et les protocoles par exemple.</p>
+<p>Et vous pourrez coder un autre module &quot;Utilisateur&quot; qui sera amené à écrire des messages et qui souhaitera les envoyer à un destinataire. Du coup, votre module &quot;Utilisateur&quot; se chargera d'écrire le message, d'identifier à qui il doit envoyer le message et il fera appel à votre module &quot;La Poste&quot; pour que votre module &quot;La Poste&quot; se charge d'envoyer le message qu'il a préparé.</p>
+<p>Voyons ce que ça peut donner :</p>
+<h4>Le module Mailer</h4>
+<p>Un module <strong>Mailer</strong> met à disposition de l'application deux services : <strong>MailFormatter</strong> et <strong>MailSender</strong>. Le service <strong>MailFormatter</strong> s'appliquera à mettre un message au bon format en composant avec l'adresse du destinataire (<code>addTo()</code>) et un corps de mail (<code>setBody()</code>). Le service <strong>MailSender</strong> prendra le message pour l'envoyer.</p>
+<pre><code class="language-php">//Module.php
+
+class Module
+{
+  public function getServiceConfig()
+  {
+    return array(
+      'factories' =&gt; array(
+        'MailFormatter' =&gt; function($sm) {
+          $mail = new Zend\Mail\Message() ;
+          $mail-&gt;setEncoding('UTF-8') ;
+          $mail-&gt;setFrom('adresse@dusite.com', 'Mon site') ; // coordonnées et nom du sender
+          
+          return $mail ;
+        },
+
+        'MailSender' =&gt; function($sm) {
+          $sender = new Zend\Mail\Transport\Sendmail() ;
+ 
+          return $sender ;
+        }
+      ),
+    );
+  }
+}
+</code></pre>
+<h4>Le module Contact</h4>
+<p>Un module <strong>Contact</strong> peut être composé d'un contrôleur et d'une vue avec un formulaire de contact. Le module <strong>Contact</strong> va se charger de valider le formulaire, notamment la gestion du captcha et le format des adresses mails. Une fois que le formulaire est valide, le module <strong>Contact</strong> va faire appel aux deux services du module <strong>Mailer</strong> pour envoyer le message.</p>
+<pre><code class="language-php">// src/Contact/Controller/IndexController.php
+
+class IndexController extends AbstractActionController
+{
+  public function sendAction()
+  {
+    // le formulaire est posté, validé
+    // on va récupérer, grâce au service manager, le service MailFormatter que le module Mailer a mis à notre disposition. 
+    // il n'est nul besoin de dire que c'est le module Mailer. 
+    // Normalement, votre application ne doit avoir qu'un et un seul service MailFormatter 
+    // au milieu de tous les services mis à disposition par tous les modules.
+    $mailer = $this-&gt;getServiceLocator()-&gt;get('MailFormatter') ; 
+    $mailer-&gt;addTo('destinataire@mail.com') ;
+    $mailer-&gt;setSubject('Sujet du mail') ;
+    $mailer-&gt;setBody('voici mon message') ;
+    // maintenant, on va récupérer le service MailSender que le module Mailer a mis à notre disposition.
+    $transport = $this-&gt;getServiceLocator()-&gt;get('MailSender') ;
+    $transport-&gt;send($mailer) ;
+  }
+}
+</code></pre>
+<p>Et voila comment, grâce au <strong>Service Manager</strong>, un module peut utiliser les services mis à dispositions par un autre module.</p>
+<p>En plus du <strong>Service Manager</strong>, il est également possible d'utiliser d'autres composants pour que deux modules interagissent ensemble.</p>
+<ul>
+<li>Il y a le composant <strong>DI</strong> (qui permet de gérer les injections de dépendances.) Je ne sais pas l'utiliser pour le moment, je ne saurais vous le présenter.</li>
+<li>Il y a le <strong>gestionnaire d'événements</strong> qui se base sur des listeners qui exécutent une tâche dès qu'un événement survient. Je reparlerais de ce point plus tard.</li>
+<li>Il y a peut être d'autres composants mais je ne les connais pas encore.</li>
+</ul>
+<p>Gardez à l'esprit que</p>
+<ul>
+<li>les modules doivent être indépendants</li>
+<li>les modules ne s'occupent que d'une seule tâche</li>
+</ul>
+<p>Dans certains cas, il restera à vous demander quelle est la manière la plus judicieuse pour les faire interagir les uns avec les autres. Et les outils que le framework met à notre disposition me semblent pour le moment assez riches et intéressants pour nous permettre de réaliser nos défis de développeur.</p>
+<p>Je rencontre quelques questions sur StackOverflow sur la meilleure façon de gérer les modules. J'espère que ma façon de voir ça pourra vous aider à réaliser vos projets.</p>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/fr/tags/zend-framework-2">zend framework 2</a></li><li><a href="/fr/tags/modules">Modules</a></li><li><a href="/fr/tags/service-manager">Service Manager</a></li></ul>
+        </div>
+      
+
+      
+    
+
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>Sur moi</h3>
+      <p>J&#39;ai appris le php il y a quelques années, quand Internet était à ses débuts. Pour diverses raisons, j&#39;ai arrêté en route et j&#39;ai perdu le fil des nouveaux Internets que je redécouvre. Résultat, je me sens constamment à courir après l&#39;histoire mais je suis toujours motivée à reprendre des projets personnels. Je me propose de vous partager mes découvertes. Au delà des sujets de programmation, j&#39;aime également partager mes infos concernant notamment l&#39;Histoire, l&#39;Astronomie, la Linguistique, les Films, les Livres et les Anime. J&#39;espère que vous aimerez suivre mon blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. Tous droits réservés.</p>
+        <p>Propulsé par <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

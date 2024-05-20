@@ -1,0 +1,13 @@
+<nav id="book-navigation">
+    {% if book.previous %}
+       <li class="link-previous"><a href="{{ book.previous.url }}"><i class="fas fa-long-arrow-alt-left"></i> {{ book.previous.title }}</li>
+    {% endif %}
+
+    {% if book.next %}
+        <li class="link-next"><a href="{{ book.next.url }}">{{ book.next.title }} <i class="fas fa-long-arrow-alt-right"></i></a></li>
+    {% endif %}
+
+    {% if book.book %}
+        <li class="link-up"><a href="{{ book.top.url }}"><i class="fas fa-book-open"></i> {{ book.top.title }}</li>
+    {% endif %}
+</nav>

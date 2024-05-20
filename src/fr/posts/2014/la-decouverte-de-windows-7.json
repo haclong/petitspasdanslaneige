@@ -1,0 +1,15 @@
+{
+    "oldcomments" : [
+    {
+        "title": "Noms de fichiers trop longs ?",
+        "date": "2017-08-06T14:30",
+        "author": "Michel",
+        "body": "Bonjour,\n\nj'ai conscience d'arriver un peu tard, mais bon, le problème se pose toujours sous Windows Server 2012, alors autant vous donner l'info.\nIl y a un message d'erreur sur certaines opérations lorsque le chemin dépasse 256 caractères.\nSi on remplace, dans la commande, %nom de fichier% par \\\\?\\, les commandes vont usuellement passer.\n\nVoici une des sources pour cette info:\n\nhttp://www.tgrmn.com/web/kb/item31.htm\n\nRécemment découvert alors que je recherchais des droits non standards dans une arborescence avec Accessenum.\n\nMagique et méconnu\n\nEnjoy ..."
+    },
+    {
+        "title": "Pour rebondir sur les infos",
+        "date": "2017-08-07T11:38",
+        "author": "haclong",
+        "body": "Pour rebondir sur les infos très intéressantes de Michel, voici plus de détails trouvés grâce aux indices fournis :\n\n<a href=\"https://serverfault.com/questions/163419/window-256-characters-path-name-limitation\" target=\"_blank\">https://serverfault.com/questions/163419/window-256-characters-path-name-limitation</a>\n\nEn attendant, de mon côté, je suis passée à Windows 10... là encore, c'est sport..."
+    }
+]}

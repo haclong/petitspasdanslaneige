@@ -1,0 +1,423 @@
+<!doctype html>
+<html class="no-js" lang="fr" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>Application CoffeeBar 8/19 - Afficher les notes en cours&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">Français</a>
+        <a href="/en/">Anglais</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/fr/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/fr/books/0/index.html">Séries</a>
+        <a href="/fr/">Accueil</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/fr/">Accueil</a><i class="fas fa-angle-right"></i>Application CoffeeBar 8/19 - Afficher les notes en cours
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>Application CoffeeBar 8/19 - Afficher les notes en cours</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>25/02/2015 13:41:00
+        
+        <i class="fas fa-th-large"></i><!--a href="/fr/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/file9271237667217.jpg" class="node-banner" />
+        
+          <p><strong>Crédit</strong> : Morguefile.com </p>
+        
+      </div>
+
+      <p><p>Notre application se structure de mieux en mieux. Nous avons nos principaux éléments et services désormais en place. Nous avons effectivement triché en affichant les éléments du cache de manière un peu... violente. Mettons maintenant les choses en forme pour un rendu plus sérieux.</p>
+<p><em>NOTE : le long du tutoriel, je vais vous faire rééditer des classes et des vues sur lesquels on sera déjà passé. Il va y avoir des parties qui auront disparu au second passage : typiquement les use, les instructions extends, implements etc... Cela ne veut pas dire qu'il faut les retirer. C'est juste pour alléger le code. S'il faut retirer du code, soit je vous remettrais le passage intégralement, pour voir ce qui a disparu, soit je vous signalerais qu'il faut effacer une ligne pour la remplacer par une autre.</em></p>
+<h2>Liste des notes ouvertes</h2>
+<p>Allons créer l'action dédiée.</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Controller/TabController.php
+
+&lt;?php
+namespace CoffeeBar\Controller ;
+
+class TabController extends AbstractActionController
+{
+  public function listOpenedAction()
+  {
+    $cache = $this-&gt;serviceLocator-&gt;get('TabCache') ;
+    $openTabs = $cache-&gt;getOpenTabs() ;
+    return array('result' =&gt; $openTabs) ;
+  }
+}
+</code></pre>
+<p>On récupère l'index '<code>openTabs</code>' dans le cache. Rappelons nous, c'est l'objet <code>CoffeeBar\Entity\OpenTabs\TodoByTab</code> qui hérite de <code>\ArrayObject</code>. Il ne reste plus qu'à itérer et à afficher les informations dans la vue.</p>
+<pre><code>// module/CoffeeBar/view/coffee-bar/tab/list-opened.phtml
+
+&lt;h1&gt;Notes ouvertes&lt;/h1&gt;
+
+&lt;table&gt;
+  &lt;tr&gt;&lt;th&gt;Serveur&lt;/th&gt;&lt;th&gt;Table&lt;/th&gt;&lt;th&gt;&lt;/th&gt;&lt;/tr&gt;
+  &lt;?php
+    foreach($result as $k =&gt; $v)
+    {
+      echo &quot;&lt;tr&gt;&quot; ;
+      echo &quot;&lt;td&gt;&quot; .$v-&gt;getWaiter(). &quot;&lt;/td&gt;&quot; ;
+      echo &quot;&lt;td&gt;&quot; .$v-&gt;getTableNumber(). &quot;&lt;/td&gt;&quot; ;
+      echo &quot;&lt;td&gt;&lt;a href='&quot;.$this-&gt;url('tab/status', array('id' =&gt; $v-&gt;getTableNumber())).&quot;'&gt;Voir le statut&lt;/a&gt;&lt;/td&gt;&quot; ;
+      echo &quot;&lt;/tr&gt;&quot; ;
+    }
+  ?&gt;
+&lt;/table&gt;
+</code></pre>
+<p>Mettons en place les routes (et la navigation) afin que cette page soit accessible. (Nous mettrons également la route <code>tab/status</code> en place au passage).</p>
+<pre><code class="language-php">// module/CoffeeBar/config/module.config.php
+
+&lt;?php
+return array(
+  'router' =&gt; array(
+    'routes' =&gt; array(
+      // ajouter aux autres routes
+      'tab' =&gt; array(
+        'child_routes' =&gt; array(
+        
+          /**
+           * cette URL : http://coffeebar.home/tab/opened mène à cette route
+           */
+          'opened' =&gt; array(
+            'type' =&gt; 'Literal',
+            'options' =&gt; array(
+              'route' =&gt; '/opened',
+              'defaults' =&gt; array(
+                'controller' =&gt; 'CoffeeBarController\Tab',
+                'action' =&gt; 'listOpened',
+              ),
+            ),
+            'may_terminate' =&gt; true,
+          ),
+ 
+          /**
+           * cette URL : http://coffeebar.home/tab/status mène à cette route
+           */
+          'status' =&gt; array(
+            'type' =&gt; 'Segment',
+            'options' =&gt; array(
+              'route' =&gt; '/status/[:id]',
+              'defaults' =&gt; array(
+                'controller' =&gt; 'CoffeeBarController\Tab',
+                'action' =&gt; 'status',
+              ),
+            ),
+          ),
+        ),
+      ),
+    ),
+  ),
+) ;
+</code></pre>
+<p>La navigation :</p>
+<pre><code class="language-php">// module/CoffeeBar/config/module.config.php
+
+&lt;?php
+return array(
+  'navigation' =&gt; array(
+    'default' =&gt; array(
+      // ajouter aux autres items de navigation
+      array(
+        'label' =&gt; 'Opened tabs',
+        'route' =&gt; 'tab/opened',
+      ),
+    ),
+  ),
+) ;
+</code></pre>
+<p>Retournons dans le contrôleur et ajoutons l'action <code>TabController::statusAction()</code>.</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Controller/TabController.php
+
+&lt;?php
+namespace CoffeeBar\Controller ;
+
+class TabController extends AbstractActionController
+{
+  public function statusAction()
+  {
+    $openTabs = $this-&gt;serviceLocator-&gt;get('OpenTabs') ;
+    $status = $openTabs-&gt;statusForTable($this-&gt;params()-&gt;fromRoute('id')) ;
+    return array('result' =&gt; $status) ;
+  }
+}
+</code></pre>
+<h3>La page de statut</h3>
+<p>Dans le service <strong>OpenTabs</strong>, nous allons mettre en place une méthode pour récupérer le statut de chacune des notes.</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Service/OpenTabs.php
+
+&lt;?php
+namespace CoffeeBar\Service ;
+
+use CoffeeBar\Entity\OpenTabs\TabStatus;
+
+class OpenTabs
+{
+  /**
+   * Retourne le statut de la commande
+   * @param int $table - numéro de la table
+   * @return TabStatus
+   */
+  public function statusForTable($table)
+  {
+    $this-&gt;loadTodoByTab() ;
+    foreach($this-&gt;todoByTab-&gt;getArrayCopy() as $k =&gt; $v)
+    {
+      if($v-&gt;getTableNumber() == $table)
+      {
+        $status = new TabStatus() ;
+        $status-&gt;setTabId($k) ;
+        $status-&gt;setTableNumber($v-&gt;getTableNumber()) ;
+        $status-&gt;setItemsToServe($v-&gt;getItemsToServe()) ;
+        $status-&gt;setItemsInPreparation($v-&gt;getItemsInPreparation()) ;
+        $status-&gt;setItemsServed($v-&gt;getItemsServed()) ;
+        return $status ;
+      }
+    }
+    return NULL ;
+  }
+}
+</code></pre>
+<p>La méthode <code>OpenTabs::statusForTable($table)</code> retourne un objet <code>CoffeeBar\Entity\OpenTabs\TabStatus</code>.</p>
+<pre><code class="language-php">// module/CoffeeBar/src/CoffeeBar/Entity/OpenTabs/TabStatus.php
+
+&lt;?php
+namespace CoffeeBar\Entity\OpenTabs ;
+
+use ArrayObject;
+
+class TabStatus
+{
+  protected $tabId; // int (guid) - id unique de la note
+  protected $tableNumber; // int - numéro de la table
+  protected $itemsToServe; // ItemsArray (ArrayObject) - liste des éléments à servir
+  protected $itemsInPreparation; // ItemsArray (ArrayObject) - liste des éléments en préparation
+  protected $itemsServed; // ItemsArray (ArrayObject) - liste des éléments servis
+
+  // getters &amp;amp; setters
+}
+</code></pre>
+<p>Le tutoriel d'origine a l'air d'appliquer scrupuleusement la règle suivante : toute méthode retourne invariablement un objet. Ca à l'air systématique. En soit, ça ne me choque pas mais cela génère effectivement un volume conséquent d'objets. Après, cela permet de modifier un objet sans casser toute l'application...</p>
+<p>Maintenant qu'on sait à quoi ressemble l'objet qui est issu de la méthode <code>OpenTabs::statusForTable()</code>, on va pouvoir organiser notre vue.</p>
+<p><em>(faites pas attention, je me suis aperçu après coup que mes vues sont un coup en français, un coup en anglais...)</em></p>
+<pre><code class="language-php">// module/CoffeeBar/view/coffee-bar/tab/status.phtml
+
+&lt;h1&gt;Tab status&lt;/h1&gt;
+
+&lt;h2&gt;Table #&lt;?php echo $result-&gt;getTableNumber(); ?&gt;&lt;/h2&gt;
+
+&lt;div&gt;&lt;a href=&quot;&lt;?php echo $this-&gt;url('tab/order', array('id' =&gt; $result-&gt;getTableNumber())) ;?&gt;&quot;&gt;Order Food/Drink&lt;/a&gt;&lt;/div&gt;
+
+&lt;h3&gt;Items to serve&lt;/h3&gt;
+
+&lt;?php
+  if(count($result-&gt;getItemsToServe()) == 0)
+  {
+    echo 'Pas de commande en cours' ;
+  } else {
+?&gt;
+
+    &lt;table&gt;
+      &lt;tr&gt;
+        &lt;th&gt;Menu #&lt;/th&gt;
+        &lt;th&gt;Description&lt;/th&gt;
+      &lt;/tr&gt;
+
+      &lt;?php
+        foreach($result-&gt;getItemsToServe() as $k=&gt; $v)
+        {
+          echo &quot;&lt;tr&gt;&quot; ;
+          echo &quot;&lt;td&gt;&quot; .$v-&gt;getMenuNumber(). &quot;&lt;/td&gt;&quot; ;
+          echo &quot;&lt;td&gt;&quot; .$v-&gt;getDescription() . &quot;&lt;/td&gt;&quot; ;
+          echo &quot;&lt;/tr&gt;&quot; ;
+        }
+      ?&gt;
+    &lt;/table&gt;
+
+&lt;?php
+  }
+?&gt;
+
+&lt;h3&gt;Food in preparation&lt;/h3&gt;
+
+&lt;?php
+  if(count($result-&gt;getItemsInPreparation()) == 0)
+  {
+    echo 'Pas de commande en cours' ;
+  } else {
+?&gt;
+    &lt;table&gt;
+      &lt;tr&gt;
+        &lt;th&gt;Menu #&lt;/th&gt;
+        &lt;th&gt;Description&lt;/th&gt;
+      &lt;/tr&gt;
+
+      &lt;?php 
+        foreach($result-&gt;getItemsInPreparation() as $k=&gt; $v)
+        {
+          echo &quot;&lt;tr&gt;&quot; ;
+          echo &quot;&lt;td&gt;&quot; .$v-&gt;getMenuNumber(). &quot;&lt;/td&gt;&quot; ;
+          echo &quot;&lt;td&gt;&quot; .$v-&gt;getDescription() . &quot;&lt;/td&gt;&quot; ;
+          echo &quot;&lt;/tr&gt;&quot; ;
+        }
+      ?&gt;
+    &lt;/table&gt;
+
+&lt;?php
+  }
+?&gt;
+
+&lt;h3&gt;Items already served&lt;/h3&gt;
+
+&lt;?php
+  if(count($result-&gt;getItemsServed()) == 0)
+  {
+    echo 'Pas de commande en cours' ;
+  } else {
+?&gt;
+
+    &lt;table&gt;
+      &lt;tr&gt;
+        &lt;th&gt;Menu #&lt;/th&gt;
+        &lt;th&gt;Description&lt;/th&gt;
+      &lt;/tr&gt;
+
+      &lt;?php 
+        foreach($result-&gt;getItemsServed() as $k=&gt; $v)
+        {
+          echo &quot;&lt;tr&gt;&quot; ;
+          echo &quot;&lt;td&gt;&quot; .$v-&gt;getMenuNumber(). &quot;&lt;/td&gt;&quot; ;
+          echo &quot;&lt;td&gt;&quot; .$v-&gt;getDescription() . &quot;&lt;/td&gt;&quot; ;
+          echo &quot;&lt;/tr&gt;&quot; ;
+        }
+      ?&gt;
+    &lt;/table&gt;
+
+&lt;?php
+  }
+?&gt;
+</code></pre>
+<p>Evidemment, à ce niveau, nos listes (<code>$itemsToServe</code>, <code>$itemsInPreparation</code> et <code>$itemsServed</code>) sont vides... il n'y a rien... aucune commande.</p>
+<p>Alors allons y !! Mettons les commandes en place.</p>
+<p><em>Vous trouverez l'intégralité de l'application sur mon <a href="https://github.com/haclong/coffeebar" target="_blank">github</a></em></p>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/fr/tags/zend-framework-2">zend framework 2</a></li><li><a href="/fr/tags/mvc">MVC</a></li><li><a href="/fr/tags/programmation-evenementielle">programmation événementielle</a></li><li><a href="/fr/tags/events">events</a></li><li><a href="/fr/tags/oop">OOP</a></li></ul>
+        </div>
+      
+
+      
+        <nav id="book-navigation">
+    
+       <li class="link-previous"><a href="/fr/posts/application-coffeebar-719-gerer-les-commandes-ouvertes.html"><i class="fas fa-long-arrow-alt-left"></i> Application CoffeeBar 7/19 - Gérer les commandes ouvertes</li>
+    
+
+    
+        <li class="link-next"><a href="/fr/posts/application-coffeebar-919-commander-les-plats-et-les-boissons.html">Application CoffeeBar 9/19 - Commander les plats et les boissons <i class="fas fa-long-arrow-alt-right"></i></a></li>
+    
+
+    
+        <li class="link-up"><a href="/fr/books/gerer-un-cafe-avec-une-programmation-evenementielle.html"><i class="fas fa-book-open"></i> Gérer un café avec une programmation événementielle</li>
+    
+</nav>
+
+      
+    
+
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>Sur moi</h3>
+      <p>J&#39;ai appris le php il y a quelques années, quand Internet était à ses débuts. Pour diverses raisons, j&#39;ai arrêté en route et j&#39;ai perdu le fil des nouveaux Internets que je redécouvre. Résultat, je me sens constamment à courir après l&#39;histoire mais je suis toujours motivée à reprendre des projets personnels. Je me propose de vous partager mes découvertes. Au delà des sujets de programmation, j&#39;aime également partager mes infos concernant notamment l&#39;Histoire, l&#39;Astronomie, la Linguistique, les Films, les Livres et les Anime. J&#39;espère que vous aimerez suivre mon blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. Tous droits réservés.</p>
+        <p>Propulsé par <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

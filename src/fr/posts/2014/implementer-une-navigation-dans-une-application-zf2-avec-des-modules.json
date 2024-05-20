@@ -1,0 +1,17 @@
+{
+    "oldcomments" : [
+    {
+        "title": "Is there a way to add an",
+        "date": "2015-09-05T14:08",
+        "author": "King",
+        "body": "Is there a way to add an empty link to a navigation menu? I want sub pages to the main link to go somewhere, but I want a label with no link to the main category. Any ideas?",
+        "replies": [
+            {
+                "title": "I'd use the URI type page",
+                "date": "2015-05-09T16:06",
+                "author": "haclong",
+                "body": "I'd use the URI type page\n\nor use a key in the navigation array so you can use its child pages later"
+            }
+        ]        
+    }
+]}

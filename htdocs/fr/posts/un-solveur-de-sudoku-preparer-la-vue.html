@@ -1,0 +1,360 @@
+<!doctype html>
+<html class="no-js" lang="fr" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>Un solveur de Sudoku - Préparer la vue&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">Français</a>
+        <a href="/en/">Anglais</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/fr/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/fr/books/0/index.html">Séries</a>
+        <a href="/fr/">Accueil</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/fr/">Accueil</a><i class="fas fa-angle-right"></i>Un solveur de Sudoku - Préparer la vue
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>Un solveur de Sudoku - Préparer la vue</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>25/03/2014 18:10:00
+        
+        <i class="fas fa-th-large"></i><!--a href="/fr/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/Sudoku_Board_Game.jpg" class="node-banner" />
+        
+      </div>
+
+      <p><h3>Préparer la vue</h3>
+<p>Comme je ne suis pas un génie en développement, je vais commencer par préparer ma vue. Deux avantages dans le cadre d'un développement empirique comme j'ai l'habitude de faire :</p>
+<ul>
+<li>on détermine d'ores et déjà la structure de la grille que le contrôleur va envoyer dans la vue.</li>
+<li>une fois que la vue est prête, on pourra vérifier &quot;de visu&quot; chaque étape du développement.</li>
+</ul>
+<h3>Les possibilités</h3>
+<p>La grille de sudoku peut être en dur, avec une succession de <code>&lt;tr&gt;</code> et de <code>&lt;td&gt;</code> écrits à la main dans la vue.</p>
+<p>Le contrôleur peut passer le contenu de chacune des cases de la grille à la vue et l'affichage de chacune des valeurs peut se faire une à une dans la vue.</p>
+<p>Ce serait effectivement possible, mais pas vraiment efficace, ni intelligent. On ne fait pas un programme pour tout écrire à la main. Surtout une succession de</p>
+<pre><code class="language-php">&lt;tr&gt;
+  &lt;td&gt;
+    &lt;?php echo $this-&gt;valeur_de_ma_case_1 ?&gt;
+  &lt;/td&gt;
+&lt;/tr&gt;...
+</code></pre>
+<p>L'option la plus logique est de créer la grille avec une boucle. Et pour créer une grille avec des boucles, il faut déterminer quand on doit revenir à la ligne.</p>
+<p>Si on utilise une boucle <code>For</code>, il faut lui fournir une limite afin que la boucle sache quand finir. Une grille de sudoku contient 9 lignes, chaque ligne contient 9 colonnes. La limite est donc de 9 invariablement.</p>
+<p>Invariablement ? Pourtant, il suffirait de pousser un peu pour rendre cette information variable. De plus, le modèle qu'on a esquissé jusqu'à présent ne semble pas avoir une limite au niveau de la taille des éléments. Il pourrait donc s'adapter assez facilement pour une grille de 9 cases de côté, de 16 cases, de 25 cases et même de 4 cases...</p>
+<p>Dans le cas où la taille de la grille devient variable, il faut pouvoir fournir à la boucle <code>For</code> la limite dont la boucle a besoin pour s'arrêter.</p>
+<pre><code class="language-php">for($i = 0; $i &lt; $limite_de_la_boucle ; $i++) { }
+</code></pre>
+<p>La limite de la boucle peut être envoyé à la vue par le contrôleur. Toutefois, cette information peut être facilement déduite des éléments (les cases de la grille) qui sont par ailleurs envoyés à la vue par le contrôleur. Par exemple, une boucle Foreach n'est limitée que par la taille du tableau sur lequel est exécuté la boucle. Ce qui devient l'option la plus intéressante dans notre situation puisque 1/ on n'a plus besoin de connaître la limite de la boucle et 2/ on sait d'ores et déjà que nos données devront être envoyées sous la forme d'un tableau. Et afin de créer une boucle dans une boucle, il faut que le tableau sur lequel on va exécuter la boucle soit un tableau à deux dimensions.</p>
+<pre><code class="language-php">foreach($tableau as $row_id =&gt; $ligne)
+{
+  foreach($ligne as $col_id =&gt; $colonne) { }
+}
+</code></pre>
+<p>Le premier <code>Foreach</code> boucle sur les lignes et pour chaque ligne, une seconde boucle <code>Foreach</code> va boucler sur les colonnes.</p>
+<p>Il ne reste plus qu'à insérer les balises HTML au bon endroit :</p>
+<ol>
+<li>Vider toute la page index.phtml. On repart d'un fichier vierge.</li>
+</ol>
+<pre><code class="language-php">// module/Application/view/application/index/index.phtml
+
+&lt;?php
+// le tableau $grille que le contrôleur va envoyer.
+// sans contrôleur pour le moment, nous créons le tableau à la main
+
+$grille[0][0] = '1 - 1' ;
+$grille[0][1] = '1 - 2' ;
+$grille[0][2] = '1 - 3' ;
+$grille[0][3] = '1 - 4' ;
+$grille[1][0] = '2 - 1' ;
+$grille[1][1] = '2 - 2' ;
+$grille[1][2] = '2 - 3' ;
+$grille[1][3] = '2 - 4' ;
+$grille[2][0] = '3 - 1' ;
+$grille[2][1] = '3 - 2' ;
+$grille[2][2] = '3 - 3' ;
+$grille[2][3] = '3 - 4' ;
+$grille[3][0] = '4 - 1' ;
+$grille[3][1] = '4 - 2' ;
+$grille[3][2] = '4 - 3' ;
+$grille[3][3] = '4 - 4' ;
+?&gt;
+
+&lt;table border=&quot;1&quot;&gt;
+
+  &lt;?php
+    foreach($grille as $ligne)
+    {
+  ?&gt;
+  
+  &lt;tr&gt;
+
+  &lt;?php
+    foreach($ligne as $cellule)
+    {
+      print(&quot;&lt;td&gt;&quot; . $cellule . &quot;&lt;/td&gt;&quot;) ;
+    }
+  ?&gt;
+  
+  &lt;/tr&gt;
+
+  &lt;?php
+    }
+  ?&gt;
+
+&lt;/table&gt;
+</code></pre>
+<ol start="2">
+<li>Ouvrez votre navigateur favori.</li>
+</ol>
+<p><code>http://localhost/SudokuSolver</code></p>
+<p>Un tableau-plus-basique-que-ça-tu-meurs s'affiche. De 4x4 cases.</p>
+<p>Mais bon, le tableau n'est pas joli joli... on va mettre une couche de vernis/css pour décorer tout ça et on enchaîne.</p>
+<p>Apportons d'abord des modifications à notre vue. On profitera au passage pour rajouter des balises <code>&lt;input&gt;</code> puisqu'on devra pouvoir insérer les numéros dans la grille. La double boucle va légèrement changer pour pouvoir ajouter un nom à chacune des balises <code>&lt;input&gt;</code>.</p>
+<pre><code class="language-php">// module/Application/view/application/index/index.phtml
+// supprimer l'attribut border et ajouter le style à la balise &lt;table&gt;
+&lt;table class=&quot;sudoku_grid&quot;&gt;
+
+  &lt;?php
+    // ajouter la clé à la boucle foreach
+    foreach($grille as $num_ligne =&gt; $ligne)
+    {
+  ?&gt;
+  
+  &lt;tr&gt;
+
+    &lt;?php
+    
+      // ajouter la clé à la boucle foreach
+      foreach($ligne as $num_colonne =&gt; $cellule)
+      {
+        // ajouter la balise &lt;input avec les clés&gt;
+        // ajouter le style à la balise &lt;td&gt;
+        print(&quot;&lt;td class=\&quot;sudoku_case\&quot;&gt;
+          &lt;input type=\&quot;text\&quot; size=\&quot;1\&quot; name=\&quot;k[&quot;.$num_ligne.&quot;][&quot;.$num_colonne.&quot;]\&quot; value=\&quot;&quot; . $cellule . &quot;\&quot;/&gt;
+          &lt;/td&gt;&quot;) ;
+      }
+    
+    ?&gt;
+  
+  &lt;/tr&gt;
+
+  &lt;?php
+    }
+  ?&gt;
+&lt;/table&gt;
+</code></pre>
+<p>La feuille de style</p>
+<pre><code class="language-css">// public/css/sudoku.css
+.sudoku_case {border : 1px solid #aaaaaa ; padding : 8px}
+.sudoku_grid {border : 5px solid #cccccc ; margin-top : 30px}
+.sudoku_case input {border : 0px ; font-size : 1.8em ; text-align : center}
+</code></pre>
+<p>Ne pas oublier d'ajouter notre feuille de style au layout de l'application</p>
+<pre><code class="language-php">// module/Application/view/layout/layout.phtml
+
+&lt;!-- Le styles --&gt;
+&lt;?php 
+
+echo $this-&gt;headLink(array('rel' =&gt; 'shortcut icon', 'type' =&gt; 'image/vnd.microsoft.icon', 'href' =&gt; $this-&gt;basePath() . '/img/favicon.ico'))
+  -&gt;prependStylesheet($this-&gt;basePath() . '/css/style.css')
+  // ajouter la feuille de style
+  -&gt;prependStylesheet($this-&gt;basePath() . '/css/sudoku.css')
+  -&gt;prependStylesheet($this-&gt;basePath() . '/css/bootstrap-theme.min.css')
+  -&gt;prependStylesheet($this-&gt;basePath() . '/css/bootstrap.min.css') 
+
+?&gt;
+</code></pre>
+<p>Voyons ce que ça donne dans l'explorateur...</p>
+<p>Bon, pas si mal... Mais on ne distingue pas les différentes régions les unes des autres...</p>
+<p>Bon, pas le temps de me lancer dans une démonstration mathématique. Il est d'ailleurs plus rapide de le dire que de le démontrer. La largeur d'une région est égale à la racine carrée de la largeur de la grille. Il en va de même pour la hauteur de la région. Ajoutons donc les styles où ils vont bien.</p>
+<pre><code class="language-php">// module/Application/view/application/index/index.phtml
+
+&lt;table class=&quot;sudoku_grid&quot;&gt;
+
+  &lt;?php
+    foreach($grille as $num_ligne =&gt; $ligne)
+    {
+  ?&gt;
+  
+  &lt;tr&gt;
+
+    &lt;?php
+      
+      foreach($ligne as $num_colonne =&gt; $cellule)
+      {
+        // calculer les styles pour les régions
+        $bordure_bas = &quot;&quot; ;
+        $bordure_droite = &quot;&quot; ;
+        
+        if($num_ligne % sqrt(count($grille)) == 0) {
+          $bordure_bas = &quot; region_border_bottom&quot; ;
+        }
+ 
+        if($num_colonne % sqrt(count($ligne)) == 0) {
+          $bordure_droite = &quot; region_border_right&quot; ;
+        }
+
+        // ajouter les styles dans la balise &lt;td&gt;
+        print(&quot;&lt;td class=\&quot;sudoku_case&quot;. $bordure_droite.$bordure_bas.&quot;\&quot;&gt;
+            &lt;input type=\&quot;text\&quot; size=\&quot;1\&quot; name=\&quot;k[&quot;.$num_ligne.&quot;][&quot;.$num_colonne.&quot;]\&quot; value=\&quot;&quot; . $cellule . &quot;\&quot;/&gt;
+            &lt;/td&gt;&quot;) ;
+      }
+  
+    ?&gt;
+    
+  &lt;/tr&gt;
+
+  &lt;?php
+    }
+  ?&gt;
+&lt;/table&gt;
+
+// public/css/sudoku.css
+// ajouter deux nouveaux styles
+.region_border_right {border-right : 2px solid #777777}
+.region_border_bottom {border-bottom : 3px solid #777777}&lt;/pre&gt;
+</code></pre>
+<p>Comme on utilise le module (%), il faut que la numérotation des colonnes (et des lignes) tombent juste. Il faut donc que l'index de la 1ere colonne soit un 1 et non pas un 0.</p>
+<p>Le tableau $grille attendu doit donc ressembler au tableau suivant</p>
+<pre><code class="language-php">$grille[1][1] = '1 - 1' ;
+$grille[1][2] = '1 - 2' ;
+$grille[1][3] = '1 - 3' ;
+$grille[1][4] = '1 - 4' ;
+$grille[2][1] = '2 - 1' ;
+$grille[2][2] = '2 - 2' ;
+$grille[2][3] = '2 - 3' ;
+$grille[2][4] = '2 - 4' ;
+$grille[3][1] = '3 - 1' ;
+$grille[3][2] = '3 - 2' ;
+$grille[3][3] = '3 - 3' ;
+$grille[3][4] = '3 - 4' ;
+$grille[4][1] = '4 - 1' ;
+$grille[4][2] = '4 - 2' ;
+$grille[4][3] = '4 - 3' ;
+$grille[4][4] = '4 - 4' ;
+</code></pre>
+<p>Vérifiez dans le navigateur. Le tableau s'affiche maintenant bien. La grille de sudoku est prête. Revenons maintenant à la navigation. Dans le prochain post, on va mettre en place la navigation, la route et le contrôleur qui va récupérer les paramètres de la route et qui va générer le tableau $grille (celui qu'on a monté en dur dans notre vue).</p>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/fr/tags/zend-framework-2">zend framework 2</a></li></ul>
+        </div>
+      
+
+      
+        <nav id="book-navigation">
+    
+       <li class="link-previous"><a href="/fr/posts/le-solveur-de-sudoku-concevoir-les-objets.html"><i class="fas fa-long-arrow-alt-left"></i> Le solveur de sudoku - Concevoir les objets</li>
+    
+
+    
+        <li class="link-next"><a href="/fr/posts/solveur-de-sudoku-route-et-controleur.html">Solveur de Sudoku - Route et Contrôleur <i class="fas fa-long-arrow-alt-right"></i></a></li>
+    
+
+    
+        <li class="link-up"><a href="/fr/books/aborder-la-programmation-orientee-objet-par-lexemple-concevoir-un-solveur-de-sudoku.html"><i class="fas fa-book-open"></i> Aborder la programmation orientée objet par l&#39;exemple. Concevoir un solveur de sudoku</li>
+    
+</nav>
+
+      
+    
+
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>Sur moi</h3>
+      <p>J&#39;ai appris le php il y a quelques années, quand Internet était à ses débuts. Pour diverses raisons, j&#39;ai arrêté en route et j&#39;ai perdu le fil des nouveaux Internets que je redécouvre. Résultat, je me sens constamment à courir après l&#39;histoire mais je suis toujours motivée à reprendre des projets personnels. Je me propose de vous partager mes découvertes. Au delà des sujets de programmation, j&#39;aime également partager mes infos concernant notamment l&#39;Histoire, l&#39;Astronomie, la Linguistique, les Films, les Livres et les Anime. J&#39;espère que vous aimerez suivre mon blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. Tous droits réservés.</p>
+        <p>Propulsé par <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

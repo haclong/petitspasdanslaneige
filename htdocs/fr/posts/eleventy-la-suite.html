@@ -1,0 +1,193 @@
+<!doctype html>
+<html class="no-js" lang="fr" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>Eleventy, la suite&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">Français</a>
+        <a href="/en/">Anglais</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/fr/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/fr/books/0/index.html">Séries</a>
+        <a href="/fr/">Accueil</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/fr/">Accueil</a><i class="fas fa-angle-right"></i>Eleventy, la suite
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>Eleventy, la suite</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>08/05/2024 11:09:00
+        
+        <i class="fas fa-th-large"></i><!--a href="/fr/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->, <!--a href="/fr/sites/haclong-projects.html" class="tag-sites"-->Haclong projects<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="" class="node-banner" />
+        
+      </div>
+
+      <p><h2>Précédemment, dans Petits Pas dans la Neige</h2>
+<p>Je vous la fais rapidos.</p>
+<p>Petits Pas dans la Neige était précedemment construit sur  <a href="https://www.drupal.org" target="_blank">Drupal</a>.</p>
+<p>Un CMS bien connu, efficace et performant avec une grosse communauté qui anime et enrichit l'application.</p>
+<p>Mais Drupal était trop lourd, trop gros, trop complexe. La base de données, les nombreux modules nécessaires, les mises à jour à effectuer. Je me suis demandée si ce n'était pas un peu trop pour un blog.</p>
+<p>Il fallait changer.</p>
+<p>J'ai choisi <a href="https://www.11ty.dev/" target="_blank">Eleventy</a>, une application <a href="https://jamstack.org/" target="_blank">Jamstack</a> avec la promesse d'une solution plus légère, plus basique et qui correspond mieux pour un simple blog.</p>
+<h3>Le déploiement en prod</h3>
+<p>Pour l'idée générale de la migration de Drupal vers Eleventy, voir <a href="/fr/posts/me-revoila-sur-les-rails.html" target="_blank">mon post précédent</a></p>
+<p>En tout cas, Jamstack oblige, le déploiement est assez simple : transfert des fichiers html via un client SFTP et voilà.</p>
+<p>Et dis comme ça, ça semble <em>TELLEMENT</em> plus simple... et pourtant.</p>
+<h2>Les améliorations à apporter</h2>
+<h3>Le mic mac des repositories</h3>
+<p>Bon, dans mon post précédent, j'expliquais comment j'avais très soigneusement créé deux dépôts de source distincts :</p>
+<ul>
+<li>Un premier dépôt (privé) pour gérer les fichiers de Eleventy (les templates, les fichiers de configuration, les quelques scripts et évidemment, les fichiers Markdown d'origine.)</li>
+<li>Un second dépôt github public pour gérer les fichiers HTML et les fichiers images et javascript et css.</li>
+</ul>
+<p>Ca peut fonctionner, mais l'une des contraintes, c'était l'utilisation de l'application Utterance sur github. Il était donc important d'héberger le dépôt sur github. Mais je n'avais pas compris qu'il fallait aussi héberger les fichiers d'Eleventy et les fichiers Markdown. En fait, je n'ai aucune idée comment fonctionne Utterance mais clairement, le dépôt avec les pages HTML seulement ne suffit pas.</p>
+<p>Pour corriger ça, il va falloir</p>
+<ul>
+<li>que je rapatrie tous les fichiers (Eleventy + HTML) sur un même dépôt (Github)</li>
+<li>afin d'héberger les fichiers HTML dans le répertoire public de mon hébergeur, il faut que je change la structure des fichiers du projet...</li>
+</ul>
+<p>Ca veut dire</p>
+<ul>
+<li>supprimer les deux dépôts existant</li>
+<li>supprimer les remote sur ma version locale</li>
+<li>changer le fichier d'export de Eleventy (ne plus générer les fichiers HTML sur le répertoire _site mais plutôt sur un répertoire htdocs correspondant à la structure de l'hébergeur).</li>
+<li>créer un dépôt (re) sur github auquel il faut attacher l'application Utterance</li>
+<li>ajouter un remote sur la version locale avec le nouveau dépôt</li>
+</ul>
+<h3>Un éditeur dédié</h3>
+<p>Pour effectuer la migration de Drupal vers Eleventy, j'ai utilisé mon IDE favori (<a href="https://code.visualstudio.com/" target="_blank">VS Code</a>). Pour générer les fichiers statiques, il y a un container Docker avec NodeJS pour faire tourner le moteur de Eleventy.</p>
+<p>Suite à ça, je ne me suis pas posée la question pour la rédaction + la publication des futurs articles.</p>
+<p>Le choix pour une solution Jamstack a été motivée notamment par la possibilité de rédiger les articles en markdown depuis n'importe quel éditeur (en opposition à la rédaction des articles sur Drupal, où il est obligatoire d'utiliser l'interface administrateur de Drupal)</p>
+<p>Mais une fois ce fait établi, il faut prendre certains points en considération :</p>
+<ul>
+<li>de préférence, ne pas utiliser VS Code parce que l'IDE peut être en cours d'utilisation avec un autre projet et il est fastidieux de refermer tous les fichiers du projet en cours pour écrire un nouvel article de blog. Il faut donc trouver un éditeur dédié (en tout cas, sur mon ordinateur principal) - je tente <a href="https://obsidian.md/" target="_blank">Obsidian</a>.</li>
+<li>s'assurer que les fichiers statiques vont être générés :
+<ul>
+<li>soit il faut que le container Docker fonctionne en permanence,</li>
+<li>soit il faut finalement installer un serveur NodeJS qui tournerait en tâche de fond sur l'ordinateur</li>
+<li>soit il faut installer un pipeline avec <a href="https://www.gocd.org/" target="_blank">GoCD</a> qui lancerait (lui) le container Docker uniquement quand les fichiers sont modifiés et mis à jour. (<em>je vais tenter cette option</em>)</li>
+</ul>
+</li>
+</ul>
+<h2>De Drupal à Eleventy</h2>
+<p>Pour conclure, je voulais</p>
+<ul>
+<li>alléger le blog : ok</li>
+<li>supprimer la contrainte de la base de données : ok</li>
+<li>faciliter la rédaction des articles en utilisant plusieurs éditeurs : ok</li>
+</ul>
+<p>Les changements que je n'avais pas prévu</p>
+<ul>
+<li>avec Drupal, la publication des articles était pris en charge. Il suffisait de rédiger un article sur l'éditeur de Drupal et la publication (et les conditions de publication) était intégralement gérée par Drupal. Avec Eleventy, il faut, pour chacun des éditeurs que j'aurais choisi (et depuis chacun des appareils), mettre en place une stratégie pour rédiger un article, commiter le fichier markdown, générer le fichier html avec le moteur de Eleventy.</li>
+<li>avec son moteur, Drupal pouvait redimensionner et retailler une image à la dimension des bandeaux d'illustration de mes posts. Avec Eleventy, il faut que je redimensionne les images manuellement, ce qui permet d'ajuster le cadrage.</li>
+</ul>
+<p>All in all, toutefois, je pense qu'il faut poursuivre. La mise en place est un peu plus contraignante - mais je pense honnêtement que ça me prend le même temps que ce qui m'a pris pour l'exploration et la mise en place des modules de Drupal à l'époque. Je vous tiens au courant</p>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/fr/tags/jamstack">jamstack</a></li><li><a href="/fr/tags/eleventy">eleventy</a></li><li><a href="/fr/tags/blog">blog</a></li></ul>
+        </div>
+      
+
+      
+    
+
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>Sur moi</h3>
+      <p>J&#39;ai appris le php il y a quelques années, quand Internet était à ses débuts. Pour diverses raisons, j&#39;ai arrêté en route et j&#39;ai perdu le fil des nouveaux Internets que je redécouvre. Résultat, je me sens constamment à courir après l&#39;histoire mais je suis toujours motivée à reprendre des projets personnels. Je me propose de vous partager mes découvertes. Au delà des sujets de programmation, j&#39;aime également partager mes infos concernant notamment l&#39;Histoire, l&#39;Astronomie, la Linguistique, les Films, les Livres et les Anime. J&#39;espère que vous aimerez suivre mon blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. Tous droits réservés.</p>
+        <p>Propulsé par <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

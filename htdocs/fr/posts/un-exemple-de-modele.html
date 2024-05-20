@@ -1,0 +1,298 @@
+<!doctype html>
+<html class="no-js" lang="fr" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>Un exemple de modèle&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">Français</a>
+        <a href="/en/">Anglais</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/fr/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/fr/books/0/index.html">Séries</a>
+        <a href="/fr/">Accueil</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/fr/">Accueil</a><i class="fas fa-angle-right"></i>Un exemple de modèle
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>Un exemple de modèle</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>15/03/2013 13:48:00
+        
+        <i class="fas fa-th-large"></i><!--a href="/fr/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/600_prometheus-prom-007_rgb1.jpg" class="node-banner" />
+        
+          <p><strong>Crédit</strong> : 20th century fox </p>
+        
+      </div>
+
+      <p><p>En suivant les <a href="http://en.wikipedia.org/wiki/SOLID_%28object-oriented_design%29" target="_blank">principes SOLID</a> et en me basant sur les réflexions de <a href="http://akrabat.com/zend-framework/on-models-in-a-zend-framework-application/" target="_blank">Rob Allen</a> et de <a href="http://www.mwop.net/blog/202-Model-Infrastructure.html" target="_blank">Matthew Weier O'Phinney</a>, je vais vous présenter le modèle objet que j'ai choisis de monter.</p>
+<h3>Les différents types d'objets</h3>
+<p>Mon modèle est quasiment centralisé sur des objets <strong>Domain</strong>. Extrêmement simples à appréhender, il m'a fallu un peu plus de réflexion pour me convaincre qu'ils étaient un élément indispensable à toute mon architecture.</p>
+<p>En effet, une partie de mes objets auront pour fonction de créer et alimenter mes objets <strong>Domain</strong> et l'autre partie de mes objets pourront les utiliser.</p>
+<p>Les objets <strong>Service</strong>, les objets <strong>Data</strong> et les objets <strong>Mapper</strong> vont créer mes objets <strong>Domain</strong>. Cela signifie notamment qu'une fois que j'aurais construit mes objets <strong>Domain</strong>, je n'aurais plus à faire appel à eux.</p>
+<p>Les objets <strong>Gateway</strong> ou les objets de l'application sont des objets de niveau supérieur. Ils ne savent manipuler que des objets <strong>Domain</strong> : ils les utilisent et leur appliquent des règles métiers.</p>
+<p>Au delà de ces objets, j'ai des objets <strong>Helpers</strong>, des <strong>Snippets</strong> etc...</p>
+<p>Pour ceux qui sont intéressés de savoir comment j'ai fait pour en arriver là, je vous invite à lire <a href="/fr/posts/cerner-le-modele.html" target="_blank">mon post précédent</a> sur le sujet.</p>
+<h3>L'objet Domain</h3>
+<p>Sans aller jusqu'à dire que les objets <strong>Domain</strong> sont le coeur de mon modèle, ils en forment au moins un élément pivot.</p>
+<p>Chacun des objets Domain ne contiennent que les propriétés de l'objet, quelques méthodes et les accesseurs et les mutateurs pour chacune des propriétés. Je pourrais faire des objets beaucoup plus simple et beaucoup plus souples, en définissant par défaut les méthodes magiques <code>__get()</code> et <code>__set()</code> mais je souhaite que la liste des propriétés d'un objet Domain ne soit pas extensible.</p>
+<p>J'ai opté pour des propriétés protégées (<code>protected</code>). Certains préfèreront utiliser un tableau php <code>$data</code> pour lequel chacune des clés du tableau seront une des propriétés de l'objet.</p>
+<p>Pour construire l'objet, j'ai choisi d'utiliser des méthodes publiques <code>$this-&gt;set{propertyName}($propertyValue)</code>. Mais je dois bien reconnaître que j'hésite avec la construction de mon objet en passant un tableau php au constructeur de l'objet. Cette seconde option me permettrait de construire mes objets <strong>Domain</strong> beaucoup plus rapidement. En contrepartie, dans le constructeur de mon objet, je serais obligée d'ajouter des tests if/else pour vérifier que le tableau que je passe en argument a bien les clés correspondantes aux propriétés de mon objet...</p>
+<pre><code class="language-php">// un objet Domain actuellement
+
+class My_Domain_User
+{
+    protected $_nom ;
+    protected $_prenom ;
+    protected $_dob ;
+
+    public function setNom($value)
+    {
+        $this-&gt;_nom = $value ;
+    }
+    public function getNom()
+    {
+        return $this-&gt;_nom ;
+    }
+}
+
+// Eventuellement, un objet Domain demain
+class My_Domain_User
+{
+    protected $_nom ;
+    public function __construct($array)
+    {
+        if(array_keys_exists('nom', $array))
+        {
+            $this-&gt;_nom = $array['nom'] ;
+        }
+    }
+    public function getNom()
+    {
+        return $this-&gt;_nom ;
+    }
+}
+</code></pre>
+<p>Comme mentionné plus haut, vous avez plusieurs façons de créer votre objet <strong>Domain</strong>. Ce qui compte, c'est que l'objet <strong>Domain</strong> doit juste contenir les informations sur l'objet. Il n'essaie pas de trouver des informations, il n'essaie pas de trier des objets. Tout au plus, dans le cadre d'un site de vente par exemple, l'objet peut avoir une méthode de type <code>total()</code> dans lequel il multiplierait le prix unitaire de l'objet fois la quantité de l'objet... Je n'ai pas encore bien réfléchi à ce cas mais je pense que j'articulerais la situation en deux objets domain : d'un côté, l'objet &quot;produit&quot; qui comprend son prix unitaire et de l'autre, l'objet &quot;élément du panier&quot; qui comprend le produit et la quantité du produit.</p>
+<p>L'objet <strong>Domain</strong> peut avoir une propriété qui est elle-même un autre objet <strong>Domain</strong>. Par exemple, un objet <strong>Domain</strong> &quot;User&quot; peut avoir une propriété de type &quot;Date de naissance&quot;. Cette propriété peut elle même être un objet <strong>Domain</strong> &quot;Date&quot;. L'objet <strong>Domain</strong> Date comprenant toutes les méthodes pour manipuler les dates et les reformater à la volée, il est plus judicieux de stocker dans l'objet User une date comme un objet Date...</p>
+<p>Parmi les objets <strong>Domain</strong> remarquables que j'ai créé, il faut noter l'objet <strong>Collection</strong> d'une part et l'objet <strong>Service_Response</strong> d'autre part.</p>
+<p>L'objet <strong>Domain</strong> <strong>Collection</strong> est un objet comptable, itérable etc... Il est en fait un tableau d'objets. Il va être utile notamment pour afficher la liste des utilisateurs. Ses méthodes principales vont être <code>addItemInCollection($item)</code> et <code>countItems()</code> par exemple.</p>
+<p>L'objet <strong>Service_Response</strong> est un objet qui va être utilisé par les objets de type <strong>Service</strong>. Il va contenir plusieurs propriétés de type <code>$_success</code>, <code>$_domain</code>, <code>$_error</code>.</p>
+<pre><code class="language-php"> // Un brouillon de mon objet Service_Response
+
+class Service_Response
+{
+    protected $_success = FALSE ;
+    protected $_domain ;
+    protected $_error ;
+
+    public function Succeeded()
+    {
+        $this-&gt;_success = TRUE ;
+    }
+
+    public function isSuccess()
+    {
+        return $this-&gt;_success ;  
+    }
+    
+    public function Failed($error_message)
+    {
+        $this-&gt;_error = $error_message ;
+    }
+    
+    public function setDomain($domain)
+    
+    public function getDomain()
+}
+</code></pre>
+<p>Dans les grandes lignes, l'objet <strong>Service_Response</strong> va ressembler à ça. En fonction de ma réflexion, c'est un objet qui a tendance à disparaître puis à réapparaître. Mais s'il disparaît, ses différentes méthodes seront nécessairement transmises à un autre objet du même type. De même, la propriété <code>$_error</code> va surement se finaliser par un objet <strong>Domain</strong> <strong>Error</strong> composé d'un code et d'un message avec des méthodes de type <code>getCode()</code> et <code>getMessage()</code>.</p>
+<p>Comme on peut le constater, ne serait-ce que pour la partie <strong>Domain</strong>, il y a encore long à dire mais je pense que l'essentiel est dit.</p>
+<h3>L'objet Service</h3>
+<p>L'objet <strong>Service_Response</strong> nous permet habilement d'introduire les objets de type <strong>Service</strong>.</p>
+<p>Les objets de type <strong>Service</strong> sont, contrairement aux objets <strong>Domain</strong> qui sont centralisés sur leurs propriétés, axés sur leurs méthodes.</p>
+<p>Mes objets <strong>Service</strong> retournent invariablement, sauf erreur, un objet <strong>Domain</strong>. Là encore, en cours de conception, j'ai deux façons d'y parvenir mais dans les grosses mailles, à la sortie d'un objet <strong>Service</strong>, on pourra trouver l'objet <strong>Domain</strong> &quot;promis&quot;. Les méthodes de mes objets <strong>Service</strong> seront du type <code>getUserFromDatabase()</code>, <code>findDisabledUser()</code> etc...</p>
+<pre><code class="language-php">// Objet Service retournant un objet Service_Response
+
+class My_Service_User
+{
+    public function getUserById($id)
+    {
+        $response = new My_Domain_Service_Response() ;
+        // operation pour récupérer My_Domain_User() ;
+        
+        // On a récupérer My_Domain_User() sans problème 
+        $response-&gt;succeeded() ; // la propriété $_success = TRUE maintenant
+        $response-&gt;setDomain($user) // $user = l'instance de My_Domain_User() obtenu plus tôt
+        return $response ; // Rappelez vous, c'est un objet Domain Service_Response
+    }
+}
+</code></pre>
+<p>Vous vous en doutez bien, l'objet <strong>Service</strong> <strong>User</strong> est utilisé par un autre objet, de niveau supérieur.</p>
+<pre><code class="language-php">// Objet de niveau supérieur utilisant My_Service_User
+
+class My_Application_Class
+{
+    public function findUser($id)
+    {
+        $service = new My_Service_User() ;
+        $response = $service-&gt;getUserById($id) ;
+
+        if($response-&gt;isSuccess())
+        {
+             $user = $response-&gt;getDomain() ;
+             return $user ;
+        }
+        else
+        {
+             return $response-&gt;getError() ;
+        }
+    }
+}
+</code></pre>
+<p>Comme mentionné plus tôt, je suis actuellement dans la phase &quot;oui-il-me-faut-l'objet-Service-Response&quot;.</p>
+<p>Revenons rapidement à l'objet <strong>My_Service_User</strong>. Comme on le sait, le service est instancié, il fait sa tambouille et il retourne un objet <strong>Domain</strong>. Mais que fait il exactement ? En fait, tel que je le vois, mon objet <strong>Service</strong> va chercher l'objet <strong>Data</strong> qui va bien, demander à l'objet <strong>Data</strong> de retourner les informations brutes et l'objet <strong>Service</strong> utilisera l'objet <strong>Mapper</strong> pour transformer les informations brutes en objet Domain.</p>
+<pre><code class="language-php">// Objet Service retournant un objet Service_Response
+
+class My_Service_User
+{
+    public function getUserById($id)
+    {
+        $response = new My_Domain_Service_Response() ;
+
+        // operation pour récupérer My_Domain_User() ;
+        $dataSource = new My_Datas_A_User() ; // on instancie un objet Data qui gère l'accès aux données brutes
+        $datas = $dataSource-&gt;findById($id) ; // on requête la source pour récupérer les données brutes
+        $mapper = new My_Mapper_User() ; // on instancie un objet Mapper
+        $user = $mapper-&gt;mapFromSourceA($datas) ; // l'objet Mapper retourne l'objet Domain attendu
+        
+        // On a récupérer My_Domain_User() sans problème 
+        $response-&gt;succeeded() ; // la propriété $_success = TRUE maintenant
+        $response-&gt;setDomain($user) // $user = l'instance de My_Domain_User() obtenu plus tôt
+        return $response ; // Rappelez vous, c'est un objet Domain Service_Response
+    }
+}
+</code></pre>
+<p>Et voila.</p>
+<p>Evidemment, en fonction des cas, on peut ajouter des tests et des contrôles pour vérifier que tout s'est bien passé. Par exemple, avant d'invoquer l'objet <strong>Mapper</strong>, on peut tester si l'objet <strong>Data</strong> retourne au moins un résultat.</p>
+<p>Si on rappelle le principe de <strong>Single responsability</strong>, je m'interroge sur la responsabilité de mon service : est ce que j'attends de mon service qu'il me retourne un objet <strong>Domain</strong>, auquel cas je créerais quasiment un objet <strong>Service</strong> par objet <strong>Domain</strong> ou bien est-ce que j'attends de mon service qu'il me retourne un &quot;objet <strong>Domain</strong> extrait d'une source donnée&quot;, auquel cas, je manipulerais autant d'objet <strong>Service</strong> qu'il y a de source de données fois d'objet <strong>Domain</strong>. Ce qui va déterminer le choix final, ce seront les impacts dans les scenarii de maintenance : dans le cas d'un objet <strong>Service</strong> unique par objet <strong>Domain</strong>, si je modifie une source, est-ce que cela va avoir des conséquences sur les autres méthodes de mon objet <strong>Service</strong> ? Et dans l'autre cas, si je modifie mon objet <strong>Domain</strong>, est-ce que je devrais intervenir sur les nombreux objets <strong>Service</strong> qui retournent l'objet <strong>Domain</strong> (en fonction de la source). J'ai tendance à penser que je vais organiser mes objets <strong>Service</strong> en fonction des sources de datas. Tout d'abord parce qu'en fonction des sources de datas, je ne serais peut être pas amenée à utiliser les mêmes méthodes protégées : si les sources de type BDD sont bien gérées par les librairies existantes, les sources de types fichiers plats auront nécessairement besoin d'un script pour parser le fichier et les sources de type DOM auront également des librairies dédiées pour extraire les informations du flux XML.</p>
+<p>Organiser les objets <strong>Services</strong> en fonction de l'objet <strong>Domain</strong> attendu <em>ET</em> des sources de datas va probablement m'aider à respecter le principe de <strong>substitution de Liskov</strong> et le principe <strong>ouvert/fermé</strong>.</p>
+<p>Enfin bref, comme tout, ça se joue entre le temps que ça va prendre pour l'écrire et le temps que ça va prendre pour le maintenir.</p>
+<h3>L'objet Data</h3>
+<p>L'objet <strong>Data</strong> se subdivise en plusieurs sous catégorie en fonction des besoins de l'application. Si l'application est basée sur une base de données, alors les objets <strong>Data_Db</strong> seront construits. Dans le cadre d'un développement avec Zend Framework, les objets <strong>Data_Db</strong> hériteront de <strong>Zend_Db_Table_Abstract</strong> et en fonction des méthodes, retourneront soit un objet de type <strong>Zend_Db_Table_Row_Abstract</strong> soit un objet de type <strong>Zend_Db_Table_Rowset_Abstract</strong>. Si l'application utilise des sources de données issues de WebServices, alors il faudra utiliser des objets <strong>Data_WS</strong> par ex. Si l'application a des données stockées sur fichier .csv ou sur des fichiers XML, alors il faudra construire les objets associés. On peut même imaginer que des données sont stockées sur un cookie ou bien en session...</p>
+<p>Chacun des objets <strong>Data</strong> ont pour seule et unique fonction de se connecter sur la source de données (base de données, source du webservice, chemin du fichier plat) et de retourner les données qu'on cherche à récupérer.</p>
+<p>Cette règle respecte <em>au moins</em> le principe de <strong>Single responsability</strong>. Un objet ne fait qu'une et une seule chose : on souhaite récupérer des données, il nous récupère nos données. Brutes. En utilisant une judicieuse couche d'abstraction, on peut même rêver qu'on a réussi à satisfaire le principe de <strong>Dependency inversion</strong>. Je dois reconnaitre que c'est l'un des principes que j'ai le plus de mal à appliquer...</p>
+<h3>L'objet Mapper</h3>
+<p>Appelé par l'objet <strong>Service</strong>, l'objet <strong>Mapper</strong> va assurer la conversion des données brutes obtenues avec l'objet <strong>Data</strong> en un objet <strong>Domain</strong>. C'est grâce aux objets <strong>Mapper</strong> que je vais pouvoir récupérer un véritable objet <strong>Domain</strong>. En fait, je pourrais me passer des objets <strong>Mapper</strong>. La conversion se ferait alors directement dans les objets <strong>Service</strong>. Il suffit de créer un objet <strong>Service</strong> avec deux ou trois méthodes pour s'apercevoir que l'objet <strong>Mapper</strong> devient vite indispensable.</p>
+<p>En terme de responsabilité, je me demande encore si c'est au mapper de gérer les valeurs par défaut (en cas où il manquerait certaines valeurs) ou si c'est l'objet <strong>Datas</strong> qui doit prendre en charge les valeurs en défaut... Ca reste à voir.</p>
+<h3>En pratique</h3>
+<p>Nous avons vu que les objets de niveau supérieur font appel à un objet <strong>Service</strong>. La méthode qui sera utilisée ramènera le ou les objets Domain attendus. L'objet <strong>Service</strong> fait appel à un objet <strong>Data</strong> et récupère l'objet <strong>Domain</strong> grâce à l'objet <strong>Mapper</strong>. Ensuite, les objets de niveau supérieur exploiteront les informations qui se trouveront dans l'objet <strong>Domain</strong>.</p>
+<p>On peut l'utiliser évidemment dans les deux sens. L'objet <strong>Service</strong> proposera des méthodes de type <code>getUsers()</code> by différents critères mais également des méthodes de type <code>insert()</code> et <code>delete()</code>. Dans le sens <code>insert()</code>, il faut encore décider si on passe un tableau php en argument à la méthode, un objet <strong>Domain</strong> ou autre... C'est une question d'organisation finalement... Il faudra juste choisir une option et s'y tenir.</p>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/fr/tags/oop">OOP</a></li><li><a href="/fr/tags/modele">modèle</a></li><li><a href="/fr/tags/architecture-logicielle">architecture logicielle</a></li></ul>
+        </div>
+      
+
+      
+    
+
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>Sur moi</h3>
+      <p>J&#39;ai appris le php il y a quelques années, quand Internet était à ses débuts. Pour diverses raisons, j&#39;ai arrêté en route et j&#39;ai perdu le fil des nouveaux Internets que je redécouvre. Résultat, je me sens constamment à courir après l&#39;histoire mais je suis toujours motivée à reprendre des projets personnels. Je me propose de vous partager mes découvertes. Au delà des sujets de programmation, j&#39;aime également partager mes infos concernant notamment l&#39;Histoire, l&#39;Astronomie, la Linguistique, les Films, les Livres et les Anime. J&#39;espère que vous aimerez suivre mon blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. Tous droits réservés.</p>
+        <p>Propulsé par <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

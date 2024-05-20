@@ -1,0 +1,383 @@
+<!doctype html>
+<html class="no-js" lang="fr" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>Solveur de Sudoku - Développer le solveur&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">Français</a>
+        <a href="/en/">Anglais</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/fr/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/fr/books/0/index.html">Séries</a>
+        <a href="/fr/">Accueil</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/fr/">Accueil</a><i class="fas fa-angle-right"></i>Solveur de Sudoku - Développer le solveur
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>Solveur de Sudoku - Développer le solveur</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>26/05/2014 22:46:00
+        
+        <i class="fas fa-th-large"></i><!--a href="/fr/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/Sudoku_Board_Game.jpg" class="node-banner" />
+        
+      </div>
+
+      <p><p>J'ai songé un moment mettre les méthodes du solveur dans mon objet grille (après tout, la résolution se fait à partir des éléments de la grille), mais finalement, je vais distinguer un objet <strong>Grille</strong> et un objet <strong>Solveur</strong>. L'objet <strong>Grille</strong> aurait pour responsabilité d'afficher et de manipuler la grille, et l'objet <strong>Solveur</strong> aurait pour responsabilité de gérer la résolution de la grille. Voyons donc cet objet <strong>Solveur</strong>.</p>
+<p>Pour ma part, pour résoudre une grille de sudoku, j'applique les déductions suivantes :</p>
+<ol>
+<li>Comme il ne peut y avoir deux chiffres placés sur une même ligne, si un chiffre est placé sur une ligne, alors il peut être éliminé des numéros possibles dans les autres cases de la ligne. Le même raisonnement s'applique pour la colonne et pour la région.</li>
+<li>Comme chaque chiffre possible doit apparaître une fois par ligne, si un chiffre, à force d'être éliminé dans les cases de la ligne, n'est possible que dans une seule case de la ligne, alors ce chiffre doit être placé dans cette case. Le même raisonnement s'applique pour la colonne et pour la région.</li>
+</ol>
+<p>Commençons par construire notre objet <strong>Solveur</strong> et implémentons le premier niveau de déduction.</p>
+<p>L'objet <strong>Solveur</strong> doit, bien entendu, travailler sur une grille. Il faudra donc prévoir de charger la grille dans le solveur.</p>
+<pre><code class="language-php">// module/Application/src/Application/Model/Solveur.php
+
+&lt;?php
+namespace Application\Model ;
+
+class Solveur
+{
+  /**
+   * Donnees de la grille
+   *
+   * @var Grille $grille
+   */
+  protected $grille ;
+
+  /**
+   * Constructeur
+   *
+   * @param Grille $grille
+   */
+  public function __construct(Grille $grille)
+  {
+    $this-&gt;grille = $grille ;
+  }
+}
+</code></pre>
+<p>Une fois le constructeur prêt, on va préparer la méthode qui sera appelée pour lancer le solveur. Ma façon de voir les choses : pour résoudre la grille, le solveur va exécuter une boucle qui ne s'arrêtera que lorsque la grille sera résolue. Une boucle ininterrompue jusqu'à un état qu'on n'est pas sûr d'atteindre... Mmmh... Il va falloir prévoir une porte de sortie... Et pouvoir identifier quand on tombe dans une boucle infinie...</p>
+<p>On peut dire qu'on est dans une boucle infinie quand, par exemple, on constate qu'on ne peut plus faire de déductions sur la grille. Si on ne peut plus faire de déductions sur la grille, cela signifie que la grille après les opérations de déductions est identique à la grille qu'il y avait avant.</p>
+<p>Un peu de code pour tout ça :</p>
+<pre><code class="language-php">// module/Application/src/Application/Model/Solveur.php
+
+&lt;?php
+namespace Application\Model ;
+
+class Solveur
+{
+  /**
+   * Tableau où est stockée la grille à chaque boucle
+   *
+   * @var array
+   */
+  private $tentatives = array() ;
+
+  /**
+   * Méthode pour résoudre la grille
+   *
+   * @return void
+   */
+  public function execute()
+  {
+    // instanciation du compteur
+    $i = 0 ;
+
+    // lance la boucle
+    do {
+      // stocker la grille avant de lancer les opérations de déductions
+      // j'ai appris à mes dépends que je ne peux pas enregistrer $this-&gt;grille directement. j'ai résolu le problème en transformant l'objet grille en un tableau
+      $this-&gt;tentatives[$i] = $this-&gt;photo($this-&gt;grille) ;
+
+      // s'il n'y a plus rien à déduire, sortir de la boucle
+      if(!$this-&gt;deduit($i)) {
+        break ;
+      }
+ 
+    // la boucle s'exécute jusqu'à ce que la grille soit résolue
+    } while(!$this-&gt;grille-&gt;estResolu()) ;
+  }
+
+  /**
+   * Prends une photo de la grille
+   *
+   * @param $grille Grille
+   *
+   * @return array
+   */
+  protected function photo(Grille $grille)
+  {
+    // instanciation du tableau
+    $photo = array() ;
+
+    // boucle sur chaque case de la grille
+    // on va exploiter la clé du tableau associatif, pour savoir de quelle case on parle et la valeur du tableau pour récupérer chacun des chiffres possibles
+    foreach($grille-&gt;getCases() as $index =&gt; $case) {
+      // boucle qui va parcourir chacun des chiffres possibles de la grille (déterminé par la taille de la grille)
+      for($i=1; $i&lt;=$grille-&gt;getTaille(); $i++) {
+        // construction du tableau
+        $photo[$index][$i] = $case-&gt;chiffre-&gt;getStatutDuNumero($i) ;
+      }
+    }
+    // on retourne le tableau
+    return $photo ;
+  }
+
+  /**
+   * Détermine si on est dans une boucle infinie
+   *
+   * @param int $iteration
+   *
+   * @return bool / true si on est dans une boucle infinie
+   */
+  protected function boucleInfinie($iteration)
+  {
+    if($iteration &gt;= 1 &amp;amp;&amp;amp; $this-&gt;tentatives[$iteration] == $this-&gt;tentatives[$iteration - 1]) {
+      return true ;
+    }
+    return false ;
+  }
+
+  /**
+   * Algorythme de déduction
+   *
+   * @param array $iteration
+   *
+   * @return bool / false si on est dans l'incapacité de continuer
+   */
+  protected function deduit($iteration)
+  {
+    // si on est dans une boucle infinie, cela signifie qu'on ne peut plus continuer de déduire.
+    if($this-&gt;boucleInfinie($iteration)) {
+      return false ;
+    }
+
+    // on applique le 1er degré de déduction : éliminer tous les chiffres possibles dans la ligne, colonne et région d'un chiffre qui a été validé.
+    $this-&gt;eliminerOptions() ;
+
+    // retourner true va nous permettre de continuer de boucler
+    return true ;
+  }
+
+  /**
+   * Elimination de tous les chiffres possibles dans la ligne, colonne et région d'un chiffre validé
+   *
+   * @return void
+   */
+  protected function eliminerOptions()
+  {
+    // on parcourt toutes les cases de la grille une à une
+    foreach($this-&gt;grille-&gt;getCases() as $case) {
+      // si le chiffre est validé, continuer le traitement
+      if($case-&gt;chiffre-&gt;estValide()) {
+        $colonne = $case-&gt;getColonne() ;
+        $ligne = $case-&gt;getLigne() ;
+        $region = $case-&gt;getRegion() ;
+        $chiffre = $case-&gt;chiffre-&gt;getNumero() ;
+
+        // on parcourt une seconde fois chacune des cases de la grille, cette fois ci pour écarter les possibilités dans les cases de la ligne, la colonne et la région
+        foreach($this-&gt;grille-&gt;getCases() as $c) {
+          // on vérifie que la case n'a pas encore de chiffre validé et que la case est dans la même ligne
+          if($c-&gt;getColonne() == $colonne &amp;amp;&amp;amp; !$c-&gt;chiffre-&gt;estValide()) {
+            $c-&gt;chiffre-&gt;eliminerChiffre($chiffre) ;
+          }
+          // appliquer le même principe pour la colonne et pour la région
+        }
+      }
+    }
+  }
+}
+</code></pre>
+<p>Et voila...</p>
+<p>Si on veut le voir en action, on doit aller rajouter notre solveur dans le contrôleur.</p>
+<pre><code class="language-php">// module/Application/src/Application/Controller/IndexController.php
+
+&lt;?php
+namespace Application\Controller;
+
+use Zend\Mvc\Controller\AbstractActionController;
+use Zend\View\Model\ViewModel;
+use Application\Model\Grille;
+use Zend\Session\Container ;
+use Application\Model\Solveur ; // ajouter le solveur
+
+class IndexController extends AbstractActionController
+{
+  public function indexAction()
+  {
+    $session = new Container('sudoku') ;
+
+    $size = (int) $this-&gt;params()-&gt;fromRoute('size', 9) ;
+
+    $request = $this-&gt;getRequest() ;
+    $post = $request-&gt;getPost() ;
+
+    $msg = '' ;
+
+    $g = new Grille($size) ;
+
+    switch($post['submit']) {
+      case 'start' :
+        $session-&gt;grille = $post-&gt;k ;
+        $g-&gt;chargerGrille($session-&gt;grille) ;
+        
+        // on instancie le solveur et on lui passe l'objet grille
+        $solveur = new Solveur($g) ;
+        
+        // on essaie de résoudre la grille
+        try {
+          $solveur-&gt;execute() ;
+        // si la tentative pour résoudre la grille échoue et lance une exception, on récupère l'exception et on charge la propriété $msg qu'on va envoyer à la vue
+        } catch(\Exception $e) {
+          $msg = $e-&gt;getMessage() ;
+        }
+
+        // on change le contenu de la variable $msg si la grille est résolue
+        if($g-&gt;isSolved()) {
+          $msg = 'Grille résolue' ;
+        }
+        break ;
+      
+      case 'reset' :
+        $g-&gt;chargerGrid($session-&gt;grille) ;
+        break ;
+ 
+      case 'new' :
+      default :
+        $session-&gt;grille = array() ;
+        $g-&gt;nouvelleGrille() ;
+      break ;
+    }
+
+    $view = array(
+      'grille' =&gt; $g-&gt;prepare(),
+      'msg' =&gt; $msg ;
+    ) ;
+    return $view ;
+  }
+}
+</code></pre>
+<p>Arrivé là, notre solveur devrait être capable de résoudre des grilles simples de sudoku.</p>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/fr/tags/zend-framework-2">zend framework 2</a></li><li><a href="/fr/tags/poo">POO</a></li></ul>
+        </div>
+      
+
+      
+        <nav id="book-navigation">
+    
+       <li class="link-previous"><a href="/fr/posts/solveur-de-sudoku-ajouter-des-hypotheses.html"><i class="fas fa-long-arrow-alt-left"></i> Solveur de Sudoku - Ajouter des hypothèses</li>
+    
+
+    
+        <li class="link-next"><a href="/fr/posts/solveur-de-sudoku-la-grille-suite.html">Solveur de Sudoku - La grille, suite <i class="fas fa-long-arrow-alt-right"></i></a></li>
+    
+
+    
+        <li class="link-up"><a href="/fr/books/aborder-la-programmation-orientee-objet-par-lexemple-concevoir-un-solveur-de-sudoku.html"><i class="fas fa-book-open"></i> Aborder la programmation orientée objet par l&#39;exemple. Concevoir un solveur de sudoku</li>
+    
+</nav>
+
+      
+    
+
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3></h3>
+      <p></p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. Tous droits réservés.</p>
+        <p>Propulsé par <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

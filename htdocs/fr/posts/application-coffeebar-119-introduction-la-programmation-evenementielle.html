@@ -1,0 +1,296 @@
+<!doctype html>
+<html class="no-js" lang="fr" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>Application CoffeeBar 1/19 - Introduction à la programmation événementielle&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">Français</a>
+        <a href="/en/">Anglais</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/fr/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/fr/books/0/index.html">Séries</a>
+        <a href="/fr/">Accueil</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/fr/">Accueil</a><i class="fas fa-angle-right"></i>Application CoffeeBar 1/19 - Introduction à la programmation événementielle
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>Application CoffeeBar 1/19 - Introduction à la programmation événementielle</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>22/12/2014 15:39:00
+        
+        <i class="fas fa-th-large"></i><!--a href="/fr/sites/developpement.html" class="tag-sites"-->Développement<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/file9271237667217.jpg" class="node-banner" />
+        
+          <p><strong>Crédit</strong> : Morguefile.com </p>
+        
+      </div>
+
+      <p><p>S’il me paraît plus aisé de faire des applications en programmation séquentielle, il existe en opposition à celle ci des applications basées sur une programmation événementielle. Même si PHP ne semble pas être un langage dans lequel on peut naturellement faire de la programmation événementielle, nous verrons en quoi le framework Zend Framework 2 a mis en place des composants pour nous aider à réaliser notre projet.</p>
+<h2>Séquentielle vs Evénementielle ?</h2>
+<p>La <a href="http://fr.wikipedia.org/wiki/Programmation_s%C3%A9quentielle" target="_blank">programmation séquentielle</a> est ce que je considère la façon la plus basique pour aborder la programmation. En programmation séquentielle, en gros, on définit une liste d’instructions ordonnées et le programme est sensé exécuter ces instructions toujours dans le même ordre. Lorsque vous apprenez à développer et qu’on vous recommande de dessiner un <a href="http://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Pstricks_exo_organigramme_simple.png/220px- Pstricks_exo_organigramme_simple.png" target="_blank">organigramme</a>, vous appliquez très exactement une logique qui va vous faire programmer en séquentiel.</p>
+<p>La <a href="http://fr.wikipedia.org/wiki/Programmation_%C3%A9v%C3%A9nementielle" target="_blank">programmation événementielle</a> est une façon d’aborder votre programme de façon différente. On ne code plus à partir d’une liste d’instructions ordonnées mais on commence en déterminant une liste d’événements. Votre application est exécutée et '<em><strong>il se passe quelquechose</strong></em>' quand un événement de la liste survient. Dit comme ça, on peut se dire qu’en programmation séquentielle aussi, '<em><strong>il se passe quelquechose</strong></em>' quand un événement survient : quand je clique sur le bouton, il se passe quelquechose. Mais entre les deux, la différence survient dans la façon d’écrire le code. Non pas dans ce qu’il se passe.</p>
+<p>En <strong>séquentiel</strong>, vous serez tenu d’écrire :</p>
+<pre><code class="language-php">if (bouton_clicked())
+{
+  prog-&gt;do_something() ;
+}
+</code></pre>
+<p>Cela implique - au niveau de l’architecture de votre application, dans le bout de code qui dit <code>(bouton_clicked())</code>, vous allez devoir charger / connaître / lister les autres éléments qui vont réagir au moment où le bouton a été cliqué - cela veut dire <u><strong>gestion des dépendances</strong></u>.</p>
+<p>En événementiel, en principe, vous n’êtes pas tenu de l’écrire.</p>
+<p>Vous aurez votre bouton d’un côté qui va dire</p>
+<pre><code class="language-php">// bouton
+trigger (oh ! i’ve been clicked !) ;
+</code></pre>
+<p>et de l’autre côté, un élément qui va faire quelquechose parce que le bouton a été cliqué.</p>
+<pre><code class="language-php">// prog
+when(bouton: oh! i’ve been clicked !)
+{
+  then do_something() ;
+}
+</code></pre>
+<p>L’élément qui réagit n’a pas besoin de savoir finalement QUI est le bouton qui a été cliqué et le bouton, quant à lui, n’a pas à savoir qui fait quoi au moment où il a été cliqué… En terme de dépendances, on est plus que ok. Par contre, vous aurez besoin de rigueur… il ne faudra pas éparpiller vos listeners (les éléments qui réagissent aux événements) et les éléments qui génèrent les événements parce que pour identifier ce qui les lie est plus compliqué.</p>
+<p>Foncièrement, que vous choisissez l’un ou l’autre, votre programme fera la même chose (parce que, après tout, c’est ce qu’on attend de vous, que vous développiez un programme qui fait ce qu’on veut qu’il fasse). En web, je pense que c’est surtout le schéma séquentiel qui prime puisque tout le web est organisé sur un principe d’échange de requêtes et de réponses (si on fait ça, faire ça, si on fait ci, faire ci)... Mais en jeux par exemple, une programmation événementielle serait sûrement plus adaptée.</p>
+<h2>Le projet</h2>
+<p>J’ai découvert la programmation événementielle en cherchant totalement autre chose, merci Internet. Je voulais avoir des détails sur le <a href="http://fr.wikipedia.org/wiki/Transparence_r%C3%A9f%C3%A9rentielle#Principe_de_s.C3.A9paration_commande-requ.C3.AAte" target="_blank">principe de séparation commande-requête</a> ou <a href="http://en.wikipedia.org/wiki/Command%E2%80%93query_separation#Command_Query_Responsibility_Segregation" target="_blank">CQRS</a> en anglais. Alors que le tutoriel me vantait les bienfaits de ce principe, je me suis retrouvé au milieu d’une nouvelle façon d’aborder le code. Le <a href="http://www.cqrs.nu/tutorial/cs/01-design" target="_blank">tutoriel original</a> est destiné au langage <strong>.Net</strong> (je crois). On va reprendre l’argument du tutoriel et tenter de monter la même application pour PHP.</p>
+<h3>Le scenario</h3>
+<p>Nous développons une application pour un petit café. Nous allons nous concentrer sur le concept d’une <strong>note</strong> (ou une commande, mais on va utiliser une note). Celle ci va nous permettre de suivre les clients qui se présentent au café. Quand les clients arrivent au café et prennent une table, une note <strong>est ouverte</strong>. Les clients peuvent alors <strong>commander</strong> des boissons ou des plats. Les <strong>boissons</strong> sont <strong>servies</strong> immédiatement par le serveur de la table mais pour les <strong>plats</strong>, il faut attendre que les plats soient cuisinés par le chef. Une fois que les plats sont <strong>préparés</strong>, ils peuvent alors <strong>être servis</strong>.</p>
+<p>Durant tout le temps que les clients sont au café, ils peuvent <strong>commander</strong> de nouvelles boissons, ou de nouveaux plats. Ils peuvent <strong>annuler</strong> une boisson ou un plat uniquement si le plat (ou la boisson) n’a pas encore été préparé ou servi.</p>
+<p>A la fin, la note <strong>est fermée</strong> quand le client la règle. Une note ne peut être réglée si tous les plats et toutes les boissons n’ont pas été soit servis, soit annulés. Une note doit être réglée en totalité. Pas de crédit. Le client peut également ajouter un pourboire.</p>
+<h3>Les événements</h3>
+<p>En <strong>programmation séquentielle</strong>, je vous vois déjà frétiller, vous créez une entité client, une entité boisson, une entité plat etc… pour vos boissons et plats, vous avez nécessairement un système de statuts qui aura les valeurs suivantes : commandé, préparé, servi… Si la boisson est commandée, le statut passe à commandé. Si la boisson est servie, le statut passe à servi. etc… On l’a tous fait.</p>
+<p>En <strong>programmation événementielle</strong>, les objets ne nous intéressent pas pour le moment. Ce qui nous intéresse ici, c’est ce qu’il se passe. Et chaque fois qu’il se passe quelquechose, c’est un événement dans notre application. Et rappelons nous : un événement est toujours un truc qui s’est passé (dans le passé)...</p>
+<p>Repassons notre scénario cette fois avec du code :</p>
+<p><em>Quand les clients arrivent au café et prennent une table, une note est ouverte.</em></p>
+<ul>
+<li>une <em><strong>Opération</strong></em> : OpenTab</li>
+<li>un <em><strong>Evénement</strong></em> : TabOpened</li>
+<li>une <em><strong>Exception</strong></em> : TableNumberUnavailable (la table est déjà occupée, on ne peut pas ouvrir une seconde note tant que la note précédente n’est pas fermée)</li>
+</ul>
+<p><em>Les clients peuvent alors commander des boissons ou des plats.</em></p>
+<ul>
+<li>une <em><strong>Opération</strong></em> : PlaceOrder</li>
+<li>un <em><strong>Evénement</strong></em> : DrinksOrdered</li>
+<li>un <em><strong>Evenement</strong></em> : FoodOrdered</li>
+<li>une <em><strong>Exception</strong></em> : TabNotOpened</li>
+</ul>
+<p><em>Les boissons sont servies immédiatement</em></p>
+<ul>
+<li>une <em><strong>Opération</strong></em> : MarkDrinksServed</li>
+<li>un <em><strong>Evénement</strong></em> : DrinksServed</li>
+</ul>
+<p><em>mais pour les plats, il faut attendre que les plats soient préparés.</em></p>
+<ul>
+<li>une <em><strong>Opération</strong></em> : MarkFoodPrepared</li>
+<li>un <em><strong>Evénement</strong></em> : FoodPrepared</li>
+</ul>
+<p><em>Une fois que les plats sont prêts, ils peuvent alors être servis.</em></p>
+<ul>
+<li>une <em><strong>Opération</strong></em> : MarkFoodServed</li>
+<li>un <em><strong>Evénement</strong></em> : FoodServed</li>
+</ul>
+<p><em>Durant tout le temps que les clients sont au café, ils peuvent commander de nouvelles boissons, ou de nouveaux plats.</em></p>
+<ul>
+<li>une <em><strong>Opération</strong></em> : PlaceOrder</li>
+<li>...</li>
+</ul>
+<p><em>Ils peuvent annuler une boisson ou un plat uniquement si le plat (ou la boisson) n’a pas encore été préparé ou servi.</em></p>
+<ul>
+<li>une <em><strong>Operation</strong></em> : AmendOrder</li>
+<li>une <em><strong>Opération</strong></em> : MarkFoodCancelled</li>
+<li>une <em><strong>Opération</strong></em> : MarkDrinksCancelled</li>
+<li>un <em><strong>Evénement</strong></em> : FoodCancelled</li>
+<li>un <em><strong>Evenement</strong></em> : DrinksCancelled</li>
+<li>une <em><strong>Exception</strong></em> : CannotCancelledServedItem</li>
+<li>une <em><strong>Exception</strong></em> : CannotCancelledPreparedItem</li>
+</ul>
+<p><em>A la fin, la note est fermée quand le client la règle. Une note ne peut être réglée si tous les plats et toutes les boissons n’ont pas été soit servis, soit annulés. Une note doit être réglée en totalité. Pas de crédit. Le client peut également ajouter un pourboire.</em></p>
+<ul>
+<li>une <em><strong>Opération</strong></em> : CloseTab</li>
+<li>un <em><strong>Evénement</strong></em> : TabClosed</li>
+<li>une <em><strong>Exception</strong></em> : TabHasUnservedItem</li>
+<li>une <em><strong>Exception</strong></em> : MustPayEnough</li>
+</ul>
+<p>Le tutoriel d'origine insiste bien sur le fait que pour rester au plus près du business, il faut garder les entités très parlantes. Il n'y a pas de raccourcis : il faut une opération <strong>OpenTab</strong> pour avoir un événement <strong>TabOpened</strong>. Reférez vous au tutoriel d'origine où tout <a href="http://cqrs.nu/tutorial/cs/02-domain-logic" target="_blank">le mécanisme logique est décrit</a>. La conception inclus des tests de comportement <strong>Behaviour Driven Tests.</strong></p>
+<p>Je n'ai pas réussi à installer <strong>Behat</strong> pour monter les mêmes tests mais lorsqu'on lit les scénarii de tests du tutoriel, <strong>la logique Opération/Evénement prend tout son sens.</strong></p>
+<p>N’hésitez pas à faire des événements clairs et précis. Evitez les banalités du genre “Created”, “Updated” etc… parce que tous vos évenements finiront par tous se ressembler.</p>
+<p>On peut très bien nommer ses événements en français. Par habitude, les miens sont toujours en anglais. Pour des tas de raisons différentes pas toujours justifiées peut être mais le pli est pris.</p>
+<p>Entrons dans le vif du sujet. Gardez bien notre scénario en tête.</p>
+<p>Le tutoriel va être long. Il vaut mieux le suivre depuis le début parce que, au fur et à mesure que je dévoilerais les objets qu'on va manipuler, je ne répèterais pas systématiquement les méthodes, les instructions, les interfaces etc... Les objets dans les derniers articles seront peut être un peu... incomplets. J'espère avoir fait de mon mieux, merci de me suivre.</p>
+<p><em>Vous trouverez l'intégralité de l'application sur mon <a href="https://github.com/haclong/coffeebar" target="_blank">github</a></em></p>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/fr/tags/events">events</a></li><li><a href="/fr/tags/programmation-evenementielle">programmation événementielle</a></li></ul>
+        </div>
+      
+
+      
+        <nav id="book-navigation">
+    
+
+    
+        <li class="link-next"><a href="/fr/posts/application-coffeebar-219-installer-la-base-de-developpement.html">Application CoffeeBar 2/19 - Installer la base de développement <i class="fas fa-long-arrow-alt-right"></i></a></li>
+    
+
+    
+        <li class="link-up"><a href="/fr/books/gerer-un-cafe-avec-une-programmation-evenementielle.html"><i class="fas fa-book-open"></i> Gérer un café avec une programmation événementielle</li>
+    
+</nav>
+
+      
+    
+
+      
+        <section id="oldcomment">
+          <h2>Commentaires historiques</h2><article>
+              <div class="level1">
+  <h3>énorme merci pour ton github</h3>
+  <div class="meta">buddhi 2015-04-19T02:12 </div>
+  <div class="body">Oui merci c'est trop trop cool.<br />
+<br />
+Ton code est super propre. Sympa de nous donner ton github.<br />
+<br />
+J'apprends dix fois plus vite grâce à toi.<br />
+<br />
+Merci<br />
+<br />
+j'avoue, je suis tombé sous le charme. Oui, oui je t'aime haclong<br />
+<br />
+Nico</div>
+
+  
+  
+</div>
+
+            </article><article>
+              <div class="level1">
+  <h3>Merci. Tu peux trouver la</h3>
+  <div class="meta">haclong 2015-04-19T09:24 </div>
+  <div class="body">Merci. Tu peux trouver la même application en français. Je me mélange un peu les pinceaux dans la page d'accueil de mon site.</div>
+
+  
+  
+</div>
+
+            </article><article>
+              <div class="level1">
+  <h3>Petite coquille</h3>
+  <div class="meta">Yann 2016-03-25T22:35 </div>
+  <div class="body">Hello,<br />
+<br />
+Je commence à lire le tutoriel, pour l'instant tout est très clair, merci beaucoup pour ton travail !<br />
+Simple remarque, le lien que tu indiques sur le principe de séparation Commande/requête renvoie vers une page d'erreur car il y a un underscore en trop dans "Transparence_r_éférentielle"</div>
+
+  
+  
+</div>
+
+            </article><article>
+              <div class="level1">
+  <h3>Merci pour le commentaire</h3>
+  <div class="meta">haclong 2016-04-18T11:45 </div>
+  <div class="body">Merci pour le commentaire. Coquille corrigée</div>
+
+  
+  
+</div>
+
+            </article></section>
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>Sur moi</h3>
+      <p>J&#39;ai appris le php il y a quelques années, quand Internet était à ses débuts. Pour diverses raisons, j&#39;ai arrêté en route et j&#39;ai perdu le fil des nouveaux Internets que je redécouvre. Résultat, je me sens constamment à courir après l&#39;histoire mais je suis toujours motivée à reprendre des projets personnels. Je me propose de vous partager mes découvertes. Au delà des sujets de programmation, j&#39;aime également partager mes infos concernant notamment l&#39;Histoire, l&#39;Astronomie, la Linguistique, les Films, les Livres et les Anime. J&#39;espère que vous aimerez suivre mon blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. Tous droits réservés.</p>
+        <p>Propulsé par <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,406 @@
+<!doctype html>
+<html class="no-js" lang="fr" dir="ltr">
+  
+<head>
+
+  <meta charset="utf-8">
+  <title>Faire sa comptabilité avec GnuCash&nbsp;|&nbsp;Petits Pas Dans La Neige</title>
+
+  <meta name="description" content="Haclong&#39;s lair">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Generator" content="Eleventy v2.0.1" />
+
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <!--link rel="shortlink" href="http://localhost:8080" /-->
+
+  <link rel="stylesheet" href="/assets/styles/bootstrap.css">
+  <link rel="stylesheet" href="/assets/styles/theme.css">
+
+</head>
+
+<body onscroll="checkscroll('header-top');">
+
+    <header id="header">
+    <div id="header-top">
+      <div class="container-xl">
+        <a href="/fr/">Français</a>
+        <a href="/en/">Anglais</a>
+      </div>
+    </div>
+    <div id="title-bar" class="container-xl d-flex align-items-center">
+      <div class="flex-grow-1">
+        <a href="/fr/" class="site-name">PETITS PAS DANS LA NEIGE</a>
+        <div class="site-slogan">Haclong Home</div>
+      </div>
+      <i id="mobile-nav-trigger" class="fas fa-bars"></i>
+      <nav id="nav" class="">
+        <div id="mobile-nav-close">X</div>
+        <a href="/fr/books/0/index.html">Séries</a>
+        <a href="/fr/">Accueil</a>
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- ----- DYNAMIC CONTENT : many articles + 1 pagination ----- -->
+
+    <div id="content">
+    
+    <div id="breadcrumb">
+      <div class="container-xl">
+        <a href="/fr/">Accueil</a><i class="fas fa-angle-right"></i>Faire sa comptabilité avec GnuCash
+      </div>
+    </div>
+
+
+  <!-- Structure of the article -->
+    <article class="article container-xl">
+      <!--h2>Faire sa comptabilité avec GnuCash</h2-->
+      <div class="node-meta">
+        <i class="fas fa-user"></i>haclong
+        <i class="fas fa-calendar"></i>21/10/2013 17:26:00
+        
+        <i class="fas fa-th-large"></i><!--a href="/fr/sites/haclong-projects.html" class="tag-sites"-->Haclong projects<!--/a-->, <!--a href="/fr/sites/footprints-in-the-snow.html" class="tag-sites"-->Footprints in the snow<!--/a-->
+      </div>
+
+      <div class="node-banner">
+        <img src="/img/teaser/stockvault-coins120947.jpg" class="node-banner" />
+        
+      </div>
+
+      <p><p>Que vous soyez un professionnel ou un particulier, vous devez faire vos comptes régulièrement. Une tenue de compte minimum si vous êtes un particulier, une tenue de compte plus élaborée si vous êtes un professionnel. Mais, dans tous les cas, une comptabilité. Comme pour la plupart des particuliers, j'ai commencé à faire mes comptes sur un fichier excel. C'est pratique. Ca somme tout seul. Il suffit d'aligner les débits et les crédits dans les bonnes colonnes. Et puis, comme pour certains d'entre nous, j'ai commencé, soit à trouver les limites d'Excel en tant qu'outil de comptabilité, soit à me lasser du format Excel... Qui pourrait vraiment le dire ?</p>
+<h3>Les limites d'un tableur.</h3>
+<p>La dernière version de mon fichier Excel est assez élaborée.</p>
+<p>En début d'année, j'établis un budget et le budget de chaque poste est répété sur chaque mois de l'année. Il y a des feuilles de synthèse qui me permet de voir en une année ce que j'ai dépensé pour chaque poste, si j'ai dépassé le budget annuel alloué, si j'ai réussi à tenir les objectifs.</p>
+<p>Mais mon fichier Excel ne me fait voir que ce qu'il se passe sur le compte courant. Il ne figure pas de comptes d'épargne et encore moins de comptes à crédit ou les investissements effectués sous forme d'actions. Et si vous avez le malheur d'avoir plusieurs comptes et que vous commencez à faire des virements d'un compte à l'autre, vous vous retrouvez avec des dépenses qui n'en sont pas et des entrées d'argent qui ne vous ont pas enrichi pour autant.</p>
+<p>J'ai eu du mal (mais ce n'est pas impossible) de gérer les cas suivants :</p>
+<ul>
+<li>Tracer les dépenses d'un poste alors que le poste est un sous ensemble d'un poste plus large : par ex, tracer les dépenses en plats cuisinés parmi les dépenses en alimentaire.</li>
+<li>Tracer les investissements immobiliers avec les caractéristiques suivantes :
+<ul>
+<li>Un bien immobilier est financé par un prêt.</li>
+<li>Le remboursement du prêt se fait à partir de votre compte courant. Du coup, chaque échéance réduit votre dette auprès de l'organisme prêteur mais réduit également votre compte courant.</li>
+<li>Vous avez donc un compte qui représente le prêt et vous vous évertuez à réduire ce compte (votre dette) à 0.00 et un compte qui représente vos sous et pour lequel vous vous évertuez à ne pas réduire de trop sous peine d'être en négatif auprès de votre banque habituelle.</li>
+<li>Sur Excel, vous êtes obligé de créer une feuille par compte et un montant crédité sur la dette est forcément débité sur le compte courant. Vous êtes obligés de faire figurer le montant sur les deux feuilles. Double saisie... Pas vraiment efficace.</li>
+</ul>
+</li>
+</ul>
+<p>Si on doit résumer, l'outil doit pouvoir</p>
+<ul>
+<li>faire figurer tous les différents comptes que j'ai</li>
+<li>faire figurer les comptes d'actions (compte titres, PEA)</li>
+<li>faire figurer les &quot;gros&quot; investissements (immobilier, automobile)</li>
+<li>gérer les virements d'un compte à un autre</li>
+<li>permettre de tracer différents postes de dépenses avec une logique arborescente</li>
+</ul>
+<h3>Les outils du marché</h3>
+<p>Je cherche un outil du marché gratuit. Dans la mesure où je ne suis qu'un particulier qui veut &quot;s'amuser&quot; avec un outil de comptabilité, je ne suis pas vraiment prête à payer un véritable outil de comptabilité dont je n'utiliserais peut être qu'une fraction des fonctionnalités.</p>
+<p>Je cherche en même temps un outil assez complet. Dans la mesure où je veux progresser dans les notions comptables, un logiciel qui ne présenterait qu'une colonne débit et une colonne crédit se résumerait, à mes yeux, à un fichier Excel amélioré et je souhaite dépasser cet état.</p>
+<p>Sur Ubuntu, je trouve plusieurs logiciels gratuits : <strong><a href="http://fr.wikipedia.org/wiki/Grisbi" target="_blank">Grisbi</a></strong>, <strong><a href="http://www.gnucash.org/" target="_blank">GnuCash</a></strong>, **<a href="http://kmymoney2.sourceforge.net/index-home.html" target="_blank">KMyMoney </a>**et <strong><a href="http://homebank.free.fr/" target="_blank">HomeBank</a></strong>. Je n'ai pas vraiment fait de comparatifs entre les différentes solutions. J'ai finalement fini par installer <strong>Grisbi</strong> et <strong>GnuCash</strong> mais <strong>GnuCash</strong> me paraissait plus complet et j'ai adopté celui là assez rapidement, avant même, je dois l'avouer, avoir trouvé des limites à <strong>Grisbi</strong>.</p>
+<p><strong>GnuCash</strong> présentait plusieurs avantages à mes yeux :</p>
+<ul>
+<li>Il existe une version pour Windows. Cela peut être utile si je souhaite étendre l'utilisation de l'outil.</li>
+<li>Il fait de la <strong>comptabilité en partie double</strong>. Ce qui s'applique exactement au cas d'un investissement immobilier. C'est un moyen également d'en apprendre un peu plus sur le métier comptable sans trop d'effort. Et de toutes façons, en tentant de suivre mon investissement immobilier, j'avais fini par arriver à la conclusion qu'il me fallait bien deux comptes pour suivre : comptabilité en partie double.</li>
+</ul>
+<p>La documentation de <strong>GnuCash</strong> se trouve principalement en deux parties : &quot;<a href="http://www.gnucash.org/viewdoc.phtml?doc=help" target="_blank">The Help Manual</a>&quot; et &quot;<a href="http://www.gnucash.org/viewdoc.phtml?doc=guide" target="_blank">The Tutorials and Concepts Guide</a>&quot;. Ces deux manuels se trouvent soit sur le site de <strong>GnuCash</strong>, soit ils se trouvent également sur Google. Il est parfois utiles/pratiques d'aller les chercher sur Google parce que ces deux manuels existent en différentes versions et si vous êtes chanceux, il se pourrait qu'une version obsolète paraissent plus concrète que la version la plus récente - mais reformulée - du manuel.</p>
+<p>&quot;The Help Manual&quot; présente les fonctionnalités de <strong>GnuCash</strong> et je ne crois pas l'avoir beaucoup exploré. En revanche, &quot;The Tutorials and Concepts Guide&quot; est une ressource que j'ai beaucoup plus étudié parce qu'il présente des cas assez concrets et on peut y puiser des similitudes au cas que vous souhaitez créer dans votre version de GnuCash.</p>
+<p>La documentation de <strong>GnuCash</strong> présente le désavantage d'être en anglais uniquement, les versions traduites soit n'existant pas, soit ayant été retirées parce qu'elles n'ont pas été maintenues avec l'évolution de l'outil. Là où c'est sioux, c'est que le logiciel a été traduit. Du coup, il faut faire un peu correspondre les concepts entre le vocabulaire comptable anglais et le vocabulaire comptable français. Mais on s'en sort finalement et cet article peut également vous être utile.</p>
+<p><strong>LEXIQUE</strong> : un point à souligner et à comprendre pour comprendre <strong>GnuCash</strong> : Tout est <strong>compte</strong> dans <strong>GnuCash</strong>. Chaque poste de dépenses est un compte. Du coup, dès que vous voulez regroupez votre argent par ensemble, c'est considéré comme un compte. Toutes les dépenses liées à l'essence seront regroupées dans un compte &quot;Essence&quot;.</p>
+<p>Un mauvais point dans <strong>GnuCash</strong> à ce jour : les rapports. <strong>GnuCash</strong> permet de faire de nombreux rapports et il a même une option pour sauvegarder ses propres rapports. Mais la mise en colonne des rapports me semble incompréhensible. Je ne sais pas si c'est un colonnage normal ou si c'est une erreur grossière dans la feuille de style. Cet partie là est un point noir que je compte régler un de ces jours en me penchant sur la personnalisation des rapports.</p>
+<p>De plus, pour des portefeuille de titre, je n'ai pas encore trouvé le moyen de mettre en évidence le montant qui a été investi vs le montant réel du compte actuel. Mais je considère que ce n'est qu'une question de mise en page. Les données existent, il devrait être possible de les extraire et d'en faire ce que je veux.</p>
+<h3>La comptabilité en simplifié</h3>
+<p>La comptabilité est un mot qui fait peur. Mais finalement, c'est simple si on fait abstraction du mot &quot;comptabilité&quot;. En fait, c'est basique : il y a</p>
+<ul>
+<li><em><strong>ce que vous possédez, toutes vos richesses additionnées</strong></em> : les sous, soit à la banque, soit dans votre portefeuille, les biens immobiliers si vous en avez, vos actions, votre automobile, vos assurances vie etc... y compris les comptes bloqués, bien sûr : vous voudrez avoir la somme de tout ça pour pouvoir vous imaginez comme Picsou dans son coffre fort...</li>
+<li><em><strong>ce que vous devez, parce que vous avez contracté des prêts ou bien parce que vous avez des facilités de paiement qui vous permettent de payer plus tard</strong></em> : tôt ou tard, ce sera de l'argent qu'il faudra rembourser et, normalement, il y aura toujours quelqu'un qui va se charger de vous rappeler ce qui vous reste à payer.</li>
+<li><em><strong>où va votre argent</strong></em> : l'essence, l'automobile, les assurances, l'alimentaire, les loisirs...</li>
+<li><em><strong>d'où vient votre argent,</strong></em> qui vous fait gagner de l'argent : vos salaires, les intérêts des comptes d'épargne, les primes, les loyers..</li>
+</ul>
+<p>Vous avez donc les quatres types principaux d'une comptabilité normale.</p>
+<p>Ces types ont des noms :</p>
+<ul>
+<li>L'<strong>actif</strong>, c'est ce que vous possédez. <strong>Assets</strong> en anglais.</li>
+<li>Le <strong>passif</strong>, c'est ce que vous devez. <strong>Liability</strong> en anglais.</li>
+<li>Les <strong>dépenses</strong>, c'est où va votre argent. <strong>Expense</strong> en anglais.</li>
+<li>Les <strong>revenus</strong>, c'est d'où vient votre argent. <strong>Income</strong> en anglais.</li>
+</ul>
+<h3>La comptabilité en partie double pour les nuls</h3>
+<p><strong>GnuCash</strong> est un logiciel de comptabilité en partie double. Cela signifie que <em>ce qui est débité d'un compte crédite nécessairement un autre compte</em>. Dis comme ça, ça fait un peu peur mais quand y pense, c'est super logique et finalement, c'est super pratique quand on sait où regarder.</p>
+<p>Vous achetez 30.00 EUR d'essence. Cela signifie que vous allez débiter votre compte courant de 30.00 EUR (il y a 30.00 EUR de moins sur votre compte courant) mais il y aura 30.00 EUR de plus en dépenses d'essence. Si vous consultez votre compte courant, vous verrez que vous avez dépensé 30.00 EUR en essence. Si vous consultez le compte de dépenses Essence, vous verrez que vous avez mis 30.00 EUR de plus sur le poste essence. Vous verrez également tout ce que vous dépensez pour le poste essence.</p>
+<p>Si vous avez ces éléments en tête, créer des comptes sur <strong>GnuCash</strong> peut se faire assez rapidement. Nous verrons prochainement comment mettre ces concepts en pratique et créer notre premier fichier de comptes sur <strong>GnuCash</strong>.</p>
+</p>
+
+      
+        <div class="node-taxonomy">
+          <h3><i class="fas fa-bookmark"></i>Tags</h3>
+          <ul><li><a href="/fr/tags/gnucash">GnuCash</a></li><li><a href="/fr/tags/comptabilite">comptabilité</a></li></ul>
+        </div>
+      
+
+      
+    
+
+      
+        <section id="oldcomment">
+          <h2>Commentaires historiques</h2><article>
+              <div class="level1">
+  <h3>GnuCash et salaire</h3>
+  <div class="meta">Sylvain 2013-11-04T06:01 </div>
+  <div class="body">Bonjour,<br />
+<br />
+Merci pour cet intéressant article. Je m'essaye à GnuCash depuis quelques minutes :) Je suis d'accord avec vous quant aux limites des tableurs pour la comptabilité. Et ce même si je suis archi-débutant en comptabilité.<br />
+J'ai encore beaucoup de mal avec les notions de "crédit" et de "débit" qui, si elles ont l'air simples, restent (je trouve) finalement un peu plus complexe que l'utilisation basique avec simple compte courant. Disons que je me triture encore les méninges :)<br />
+<br />
+J'ai une interrogation concernant GnuCah ou n'importe quel autre de logiciel de comptabilité. Je cerne bien l’intérêt de la "comptabilité en partie double", j'ai un peu de mal à mettre ça en place dans GnuCash pour les rentrées d'argent.<br />
+En fait surtout 1 rentrée: mon salaire (j'en ai pas d'autre). Il y a bien par défaut, dans les comptes, un compte ressource/Salaire.<br />
+Je me dis que ça ferait bien l'affaire. J'avais dans l'idée de le garnir tout les 1er du mois de la valeur de mon salaire et de le vider tout les mois vers un compte Actif/chèques.<br />
+Mais je me pose une question, si je crédite le compte Revenue/Salaire tous les mois, quel compte doit-je débiter? Dois-je créer un compte "Employeur" que je débite tous les mois? Et que je crédite d'un montant faramineux lors de sa création pour éviter d'avoir à le créditer tous les mois du montant de mon salaire (pour éviter que ce compte se retrouve en négatif, mais dans ce cas là je le crédite à partir de quel compte, je tourne en boucle).<br />
+En fait, je me demande s'il est possible de créer un compte dont on ne serait pas propriétaire... Parce que dans mon hypothèse, je risque de voir apparaître le compte "employeur" dans mes bilans...<br />
+Bon, comme je disais, je suis archi-débutant, j'ai peut-être loupé un point essentiel, qui fait que je ne devrais pas avoir à me poser ce genre de questions :)<br />
+Enfin voilà, si des fois vous avez le temps de réfléchir à mon petit soucis, merci.<br />
+Bonne continuation.</div>
+
+  
+  
+</div>
+
+            </article><article>
+              <div class="level1">
+  <h3>Merci pour votre commentaire</h3>
+  <div class="meta">haclong 2013-11-04T19:54 </div>
+  <div class="body">Merci pour votre commentaire<br />
+<br />
+Je suis également à mes débuts...<br />
+<br />
+Oui, en effet, il faut créer un compte (dans les comptes de Revenus). Inutile de "créditer" votre compte Employeur.<br />
+<br />
+Vous créez un compte Actif qui est votre compte courant (là où votre salaire va être viré en fait).<br />
+Vous créez un compte Revenus qui est votre employeur<br />
+Chaque mois, vous ouvrez votre compte Actif, vous ajoutez une transaction. Dans la colonne Virement, vous choisissez le compte Revenus correspondant à celui de votre employeur. Et vous saisissez le montant de votre salaire dans la colonne Couverture.<br />
+<br />
+Et voila !<br />
+<br />
+Pour vos bilans, seuls les comptes Actif, Passif et Revenus propres vous intéressent.<br />
+Les comptes Revenus n'est pas votre argent : ce sont les comptes externes d'où vient l'argent.<br />
+Les comptes Dépensens n'est pas votre argent : ce sont les comptes internes où va l'argent.<br />
+<br />
+Mon prochain poste explique comment saisir des montants dans GnuCash. Restez dans le coin !</div>
+
+  
+  
+</div>
+
+            </article><article>
+              <div class="level1">
+  <h3>GnuCash plusieurs comptes, etc</h3>
+  <div class="meta">Bressy 2014-12-04T15:05 </div>
+  <div class="body">Bonjour<br />
+<br />
+je viens de débuter sur GnuCash.<br />
+<br />
+effectivement mon fichier Calc de OpenOffice a atteint ses limites.<br />
+<br />
+mais comment gérer plusieurs comptes en même temps? (le perso et le commun)<br />
+<br />
+et comment, je compare par rapport à mon ancien fichier Calc, gérer à la fois par mois et par année?<br />
+<br />
+et gérer une carte bleu à débit différé sur le compte perso?<br />
+<br />
+et débuter, chaque année, avec un fichier avec des estimations de dépenses et de revenus? et affiner au fur et à mesure de l'année?<br />
+<br />
+Cordialement</div>
+
+  
+  
+</div>
+
+            </article><article>
+              <div class="level1">
+  <h3>Bonjour</h3>
+  <div class="meta">haclong 2014-12-04T15:19 </div>
+  <div class="body">Bonjour<br />
+<br />
+hehe, le fichier calc, bien pratique, mais assez vite limité<br />
+<br />
+Dans vos actifs, il faut créer un compte par compte bancaire, du coup, vous aurez un compte pour votre compte perso, un compte pour votre compte commun, autant de compte que de compte d'épargne... dans les actifs, c'est simple, un compte = un numéro de compte à la banque<br />
+<br />
+Si vous faites des virements entre vos comptes, vous débiterez le premier et créditerez le second. Il faut toujours savoir d'où vient l'argent et où il va... là où GnuCash perturbe (par rapport à un fichier calc en tout cas) c'est que finalement, votre transaction apparaît deux fois : une fois par compte... Là où c'est pratique, c'est que vous créer la ligne une fois mais elle apparait dans les autres comptes.<br />
+<br />
+Pour savoir ce qu'il se passe par moi et par année, il faut utiliser les rapports (je n'ai pas le logiciel sous les yeux mais il faut manipuler là)<br />
+<br />
+La carte bleue à débit différé, c'est un passif (selon moi) : Voici la logique :<br />
+  - actif : le compte perso<br />
+  - passif : le compte CB<br />
+  - dépenses : les boutiques<br />
+<br />
+Quand vous achetez qqch, vous débitez le compte CB et créditez le compte Boutique<br />
+Du coup, vous ne devez plus rien à la boutique mais vous devez de l'argent à votre CB<br />
+A la fin du mois, au moment où votre compte perso est débité, vous débitez le compte perso et vous créditez le compte CB. S'il y a des frais, il faut pensez à splitter la transaction : une part pour le capital et une part pour les frais, sinon, votre compte CB ne pourra jamais être à 0 et là, vous aurez un décalage que vous n'arriverez jamais à rapprocher.<br />
+<br />
+Pour le budget, je vous laisse découvrir, je n'ai pas du tout aborder ce point pour le moment.<br />
+Je devrais revenir avec des posts détaillés sur ce que je viens de vous dire mais je n'ai pas trouvé le temps de faire ça. Merci en tout cas pour votre message.</div>
+
+  
+  
+</div>
+
+            </article><article>
+              <div class="level1">
+  <h3>GnuCash, comment mettre une action récurrente (salaire, facture</h3>
+  <div class="meta">Bressy 2014-12-22T09:22 </div>
+  <div class="body">Bonjour<br />
+<br />
+sur GnuCash j'ai du mal à mettre en place des actions récurrentes comme le salaire chaque fin de mois, un prélévement mensuel.<br />
+<br />
+pour l'instant je fais une copie de ligne.<br />
+<br />
+quel est la procédure?<br />
+<br />
+Cordialement</div>
+
+  
+  
+</div>
+
+            </article><article>
+              <div class="level1">
+  <h3>Tâches récurrentes</h3>
+  <div class="meta">haclong 2014-12-22T12:21 </div>
+  <div class="body">Merci pour le commentaire. Je n'ai pas l'outil sous la main mais je vais revenir avec l'explication</div>
+
+  
+  
+</div>
+
+            </article><article>
+              <div class="level1">
+  <h3>Calcul - défiscalisation</h3>
+  <div class="meta">Denis 2016-10-11T07:51 </div>
+  <div class="body">Bonjour. GnuCash peut-il être utilisé pour les calculs liés à la <a href="http://simulationpinel.com/defiscalisation-duflot/e" target="_blank">défiscalisation immobilière Duflot?</a></div>
+
+  
+  
+</div>
+
+            </article><article>
+              <div class="level1">
+  <h3>defiscalisation</h3>
+  <div class="meta">haclong 2016-10-11T18:44 </div>
+  <div class="body">mmh<br />
+je ne pense pas<br />
+il y a bien des fonctionnalités de budget mais je ne crois pas qu'on puisse calculer un dufflot avec..</div>
+
+  
+  
+</div>
+
+            </article><article>
+              <div class="level1">
+  <h3>je vous remercie pour le</h3>
+  <div class="meta">lucien 2017-01-09T11:54 </div>
+  <div class="body">je vous remercie pour le partage de ces info, j'avais suivie tout ceci pour le calcul de ma <a href="http://www.sunfimmo.com/defiscaliser-france/" target="_blank">defiscalisation en 2014</a> et c'est beaucoup plus clair de travailler comme cela, je suis assez à l'ancienne où je n'utilise pas d'ordinateur mais je trouve que c'est un bon outil lorsqu'on s'en sert correctement</div>
+
+  
+  
+</div>
+
+            </article><article>
+              <div class="level1">
+  <h3>Opérations récurrentes</h3>
+  <div class="meta">André VERHULST 2018-06-22T15:58 </div>
+  <div class="body">Pas de sommes affichées dans le tableau des opérations récurrentes. Dommage, cela rend plus difficiles les prévisions de fin de mois. Y a-t-il une solution ?</div>
+
+  
+  
+</div>
+
+            </article><article>
+              <div class="level1">
+  <h3>je n'ai pas très bien compris</h3>
+  <div class="meta">haclong 2018-07-25T13:14 </div>
+  <div class="body">je n'ai pas très bien compris la question...</div>
+
+  
+  
+</div>
+
+            </article><article>
+              <div class="level1">
+  <h3>la suite !? gnucash</h3>
+  <div class="meta">yza 2020-01-28T17:55 </div>
+  <div class="body">bonjour<br />
+cherchant des explications compréhensible pour commencer avec ce logiciel , je suis tombées sur cette introduction qui m'a bien éclairée. Merci<br />
+mais je ne trouve pas la suite !<br />
+l'avez vous rédigée ? ou est-elle ?<br />
+merci<br />
+ cordialement<br />
+yza</div>
+
+  
+    
+      <div class="level2">
+        <h3>je suis très dépassée par ma</h3>
+        <div class="meta">haclong 2020-01-29T12:28</div>
+        <div class="body">je suis très dépassée par ma vie professionnelle<br />
+<br />
+je me remettrais aux articles sur gnucash que je continue d'utiliser quotidiennement.<br />
+<br />
+que cherchez vous en particulier ?</div>
+      </div>
+    
+  
+  
+</div>
+
+            </article></section>
+      
+
+
+      <comment>
+        <script src="https://utteranc.es/client.js"
+          repo="haclong/petitspasdanslaneige"
+          issue-term="title"
+          label="Comment"
+          theme="preferred-color-scheme"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </comment>
+
+
+    </article>
+
+
+
+    </div>
+
+    <!-- ----- End of DYNAMIC CONTENT ----- -->
+
+  </main>
+
+    
+  <i id="scrolltop" class="fa fa-angle-up" onclick="gototop()"></i>
+
+  <footer id="footer">
+    <div class="container-xl">
+      <h3>Sur moi</h3>
+      <p>J&#39;ai appris le php il y a quelques années, quand Internet était à ses débuts. Pour diverses raisons, j&#39;ai arrêté en route et j&#39;ai perdu le fil des nouveaux Internets que je redécouvre. Résultat, je me sens constamment à courir après l&#39;histoire mais je suis toujours motivée à reprendre des projets personnels. Je me propose de vous partager mes découvertes. Au delà des sujets de programmation, j&#39;aime également partager mes infos concernant notamment l&#39;Histoire, l&#39;Astronomie, la Linguistique, les Films, les Livres et les Anime. J&#39;espère que vous aimerez suivre mon blog.</p>
+      <!--div class="hr-double"></div-->
+      <div class="bottomline">
+        <p>&copy; 2012-2024 Haclong. Tous droits réservés.</p>
+        <p>Propulsé par <a href="https://www.11ty.dev/" target="_blank">Eleventy</a></p>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- First JS scripts to be loaded -->
+  <script src="/assets/scripts/bootstrap.js"></script>
+  <!-- Last JS scripts to be loaded -->
+  <script src="/assets/scripts/theme.js"></script>
+
+</body>
+</html>
