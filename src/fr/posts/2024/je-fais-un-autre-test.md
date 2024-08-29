@@ -1,6 +1,6 @@
 ---
-title: Je fais un test
-permalink: fr/posts/je-fais-un-test.html
+title: Je fais un autre test
+permalink: fr/posts/je-fais-un-autre-test.html
 date: 2024-05-08T11:09
 slug: je-fais-un-test
 layout: post
