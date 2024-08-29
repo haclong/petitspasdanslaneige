@@ -75,7 +75,7 @@ module.exports = function (eleventyConfig) {
 		defaultLanguage: "fr",
 	});
 
-    eleventyConfig.addPassthroughCopy({"src/img"}, {debug: true});
+    eleventyConfig.addPassthroughCopy("src/img");
     eleventyConfig.addPassthroughCopy("src/css");
     eleventyConfig.addPassthroughCopy("src/favicon.ico");
 	eleventyConfig.addPassthroughCopy("src/assets") ;
