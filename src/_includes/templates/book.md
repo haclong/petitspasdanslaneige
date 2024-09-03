@@ -1,14 +1,14 @@
 ---
-title: "Mon nouveau titre"
-permalink: "fr/posts/{{title}}.html"
-date: {{date:YYYY-MM-DD}}T{{time:HH:mm}}
-slug: {{title}}
+title: <% tp.file.title %>
+permalink: "fr/posts/<% tp.file.title.split(" ").join("-").toLowerCase() %>.html"
+date: <% tp.date.now("YYYY-MM-DD") %>T<% tp.date.now("HH:mmZZ") %>
+slug: <% tp.file.title.split(" ").join("-").toLowerCase() %>
 layout: book
 lang: fr
 author: haclong
 
 book: 
-  key: {{title}}
+  key: <% tp.file.title.split(" ").join("-").toLowerCase() %>
   next:
     url: "first-post-in-book-permalink"
     title: "first-post-in-book-title"
@@ -24,5 +24,5 @@ sites:
   - "Haclong projects"
 
 summary: "Mon résumé"
-
+<% tp.file.rename( tp.file.title.split(" ").join("-").toLowerCase()) %>
 ---
